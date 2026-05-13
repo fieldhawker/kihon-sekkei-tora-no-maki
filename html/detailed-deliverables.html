@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>詳細設計 成果物ガイド — 設計手順書</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo"><span class="logo-icon">📚</span>設計手順書 虎の巻</a>
+    <div class="search-box"><input class="search-input" type="text" placeholder="ページを検索…"></div>
+    <div class="sidebar-section">全体ガイド</div>
+    <nav>
+      <a href="index.html"><span class="nav-icon">🏠</span>トップ / 全体目次</a>
+      <a href="howto.html"><span class="nav-icon">🗺️</span>全体フロー・HowTo</a>
+    </nav>
+    <div class="sidebar-section">基本設計フェーズ</div>
+    <nav>
+      <a href="basic-design.html"><span class="nav-icon">📐</span>基本設計 手順 (STEP0〜8)</a>
+      <a href="basic-deliverables.html"><span class="nav-icon">📋</span>基本設計 成果物ガイド</a>
+    </nav>
+    <div class="sidebar-section">詳細設計フェーズ</div>
+    <nav>
+      <a href="detailed-design.html"><span class="nav-icon">🔬</span>詳細設計 手順 (STEP0〜9)</a>
+      <a href="detailed-deliverables.html"><span class="nav-icon">📋</span>詳細設計 成果物ガイド</a>
+      <a href="common-libs.html"><span class="nav-icon">📦</span>共通ライブラリ設計</a>
+    </nav>
+    <div class="sidebar-section">実装・テスト</div>
+    <nav>
+      <a href="implementation.html"><span class="nav-icon">💻</span>実装手順</a>
+      <a href="testing.html"><span class="nav-icon">🧪</span>テスト実施手順</a>
+    </nav>
+    <div class="sidebar-section">資料・テンプレート</div>
+    <nav>
+      <a href="templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+      <a href="adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+      <a href="ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-header phase-detail">
+      <div class="subtitle">Phase 2 — 成果物ガイド</div>
+      <h1>📋 詳細設計 成果物ガイド</h1>
+      <p class="description">詳細設計フェーズで作成する D-01〜D-18 の成果物について、使うツール・作り方・注意点をまとめています。</p>
+    </div>
+
+    <div class="content">
+
+      <!-- 成果物一覧 -->
+      <h2 class="section-title"><span class="title-icon">📑</span> 成果物一覧（D-01〜D-18）</h2>
+      <div class="deliverable-grid">
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-01</span>詳細機能設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-02</span>詳細画面設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-03</span>詳細API仕様書（OpenAPI）</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-04</span>バッチ詳細設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-05</span>帳票詳細設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-06</span>物理ER図</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-07</span>インデックス設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-08</span>主要クエリ設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-09</span>マイグレーションスクリプト</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-10</span>詳細外部IF設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-11</span>連携シーケンス図</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-12</span>詳細セキュリティ設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-13</span>単体テスト設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-14</span>結合テスト設計方針書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-15</span>コーディング規約書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-16</span>開発環境構築手順書</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-17</span>詳細設計書（総括）</div>
+        <div class="deliverable-item"><span class="deliverable-code" style="background:#0e9f6e">D-18</span>トレーサビリティマトリクス</div>
+      </div>
+
+      <!-- D-03 OpenAPI -->
+      <h2 class="section-title"><span class="title-icon">📄</span> D-03 詳細API仕様書（OpenAPI）— 作成ガイド</h2>
+      <div class="card">
+        <div class="callout callout-info" style="margin-bottom:1rem">
+          <span class="callout-icon">🔧</span>
+          <div class="callout-body">
+            <b>推奨ワークフロー</b><br>
+            ① <code>openapi.yaml</code> を作成 → ② Swagger UI でブラウザ確認 → ③ Prism でモックサーバー起動 → ④ フロントエンドがモックに対してUI開発 → ⑤ バックエンド実装完了後に本物に切り替え
+          </div>
+        </div>
+        <pre><code>openapi: 3.0.3
+info:
+  title: 経費精算システム API
+  version: 1.0.0
+
+paths:
+  /api/v1/expenses:
+    post:
+      summary: 申請書作成
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseCreateRequest'
+      responses:
+        '201':
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: バリデーションエラー
+        '401':
+          description: 認証エラー
+
+components:
+  schemas:
+    ExpenseCreateRequest:
+      type: object
+      required: [title, amount, date]
+      properties:
+        title:
+          type: string
+          maxLength: 100
+          description: 申請タイトル
+        amount:
+          type: integer
+          minimum: 1
+          description: 金額（円）
+        date:
+          type: string
+          format: date
+          description: 使用日（YYYY-MM-DD）</code></pre>
+
+        <div class="table-wrap" style="margin-top:1rem">
+          <table>
+            <thead><tr><th>ツール</th><th>用途</th><th>コマンド例</th></tr></thead>
+            <tbody>
+              <tr><td>Swagger UI</td><td>OpenAPIの可視化・確認</td><td><code>docker run -p 8080:8080 -e SWAGGER_JSON=/openapi.yaml swaggerapi/swagger-ui</code></td></tr>
+              <tr><td>Prism</td><td>モックサーバー起動</td><td><code>npx @stoplight/prism-cli mock openapi.yaml</code></td></tr>
+              <tr><td>openapi-generator</td><td>クライアントコード自動生成</td><td><code>openapi-generator-cli generate -i openapi.yaml -g typescript-axios</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- D-11 Mermaidシーケンス図 -->
+      <h2 class="section-title" id="external"><span class="title-icon">🔀</span> D-11 連携シーケンス図（Mermaid）— 作成ガイド</h2>
+      <div class="card">
+        <div class="callout callout-info" style="margin-bottom:1rem">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">Mermaid記法を使うと、テキストで書いたフローが自動的に図に変換されます。GitリポジトリのMarkdownに埋め込んでコードと一緒にバージョン管理できます。</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div>
+            <div class="text-xs text-muted font-bold" style="margin-bottom:.5rem">Mermaid記法（入力）</div>
+            <pre><code>sequenceDiagram
+  actor User as ユーザー
+  participant FE as フロントエンド
+  participant API as APIサーバー
+  participant DB as データベース
+  participant Mail as メールサーバー
+
+  User->>FE: 申請書提出ボタン押下
+  FE->>API: POST /api/v1/expenses
+  API->>API: バリデーション
+  API->>DB: INSERT expenses
+  DB-->>API: 挿入成功
+  API->>Mail: 承認依頼メール送信
+  Mail-->>API: 送信完了
+  API-->>FE: 201 Created
+  FE-->>User: 提出完了メッセージ表示</code></pre>
+          </div>
+          <div>
+            <div class="text-xs text-muted font-bold" style="margin-bottom:.5rem">レンダリング結果</div>
+            <div class="mermaid" style="font-size:.75rem">
+sequenceDiagram
+  actor User as ユーザー
+  participant FE as フロント
+  participant API as APIサーバー
+  participant DB as DB
+
+  User->>FE: 申請書提出
+  FE->>API: POST /expenses
+  API->>DB: INSERT
+  DB-->>API: 成功
+  API-->>FE: 201 Created
+  FE-->>User: 完了表示
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D-09 Flyway -->
+      <h2 class="section-title"><span class="title-icon">🗄️</span> D-09 マイグレーションスクリプト（Flyway）— 管理方針</h2>
+      <div class="card">
+        <div class="table-wrap" style="margin-bottom:1rem">
+          <table>
+            <thead><tr><th>ファイル命名規則</th><th>説明</th></tr></thead>
+            <tbody>
+              <tr><td><code>V1__create_users.sql</code></td><td>V{バージョン}__{説明}.sql（バージョンは昇順）</td></tr>
+              <tr><td><code>V2__create_expenses.sql</code></td><td>テーブル作成 DDL</td></tr>
+              <tr><td><code>V3__add_index_expenses.sql</code></td><td>インデックス追加</td></tr>
+              <tr><td><code>V4__alter_users_add_column.sql</code></td><td>ALTER TABLE でカラム追加</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-danger">
+          <span class="callout-icon">🚫</span>
+          <div class="callout-body">
+            <b>Flywayの鉄則</b>: 一度適用したマイグレーションファイルは絶対に編集しないこと。変更が必要な場合は必ず新しいバージョンのファイルを追加してください。
+          </div>
+        </div>
+        <pre style="margin-top:.75rem"><code>-- V4__alter_users_add_column.sql
+-- ユーザーテーブルに部署IDカラムを追加
+ALTER TABLE users
+  ADD COLUMN department_id BIGINT,
+  ADD CONSTRAINT fk_users_department
+    FOREIGN KEY (department_id) REFERENCES departments(id);
+
+COMMENT ON COLUMN users.department_id IS '所属部署ID';</code></pre>
+      </div>
+
+      <!-- ツール選定まとめ -->
+      <h2 class="section-title"><span class="title-icon">🛠️</span> ツール選定まとめ（D-01〜D-18）</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>成果物</th><th>推奨ツール</th><th>代替</th></tr></thead>
+            <tbody>
+              <tr><td>D-01 詳細機能設計書</td><td>Markdown / Word</td><td>Confluence</td></tr>
+              <tr><td>D-02 詳細画面設計書</td><td>Figma（コメント機能活用）</td><td>Adobe XD</td></tr>
+              <tr><td>D-03 詳細API仕様書</td><td>OpenAPI 3.0 (YAML) + Swagger UI</td><td>Postman Collections</td></tr>
+              <tr><td>D-06 物理ER図</td><td>A5:SQL Mk-2 / DBeaver ERD</td><td>dbdiagram.io</td></tr>
+              <tr><td>D-07 インデックス設計書</td><td>Excel / Markdown</td><td>—</td></tr>
+              <tr><td>D-09 マイグレーション</td><td>Flyway / Liquibase</td><td>手動SQLスクリプト</td></tr>
+              <tr><td>D-11 シーケンス図</td><td>Mermaid（Markdownに埋め込み）</td><td>PlantUML、draw.io</td></tr>
+              <tr><td>D-15 コーディング規約書</td><td>Markdown（リポジトリに配置）</td><td>Confluence</td></tr>
+              <tr><td>D-16 開発環境手順書</td><td>README.md + Docker Compose</td><td>Confluence</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>
+<script src="js/main.js"></script>
+</body>
+</html>

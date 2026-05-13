@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>設計書テンプレート集 — 設計手順書</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo"><span class="logo-icon">📚</span>設計手順書 虎の巻</a>
+    <div class="search-box"><input class="search-input" type="text" placeholder="ページを検索…"></div>
+    <div class="sidebar-section">全体ガイド</div>
+    <nav>
+      <a href="index.html"><span class="nav-icon">🏠</span>トップ / 全体目次</a>
+      <a href="howto.html"><span class="nav-icon">🗺️</span>全体フロー・HowTo</a>
+    </nav>
+    <div class="sidebar-section">基本設計フェーズ</div>
+    <nav>
+      <a href="basic-design.html"><span class="nav-icon">📐</span>基本設計 手順 (STEP0〜8)</a>
+      <a href="basic-deliverables.html"><span class="nav-icon">📋</span>基本設計 成果物ガイド</a>
+    </nav>
+    <div class="sidebar-section">詳細設計フェーズ</div>
+    <nav>
+      <a href="detailed-design.html"><span class="nav-icon">🔬</span>詳細設計 手順 (STEP0〜9)</a>
+      <a href="detailed-deliverables.html"><span class="nav-icon">📋</span>詳細設計 成果物ガイド</a>
+      <a href="common-libs.html"><span class="nav-icon">📦</span>共通ライブラリ設計</a>
+    </nav>
+    <div class="sidebar-section">実装・テスト</div>
+    <nav>
+      <a href="implementation.html"><span class="nav-icon">💻</span>実装手順</a>
+      <a href="testing.html"><span class="nav-icon">🧪</span>テスト実施手順</a>
+    </nav>
+    <div class="sidebar-section">資料・テンプレート</div>
+    <nav>
+      <a href="templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+      <a href="adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+      <a href="ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-header phase-libs">
+      <div class="subtitle">Templates</div>
+      <h1>📝 設計書テンプレート集</h1>
+      <p class="description">コピーしてすぐ使える設計書テンプレートです。T-01〜T-11 を収録しています。各テンプレートのMarkdownファイルを元のoutputフォルダで確認できます。</p>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-info">
+        <span class="callout-icon">📋</span>
+        <div class="callout-body">テンプレートのMarkdownファイルは <code>output/設計書テンプレート/</code> フォルダにあります。プロジェクト固有の内容に書き換えてから使用してください。</div>
+      </div>
+
+      <!-- テンプレート一覧 -->
+      <h2 class="section-title"><span class="title-icon">📑</span> テンプレート一覧</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>テンプレートID</th><th>テンプレート名</th><th>対応成果物</th><th>フェーズ</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge badge-primary">T-01</span></td><td>機能一覧</td><td>B-03 機能一覧</td><td>基本設計</td></tr>
+              <tr><td><span class="badge badge-primary">T-02</span></td><td>画面一覧</td><td>B-04 画面一覧</td><td>基本設計</td></tr>
+              <tr><td><span class="badge badge-primary">T-03</span></td><td>API一覧</td><td>B-07 API一覧</td><td>基本設計</td></tr>
+              <tr><td><span class="badge badge-primary">T-04</span></td><td>テーブル定義書</td><td>B-10 テーブル定義書（サンプルデータつき）</td><td>基本設計</td></tr>
+              <tr><td><span class="badge badge-primary">T-05</span></td><td>権限マトリクス</td><td>B-15 権限マトリクス</td><td>基本設計</td></tr>
+              <tr><td><span class="badge badge-primary">T-06</span></td><td>外部IF設計書</td><td>B-12 外部インタフェース設計書</td><td>基本設計</td></tr>
+              <tr><td><span class="badge badge-primary">T-07</span></td><td>非機能要件設計書</td><td>B-13 非機能要件設計書</td><td>基本設計</td></tr>
+              <tr><td><span class="badge badge-primary">T-08</span></td><td>トレーサビリティマトリクス</td><td>B-19 / D-18 トレーサビリティマトリクス</td><td>基本・詳細設計</td></tr>
+              <tr><td><span class="badge badge-success">T-09</span></td><td>テスト計画書</td><td>テスト計画書</td><td>テスト</td></tr>
+              <tr><td><span class="badge badge-success">T-10</span></td><td>UATシナリオ</td><td>受入テストシナリオ書</td><td>UAT</td></tr>
+              <tr><td><span class="badge badge-success">T-11</span></td><td>カットオーバー手順書</td><td>カットオーバー・バックアウト手順書</td><td>リリース</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- T-01 機能一覧プレビュー -->
+      <h2 class="section-title"><span class="title-icon">📄</span> T-01 機能一覧 — テンプレートプレビュー</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>機能ID</th>
+                <th>機能名</th>
+                <th>概要</th>
+                <th>対象画面/API</th>
+                <th>優先度</th>
+                <th>備考</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>F-001</td>
+                <td>ログイン</td>
+                <td>メールアドレス+パスワードで認証する</td>
+                <td>SCR-001 ログイン画面</td>
+                <td><span class="badge badge-danger">高</span></td>
+                <td>ログイン失敗5回でアカウントロック</td>
+              </tr>
+              <tr>
+                <td>F-002</td>
+                <td>パスワードリセット</td>
+                <td>メール送信でパスワードを再設定する</td>
+                <td>SCR-002〜003</td>
+                <td><span class="badge badge-warning">中</span></td>
+                <td>リセットリンクは24時間有効</td>
+              </tr>
+              <tr>
+                <td>F-003</td>
+                <td>申請書作成</td>
+                <td>経費申請フォームに入力して提出する</td>
+                <td>SCR-010、API-001</td>
+                <td><span class="badge badge-danger">高</span></td>
+                <td>添付ファイルは最大5件、合計10MB以内</td>
+              </tr>
+              <tr>
+                <td colspan="6" style="text-align:center;color:var(--gray-400)">… （以下続く）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- T-03 API一覧プレビュー -->
+      <h2 class="section-title"><span class="title-icon">📄</span> T-03 API一覧 — テンプレートプレビュー</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>API-ID</th>
+                <th>機能名</th>
+                <th>HTTPメソッド</th>
+                <th>エンドポイント</th>
+                <th>認証</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>API-001</td>
+                <td>ログイン</td>
+                <td><code>POST</code></td>
+                <td><code>/api/v1/auth/login</code></td>
+                <td>不要</td>
+                <td>メール+パスワードで認証しトークンを返す</td>
+              </tr>
+              <tr>
+                <td>API-002</td>
+                <td>申請書作成</td>
+                <td><code>POST</code></td>
+                <td><code>/api/v1/expenses</code></td>
+                <td>必要</td>
+                <td>申請書を新規作成する</td>
+              </tr>
+              <tr>
+                <td>API-003</td>
+                <td>申請書一覧取得</td>
+                <td><code>GET</code></td>
+                <td><code>/api/v1/expenses</code></td>
+                <td>必要</td>
+                <td>申請書一覧をページネーションで返す</td>
+              </tr>
+              <tr>
+                <td>API-004</td>
+                <td>申請書承認</td>
+                <td><code>PUT</code></td>
+                <td><code>/api/v1/expenses/{id}/approve</code></td>
+                <td>必要（MANAGER以上）</td>
+                <td>申請書を承認する</td>
+              </tr>
+              <tr>
+                <td colspan="6" style="text-align:center;color:var(--gray-400)">… （以下続く）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- T-08 トレーサビリティマトリクスプレビュー -->
+      <h2 class="section-title"><span class="title-icon">📄</span> T-08 トレーサビリティマトリクス — テンプレートプレビュー</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>要件ID</th>
+                <th>要件概要</th>
+                <th>基本設計書</th>
+                <th>詳細設計書</th>
+                <th>テストケースID</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>REQ-001</td>
+                <td>ユーザーはメールとパスワードでログインできること</td>
+                <td>B-03: F-001, B-14: §認証</td>
+                <td>D-01: §ログイン処理, D-03: API-001</td>
+                <td>UT-001, IT-001, ST-001</td>
+              </tr>
+              <tr>
+                <td>REQ-002</td>
+                <td>ログイン失敗5回でアカウントをロックすること</td>
+                <td>B-03: F-001, B-14: §アカウントロック</td>
+                <td>D-01: §認証失敗ロジック</td>
+                <td>UT-002, ST-002</td>
+              </tr>
+              <tr>
+                <td colspan="5" style="text-align:center;color:var(--gray-400)">… （以下続く）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-success" style="margin-top:1rem">
+          <span class="callout-icon">✅</span>
+          <div class="callout-body">トレーサビリティマトリクスは「要件の抜け漏れ」と「テストの対応漏れ」を検出するための重要な品質管理ツールです。基本設計時点から更新し続けてください。</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基本設計 成果物ガイド — 設計手順書</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo"><span class="logo-icon">📚</span>設計手順書 虎の巻</a>
+    <div class="search-box"><input class="search-input" type="text" placeholder="ページを検索…"></div>
+    <div class="sidebar-section">全体ガイド</div>
+    <nav>
+      <a href="index.html"><span class="nav-icon">🏠</span>トップ / 全体目次</a>
+      <a href="howto.html"><span class="nav-icon">🗺️</span>全体フロー・HowTo</a>
+    </nav>
+    <div class="sidebar-section">基本設計フェーズ</div>
+    <nav>
+      <a href="basic-design.html"><span class="nav-icon">📐</span>基本設計 手順 (STEP0〜8)</a>
+      <a href="basic-deliverables.html"><span class="nav-icon">📋</span>基本設計 成果物ガイド</a>
+    </nav>
+    <div class="sidebar-section">詳細設計フェーズ</div>
+    <nav>
+      <a href="detailed-design.html"><span class="nav-icon">🔬</span>詳細設計 手順 (STEP0〜9)</a>
+      <a href="detailed-deliverables.html"><span class="nav-icon">📋</span>詳細設計 成果物ガイド</a>
+      <a href="common-libs.html"><span class="nav-icon">📦</span>共通ライブラリ設計</a>
+    </nav>
+    <div class="sidebar-section">実装・テスト</div>
+    <nav>
+      <a href="implementation.html"><span class="nav-icon">💻</span>実装手順</a>
+      <a href="testing.html"><span class="nav-icon">🧪</span>テスト実施手順</a>
+    </nav>
+    <div class="sidebar-section">資料・テンプレート</div>
+    <nav>
+      <a href="templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+      <a href="adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+      <a href="ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-header phase-basic">
+      <div class="subtitle">Phase 1 — 成果物ガイド</div>
+      <h1>📋 基本設計 成果物ガイド</h1>
+      <p class="description">基本設計フェーズで作成する B-01〜B-19 の成果物について、使うツール・作り方・注意点をまとめています。</p>
+    </div>
+
+    <div class="content">
+
+      <!-- 成果物一覧 -->
+      <h2 class="section-title"><span class="title-icon">📑</span> 成果物一覧（B-01〜B-19）</h2>
+      <div class="deliverable-grid">
+        <div class="deliverable-item"><span class="deliverable-code">B-01</span>システム構成図</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-02</span>技術スタック選定書（ADR）</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-03</span>機能一覧</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-04</span>画面一覧</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-05</span>画面レイアウト定義書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-06</span>画面遷移図</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-07</span>API一覧（概要版）</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-08</span>バッチ一覧</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-09</span>ER図（概念・論理）</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-10</span>テーブル定義書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-11</span>マスタデータ定義書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-12</span>外部IF設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-13</span>非機能要件設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-14</span>セキュリティ設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-15</span>権限マトリクス</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-16</span>運用設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-17</span>移行設計書</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-18</span>基本設計書（総括）</div>
+        <div class="deliverable-item"><span class="deliverable-code">B-19</span>トレーサビリティマトリクス</div>
+      </div>
+
+      <!-- ツール選定まとめ -->
+      <h2 class="section-title"><span class="title-icon">🛠️</span> ツール選定まとめ</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>成果物</th><th>推奨ツール</th><th>代替ツール</th><th>ポイント</th></tr></thead>
+            <tbody>
+              <tr><td>B-01 システム構成図</td><td>Draw.io (diagrams.net)</td><td>Lucidchart、Mermaid</td><td>無料・Gitで管理可能なXML形式</td></tr>
+              <tr><td>B-02 技術スタック選定書</td><td>Markdown + Git (ADR形式)</td><td>Confluence</td><td>コードと同じリポジトリで管理</td></tr>
+              <tr><td>B-03〜B-04 機能・画面一覧</td><td>Excel</td><td>Notion、Google Sheets</td><td>フィルタ・ソートが便利</td></tr>
+              <tr id="api"><td>B-05〜B-06 画面設計</td><td>Figma</td><td>Adobe XD、Balsamiq</td><td>コメント機能・共有が便利</td></tr>
+              <tr><td>B-07 API一覧</td><td>OpenAPI (YAML) + Swagger UI</td><td>Excel</td><td>詳細設計でOpenAPI完全版に発展</td></tr>
+              <tr id="data"><td>B-09 ER図</td><td>dbdiagram.io</td><td>A5:SQL Mk-2、ERD Plus</td><td>ブラウザ完結・無料・共有URL生成</td></tr>
+              <tr><td>B-10 テーブル定義書</td><td>A5:SQL Mk-2（Excel出力）</td><td>Excel手動作成</td><td>ER図→Excel出力の自動化が便利</td></tr>
+              <tr id="security"><td>B-14 セキュリティ設計書</td><td>Excel / Markdown</td><td>Confluence</td><td>OWASP対策チェックリスト形式推奨</td></tr>
+              <tr><td>B-15 権限マトリクス</td><td>Excel</td><td>Google Sheets</td><td>行=機能、列=ロール の表形式</td></tr>
+              <tr><td>B-19 トレーサビリティ</td><td>Excel</td><td>Jira、Notion</td><td>要件ID → 設計書の対応を管理</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- B-09〜B-11 データ設計の詳細 -->
+      <h2 class="section-title"><span class="title-icon">🗄️</span> データ設計（B-09〜B-11）詳細</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fef9c3">🗄️</span><h2>A5:SQL Mk-2 を使ったER図作成手順（DB接続なし）</h2></div>
+        <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
+          <li>A5:SQL Mk-2 を起動 → [ファイル] → [新しいER図]</li>
+          <li>[テーブル追加] ボタンでエンティティを作成</li>
+          <li>各テーブルの列（カラム名・型・必須）を入力</li>
+          <li>テーブル間を線でつなぎリレーションを設定（1:N / N:M）</li>
+          <li>[出力] → [Excel/Word 出力] でテーブル定義書を自動生成</li>
+        </ol>
+        <div class="callout callout-info" style="margin-top:.75rem">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">基本設計時点では「論理名・型の目安」で可。物理的な桁数・インデックスは詳細設計（D-06〜D-09）で確定させます。</div>
+        </div>
+      </div>
+
+      <!-- B-15 権限マトリクス例 -->
+      <h2 class="section-title"><span class="title-icon">🔐</span> 権限マトリクス（B-15）の書き方</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>機能 / 画面</th>
+                <th>一般ユーザー</th>
+                <th>マネージャー</th>
+                <th>管理者</th>
+                <th>システム管理者</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ダッシュボード参照</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>申請書 作成・提出</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>申請書 承認・差し戻し</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>マスタデータ編集</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>ユーザー管理</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+              <tr><td>全データ参照</td><td>自分のみ</td><td>部署内</td><td>全件</td><td>全件</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-warning" style="margin-top:.75rem">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">権限マトリクスは必ず顧客と合意を取ること。後から「実はこのロールにはこの操作も必要だった」が最もよくある手戻りパターンです。</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
