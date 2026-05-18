@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>単体テスト設計技法まとめ — 虎の巻</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <span class="logo-icon">📚</span>
+      設計手順書 虎の巻
+    </a>
+    <div class="search-box">
+      <input class="search-input" type="text" placeholder="ページを検索…">
+    </div>
+
+    <div class="sidebar-section">全体ガイド</div>
+    <nav>
+      <a href="index.html"><span class="nav-icon">🏠</span>トップ / 全体目次</a>
+      <a href="howto.html"><span class="nav-icon">🗺️</span>全体フロー・HowTo</a>
+    </nav>
+
+    <div class="sidebar-section">基本設計フェーズ</div>
+    <nav>
+      <a href="basic-design.html"><span class="nav-icon">📐</span>基本設計 手順 (STEP0〜8)</a>
+      <a href="basic-deliverables.html"><span class="nav-icon">📋</span>基本設計 成果物ガイド</a>
+    </nav>
+
+    <div class="sidebar-section">詳細設計フェーズ</div>
+    <nav>
+      <a href="detailed-design.html"><span class="nav-icon">🔬</span>詳細設計 手順 (STEP0〜9)</a>
+      <a href="detailed-deliverables.html"><span class="nav-icon">📋</span>詳細設計 成果物ガイド</a>
+      <a href="common-libs.html"><span class="nav-icon">📦</span>共通ライブラリ設計</a>
+      <a href="detailed-design-techniques.html"><span class="nav-icon">💡</span>詳細設計技法</a>
+    </nav>
+
+    <div class="sidebar-section">実装・テスト</div>
+    <nav>
+      <a href="implementation.html"><span class="nav-icon">💻</span>実装手順</a>
+      <a href="testing.html"><span class="nav-icon">🧪</span>テスト実施手順</a>
+      <a href="unit-test-techniques.html" class="active"><span class="nav-icon">🎯</span>単体テスト設計技法</a>
+    </nav>
+
+    <div class="sidebar-section">資料・テンプレート</div>
+    <nav>
+      <a href="templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+      <a href="adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+      <a href="ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="content">
+      <h1 class="page-title"><span class="title-icon">🎯</span> 単体テスト設計技法まとめ</h1>
+      <p>単体テスト（Unit Test）は、プログラムを構成する最小単位（関数やメソッドなど）が、設計通りに正しく動作するかを検証するテストです。<br>テストケースを場当たり的に作成すると、考慮漏れによるバグの見逃しや、無駄なテストケースの増大を招きます。</p>
+      <p>以下に、単体テストを効率的かつ網羅的に行うための代表的なテスト設計技法（ブラックボックス・ホワイトボックス）をまとめます。</p>
+
+      <h2 class="section-title">1. 入力データに着目した技法（ブラックボックステスト）</h2>
+      <p>プログラムの内部構造を意識せず、仕様書（インプットとアウトプット）に基づいてテストケースを設計します。</p>
+
+      <div class="card">
+        <h3>1.1 同値分割法 (Equivalence Partitioning)</h3>
+        <p>入力値を「同じように処理されるグループ（同値クラス）」に分け、各グループから代表値を1つ選んでテストする手法です。</p>
+        <div class="callout callout-info">
+          <strong>使用事例: 「パスワードの文字数チェック（8文字以上、16文字以下）」</strong>
+          <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+            <tr style="background:#f1f5f9; font-weight:bold; text-align:center;">
+              <td style="border:1px solid #cbd5e1; padding:8px;">無効同値（短すぎる）</td>
+              <td style="border:1px solid #cbd5e1; padding:8px; background:#dcfce7; color:#166534;">有効同値（正常）</td>
+              <td style="border:1px solid #cbd5e1; padding:8px;">無効同値（長すぎる）</td>
+            </tr>
+            <tr style="text-align:center;">
+              <td style="border:1px solid #cbd5e1; padding:8px;">〜7文字</td>
+              <td style="border:1px solid #cbd5e1; padding:8px;">8〜16文字</td>
+              <td style="border:1px solid #cbd5e1; padding:8px;">17文字〜</td>
+            </tr>
+            <tr style="text-align:center; color:#2563eb; font-weight:bold;">
+              <td style="border:1px solid #cbd5e1; padding:8px;">代表値: 5文字</td>
+              <td style="border:1px solid #cbd5e1; padding:8px;">代表値: 10文字</td>
+              <td style="border:1px solid #cbd5e1; padding:8px;">代表値: 20文字</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>1.2 境界値分析 (Boundary Value Analysis)</h3>
+        <p>バグが発生しやすい「同値クラスの境界（しきい値とその前後の値）」を狙ってテストする手法です。同値分割法とセットで使われます。</p>
+        <div class="callout callout-info">
+          <strong>使用事例: 「年齢による入場制限（18歳以上のみ入場可）」</strong>
+          <p>境界となる値：<strong>18</strong></p>
+          <ul style="margin-top:10px;">
+            <li><code>17歳</code> (境界のすぐ下：入場不可となるか)</li>
+            <li style="color:#2563eb; font-weight:bold;"><code>18歳</code> (境界値：入場可となるか)</li>
+            <li><code>19歳</code> (境界のすぐ上：入場可となるか)</li>
+          </ul>
+          <p style="margin-top:8px;"><code>&gt;=</code> と <code>&gt;</code> の書き間違い（オフバイワンエラー）などのバグを効果的に検出できます。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">2. 条件と結果の組み合わせに着目した技法</h2>
+
+      <div class="card">
+        <h3>2.1 デシジョンテーブルテスト (Decision Table Testing)</h3>
+        <p>複数の入力条件の組み合わせによって出力（結果）が変化するロジックに対して、考えられる全ての組み合わせを表にしてテストする手法です。</p>
+        <div class="callout callout-info">
+          <strong>使用事例: 「ECサイトの割引判定」</strong>
+          <ul style="margin-top:10px;">
+            <li>会員=Yes, 5000円=Yes ➔ <strong style="color:#2563eb;">結果: 割引適用</strong></li>
+            <li>会員=Yes, 5000円=No  ➔ <strong>結果: 割引適用外</strong></li>
+            <li>会員=No,  5000円=Yes ➔ <strong>結果: 割引適用外</strong></li>
+            <li>会員=No,  5000円=No  ➔ <strong>結果: 割引適用外</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2.2 ペアワイズテスト / 直交表 (Pairwise Testing)</h3>
+        <p>多数のパラメータがある場合、「任意の2つのパラメータの組み合わせが必ず1回以上登場する」ようにケースを絞り込む手法です。</p>
+        <div class="callout callout-info">
+          <strong>使用事例: 「OS、ブラウザ、言語の設定による画面表示」</strong>
+          <p>パラメータ: OS(Win/Mac)、ブラウザ(Chrome/Edge/Safari)、言語(日/英)</p>
+          <p>全組み合わせは 12通りですが、ペアワイズツールを利用することで「OS×ブラウザ」「ブラウザ×言語」等の2ペア網羅をより少ない回数（6回程度）に絞り込めます。<br>ソフトウェアのバグの大半は「1〜2つのパラメータの組み合わせ」で発生するという経験則に基づいています。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">3. プログラムの内部構造に着目した技法（ホワイトボックステスト）</h2>
+
+      <div class="card">
+        <h3>3.1 制御フローテスト / パステスト (Control Flow Testing)</h3>
+        <p>コード内の命令や分岐をどれだけ通過したか（カバレッジ：網羅率）を基準にテストを設計します。</p>
+        <div class="callout callout-info">
+          <div class="mermaid">
+          flowchart TD
+              A[開始] --> B{A &gt; 0 || B &gt; 0}
+              B -- True --> C[処理X]
+              B -- False --> D[処理Y]
+              C --> E[終了]
+              D --> E
+          </div>
+          <ul style="margin-top:15px;">
+            <li><strong>C0 (命令網羅)</strong>: すべての「行」を少なくとも1回実行。</li>
+            <li><strong>C1 (分岐網羅)</strong>: すべての「分岐(True/False)」を両方とも1回実行。（単体テストの目標水準）
+              <ul><li>例：Trueルート <code>A=1, B=0</code> / Falseルート <code>A=0, B=0</code></li></ul>
+            </li>
+            <li><strong>C2 (条件網羅)</strong>: 分岐の中の「複数条件」のTrue/False組み合わせを網羅。</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="section-title">4. 状態の変化や経験則に着目した技法</h2>
+
+      <div class="card">
+        <h3>4.1 状態遷移テスト (State Transition Testing)</h3>
+        <p>システムが特定の「状態」を持っており、イベントによって状態が変わる場合に、その遷移が正しく行われるかをテストします。</p>
+        <div class="callout callout-info">
+          <strong>使用事例: 「動画プレイヤー（停止・再生・一時停止）」</strong>
+          <ul style="margin-top:10px;">
+            <li>「停止中」に「再生ボタン」 ➔ 「再生中」になるか</li>
+            <li>「一時停止中」に「再生ボタン」 ➔ 「再生中」になるか</li>
+            <li>「停止中」に「一時停止ボタン」 ➔ 無視されるか（エラー処理されるか）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4.2 エラー推測 (Error Guessing)</h3>
+        <p>エンジニアの経験や直感に基づき、「ミスしやすそうな箇所」「過去のバグパターン」を狙い撃ちにする手法です。</p>
+        <div class="callout callout-info">
+          <strong>使用事例: 「入力フォームのテスト」</strong>
+          <p>狙い撃ちデータ例：空文字列、半角スペースのみ、全角半角混在、超長文、特殊文字( <code>'</code> や <code>;</code> など )</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+</script>
+<script src="js/main.js"></script>
+</body>
+</html>
