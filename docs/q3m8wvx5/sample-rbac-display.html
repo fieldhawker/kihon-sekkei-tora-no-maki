@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>権限・ロール別表示パターン（RBAC）— 設計手順書</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .role-simulator {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+    .role-selector {
+      background: #f9fafb;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .role-selector label { font-weight: 600; color: #374151; margin-right: 0.5rem; }
+    .role-radio { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .role-radio label {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      border: 2px solid #d1d5db;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .role-radio input[type=radio] { display: none; }
+    .role-radio input[type=radio]:checked + span { /* handled via JS class */ }
+    .role-radio label.active-admin { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
+    .role-radio label.active-user  { border-color: #1a56db; background: #eff6ff; color: #1a56db; }
+    .role-radio label.active-reader{ border-color: #6b7280; background: #f3f4f6; color: #6b7280; }
+    .sim-body {
+      padding: 1.5rem;
+    }
+    .sim-toolbar {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .sim-toolbar h3 { margin: 0; font-size: 1rem; flex: 1; }
+    .sim-btn {
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity 0.2s, background 0.2s;
+    }
+    .sim-btn.btn-add    { background: #0e9f6e; color: #fff; }
+    .sim-btn.btn-edit   { background: #1a56db; color: #fff; }
+    .sim-btn.btn-delete { background: #e02424; color: #fff; }
+    .sim-btn.btn-export { background: #6b7280; color: #fff; }
+    .sim-btn.btn-disabled {
+      background: #e5e7eb !important;
+      color: #9ca3af !important;
+      cursor: not-allowed;
+    }
+    .sim-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .sim-table th { background: #f3f4f6; padding: 0.6rem 1rem; text-align: left; border-bottom: 2px solid #e5e7eb; }
+    .sim-table td { padding: 0.6rem 1rem; border-bottom: 1px solid #f3f4f6; }
+    .sim-table tr:last-child td { border-bottom: none; }
+    .masked { color: #9ca3af; letter-spacing: 2px; }
+    .own-row { background: #f0fdf4; }
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .pattern-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .pattern-card-header {
+      padding: 0.75rem 1rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .pattern-card-header.ph-hidden  { background: #fee2e2; color: #dc2626; border-bottom: 2px solid #fca5a5; }
+    .pattern-card-header.ph-gray    { background: #fef9c3; color: #92400e; border-bottom: 2px solid #fde68a; }
+    .pattern-card-header.ph-mask    { background: #ede9fe; color: #6d28d9; border-bottom: 2px solid #c4b5fd; }
+    .pattern-card-body { padding: 1rem; font-size: 0.85rem; }
+    .demo-ui-box {
+      background: #f9fafb; border-radius: 6px; padding: 0.75rem; margin: 0.5rem 0;
+      border: 1px solid #e5e7eb;
+    }
+    .demo-ui-box .ui-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+    .demo-ui-box .ui-row:last-child { margin-bottom: 0; }
+    .tooltip-wrap { position: relative; display: inline-block; }
+    .tooltip-wrap .tooltip-text {
+      visibility: hidden; opacity: 0;
+      background: #1f2937; color: #fff;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
+      white-space: nowrap;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; }
+    .error-page-mock {
+      border: 2px solid #e5e7eb; border-radius: 10px; overflow: hidden; text-align: center; padding: 2rem;
+      background: #f9fafb;
+    }
+    .error-code { font-size: 3rem; font-weight: 800; color: #e02424; }
+    .error-msg  { font-size: 1.1rem; color: #374151; margin: 0.5rem 0; font-weight: 600; }
+    .error-sub  { font-size: 0.85rem; color: #6b7280; }
+    .partial-lock {
+      position: relative;
+      display: inline-block;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .partial-lock::after {
+      content: '🔒';
+      position: absolute; top: -8px; right: -8px;
+      font-size: 0.8rem;
+    }
+    .flow-steps {
+      display: flex; align-items: stretch; gap: 0; margin-top: 1rem; flex-wrap: wrap;
+    }
+    .flow-step {
+      flex: 1; min-width: 140px;
+      background: #eff6ff; border: 2px solid #bfdbfe;
+      padding: 1rem; text-align: center;
+      position: relative; font-size: 0.85rem;
+    }
+    .flow-step:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -18px; top: 50%; transform: translateY(-50%);
+      font-size: 1.2rem; color: #1a56db; z-index: 1;
+    }
+    .flow-step .step-icon { font-size: 1.5rem; }
+    .flow-step .step-label { font-weight: 700; margin: 0.4rem 0 0.2rem; color: #1e40af; }
+    .flow-step .step-desc { color: #374151; font-size: 0.78rem; }
+    .flow-step.step-server { background: #f0fdf4; border-color: #86efac; }
+    .flow-step.step-server .step-label { color: #15803d; }
+    .flow-step.step-danger { background: #fef2f2; border-color: #fca5a5; }
+    .flow-step.step-danger .step-label { color: #dc2626; }
+    .concept-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem; margin-top: 1rem;
+    }
+    .concept-card {
+      padding: 1.25rem; border-radius: 10px;
+      border-left: 4px solid;
+    }
+    .concept-card.c-authn { border-color: #f59e0b; background: #fffbeb; }
+    .concept-card.c-authz { border-color: #1a56db; background: #eff6ff; }
+    .concept-card.c-rbac  { border-color: #0e9f6e; background: #f0fdf4; }
+    .concept-card h4 { margin: 0 0 0.4rem; font-size: 1rem; }
+    .concept-card p  { margin: 0; font-size: 0.85rem; color: #374151; line-height: 1.6; }
+    .403-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .feature-locked {
+      border: 2px solid #e5e7eb; border-radius: 8px; padding: 1rem;
+      text-align: center; background: #f9fafb;
+    }
+    .feature-locked .lock-icon { font-size: 2rem; }
+    .feature-locked h4 { margin: 0.5rem 0 0.25rem; font-size: 0.95rem; }
+    .feature-locked p  { margin: 0; font-size: 0.82rem; color: #6b7280; }
+    .feature-locked a  { font-size: 0.82rem; color: #1a56db; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo"><span class="logo-icon">📚</span>設計手順書 虎の巻</a>
+    <div class="search-box"><input class="search-input" type="text" placeholder="ページを検索…"></div>
+    <div class="sidebar-section">全体ガイド</div>
+    <nav>
+      <a href="index.html"><span class="nav-icon">🏠</span>トップ / 全体目次</a>
+      <a href="howto.html"><span class="nav-icon">🗺️</span>全体フロー・HowTo</a>
+    </nav>
+    <div class="sidebar-section">基本設計フェーズ</div>
+    <nav>
+      <a href="basic-design.html"><span class="nav-icon">📐</span>基本設計 手順 (STEP0〜8)</a>
+      <a href="basic-deliverables.html"><span class="nav-icon">📋</span>基本設計 成果物ガイド</a>
+    </nav>
+    <div class="sidebar-section">詳細設計フェーズ</div>
+    <nav>
+      <a href="detailed-design.html"><span class="nav-icon">🔬</span>詳細設計 手順 (STEP0〜9)</a>
+      <a href="detailed-deliverables.html"><span class="nav-icon">📋</span>詳細設計 成果物ガイド</a>
+      <a href="common-libs.html"><span class="nav-icon">📦</span>共通ライブラリ設計</a>
+      <a href="detailed-design-techniques.html"><span class="nav-icon">💡</span>詳細設計技法</a>
+    </nav>
+    <div class="sidebar-section">実装・テスト</div>
+    <nav>
+      <a href="implementation.html"><span class="nav-icon">💻</span>実装手順</a>
+      <a href="testing.html"><span class="nav-icon">🧪</span>テスト実施手順</a>
+      <a href="unit-test-techniques.html"><span class="nav-icon">🎯</span>単体テスト設計技法</a>
+    </nav>
+    <div class="sidebar-section">資料・テンプレート</div>
+    <nav>
+      <a href="templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+      <a href="adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+      <a href="ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    </nav>
+    <div class="sidebar-section">サンプル画面集</div>
+    <nav>
+      <a href="sample-index.html"><span class="nav-icon">🗂️</span>サンプル一覧</a>
+      <a href="sample-layout.html"><span class="nav-icon">🏗️</span>レイアウト・ナビ構造</a>
+      <a href="sample-ui-components.html"><span class="nav-icon">🧩</span>UIコンポーネント状態</a>
+      <a href="sample-responsive.html"><span class="nav-icon">📱</span>レスポンシブデザイン</a>
+      <a href="sample-log-viewer.html"><span class="nav-icon">📋</span>ログ出力</a>
+      <a href="sample-error-patterns.html"><span class="nav-icon">⚠️</span>エラーハンドリング</a>
+      <a href="sample-form-validation.html"><span class="nav-icon">✅</span>バリデーション</a>
+      <a href="sample-wizard-form.html"><span class="nav-icon">🧭</span>ステップフォーム</a>
+      <a href="sample-data-table.html"><span class="nav-icon">📊</span>テーブル・一覧</a>
+      <a href="sample-notifications.html"><span class="nav-icon">🔔</span>通知・フィードバック</a>
+      <a href="sample-auth-flow.html"><span class="nav-icon">🔐</span>認証・認可フロー</a>
+      <a href="sample-async-states.html"><span class="nav-icon">⏳</span>非同期処理状態</a>
+      <a href="sample-file-upload.html"><span class="nav-icon">📁</span>ファイルアップロード</a>
+      <a href="sample-datetime-input.html"><span class="nav-icon">📅</span>日付・時刻入力</a>
+      <a href="sample-search-ui.html"><span class="nav-icon">🔍</span>検索UI</a>
+      <a href="sample-api-response.html"><span class="nav-icon">🔌</span>APIレスポンス設計</a>
+      <a href="sample-rbac-display.html" class="active"><span class="nav-icon">🛡️</span>権限・ロール別表示</a>
+      <a href="sample-audit-log.html"><span class="nav-icon">📜</span>監査ログ・操作履歴</a>
+      <a href="sample-dashboard.html"><span class="nav-icon">📈</span>ダッシュボード</a>
+      <a href="sample-input-assist.html"><span class="nav-icon">💡</span>入力補助・オートコンプリート</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-header phase-adr">
+      <div class="page-header-content">
+        <h1>🛡️ 権限・ロール別表示パターン（RBAC）</h1>
+        <p>Role-Based Access Control — 誰が何をできるかをUIに反映する設計パターン</p>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- 重要な注意 -->
+      <div class="callout callout-danger">
+        <strong>⚠️ 重要：フロントエンドの非表示はUXのためであり、セキュリティではない</strong><br>
+        ブラウザのDevToolsでHTMLを書き換えれば、非表示ボタンを表示させることは誰でもできる。
+        真のセキュリティチェックは<strong>サーバーサイドAPIで必ず実装する</strong>。
+        フロントの表示制御は「余計な混乱を与えない」ための配慮にすぎない。
+      </div>
+
+      <!-- セクション1: 概念整理 -->
+      <h2 class="section-title"><span class="title-icon">📖</span>1. 認証・認可・RBAC の関係</h2>
+      <p>この3つは混同されやすいが、役割が明確に異なる。</p>
+      <div class="concept-grid">
+        <div class="concept-card c-authn">
+          <h4>🔑 認証（Authentication）</h4>
+          <p>「あなたは誰ですか？」を確認する。ログイン・パスワード・多要素認証など。<br>
+          <strong>「本人であること」</strong>を証明するフェーズ。</p>
+        </div>
+        <div class="concept-card c-authz">
+          <h4>🚪 認可（Authorization）</h4>
+          <p>「あなたはこれをしていいですか？」を判断する。認証後に行われる。<br>
+          <strong>「何ができるか」</strong>を決めるフェーズ。</p>
+        </div>
+        <div class="concept-card c-rbac">
+          <h4>🛡️ RBAC（Role-Based AC）</h4>
+          <p>認可の実装方式のひとつ。ユーザーに「ロール（役割）」を割り当て、ロール単位で権限を管理する。個人ではなくロールで管理するため運用が楽になる。</p>
+        </div>
+      </div>
+
+      <!-- セクション2: ロール定義 -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">📋</span>2. ロール定義例</h2>
+      <p>システム設計時にロールと権限の対応表を明文化しておく。仕様書に必ず記載すること。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ロール</th>
+              <th>説明</th>
+              <th>できること</th>
+              <th>できないこと</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-danger">管理者</span></td>
+              <td>システム全体を管理する責任者</td>
+              <td>全データの参照・作成・編集・削除、ユーザー管理、エクスポート、設定変更</td>
+              <td>（基本的に制限なし）</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-primary">一般ユーザー</span></td>
+              <td>通常の業務を行うスタッフ</td>
+              <td>自分が担当するデータの参照・作成・編集、承認申請</td>
+              <td>他者データの編集・削除、ユーザー管理、エクスポート</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-gray">閲覧のみ</span></td>
+              <td>参照のみ許可されたオブザーバー</td>
+              <td>全データの参照（マスキングあり）</td>
+              <td>作成・編集・削除・エクスポート全て不可</td>
+            </tr>
+            <tr>
+              <td><span class="badge" style="background:#f3f4f6;color:#374151;border:1px solid #d1d5db;">ゲスト</span></td>
+              <td>ログイン前の未認証ユーザー</td>
+              <td>公開ページのみ閲覧</td>
+              <td>ログイン画面以外ほぼ全て不可</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- セクション3: ロールシミュレーター -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🎮</span>3. ロールシミュレーター</h2>
+      <p>ロールを切り替えて、同じ画面がどう変化するかを確認してみよう。</p>
+
+      <div class="role-simulator">
+        <div class="role-selector">
+          <span style="font-weight:700;color:#374151;">ログイン中のロールを切り替え：</span>
+          <div class="role-radio">
+            <label id="lbl-admin">
+              <input type="radio" name="role" value="admin" checked>
+              <span>🔴 管理者</span>
+            </label>
+            <label id="lbl-user">
+              <input type="radio" name="role" value="user">
+              <span>🔵 一般ユーザー</span>
+            </label>
+            <label id="lbl-reader">
+              <input type="radio" name="role" value="reader">
+              <span>⚫ 閲覧のみ</span>
+            </label>
+          </div>
+        </div>
+        <div class="sim-body">
+          <div class="sim-toolbar">
+            <h3 id="sim-title">👤 ユーザー管理</h3>
+            <button class="sim-btn btn-add"    id="btn-add">＋ 新規追加</button>
+            <button class="sim-btn btn-edit"   id="btn-edit">✏️ 編集</button>
+            <button class="sim-btn btn-delete" id="btn-delete">🗑️ 削除</button>
+            <button class="sim-btn btn-export" id="btn-export">📥 エクスポート</button>
+          </div>
+          <div id="sim-notice" class="callout callout-info" style="margin-bottom:1rem;display:none;"></div>
+          <div class="table-wrap">
+            <table class="sim-table">
+              <thead>
+                <tr>
+                  <th>氏名</th>
+                  <th>メールアドレス</th>
+                  <th>部署</th>
+                  <th>電話番号</th>
+                  <th>ロール</th>
+                </tr>
+              </thead>
+              <tbody id="sim-tbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション4: 表示制御パターン3種 -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🎨</span>4. 表示制御パターン3種</h2>
+      <p>「見せない方法」にも複数のパターンがある。適切に使い分けることがUX向上につながる。</p>
+      <div class="pattern-grid">
+        <div class="pattern-card">
+          <div class="pattern-card-header ph-hidden">① 非表示（display: none）</div>
+          <div class="pattern-card-body">
+            <p style="margin:0 0 0.75rem;"><strong>いつ使う：</strong>機能の存在自体をユーザーに知らせたくない場合。「そんな機能があること」を隠す。</p>
+            <div class="demo-ui-box">
+              <div class="ui-row">
+                <button class="sim-btn btn-edit" style="font-size:0.8rem;">✏️ 編集</button>
+                <span style="font-size:0.8rem;color:#6b7280;">← 一般ユーザーには見える</span>
+              </div>
+              <div class="ui-row">
+                <span style="font-size:0.8rem;color:#9ca3af;font-style:italic;">（削除ボタンはここにあったが、閲覧ユーザーには完全非表示）</span>
+              </div>
+            </div>
+            <p style="margin:0.75rem 0 0;font-size:0.82rem;color:#374151;">
+              <strong>注意：</strong>HTML上に要素が残るとDevToolsで見える。機密情報はサーバーサイドで除外する。
+            </p>
+          </div>
+        </div>
+
+        <div class="pattern-card">
+          <div class="pattern-card-header ph-gray">② グレーアウト（disabled）</div>
+          <div class="pattern-card-body">
+            <p style="margin:0 0 0.75rem;"><strong>いつ使う：</strong>機能は存在するが今の権限では使えないことを示したい場合。「申請すれば使えるかも」と理解させられる。</p>
+            <div class="demo-ui-box">
+              <div class="ui-row">
+                <button class="sim-btn btn-add" style="font-size:0.8rem;">＋ 新規追加</button>
+                <div class="tooltip-wrap">
+                  <button class="sim-btn btn-disabled" style="font-size:0.8rem;" disabled>🗑️ 削除</button>
+                  <span class="tooltip-text">管理者権限が必要です</span>
+                </div>
+                <span style="font-size:0.75rem;color:#6b7280;">← ホバーで理由表示</span>
+              </div>
+            </div>
+            <p style="margin:0.75rem 0 0;font-size:0.82rem;color:#374151;">
+              <strong>ポイント：</strong>tooltip で「なぜ使えないか・どうすれば使えるか」を必ず伝える。
+            </p>
+          </div>
+        </div>
+
+        <div class="pattern-card">
+          <div class="pattern-card-header ph-mask">③ マスキング（**** 表示）</div>
+          <div class="pattern-card-body">
+            <p style="margin:0 0 0.75rem;"><strong>いつ使う：</strong>データの存在は見せるが内容を隠したい場合。個人情報・金額・連絡先など。</p>
+            <div class="demo-ui-box">
+              <div class="ui-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.82rem;">
+                <div><span style="color:#6b7280;">氏名：</span> 田中 太郎</div>
+                <div><span style="color:#6b7280;">電話：</span> <span class="masked">***-****-****</span></div>
+                <div><span style="color:#6b7280;">メール：</span> <span class="masked">t.***@example.com</span></div>
+                <div><span style="color:#6b7280;">給与：</span> <span class="masked">¥***, ***</span></div>
+              </div>
+            </div>
+            <p style="margin:0.75rem 0 0;font-size:0.82rem;color:#374151;">
+              <strong>注意：</strong>マスキングはあくまでUI表示のみ。APIレスポンスにも含めないのが理想。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション5: 権限不足時の画面パターン -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🚫</span>5. 権限不足時の画面パターン</h2>
+      <p>アクセスを拒否する際も、ユーザーを混乱させない設計が重要。</p>
+      <div class="403-grid">
+        <div>
+          <p style="font-weight:700;margin:0 0 0.5rem;">パターンA: ページ全体 403</p>
+          <div class="error-page-mock">
+            <div class="error-code">403</div>
+            <div class="error-msg">アクセスが拒否されました</div>
+            <div class="error-sub">このページを表示する権限がありません。<br>管理者にお問い合わせください。</div>
+            <div style="margin-top:1rem;">
+              <a href="#" style="color:#1a56db;font-size:0.85rem;">← トップページに戻る</a>
+            </div>
+          </div>
+          <p style="font-size:0.82rem;color:#6b7280;margin-top:0.5rem;">URLを直接入力してアクセスした場合など、ページ単位でブロックするケース。</p>
+        </div>
+        <div>
+          <p style="font-weight:700;margin:0 0 0.5rem;">パターンB: 部分的なNG表示</p>
+          <div style="border:2px solid #e5e7eb;border-radius:10px;padding:1rem;background:#f9fafb;">
+            <p style="margin:0 0 0.75rem;font-weight:700;font-size:0.9rem;">注文一覧</p>
+            <div style="font-size:0.85rem;padding:0.5rem;background:#fff;border-radius:6px;border:1px solid #e5e7eb;margin-bottom:0.5rem;">注文 #001 — 田中様 ¥12,000</div>
+            <div style="font-size:0.85rem;padding:0.5rem;background:#fff;border-radius:6px;border:1px solid #e5e7eb;margin-bottom:0.5rem;">注文 #002 — 山田様 ¥8,500</div>
+            <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:6px;padding:0.75rem;text-align:center;font-size:0.82rem;color:#dc2626;">
+              🔒 エクスポート機能は管理者のみ利用可能です
+            </div>
+          </div>
+          <p style="font-size:0.82rem;color:#6b7280;margin-top:0.5rem;">ページは見られるが、特定機能だけブロックされる場合。なぜ使えないかを明示する。</p>
+        </div>
+        <div>
+          <p style="font-weight:700;margin:0 0 0.5rem;">パターンC: 機能ロック（申請誘導）</p>
+          <div class="feature-locked">
+            <div class="lock-icon">🔒</div>
+            <h4>高度なレポート機能</h4>
+            <p>この機能はプレミアムプランまたは管理者権限が必要です。</p>
+            <div style="margin-top:0.75rem;">
+              <a href="#">権限を申請する →</a>
+            </div>
+          </div>
+          <p style="font-size:0.82rem;color:#6b7280;margin-top:0.5rem;">SaaSなどでアップグレードや申請を促すUX。ブロックしながら次のアクションを提示する。</p>
+        </div>
+      </div>
+
+      <!-- セクション6: 実装フロー -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🔄</span>6. 権限チェックの実装フロー</h2>
+      <p>フロントエンドとサーバーサイドで<strong>二重にチェック</strong>することが鉄則。フロントだけでは絶対に不十分。</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon">👤</div>
+          <div class="step-label">① UI非表示</div>
+          <div class="step-desc">ロールに応じてボタン・メニューを非表示/グレーアウト。UXのための制御。</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon">📡</div>
+          <div class="step-label">② APIリクエスト</div>
+          <div class="step-desc">JWTトークン等をヘッダーに付与してAPIを呼び出す。</div>
+        </div>
+        <div class="flow-step step-server">
+          <div class="step-icon">🛡️</div>
+          <div class="step-label">③ サーバー権限チェック</div>
+          <div class="step-desc">トークンを検証し、そのユーザーのロールで操作が許可されているか判断する。<strong>ここが本当のセキュリティ</strong>。</div>
+        </div>
+        <div class="flow-step step-server">
+          <div class="step-icon">✅</div>
+          <div class="step-label">④ レスポンス</div>
+          <div class="step-desc">OKなら200+データ。NGなら403を返す。フロントはこれを受けてUIを更新。</div>
+        </div>
+        <div class="flow-step step-danger">
+          <div class="step-icon">🚨</div>
+          <div class="step-label">⑤ 改ざん検知</div>
+          <div class="step-desc">フロント改ざんでリクエストが来ても、③でブロックされるので安全。ログに記録することも重要。</div>
+        </div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:2rem;">
+        <strong>💡 設計チェックリスト</strong>
+        <ul style="margin:0.5rem 0 0 1.2rem;line-height:2;">
+          <li>ロールと権限の対応表を仕様書に記載したか？</li>
+          <li>APIエンドポイントごとに必要なロールを定義したか？</li>
+          <li>権限不足時のHTTPステータス（403 vs 404）を統一したか？</li>
+          <li>機密データはAPIレスポンス自体に含めていないか？</li>
+          <li>権限チェックのテストケース（正常系・異常系）を書いたか？</li>
+        </ul>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /layout -->
+
+<script>
+const DATA = [
+  { name: '田中 太郎', email: 'tanaka@example.com', dept: '営業部', tel: '090-1234-5678', role: '管理者', own: false },
+  { name: '山田 花子', email: 'yamada@example.com', dept: '人事部', tel: '090-2345-6789', role: '一般', own: true },
+  { name: '鈴木 一郎', email: 'suzuki@example.com', dept: '開発部', tel: '090-3456-7890', role: '閲覧のみ', own: false },
+  { name: '佐藤 美咲', email: 'sato@example.com', dept: '経理部', tel: '090-4567-8901', role: '一般', own: false },
+];
+
+const MASK = '***-****-****';
+const MAIL_MASK = (m) => m.split('@')[0].slice(0,2) + '***@' + m.split('@')[1];
+
+function renderSimulator(role) {
+  const tbody = document.getElementById('sim-tbody');
+  const notice = document.getElementById('sim-notice');
+  const btnAdd    = document.getElementById('btn-add');
+  const btnEdit   = document.getElementById('btn-edit');
+  const btnDelete = document.getElementById('btn-delete');
+  const btnExport = document.getElementById('btn-export');
+
+  // ボタン制御
+  const setBtn = (btn, enabled, visible=true) => {
+    btn.style.display = visible ? '' : 'none';
+    btn.classList.toggle('btn-disabled', !enabled);
+    btn.disabled = !enabled;
+  };
+
+  if (role === 'admin') {
+    setBtn(btnAdd, true);
+    setBtn(btnEdit, true);
+    setBtn(btnDelete, true);
+    setBtn(btnExport, true);
+    notice.style.display = 'none';
+  } else if (role === 'user') {
+    setBtn(btnAdd, true);
+    setBtn(btnEdit, true);
+    setBtn(btnDelete, false); // グレーアウト
+    setBtn(btnExport, false, false); // 非表示
+    notice.style.display = '';
+    notice.innerHTML = '👤 <strong>一般ユーザーモード：</strong>自分のデータのみ編集可能です。削除・エクスポートは管理者のみ。';
+  } else {
+    setBtn(btnAdd, false, false);
+    setBtn(btnEdit, false, false);
+    setBtn(btnDelete, false, false);
+    setBtn(btnExport, false, false);
+    notice.style.display = '';
+    notice.innerHTML = '👁️ <strong>閲覧のみモード：</strong>データの参照のみ可能です。個人情報はマスキング表示されます。';
+  }
+
+  // テーブル描画
+  tbody.innerHTML = DATA
+    .filter(d => role !== 'user' || d.own || d.role === '管理者') // 一般は自分+管理者のみ
+    .map(d => {
+      const masked = role === 'reader';
+      const isOwn = d.own;
+      const rowClass = (role === 'user' && isOwn) ? 'own-row' : '';
+      const tel = masked ? `<span class="masked">${MASK}</span>` : d.tel;
+      const mail = masked ? `<span class="masked">${MAIL_MASK(d.email)}</span>` : d.email;
+      const ownLabel = (role === 'user' && isOwn) ? ' <span class="badge badge-success" style="font-size:0.7rem;">自分</span>' : '';
+      return `<tr class="${rowClass}">
+        <td>${d.name}${ownLabel}</td>
+        <td>${mail}</td>
+        <td>${d.dept}</td>
+        <td>${tel}</td>
+        <td>${d.role}</td>
+      </tr>`;
+    }).join('');
+}
+
+// ラジオボタンのアクティブスタイル
+function updateRoleLabel(role) {
+  document.getElementById('lbl-admin').className  = role === 'admin'  ? 'active-admin' : '';
+  document.getElementById('lbl-user').className   = role === 'user'   ? 'active-user'  : '';
+  document.getElementById('lbl-reader').className = role === 'reader' ? 'active-reader': '';
+}
+
+document.querySelectorAll('input[name="role"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    renderSimulator(e.target.value);
+    updateRoleLabel(e.target.value);
+  });
+});
+
+// 初期描画
+renderSimulator('admin');
+updateRoleLabel('admin');
+</script>
+</body>
+</html>

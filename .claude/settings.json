@@ -6,7 +6,8 @@
       "Bash(Start-Process \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\html\\\\index.html\")",
       "PowerShell(Start-Process \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\\\\html\\\\index.html\")",
       "Bash(Get-ChildItem \"d:\\\\avtigravity\\\\基本設計虎の巻\")",
-      "Read(//d/avtigravity/**)"
+      "Read(//d/avtigravity/**)",
+      "Read(//d/avtigravity/��{�݌v�Ղ̊�/docs/**)"
     ],
     "additionalDirectories": [
       "d:\\avtigravity\\��{�݌v�Ղ̊�\\html"

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ファイルアップロード — 設計手順書</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .drop-zone {
+      border: 2px dashed #4b5563;
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f9fafb;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: #1a56db;
+      background: #eff6ff;
+    }
+    .drop-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .drop-zone-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+    .drop-zone-text { color: #6b7280; font-size: 0.95rem; }
+    .drop-zone-text strong { color: #1a56db; }
+    .file-list { margin-top: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
+    .file-item {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.7rem 1rem; background: #fff; border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    .file-item-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .file-item-info { flex: 1; min-width: 0; }
+    .file-item-name { font-weight: 600; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-item-meta { color: #6b7280; font-size: 0.78rem; }
+    .file-item-status { font-size: 0.78rem; margin-top: 0.3rem; }
+    .file-item-remove { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1.2rem; padding: 0.2rem; line-height: 1; }
+    .file-item-remove:hover { color: #e02424; }
+    .file-error { color: #e02424; font-size: 0.82rem; }
+    .progress-wrap { margin-top: 0.4rem; background: #e5e7eb; border-radius: 99px; height: 6px; overflow: hidden; }
+    .progress-bar { height: 100%; border-radius: 99px; background: #1a56db; transition: width 0.2s; }
+    .progress-bar.done { background: #0e9f6e; }
+    .progress-bar.fail { background: #e02424; }
+    .upload-btn {
+      margin-top: 1rem; padding: 0.6rem 1.5rem;
+      background: #1a56db; color: #fff; border: none; border-radius: 8px;
+      font-size: 0.95rem; cursor: pointer; font-weight: 600;
+    }
+    .upload-btn:hover { background: #1e429f; }
+    .upload-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+    .retry-btn {
+      font-size: 0.75rem; padding: 0.2rem 0.6rem; border: 1px solid #e02424;
+      color: #e02424; background: none; border-radius: 4px; cursor: pointer;
+    }
+    .retry-btn:hover { background: #fef2f2; }
+    .uploaded-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.8rem; }
+    .uploaded-item {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.6rem 1rem; background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 8px;
+    }
+    .uploaded-item-name { flex: 1; font-size: 0.9rem; }
+    .uploaded-item-meta { color: #6b7280; font-size: 0.78rem; }
+    .delete-btn {
+      background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1rem;
+    }
+    .delete-btn:hover { color: #e02424; }
+    .limit-msg { color: #f59e0b; font-size: 0.82rem; margin-top: 0.4rem; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo"><span class="logo-icon">📚</span>設計手順書 虎の巻</a>
+    <div class="search-box"><input class="search-input" type="text" placeholder="ページを検索…"></div>
+    <div class="sidebar-section">全体ガイド</div>
+    <nav>
+      <a href="index.html"><span class="nav-icon">🏠</span>トップ / 全体目次</a>
+      <a href="howto.html"><span class="nav-icon">🗺️</span>全体フロー・HowTo</a>
+    </nav>
+    <div class="sidebar-section">基本設計フェーズ</div>
+    <nav>
+      <a href="basic-design.html"><span class="nav-icon">📐</span>基本設計 手順 (STEP0〜8)</a>
+      <a href="basic-deliverables.html"><span class="nav-icon">📋</span>基本設計 成果物ガイド</a>
+    </nav>
+    <div class="sidebar-section">詳細設計フェーズ</div>
+    <nav>
+      <a href="detailed-design.html"><span class="nav-icon">🔬</span>詳細設計 手順 (STEP0〜9)</a>
+      <a href="detailed-deliverables.html"><span class="nav-icon">📋</span>詳細設計 成果物ガイド</a>
+      <a href="common-libs.html"><span class="nav-icon">📦</span>共通ライブラリ設計</a>
+      <a href="detailed-design-techniques.html"><span class="nav-icon">💡</span>詳細設計技法</a>
+    </nav>
+    <div class="sidebar-section">実装・テスト</div>
+    <nav>
+      <a href="implementation.html"><span class="nav-icon">💻</span>実装手順</a>
+      <a href="testing.html"><span class="nav-icon">🧪</span>テスト実施手順</a>
+      <a href="unit-test-techniques.html"><span class="nav-icon">🎯</span>単体テスト設計技法</a>
+    </nav>
+    <div class="sidebar-section">資料・テンプレート</div>
+    <nav>
+      <a href="templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+      <a href="adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+      <a href="ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    </nav>
+    <div class="sidebar-section">サンプル画面集</div>
+    <nav>
+      <a href="sample-index.html"><span class="nav-icon">🗂️</span>サンプル一覧</a>
+      <a href="sample-layout.html"><span class="nav-icon">🏗️</span>レイアウト・ナビ構造</a>
+      <a href="sample-ui-components.html"><span class="nav-icon">🧩</span>UIコンポーネント状態</a>
+      <a href="sample-responsive.html"><span class="nav-icon">📱</span>レスポンシブデザイン</a>
+      <a href="sample-log-viewer.html"><span class="nav-icon">📋</span>ログ出力</a>
+      <a href="sample-error-patterns.html"><span class="nav-icon">⚠️</span>エラーハンドリング</a>
+      <a href="sample-form-validation.html"><span class="nav-icon">✅</span>バリデーション</a>
+      <a href="sample-wizard-form.html"><span class="nav-icon">🧭</span>ステップフォーム</a>
+      <a href="sample-data-table.html"><span class="nav-icon">📊</span>テーブル・一覧</a>
+      <a href="sample-notifications.html"><span class="nav-icon">🔔</span>通知・フィードバック</a>
+      <a href="sample-auth-flow.html"><span class="nav-icon">🔐</span>認証・認可フロー</a>
+      <a href="sample-async-states.html"><span class="nav-icon">⏳</span>非同期処理状態</a>
+      <a href="sample-file-upload.html" class="active"><span class="nav-icon">📁</span>ファイルアップロード</a>
+      <a href="sample-datetime-input.html"><span class="nav-icon">📅</span>日付・時刻入力</a>
+      <a href="sample-search-ui.html"><span class="nav-icon">🔍</span>検索UI</a>
+      <a href="sample-api-response.html"><span class="nav-icon">🔌</span>APIレスポンス設計</a>
+      <a href="sample-rbac-display.html"><span class="nav-icon">🛡️</span>権限・ロール別表示</a>
+      <a href="sample-audit-log.html"><span class="nav-icon">📜</span>監査ログ・操作履歴</a>
+      <a href="sample-dashboard.html"><span class="nav-icon">📈</span>ダッシュボード</a>
+      <a href="sample-input-assist.html"><span class="nav-icon">💡</span>入力補助・オートコンプリート</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-header phase-libs">
+      <div class="page-header-content">
+        <div class="page-header-label">サンプル画面集</div>
+        <h1 class="page-header-title">📁 ファイルアップロード</h1>
+        <p class="page-header-desc">ファイルアップロードUIの設計パターンとサーバーサイド連携を示すサンプルです。</p>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-danger">
+        <strong>⚠️ セキュリティの大原則：</strong>
+        フロントエンドのファイル検証はあくまでUX向上のため。ユーザーはブラウザの検証を簡単に迂回できます。
+        <strong>サーバーサイドでも必ず再検証してください（Content-Type偽装・拡張子偽装対策）。</strong>
+      </div>
+
+      <!-- セクション1: 基本設計 -->
+      <h2 class="section-title"><span class="title-icon">📋</span>アップロードの基本設計</h2>
+      <p>ファイルアップロード機能は、フロントとサーバーの両方で検証することが必須です。各検証がどちらで行われるべきかを整理します。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>検証項目</th>
+              <th>フロント</th>
+              <th>サーバー</th>
+              <th>理由</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ファイルサイズ</td>
+              <td><span class="badge badge-success">実施</span></td>
+              <td><span class="badge badge-success">実施</span></td>
+              <td>フロントはUX向け（早期エラー表示）、サーバーは攻撃対策（大容量DoS防止）</td>
+            </tr>
+            <tr>
+              <td>拡張子チェック</td>
+              <td><span class="badge badge-success">実施</span></td>
+              <td><span class="badge badge-success">実施</span></td>
+              <td>拡張子のみでは不十分。MIMEタイプと合わせてサーバーで検証する</td>
+            </tr>
+            <tr>
+              <td>MIMEタイプ（Content-Type）</td>
+              <td><span class="badge badge-warning">参考程度</span></td>
+              <td><span class="badge badge-success">必須</span></td>
+              <td>フロントのMIMEはブラウザ推定値。サーバーでマジックバイトを読んで確認する</td>
+            </tr>
+            <tr>
+              <td>ファイル名サニタイズ</td>
+              <td><span class="badge badge-gray">不要</span></td>
+              <td><span class="badge badge-success">必須</span></td>
+              <td>パストラバーサル（<code>../../etc/passwd</code>）対策。サーバーでUUIDなどに置換する</td>
+            </tr>
+            <tr>
+              <td>ウイルス・マルウェアスキャン</td>
+              <td><span class="badge badge-gray">不可</span></td>
+              <td><span class="badge badge-success">推奨</span></td>
+              <td>ClamAVなどのスキャナを組み込む。特にユーザー投稿系では必須</td>
+            </tr>
+            <tr>
+              <td>画像の解析・リサイズ</td>
+              <td><span class="badge badge-gray">任意</span></td>
+              <td><span class="badge badge-success">実施</span></td>
+              <td>ピクセルフラッド攻撃（極端に大きな解像度）を防ぐためサーバー側で制限する</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- セクション2: ドラッグ&ドロップ -->
+      <h2 class="section-title"><span class="title-icon">🖱️</span>ドラッグ&ドロップ + ファイル選択デモ</h2>
+      <p>クリックでダイアログを開くことも、ファイルをドラッグして離すこともできます。最大3ファイル、1ファイル5MB以下、jpg/png/pdf形式のみ受け付けます。</p>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">📁</span>
+          ファイル選択エリア
+          <span class="badge badge-gray" style="margin-left:auto; font-size:0.75rem;">最大3ファイル・5MB以下・jpg/png/pdf</span>
+        </div>
+        <div style="padding: 1.5rem;">
+          <div class="drop-zone" id="dropZone">
+            <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf" multiple>
+            <div class="drop-zone-icon">📂</div>
+            <div class="drop-zone-text">
+              <strong>クリックしてファイルを選択</strong> またはここにドラッグ<br>
+              <span style="font-size:0.8rem; margin-top:0.3rem; display:inline-block;">jpg / png / pdf ・ 1ファイル最大 5MB ・ 最大3ファイル</span>
+            </div>
+          </div>
+          <div id="limitMsg" class="limit-msg" style="display:none;">⚠️ 最大3ファイルまでです。それ以上は追加できません。</div>
+          <div class="file-list" id="fileList"></div>
+          <button class="upload-btn" id="uploadBtn" disabled>アップロード開始</button>
+        </div>
+      </div>
+
+      <!-- セクション3: 進捗デモ -->
+      <h2 class="section-title"><span class="title-icon">📊</span>アップロード進捗デモ</h2>
+      <p>「アップロード開始」ボタンを押すと各ファイルの模擬アップロードが開始されます。進捗バーでリアルタイムに状態を確認できます。完了・失敗はランダムに発生します（デモ用）。失敗したファイルは個別にリトライできます。</p>
+
+      <div class="card" id="progressSection" style="display:none;">
+        <div class="card-header"><span class="card-icon">⏳</span>アップロード中…</div>
+        <div style="padding: 1.5rem;">
+          <div id="progressList" class="file-list"></div>
+        </div>
+      </div>
+
+      <!-- セクション4: アップロード済みファイル一覧 -->
+      <h2 class="section-title"><span class="title-icon">✅</span>アップロード済みファイル一覧</h2>
+      <p>アップロードが完了したファイルはここに表示されます。削除ボタンで一覧から削除できます（実際のシステムではサーバー側のファイルも削除されます）。</p>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">🗂️</span>アップロード済みファイル</div>
+        <div style="padding: 1.5rem;">
+          <div class="uploaded-list" id="uploadedList">
+            <div class="uploaded-item">
+              <span style="font-size:1.4rem;">🖼️</span>
+              <div class="uploaded-item-name">sample_design.png</div>
+              <div class="uploaded-item-meta">1.2 MB ・ 2026-05-20 09:31</div>
+              <button class="delete-btn" onclick="removeUploaded(this)" title="削除">🗑️</button>
+            </div>
+            <div class="uploaded-item">
+              <span style="font-size:1.4rem;">📄</span>
+              <div class="uploaded-item-name">specification_v2.pdf</div>
+              <div class="uploaded-item-meta">3.7 MB ・ 2026-05-19 14:05</div>
+              <button class="delete-btn" onclick="removeUploaded(this)" title="削除">🗑️</button>
+            </div>
+          </div>
+          <div id="noUploaded" style="color:#9ca3af; font-size:0.9rem; display:none;">アップロード済みのファイルはありません。</div>
+        </div>
+      </div>
+
+      <!-- セクション5: セキュリティ -->
+      <h2 class="section-title"><span class="title-icon">🔒</span>セキュリティ上の注意点</h2>
+
+      <div class="callout callout-danger">
+        <strong>⚠️ 実装時に必ず対処すべき5つのリスク</strong>
+        <ol style="margin: 0.8rem 0 0 1.2rem; line-height: 2;">
+          <li><strong>パストラバーサル攻撃：</strong>ファイル名に <code>../../etc/passwd</code> のようなパスが含まれると、サーバーの任意パスに書き込まれる危険があります。ファイル名はUUID等に強制置換してください。</li>
+          <li><strong>ファイル名サニタイズ：</strong>日本語・スペース・特殊文字を含むファイル名はOSやシェルで問題を起こすことがあります。サーバー側で安全な文字列のみに変換してください。</li>
+          <li><strong>実行可能ファイルの禁止：</strong>.exe / .sh / .php / .js 等の実行可能ファイルを受け付けてはいけません。許可リスト方式（白リスト）で拡張子を制限してください。</li>
+          <li><strong>ストレージパスの非公開：</strong>保存先のファイルパスをURLに直接使用してはいけません。DBにファイルIDを保存し、IDでファイルを返すAPIを経由してください（直リンク禁止）。</li>
+          <li><strong>ストレージ容量の制限：</strong>ユーザー単位・システム全体のストレージ上限を設け、DoS攻撃（無限アップロード）を防いでください。</li>
+        </ol>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>💡 大容量ファイルの設計パターン：</strong>
+        10MB超のファイルを扱う場合、ブラウザで直接POSTするのではなく、<strong>署名付きURL（Presigned URL）</strong>をサーバーから発行し、クライアントがS3等に直接アップロードする方式が一般的です。これによりサーバー負荷を大幅に削減できます。
+      </div>
+
+    </div><!-- /.content -->
+  </main>
+</div>
+
+<script>
+const MAX_FILES = 3;
+const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
+const ALLOWED_EXT = ['.jpg', '.jpeg', '.png', '.pdf'];
+
+let pendingFiles = [];
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+const uploadBtn = document.getElementById('uploadBtn');
+const progressSection = document.getElementById('progressSection');
+const progressList = document.getElementById('progressList');
+const limitMsg = document.getElementById('limitMsg');
+
+function getFileIcon(type) {
+  if (type === 'application/pdf') return '📄';
+  if (type.startsWith('image/')) return '🖼️';
+  return '📎';
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function validateFile(file) {
+  const ext = '.' + file.name.split('.').pop().toLowerCase();
+  if (!ALLOWED_EXT.includes(ext)) return `拡張子が不正です（許可: jpg / png / pdf）`;
+  if (!ALLOWED_TYPES.includes(file.type)) return `ファイル形式が不正です（${file.type}）`;
+  if (file.size > MAX_SIZE) return `ファイルサイズが上限を超えています（${formatSize(file.size)} / 最大 5MB）`;
+  return null;
+}
+
+function renderFileList() {
+  fileList.innerHTML = '';
+  pendingFiles.forEach((entry, idx) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `
+      <span class="file-item-icon">${getFileIcon(entry.file.type)}</span>
+      <div class="file-item-info">
+        <div class="file-item-name">${entry.file.name}</div>
+        <div class="file-item-meta">${formatSize(entry.file.size)} ・ ${entry.file.type}</div>
+        ${entry.error ? `<div class="file-error">❌ ${entry.error}</div>` : ''}
+      </div>
+      <button class="file-item-remove" onclick="removeFile(${idx})" title="削除">×</button>
+    `;
+    fileList.appendChild(item);
+  });
+  const hasValid = pendingFiles.some(f => !f.error);
+  uploadBtn.disabled = !hasValid;
+  limitMsg.style.display = 'none';
+}
+
+function addFiles(files) {
+  for (const file of files) {
+    if (pendingFiles.length >= MAX_FILES) {
+      limitMsg.style.display = 'block';
+      break;
+    }
+    // 重複チェック
+    if (pendingFiles.some(e => e.file.name === file.name && e.file.size === file.size)) continue;
+    const error = validateFile(file);
+    pendingFiles.push({ file, error });
+  }
+  renderFileList();
+}
+
+function removeFile(idx) {
+  pendingFiles.splice(idx, 1);
+  renderFileList();
+}
+
+// ドロップゾーンのイベント
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  addFiles(Array.from(e.dataTransfer.files));
+});
+fileInput.addEventListener('change', e => {
+  addFiles(Array.from(e.target.files));
+  fileInput.value = '';
+});
+
+// アップロード開始
+uploadBtn.addEventListener('click', () => {
+  const validFiles = pendingFiles.filter(f => !f.error);
+  if (!validFiles.length) return;
+
+  progressSection.style.display = 'block';
+  progressSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  progressList.innerHTML = '';
+  uploadBtn.disabled = true;
+
+  validFiles.forEach((entry, idx) => {
+    const willFail = Math.random() < 0.25; // 25%の確率で失敗（デモ）
+    const progressId = `prog-${idx}`;
+    const barId = `bar-${idx}`;
+    const statusId = `status-${idx}`;
+    const retryId = `retry-${idx}`;
+
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.id = progressId;
+    item.innerHTML = `
+      <span class="file-item-icon">${getFileIcon(entry.file.type)}</span>
+      <div class="file-item-info" style="flex:1;">
+        <div class="file-item-name">${entry.file.name}</div>
+        <div class="file-item-meta">${formatSize(entry.file.size)}</div>
+        <div class="progress-wrap"><div class="progress-bar" id="${barId}" style="width:0%"></div></div>
+        <div class="file-item-status" id="${statusId}">準備中…</div>
+      </div>
+      <button class="retry-btn" id="${retryId}" style="display:none;" onclick="retryUpload('${progressId}','${barId}','${statusId}','${retryId}')">リトライ</button>
+    `;
+    progressList.appendChild(item);
+    simulateUpload(barId, statusId, retryId, willFail);
+  });
+
+  // アップロード完了後にファイルリストをクリア
+  const totalTime = validFiles.length * 200 + 3000;
+  setTimeout(() => {
+    pendingFiles = pendingFiles.filter(f => f.error);
+    renderFileList();
+    appendUploadedFiles(validFiles.filter((_, i) => {
+      const bar = document.getElementById(`bar-${i}`);
+      return bar && bar.classList.contains('done');
+    }));
+  }, totalTime);
+});
+
+function simulateUpload(barId, statusId, retryId, willFail) {
+  const bar = document.getElementById(barId);
+  const status = document.getElementById(statusId);
+  const retryBtn = document.getElementById(retryId);
+  let progress = 0;
+  const failAt = willFail ? Math.floor(Math.random() * 60) + 20 : 101;
+  status.textContent = 'アップロード中…';
+
+  const timer = setInterval(() => {
+    progress += Math.random() * 12 + 5;
+    if (progress >= failAt && willFail) {
+      clearInterval(timer);
+      bar.style.width = failAt + '%';
+      bar.classList.add('fail');
+      status.innerHTML = '<span style="color:#e02424;">❌ アップロード失敗</span>';
+      retryBtn.style.display = 'inline-block';
+      return;
+    }
+    if (progress >= 100) {
+      clearInterval(timer);
+      bar.style.width = '100%';
+      bar.classList.add('done');
+      status.innerHTML = '<span style="color:#0e9f6e;">✅ 完了</span>';
+      return;
+    }
+    bar.style.width = Math.min(progress, 99) + '%';
+  }, 200);
+}
+
+function retryUpload(progressId, barId, statusId, retryId) {
+  const bar = document.getElementById(barId);
+  const retryBtn = document.getElementById(retryId);
+  bar.style.width = '0%';
+  bar.classList.remove('fail');
+  retryBtn.style.display = 'none';
+  simulateUpload(barId, statusId, retryId, false);
+}
+
+function appendUploadedFiles(files) {
+  const list = document.getElementById('uploadedList');
+  const noMsg = document.getElementById('noUploaded');
+  files.forEach(entry => {
+    const item = document.createElement('div');
+    item.className = 'uploaded-item';
+    const now = new Date().toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    item.innerHTML = `
+      <span style="font-size:1.4rem;">${getFileIcon(entry.file.type)}</span>
+      <div class="uploaded-item-name">${entry.file.name}</div>
+      <div class="uploaded-item-meta">${formatSize(entry.file.size)} ・ ${now}</div>
+      <button class="delete-btn" onclick="removeUploaded(this)" title="削除">🗑️</button>
+    `;
+    list.appendChild(item);
+  });
+  noMsg.style.display = 'none';
+}
+
+function removeUploaded(btn) {
+  const item = btn.closest('.uploaded-item');
+  item.remove();
+  const list = document.getElementById('uploadedList');
+  const noMsg = document.getElementById('noUploaded');
+  if (!list.querySelector('.uploaded-item')) {
+    noMsg.style.display = 'block';
+  }
+}
+</script>
+</body>
+</html>

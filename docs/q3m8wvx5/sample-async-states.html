@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>非同期処理・ローディング状態 — 設計手順書 虎の巻</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 状態カード */
+    .state-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .state-card {
+      border-radius: var(--radius-lg); padding: 1.2rem;
+      border: 2px solid transparent; text-align: center;
+    }
+    .state-idle    { background: #f9fafb; border-color: var(--gray-200); }
+    .state-loading { background: #eff6ff; border-color: #bfdbfe; }
+    .state-success { background: #f0fdf4; border-color: #6ee7b7; }
+    .state-error   { background: #fff5f5; border-color: #fca5a5; }
+    .state-icon    { font-size: 2.2rem; margin-bottom: .5rem; }
+    .state-label   { font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .4rem; }
+    .state-idle .state-label    { color: var(--gray-500); }
+    .state-loading .state-label { color: #1e40af; }
+    .state-success .state-label { color: #065f46; }
+    .state-error .state-label   { color: #b91c1c; }
+    .state-desc { font-size: .82rem; color: var(--gray-600); line-height: 1.5; }
+
+    /* スピナー */
+    .spinner-sm { width:1rem;height:1rem;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:.4rem; }
+    .spinner-md { width:2rem;height:2rem;border:3px solid var(--gray-200);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto; }
+    .spinner-dark { width:1rem;height:1rem;border:2px solid var(--gray-300);border-top-color:var(--primary);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:.4rem; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ボタンデモ */
+    .btn { padding:.55rem 1.2rem;border-radius:var(--radius);font-size:.9rem;cursor:pointer;font-weight:600;border:none;transition:opacity .15s; }
+    .btn:hover:not(:disabled) { opacity:.85; }
+    .btn:disabled { opacity:.5; cursor:default; }
+    .btn-primary { background:var(--primary);color:#fff; }
+    .btn-success { background:var(--secondary);color:#fff; }
+    .btn-danger  { background:var(--danger);color:#fff; }
+    .btn-ghost   { background:transparent;border:1px solid var(--gray-300);color:var(--gray-700); }
+    .btn-warning { background:var(--warning);color:#fff; }
+
+    /* スケルトン */
+    .skeleton { background:linear-gradient(90deg,var(--gray-100) 25%,var(--gray-200) 50%,var(--gray-100) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius); }
+    @keyframes shimmer { from{background-position:200% 0} to{background-position:-200% 0} }
+    .skeleton-line { height:.75rem;margin:.5rem 0; }
+    .skeleton-line.w-full { width:100%; }
+    .skeleton-line.w-3/4  { width:75%; }
+    .skeleton-line.w-1/2  { width:50%; }
+    .skeleton-avatar { width:2.5rem;height:2.5rem;border-radius:50%;flex-shrink:0; }
+    .skel-card { background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:1rem;margin-bottom:.75rem; }
+    .skel-row { display:flex;align-items:center;gap:.75rem; }
+
+    /* リストデモ */
+    .data-list-item {
+      background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius);
+      padding:.75rem 1rem; margin-bottom:.5rem;
+      display:flex; align-items:center; gap:.75rem;
+    }
+    .data-list-item .item-avatar {
+      width:2.5rem;height:2.5rem;border-radius:50%;
+      background:var(--primary);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:.9rem;flex-shrink:0;
+    }
+    .data-list-item .item-name { font-weight:600;font-size:.9rem;color:var(--gray-800); }
+    .data-list-item .item-sub  { font-size:.8rem;color:var(--gray-500);margin-top:.1rem; }
+
+    /* いいねボタン */
+    .like-btn {
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.45rem 1rem; border:1px solid var(--gray-300); border-radius:999px;
+      background:#fff; cursor:pointer; font-size:.88rem;font-weight:600;
+      color:var(--gray-600); transition:all .15s;
+    }
+    .like-btn:hover { border-color:#f9a8d4;background:#fff1f2;color:#be185d; }
+    .like-btn.liked { border-color:#f9a8d4;background:#fff1f2;color:#be185d; }
+    .like-btn.rolling-back { animation:rollback .4s ease; }
+    @keyframes rollback { 0%{transform:scale(1)} 50%{transform:scale(.85)} 100%{transform:scale(1)} }
+
+    /* プログレスバー */
+    .progress-wrap { background:var(--gray-100);border-radius:999px;height:1.2rem;overflow:hidden;margin:.75rem 0;position:relative; }
+    .progress-fill { height:100%;background:linear-gradient(90deg,var(--primary),#60a5fa);border-radius:999px;transition:width .4s; }
+    .progress-text { font-size:.82rem;color:var(--gray-600);display:flex;justify-content:space-between; }
+
+    /* チェックリスト */
+    .checklist { list-style:none;padding:0;margin:0; }
+    .checklist li { display:flex;align-items:flex-start;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--gray-100);font-size:.88rem;color:var(--gray-700);line-height:1.5; }
+    .checklist li:last-child { border-bottom:none; }
+    .checklist li::before { content:'☐';color:var(--gray-400);flex-shrink:0;margin-top:.05rem; }
+    .checklist li strong { color:var(--gray-800); }
+
+    /* 比較切り替えボタン */
+    .toggle-group { display:flex;gap:.4rem;margin-bottom:1rem; }
+    .toggle-btn { padding:.4rem .9rem;border:1px solid var(--gray-300);border-radius:999px;font-size:.82rem;cursor:pointer;background:#fff;color:var(--gray-600); }
+    .toggle-btn.active { background:var(--primary);border-color:var(--primary);color:#fff; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo"><span class="logo-icon">📚</span>設計手順書 虎の巻</a>
+    <div class="search-box"><input class="search-input" type="text" placeholder="ページを検索…"></div>
+    <div class="sidebar-section">全体ガイド</div>
+    <nav>
+      <a href="index.html"><span class="nav-icon">🏠</span>トップ / 全体目次</a>
+      <a href="howto.html"><span class="nav-icon">🗺️</span>全体フロー・HowTo</a>
+    </nav>
+    <div class="sidebar-section">基本設計フェーズ</div>
+    <nav>
+      <a href="basic-design.html"><span class="nav-icon">📐</span>基本設計 手順 (STEP0〜8)</a>
+      <a href="basic-deliverables.html"><span class="nav-icon">📋</span>基本設計 成果物ガイド</a>
+    </nav>
+    <div class="sidebar-section">詳細設計フェーズ</div>
+    <nav>
+      <a href="detailed-design.html"><span class="nav-icon">🔬</span>詳細設計 手順 (STEP0〜9)</a>
+      <a href="detailed-deliverables.html"><span class="nav-icon">📋</span>詳細設計 成果物ガイド</a>
+      <a href="common-libs.html"><span class="nav-icon">📦</span>共通ライブラリ設計</a>
+      <a href="detailed-design-techniques.html"><span class="nav-icon">💡</span>詳細設計技法</a>
+    </nav>
+    <div class="sidebar-section">実装・テスト</div>
+    <nav>
+      <a href="implementation.html"><span class="nav-icon">💻</span>実装手順</a>
+      <a href="testing.html"><span class="nav-icon">🧪</span>テスト実施手順</a>
+      <a href="unit-test-techniques.html"><span class="nav-icon">🎯</span>単体テスト設計技法</a>
+    </nav>
+    <div class="sidebar-section">資料・テンプレート</div>
+    <nav>
+      <a href="templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+      <a href="adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+      <a href="ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    </nav>
+    <div class="sidebar-section">サンプル画面集</div>
+    <nav>
+      <a href="sample-index.html"><span class="nav-icon">🗂️</span>サンプル一覧</a>
+      <a href="sample-layout.html"><span class="nav-icon">🏗️</span>レイアウト・ナビ構造</a>
+      <a href="sample-ui-components.html"><span class="nav-icon">🧩</span>UIコンポーネント状態</a>
+      <a href="sample-responsive.html"><span class="nav-icon">📱</span>レスポンシブデザイン</a>
+      <a href="sample-log-viewer.html"><span class="nav-icon">📋</span>ログ出力</a>
+      <a href="sample-error-patterns.html"><span class="nav-icon">⚠️</span>エラーハンドリング</a>
+      <a href="sample-form-validation.html"><span class="nav-icon">✅</span>バリデーション</a>
+      <a href="sample-wizard-form.html"><span class="nav-icon">🧭</span>ステップフォーム</a>
+      <a href="sample-data-table.html"><span class="nav-icon">📊</span>テーブル・一覧</a>
+      <a href="sample-notifications.html"><span class="nav-icon">🔔</span>通知・フィードバック</a>
+      <a href="sample-auth-flow.html"><span class="nav-icon">🔐</span>認証・認可フロー</a>
+      <a href="sample-async-states.html" class="active"><span class="nav-icon">⏳</span>非同期処理状態</a>
+      <a href="sample-file-upload.html"><span class="nav-icon">📁</span>ファイルアップロード</a>
+      <a href="sample-datetime-input.html"><span class="nav-icon">📅</span>日付・時刻入力</a>
+      <a href="sample-search-ui.html"><span class="nav-icon">🔍</span>検索UI</a>
+      <a href="sample-api-response.html"><span class="nav-icon">🔌</span>APIレスポンス設計</a>
+      <a href="sample-rbac-display.html"><span class="nav-icon">🛡️</span>権限・ロール別表示</a>
+      <a href="sample-audit-log.html"><span class="nav-icon">📜</span>監査ログ・操作履歴</a>
+      <a href="sample-dashboard.html"><span class="nav-icon">📈</span>ダッシュボード</a>
+      <a href="sample-input-assist.html"><span class="nav-icon">💡</span>入力補助・オートコンプリート</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-header phase-libs">
+      <div class="page-header-inner">
+        <div class="page-header-icon">⏳</div>
+        <div>
+          <h1 class="page-title">非同期処理・ローディング状態</h1>
+          <p class="page-subtitle">idle / loading / success / error の4状態管理と各UIパターン</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-warning">
+        <strong>⚠️ 設計原則：</strong>
+        非同期処理には必ず <strong>4つの状態</strong> がある。
+        すべての状態に対応するUIを設計する。<br>
+        <code>idle</code>（初期）→ <code>loading</code>（処理中）→ <code>success</code>（成功）/ <code>error</code>（失敗）<br>
+        loading と error だけ設計してしまい、idle（まだ操作していない状態）を忘れるのがよくあるミス。
+      </div>
+
+      <!-- セクション1 -->
+      <h2 class="section-title"><span class="title-icon">🗂️</span>4状態の設計原則</h2>
+
+      <div class="state-grid">
+        <div class="state-card state-idle">
+          <div class="state-icon">💤</div>
+          <div class="state-label">Idle（初期）</div>
+          <div class="state-desc">まだ何も操作していない状態。プレースホルダーや案内文を表示する。ローディングは表示しない。</div>
+        </div>
+        <div class="state-card state-loading">
+          <div class="state-icon"><div class="spinner-md"></div></div>
+          <div class="state-label">Loading（処理中）</div>
+          <div class="state-desc">APIリクエスト中。操作ボタンを無効化してスピナーかスケルトンを表示。連打を防ぐ。</div>
+        </div>
+        <div class="state-card state-success">
+          <div class="state-icon">✅</div>
+          <div class="state-label">Success（成功）</div>
+          <div class="state-desc">データを表示する。成功のフィードバック（トースト等）を出す。次のアクションを案内する。</div>
+        </div>
+        <div class="state-card state-error">
+          <div class="state-icon">❌</div>
+          <div class="state-label">Error（失敗）</div>
+          <div class="state-desc">エラーの原因と対処法を示す。リトライボタンを置く。ユーザーを行き詰まらせない。</div>
+        </div>
+      </div>
+
+      <!-- セクション2 -->
+      <h2 class="section-title"><span class="title-icon">🖱️</span>ボタンのローディング状態デモ</h2>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">💾</span>データを保存するボタン（成功/失敗がランダム）</div>
+        <p style="font-size:.88rem;color:var(--gray-600);margin-bottom:1rem;">
+          クリックするとボタンが無効化されスピナーが表示され、2秒後に成功か失敗かがランダムに決まります。
+          失敗した場合はリトライできます。
+        </p>
+        <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="save-btn" onclick="doSave()">💾 データを保存</button>
+          <span id="save-result" style="font-size:.88rem;"></span>
+        </div>
+
+        <hr style="margin:1.5rem 0;border:none;border-top:1px solid var(--gray-100);">
+
+        <div class="card-header" style="margin-bottom:1rem;"><span class="card-icon">🔒</span>連打防止デモ</div>
+        <p style="font-size:.88rem;color:var(--gray-600);margin-bottom:.75rem;">
+          1回クリックすると即座に無効化されます。処理が完了するまで何度押しても反応しません。
+          これにより重複送信を防ぎます。
+        </p>
+        <button class="btn btn-warning" id="rapid-btn" onclick="doRapidTest()">🚀 送信（連打してみてください）</button>
+        <div id="rapid-log" style="font-size:.8rem;color:var(--gray-500);margin-top:.5rem;"></div>
+      </div>
+
+      <!-- セクション3 -->
+      <h2 class="section-title"><span class="title-icon">💀</span>スケルトンスクリーン vs スピナー</h2>
+
+      <div class="callout callout-info">
+        <strong>使い分け：</strong>
+        <strong>スケルトンスクリーン</strong>はレイアウトが予測できる場合（ユーザー一覧・カードリストなど）に使う。
+        コンテンツが見えている錯覚を与え、体感速度が速くなる。
+        <strong>スピナー</strong>はレイアウトが不定の場合や、処理待ち（保存・削除など）に使う。
+      </div>
+
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="tab-skeleton" onclick="showDemo('skeleton')">スケルトンスクリーン</button>
+        <button class="toggle-btn" id="tab-spinner" onclick="showDemo('spinner')">スピナー</button>
+      </div>
+
+      <div id="demo-skeleton">
+        <div class="skel-card">
+          <div class="skel-row">
+            <div class="skeleton skeleton-avatar"></div>
+            <div style="flex:1;">
+              <div class="skeleton skeleton-line w-3/4"></div>
+              <div class="skeleton skeleton-line w-1/2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="skel-card">
+          <div class="skel-row">
+            <div class="skeleton skeleton-avatar"></div>
+            <div style="flex:1;">
+              <div class="skeleton skeleton-line w-full"></div>
+              <div class="skeleton skeleton-line w-3/4"></div>
+            </div>
+          </div>
+        </div>
+        <div class="skel-card">
+          <div class="skel-row">
+            <div class="skeleton skeleton-avatar"></div>
+            <div style="flex:1;">
+              <div class="skeleton skeleton-line w-1/2"></div>
+              <div class="skeleton skeleton-line w-3/4"></div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:.8rem;color:var(--gray-400);text-align:center;margin-top:.5rem;">↑ レイアウトを維持したまま読み込み中を表現</div>
+      </div>
+
+      <div id="demo-spinner" style="display:none;">
+        <div style="padding:4rem;text-align:center;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);">
+          <div class="spinner-md" style="margin:0 auto 1rem;"></div>
+          <div style="font-size:.9rem;color:var(--gray-500);">データを読み込み中…</div>
+        </div>
+        <div style="font-size:.8rem;color:var(--gray-400);text-align:center;margin-top:.5rem;">↑ レイアウトが決まらない場合はシンプルにスピナー</div>
+      </div>
+
+      <!-- セクション4 -->
+      <h2 class="section-title"><span class="title-icon">📋</span>リスト取得のフルデモ</h2>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">👥</span>ユーザー一覧取得</div>
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="fetchListSuccess()">✅ 成功パターンで取得</button>
+          <button class="btn btn-danger" onclick="fetchListError()">❌ エラーパターンで取得</button>
+        </div>
+        <div id="list-area">
+          <div style="text-align:center;padding:2rem;color:var(--gray-400);font-size:.9rem;">
+            💤 ボタンをクリックしてデータを取得してください
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション5 -->
+      <h2 class="section-title"><span class="title-icon">❤️</span>楽観的UI更新デモ</h2>
+
+      <div class="callout callout-info">
+        <strong>楽観的UI更新とは：</strong>
+        APIの応答を待たずに、成功を前提として<strong>即時にUIを更新</strong>する手法。
+        ユーザーがボタンを押した瞬間にカウントが増える。
+        その後APIが失敗した場合は元の値に戻す（ロールバック）。
+        いいね・ブックマーク・ゴミ箱移動などに適している。
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">❤️</span>いいねボタン（楽観的更新）</div>
+        <div style="padding:.5rem 0;">
+          <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+            <button class="like-btn" id="like-btn" onclick="toggleLike()">
+              <span id="like-icon">🤍</span>
+              <span>いいね</span>
+              <span id="like-count">42</span>
+            </button>
+            <div id="like-status" style="font-size:.82rem;color:var(--gray-500);"></div>
+          </div>
+          <div style="margin-top:.75rem;font-size:.8rem;color:var(--gray-400);">
+            ※ クリック直後にカウントが変わり、70%の確率でAPI成功・30%で失敗(ロールバック)します
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション6 -->
+      <h2 class="section-title"><span class="title-icon">📊</span>長時間処理のプログレスバーデモ</h2>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">⚙️</span>模擬バッチ処理（キャンセル可能）</div>
+        <p style="font-size:.88rem;color:var(--gray-600);margin-bottom:1rem;">
+          データエクスポートや大量データ処理など、数十秒かかる処理のUI。
+          進捗率・推定残時間・キャンセルボタンを表示する。
+        </p>
+        <div id="batch-idle">
+          <button class="btn btn-primary" onclick="startBatch()">▶ バッチ処理を開始</button>
+        </div>
+        <div id="batch-running" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;">
+            <span id="batch-label" style="font-size:.88rem;color:var(--gray-700);font-weight:600;">処理中… 0%</span>
+            <span id="batch-eta" style="font-size:.8rem;color:var(--gray-500);">推定残り: --秒</span>
+          </div>
+          <div class="progress-wrap"><div class="progress-fill" id="batch-bar" style="width:0%;"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div id="batch-step" style="font-size:.8rem;color:var(--gray-500);">処理を開始しています…</div>
+            <button class="btn btn-ghost" style="font-size:.8rem;padding:.3rem .75rem;" onclick="cancelBatch()">キャンセル</button>
+          </div>
+        </div>
+        <div id="batch-done" class="callout callout-success" style="display:none;margin-top:1rem;">
+          ✅ バッチ処理が完了しました。結果ファイルをダウンロードできます。
+          <button class="btn btn-success" style="margin-left:1rem;font-size:.82rem;padding:.3rem .75rem;">📥 ダウンロード</button>
+        </div>
+        <div id="batch-cancelled" class="callout callout-warning" style="display:none;margin-top:1rem;">
+          ⚠️ 処理をキャンセルしました。途中まで処理されたデータは保存されていません。
+        </div>
+      </div>
+
+      <!-- セクション7 -->
+      <h2 class="section-title"><span class="title-icon">✅</span>設計チェックリスト</h2>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">📝</span>非同期UI 実装前の確認事項</div>
+        <ul class="checklist">
+          <li><strong>idle状態を設計したか？</strong> 「まだデータがない」状態の表示を決めたか</li>
+          <li><strong>loading中はボタンを無効化しているか？</strong> 連打・二重送信を防止しているか</li>
+          <li><strong>loading中のUXを選んだか？</strong> スケルトン vs スピナー vs ボタン内スピナー</li>
+          <li><strong>エラーの種類ごとにメッセージを用意したか？</strong> ネットワークエラー・認証エラー・バリデーションエラーは別メッセージ</li>
+          <li><strong>リトライボタンを置いたか？</strong> エラー時に「もう一度試す」手段をユーザーに与えているか</li>
+          <li><strong>長時間処理にはキャンセル手段があるか？</strong> ユーザーが途中でやめたい場合の対処</li>
+          <li><strong>楽観的UI更新のロールバック処理を書いたか？</strong> API失敗時に元の状態に戻すロジック</li>
+          <li><strong>並列リクエストの競合を防いだか？</strong> 古いレスポンスが新しいレスポンスを上書きしないよう対処（AbortController等）</li>
+          <li><strong>ページング・無限スクロール実装時、追加読み込み中を表示しているか？</strong></li>
+          <li><strong>成功後のフィードバックを出しているか？</strong> 保存完了・削除完了トーストなど</li>
+        </ul>
+      </div>
+
+      <!-- コードサンプル -->
+      <h2 class="section-title"><span class="title-icon">💻</span>4状態管理の実装パターン</h2>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon">💻</span>React/Vue で使える状態管理パターン</div>
+        <pre><code>// ❌ よくある間違い: 成功/失敗の boolean だけで管理
+const [isLoading, setIsLoading] = useState(false);
+const [hasError, setHasError]   = useState(false);
+// → idle状態と success状態の区別ができない
+
+// ✅ 正しい: 4状態を1つの変数で管理
+type AsyncStatus = 'idle' | 'loading' | 'success' | 'error';
+const [status, setStatus] = useState&lt;AsyncStatus&gt;('idle');
+const [data,   setData]   = useState(null);
+const [error,  setError]  = useState(null);
+
+async function fetchData() {
+  setStatus('loading');
+  setError(null);
+  try {
+    const result = await api.getUsers();
+    setData(result);
+    setStatus('success');
+  } catch (err) {
+    setError(err.message);
+    setStatus('error');
+  }
+}
+
+// JSX での条件分岐
+if (status === 'idle')    return &lt;IdlePlaceholder /&gt;;
+if (status === 'loading') return &lt;SkeletonScreen /&gt;;
+if (status === 'error')   return &lt;ErrorMessage msg={error} onRetry={fetchData} /&gt;;
+return &lt;DataList items={data} /&gt;;</code></pre>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ---- セーブボタン ----
+function doSave() {
+  const btn = document.getElementById('save-btn');
+  const res = document.getElementById('save-result');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span>保存中…';
+  res.textContent = '';
+  setTimeout(() => {
+    const ok = Math.random() > 0.4;
+    btn.disabled = false;
+    if (ok) {
+      btn.innerHTML = '💾 データを保存';
+      btn.style.background = '';
+      res.innerHTML = '<span style="color:var(--secondary);">✅ 保存しました（' + new Date().toLocaleTimeString() + '）</span>';
+    } else {
+      btn.innerHTML = '🔄 もう一度試す';
+      res.innerHTML = '<span style="color:var(--danger);">❌ 保存に失敗しました。再試行してください。</span>';
+    }
+  }, 2000);
+}
+
+// ---- 連打防止 ----
+let rapidCount = 0;
+function doRapidTest() {
+  const btn = document.getElementById('rapid-btn');
+  const log = document.getElementById('rapid-log');
+  rapidCount++;
+  if (rapidCount === 1) {
+    btn.disabled = true;
+    btn.textContent = '処理中…（3秒待機）';
+    log.textContent = '1回目のクリックを受け付けました。';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '🚀 送信（連打してみてください）';
+      log.textContent = `処理完了。合計 ${rapidCount} 回クリックされましたが、送信は1回だけです。`;
+      rapidCount = 0;
+    }, 3000);
+  } else {
+    log.textContent = `${rapidCount} 回クリックされました（無視中）`;
+  }
+}
+
+// ---- スケルトン/スピナー切り替え ----
+function showDemo(type) {
+  document.getElementById('demo-skeleton').style.display = type === 'skeleton' ? '' : 'none';
+  document.getElementById('demo-spinner').style.display  = type === 'spinner'  ? '' : 'none';
+  document.getElementById('tab-skeleton').classList.toggle('active', type === 'skeleton');
+  document.getElementById('tab-spinner').classList.toggle('active', type === 'spinner');
+}
+
+// ---- リスト取得デモ ----
+const DUMMY_USERS = [
+  { name: '田中 太郎', email: 'tanaka@example.com', role: '管理者' },
+  { name: '佐藤 花子', email: 'sato@example.com',   role: '一般' },
+  { name: '鈴木 一郎', email: 'suzuki@example.com', role: '一般' },
+];
+
+function fetchListSuccess() {
+  const area = document.getElementById('list-area');
+  area.innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-md"></div><div style="margin-top:.75rem;font-size:.85rem;color:var(--gray-500);">取得中…</div></div>';
+  setTimeout(() => {
+    area.innerHTML = DUMMY_USERS.map(u => `
+      <div class="data-list-item">
+        <div class="item-avatar">${u.name[0]}</div>
+        <div>
+          <div class="item-name">${u.name}</div>
+          <div class="item-sub">${u.email} · <span class="badge badge-primary">${u.role}</span></div>
+        </div>
+      </div>
+    `).join('');
+  }, 1500);
+}
+
+function fetchListError() {
+  const area = document.getElementById('list-area');
+  area.innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-md"></div><div style="margin-top:.75rem;font-size:.85rem;color:var(--gray-500);">取得中…</div></div>';
+  setTimeout(() => {
+    area.innerHTML = `
+      <div style="text-align:center;padding:2rem;background:#fff5f5;border:1px solid #fca5a5;border-radius:var(--radius-lg);">
+        <div style="font-size:2rem;margin-bottom:.5rem;">❌</div>
+        <div style="font-weight:700;color:var(--danger);margin-bottom:.35rem;">データの取得に失敗しました</div>
+        <div style="font-size:.85rem;color:var(--gray-500);margin-bottom:1rem;">サーバーとの接続がタイムアウトしました（GET /api/users: 504）</div>
+        <button class="btn btn-primary" onclick="fetchListSuccess()">🔄 もう一度試す</button>
+      </div>
+    `;
+  }, 1500);
+}
+
+// ---- 楽観的UI ----
+let liked = false;
+let likeCount = 42;
+let likeInFlight = false;
+
+function toggleLike() {
+  if (likeInFlight) return;
+  likeInFlight = true;
+  const prevLiked = liked;
+  const prevCount = likeCount;
+
+  // 楽観的に即時更新
+  liked = !liked;
+  likeCount += liked ? 1 : -1;
+  renderLike();
+  document.getElementById('like-status').textContent = 'APIリクエスト送信中…';
+
+  // API模擬（70%成功）
+  setTimeout(() => {
+    likeInFlight = false;
+    if (Math.random() < 0.3) {
+      // 失敗: ロールバック
+      liked = prevLiked;
+      likeCount = prevCount;
+      renderLike();
+      document.getElementById('like-status').innerHTML = '<span style="color:var(--danger);">❌ API失敗 → ロールバックしました</span>';
+    } else {
+      document.getElementById('like-status').innerHTML = '<span style="color:var(--secondary);">✅ API成功 → 確定</span>';
+    }
+    setTimeout(() => { document.getElementById('like-status').textContent = ''; }, 2000);
+  }, 1000);
+}
+
+function renderLike() {
+  const btn = document.getElementById('like-btn');
+  document.getElementById('like-icon').textContent = liked ? '❤️' : '🤍';
+  document.getElementById('like-count').textContent = likeCount;
+  btn.classList.toggle('liked', liked);
+}
+
+// ---- バッチ処理 ----
+let batchTimer = null;
+let batchPct = 0;
+const BATCH_STEPS = [
+  'データを読み込んでいます…',
+  '変換処理中…',
+  '検証中…',
+  'ファイルを生成中…',
+  '最終チェック中…',
+];
+
+function startBatch() {
+  batchPct = 0;
+  document.getElementById('batch-idle').style.display = 'none';
+  document.getElementById('batch-running').style.display = '';
+  document.getElementById('batch-done').style.display = 'none';
+  document.getElementById('batch-cancelled').style.display = 'none';
+  tickBatch();
+}
+
+function tickBatch() {
+  batchTimer = setInterval(() => {
+    batchPct += Math.random() * 5 + 1;
+    if (batchPct >= 100) {
+      batchPct = 100;
+      clearInterval(batchTimer);
+      batchTimer = null;
+      updateBatchUI();
+      setTimeout(() => {
+        document.getElementById('batch-running').style.display = 'none';
+        document.getElementById('batch-done').style.display = '';
+        document.getElementById('batch-idle').style.display = '';
+      }, 500);
+    } else {
+      updateBatchUI();
+    }
+  }, 200);
+}
+
+function updateBatchUI() {
+  const pct = Math.min(100, Math.round(batchPct));
+  document.getElementById('batch-bar').style.width = pct + '%';
+  document.getElementById('batch-label').textContent = `処理中… ${pct}%`;
+  const remaining = Math.round((100 - pct) / 5);
+  document.getElementById('batch-eta').textContent = pct < 100 ? `推定残り: ${remaining}秒` : '完了!';
+  const stepIdx = Math.min(BATCH_STEPS.length - 1, Math.floor(pct / 20));
+  document.getElementById('batch-step').textContent = BATCH_STEPS[stepIdx];
+}
+
+function cancelBatch() {
+  if (batchTimer) { clearInterval(batchTimer); batchTimer = null; }
+  document.getElementById('batch-running').style.display = 'none';
+  document.getElementById('batch-cancelled').style.display = '';
+  document.getElementById('batch-idle').style.display = '';
+}
+</script>
+</body>
+</html>
