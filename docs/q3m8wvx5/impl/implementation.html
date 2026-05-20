@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>実装手順 — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-impl">
+      <div class="subtitle">Phase 3</div>
+      <h1>💻 実装手順</h1>
+      <p class="description">詳細設計書（承認済み）を基に、実際のコードを書くフェーズです。タスク分割・ブランチ戦略・PRレビュー・進捗管理の手順を説明します。</p>
+    </div>
+
+    <div class="content">
+
+      <!-- STEP 0 -->
+      <h2 class="section-title"><span class="title-icon">0</span> STEP 0 — 実装開始前の確認</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="i0-1"><label for="i0-1">詳細設計書（承認済み）が入手できている</label></li>
+          <li><input type="checkbox" id="i0-2"><label for="i0-2">開発環境（ローカル・CI・ステージング）が構築済みで全員が使える</label></li>
+          <li><input type="checkbox" id="i0-3"><label for="i0-3">共通ライブラリ（C-01〜C-05）の実装が完了・マージ済みである</label></li>
+          <li><input type="checkbox" id="i0-4"><label for="i0-4">コーディング規約・フォーマッタ設定をリポジトリに追加済みである</label></li>
+          <li><input type="checkbox" id="i0-5"><label for="i0-5">CI（自動テスト・Lint）パイプラインが動作している</label></li>
+          <li><input type="checkbox" id="i0-6"><label for="i0-6">ブランチ戦略・PRルールをチームで合意済みである</label></li>
+        </ul>
+      </div>
+
+      <!-- STEP 1 タスク分割 -->
+      <h2 class="section-title"><span class="title-icon">1</span> STEP 1 — タスク分割・バックログ構築</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fef9c3">📋</span><h2>Issue作成テンプレート</h2></div>
+        <pre><code>## 概要
+[機能名] [作業内容を1文で]
+
+## 対応するドキュメント
+- 設計書: D-01 詳細機能設計書 p.XX
+- APIエンドポイント: POST /api/v1/xxxxxxxx
+
+## 完了条件（Definition of Done）
+- [ ] 実装完了
+- [ ] 単体テスト作成・全PASS
+- [ ] コードレビュー承認済み
+- [ ] ステージング環境で動作確認済み
+
+## 見積もり
+Story Point: 3
+
+## 優先度
+High / Medium / Low</code></pre>
+        <div class="table-wrap" style="margin-top:1rem">
+          <table>
+            <thead><tr><th>タスク種別</th><th>例</th><th>依存関係</th></tr></thead>
+            <tbody>
+              <tr><td>🏗️ 基盤系</td><td>DB マイグレーション適用、共通処理テスト</td><td>最初に完了させる</td></tr>
+              <tr><td>⚙️ バックエンド</td><td>API実装・単体テスト</td><td>基盤系完了後</td></tr>
+              <tr><td>🖥️ フロントエンド</td><td>画面実装・コンポーネントテスト</td><td>APIモック使って並行可</td></tr>
+              <tr><td>🔗 結合</td><td>API〜画面の結合確認</td><td>BE・FE両方完了後</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STEP 2 ブランチ -->
+      <h2 class="section-title" id="review"><span class="title-icon">2</span> STEP 2 — ブランチ・PR・コードレビュー</h2>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🌿</span><h2>ブランチ命名規則</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>種別</th><th>命名パターン</th><th>例</th></tr></thead>
+            <tbody>
+              <tr><td>機能追加</td><td><code>feature/[issue番号]-[機能名]</code></td><td><code>feature/42-user-login</code></td></tr>
+              <tr><td>バグ修正</td><td><code>fix/[issue番号]-[内容]</code></td><td><code>fix/58-login-redirect</code></td></tr>
+              <tr><td>リファクタリング</td><td><code>refactor/[内容]</code></td><td><code>refactor/auth-service</code></td></tr>
+              <tr><td>ホットフィックス</td><td><code>hotfix/[内容]</code></td><td><code>hotfix/null-pointer-api</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:var(--secondary-lt)">🔍</span><h2>コードレビュー 観点チェックリスト（レビュア用）</h2></div>
+        <div class="tab-container">
+          <div class="tab-nav">
+            <button class="tab-btn active" data-tab="review-func">機能・ロジック</button>
+            <button class="tab-btn" data-tab="review-security">セキュリティ</button>
+            <button class="tab-btn" data-tab="review-quality">品質・保守性</button>
+          </div>
+          <div class="tab-pane active" data-pane="review-func">
+            <ul class="checklist">
+              <li><input type="checkbox" id="rv1-1"><label for="rv1-1">詳細設計書の仕様どおりに実装されているか</label></li>
+              <li><input type="checkbox" id="rv1-2"><label for="rv1-2">正常系・異常系・境界値のすべてが考慮されているか</label></li>
+              <li><input type="checkbox" id="rv1-3"><label for="rv1-3">トランザクション管理が適切か（コミット・ロールバックのタイミング）</label></li>
+              <li><input type="checkbox" id="rv1-4"><label for="rv1-4">N+1問題が発生していないか（ループ内でのDB呼び出し）</label></li>
+              <li><input type="checkbox" id="rv1-5"><label for="rv1-5">単体テストが正常系・異常系を網羅しているか</label></li>
+            </ul>
+          </div>
+          <div class="tab-pane" data-pane="review-security">
+            <ul class="checklist">
+              <li><input type="checkbox" id="rv2-1"><label for="rv2-1">SQLクエリにプリペアドステートメントを使用しているか（SQLインジェクション対策）</label></li>
+              <li><input type="checkbox" id="rv2-2"><label for="rv2-2">ユーザー入力を適切にエスケープ・サニタイズしているか（XSS対策）</label></li>
+              <li><input type="checkbox" id="rv2-3"><label for="rv2-3">認証・認可チェックが漏れていないエンドポイントはないか</label></li>
+              <li><input type="checkbox" id="rv2-4"><label for="rv2-4">パスワード・機密情報がログに出力されていないか</label></li>
+              <li><input type="checkbox" id="rv2-5"><label for="rv2-5">シークレット情報（APIキー等）がハードコードされていないか</label></li>
+            </ul>
+          </div>
+          <div class="tab-pane" data-pane="review-quality">
+            <ul class="checklist">
+              <li><input type="checkbox" id="rv3-1"><label for="rv3-1">コーディング規約に従っているか</label></li>
+              <li><input type="checkbox" id="rv3-2"><label for="rv3-2">変数名・関数名が意図を適切に表しているか</label></li>
+              <li><input type="checkbox" id="rv3-3"><label for="rv3-3">重複コードがなく、共通処理は共通ライブラリを使用しているか</label></li>
+              <li><input type="checkbox" id="rv3-4"><label for="rv3-4">エラーログが適切に出力されているか（スタックトレース含む）</label></li>
+              <li><input type="checkbox" id="rv3-5"><label for="rv3-5">設計変更が発生した場合、設計書への反映を依頼したか</label></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <h2 class="section-title"><span class="title-icon">3</span> STEP 3 — 実装進捗管理</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>確認項目</th><th>頻度</th><th>方法</th></tr></thead>
+            <tbody>
+              <tr><td>Issue消化率の確認</td><td>毎日</td><td>GitHub/Jira のバーンダウンチャート</td></tr>
+              <tr><td>遅延タスクの洗い出し</td><td>週次</td><td>週次ミーティング</td></tr>
+              <tr><td>ブロッカーの解消</td><td>随時</td><td>Slack・MTG</td></tr>
+              <tr><td>設計変更の記録</td><td>変更の都度</td><td>設計書更新 + レビュー</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-warning" style="margin-top:1rem">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <b>設計変更が発生したとき</b>: 勝手に実装を変えてはいけません。必ず ① 変更内容を上位SE・PLに報告 → ② 設計書を更新 → ③ 関係者レビュー → ④ 承認後に実装変更 の順で進めてください。
+          </div>
+        </div>
+      </div>
+
+      <!-- よくある実装トラブル -->
+      <h2 class="section-title"><span class="title-icon">⚠️</span> よくある実装トラブルと対処法</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>トラブル</th><th>原因</th><th>対処法</th></tr></thead>
+            <tbody>
+              <tr><td>N+1問題</td><td>ループ内でDB呼び出し</td><td>JOINまたはバッチ取得に変更</td></tr>
+              <tr><td>デッドロック</td><td>トランザクション内での複数テーブル更新</td><td>更新順序の統一・タイムアウト設定</td></tr>
+              <tr><td>セッションタイムアウト</td><td>長時間処理中のセッション切れ</td><td>バックグラウンド処理化・タイムアウト延長</td></tr>
+              <tr><td>文字コード不整合</td><td>DB・アプリ・接続文字列のUTF-8設定ミス</td><td>全レイヤでUTF-8を統一</td></tr>
+              <tr><td>テスト環境のみでエラー</td><td>環境依存の設定・モックの挙動差異</td><td>環境変数の確認・Dockerで環境統一</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../sidebar.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,286 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADRサンプル集 — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-adr">
+      <div class="subtitle">Architecture Decision Records</div>
+      <h1>🏛️ ADR サンプル集</h1>
+      <p class="description">アーキテクチャ決定記録（ADR）は、「なぜその技術・構成を選んだか」を将来の自分やチームに伝えるための文書です。7つのサンプルを収録しています。</p>
+    </div>
+
+    <div class="content">
+
+      <!-- ADRとは -->
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <b>ADR（Architecture Decision Record）とは？</b><br>
+          アーキテクチャに関する重要な意思決定を記録するドキュメントです。「何を決めたか」だけでなく「なぜそう決めたか」「他に何を検討したか」「どんなトレードオフがあるか」を記録することで、後から決定を変更する際の判断材料になります。
+        </div>
+      </div>
+
+      <!-- ADR管理方法 -->
+      <h2 class="section-title"><span class="title-icon">📁</span> ADRの管理方法</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">📝</span><h2>推奨フォーマット（Markdownファイル）</h2></div>
+        <pre><code># ADR-NNN: [タイトル]
+
+**ステータス**: Accepted / Proposed / Superseded by ADR-NNN
+
+## コンテキスト
+なぜこの決定が必要だったか。背景・課題・制約を記述する。
+
+## 決定事項
+何を決めたか。
+
+## 根拠
+なぜこの選択をしたか。
+
+## 検討した代替案
+| 選択肢 | メリット | デメリット | 採用/不採用 |
+|------|--------|---------|----------|
+
+## 影響・トレードオフ
+この決定による影響（良いこと・悪いこと）を記述する。
+
+## 関連ADR
+ADR-NNN: [タイトル]
+</code></pre>
+        <div class="callout callout-success" style="margin-top:1rem">
+          <span class="callout-icon">📁</span>
+          <div class="callout-body">ADRはGitリポジトリの <code>docs/adr/</code> フォルダに配置し、コードと一緒にバージョン管理することを推奨します。</div>
+        </div>
+      </div>
+
+      <!-- ADR一覧 -->
+      <h2 class="section-title"><span class="title-icon">📋</span> ADRサンプル一覧（ADR-001〜007）</h2>
+
+      <!-- ADR-001 -->
+      <div class="adr-card">
+        <div class="adr-header">
+          <span class="adr-id">ADR-001</span>
+          <span class="adr-title">バックエンドフレームワーク選定</span>
+          <span class="adr-status status-accepted">Accepted</span>
+        </div>
+        <div class="adr-body">
+          <div class="adr-section">
+            <h5>コンテキスト</h5>
+            <p>Webシステムのバックエンド開発において、適切なフレームワークを選定する必要がある。チームは Java に習熟しており、大規模なトランザクション処理と外部API連携が要件に含まれる。</p>
+          </div>
+          <div class="adr-section">
+            <h5>決定事項</h5>
+            <p><strong>Spring Boot (Java) を採用する</strong></p>
+          </div>
+          <div class="adr-section">
+            <h5>検討した代替案</h5>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>選択肢</th><th>メリット</th><th>デメリット</th><th>判定</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Spring Boot</strong></td><td>チーム習熟度高、エコシステム充実、エンタープライズ実績</td><td>起動が重い、学習コストがある</td><td>✅ 採用</td></tr>
+                  <tr><td>FastAPI (Python)</td><td>高速、シンプル、AI/MLとの親和性</td><td>チームのPython経験不足</td><td>❌ 不採用</td></tr>
+                  <tr><td>Express (Node.js)</td><td>軽量、フロントと同言語</td><td>大規模での型安全性が課題</td><td>❌ 不採用</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="adr-section">
+            <h5>影響・トレードオフ</h5>
+            <ul>
+              <li>チームのスキルセットと合致しており、即戦力で開発開始できる</li>
+              <li>JVM起動時間が長いため、Lambda等のサーバーレス利用時は要検討</li>
+              <li>Spring Securityにより認証・認可の実装が標準化できる</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADR-002 -->
+      <div class="adr-card">
+        <div class="adr-header">
+          <span class="adr-id">ADR-002</span>
+          <span class="adr-title">データベース選定</span>
+          <span class="adr-status status-accepted">Accepted</span>
+        </div>
+        <div class="adr-body">
+          <div class="adr-section">
+            <h5>コンテキスト</h5>
+            <p>業務データの永続化に使用するデータベースを選定する。トランザクション整合性が必要な業務データ（申請・承認フロー）が中心であり、複雑なJOINが発生する。</p>
+          </div>
+          <div class="adr-section">
+            <h5>決定事項</h5>
+            <p><strong>PostgreSQL を採用する</strong></p>
+          </div>
+          <div class="adr-section">
+            <h5>検討した代替案</h5>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>選択肢</th><th>メリット</th><th>デメリット</th><th>判定</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>PostgreSQL</strong></td><td>ACID準拠、JSON対応、豊富な型、OSS</td><td>—</td><td>✅ 採用</td></tr>
+                  <tr><td>MySQL</td><td>枯れた技術、Web実績多数</td><td>JSONサポートがPostgresより弱い</td><td>❌ 不採用</td></tr>
+                  <tr><td>DynamoDB</td><td>スケーラビリティ高、フルマネージド</td><td>複雑クエリが苦手、JOINなし</td><td>❌ 不採用</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADR-003 -->
+      <div class="adr-card">
+        <div class="adr-header">
+          <span class="adr-id">ADR-003</span>
+          <span class="adr-title">認証方式選定（セッション / JWT / OAuth2）</span>
+          <span class="adr-status status-accepted">Accepted</span>
+        </div>
+        <div class="adr-body">
+          <div class="adr-section">
+            <h5>コンテキスト</h5>
+            <p>Webシステムの認証方式を決定する。社内向けシステムで、外部サービス連携なし。スマートフォン対応は不要。</p>
+          </div>
+          <div class="adr-section">
+            <h5>決定事項</h5>
+            <p><strong>セッションベース認証（サーバーサイドセッション + Cookie）を採用する</strong></p>
+          </div>
+          <div class="adr-section">
+            <h5>検討した代替案</h5>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>選択肢</th><th>向いているケース</th><th>今回の判断</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>セッション認証</strong></td><td>社内Webアプリ、ステートフルでOK</td><td>✅ 採用：シンプル・無効化が即時</td></tr>
+                  <tr><td>JWT</td><td>スケールアウト、マイクロサービス</td><td>❌ 不採用：トークン即時無効化が困難</td></tr>
+                  <tr><td>OAuth2 + OIDC</td><td>外部サービス連携、SSO</td><td>❌ 不採用：外部連携が不要のため過剰</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADR-004 -->
+      <div class="adr-card">
+        <div class="adr-header">
+          <span class="adr-id">ADR-004</span>
+          <span class="adr-title">フロントエンドフレームワーク選定（React / Vue.js / Next.js）</span>
+          <span class="adr-status status-accepted">Accepted</span>
+        </div>
+        <div class="adr-body">
+          <div class="adr-section">
+            <h5>決定事項</h5>
+            <p><strong>React + TypeScript を採用する</strong></p>
+          </div>
+          <div class="adr-section">
+            <h5>検討した代替案</h5>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>選択肢</th><th>メリット</th><th>デメリット</th><th>判定</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>React + TypeScript</strong></td><td>コミュニティ最大、型安全、豊富ライブラリ</td><td>設定が多い、学習コスト</td><td>✅ 採用</td></tr>
+                  <tr><td>Vue.js 3</td><td>学習コスト低、日本語資料豊富</td><td>大規模プロジェクト実績が少ない</td><td>❌ 不採用</td></tr>
+                  <tr><td>Next.js</td><td>SSR・SSG対応、SEO有利</td><td>SEO不要の社内ツールに過剰</td><td>❌ 不採用</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADR-005 -->
+      <div class="adr-card">
+        <div class="adr-header">
+          <span class="adr-id">ADR-005</span>
+          <span class="adr-title">アーキテクチャパターン選定（モノリス vs マイクロサービス）</span>
+          <span class="adr-status status-accepted">Accepted</span>
+        </div>
+        <div class="adr-body">
+          <div class="adr-section">
+            <h5>決定事項</h5>
+            <p><strong>モジュラモノリス（モノリシックアーキテクチャ、ただしモジュール分割を明確化）を採用する</strong></p>
+          </div>
+          <div class="adr-section">
+            <h5>根拠</h5>
+            <ul>
+              <li>チーム規模が小さく（3名）、マイクロサービスの運用コストが見合わない</li>
+              <li>初期リリースはシンプルな構成で素早く価値提供し、スケールが必要になった時点で分割を検討する</li>
+              <li>モジュール境界を明確に設計しておくことで、将来のマイクロサービス化を容易にする</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADR-006 -->
+      <div class="adr-card">
+        <div class="adr-header">
+          <span class="adr-id">ADR-006</span>
+          <span class="adr-title">キャッシュ戦略（インプロセス / Redis / CDN の使い分け）</span>
+          <span class="adr-status status-accepted">Accepted</span>
+        </div>
+        <div class="adr-body">
+          <div class="adr-section">
+            <h5>決定事項</h5>
+            <p><strong>セッションキャッシュにRedis、静的コンテンツにCDN（CloudFront）、頻繁に読む参照データにインプロセスキャッシュ（Caffeine）を組み合わせる</strong></p>
+          </div>
+          <div class="adr-section">
+            <h5>使い分け方針</h5>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>キャッシュ対象</th><th>採用技術</th><th>理由</th></tr></thead>
+                <tbody>
+                  <tr><td>セッション</td><td>Redis</td><td>複数サーバー間でセッション共有が必要</td></tr>
+                  <tr><td>コードマスタ等の参照データ</td><td>Caffeine（インプロセス）</td><td>更新頻度低い、サーバー内完結</td></tr>
+                  <tr><td>静的ファイル（JS/CSS/画像）</td><td>CloudFront CDN</td><td>エッジ配信でグローバル低レイテンシ</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADR-007 -->
+      <div class="adr-card">
+        <div class="adr-header">
+          <span class="adr-id">ADR-007</span>
+          <span class="adr-title">API設計スタイル選定（REST / GraphQL / gRPC）</span>
+          <span class="adr-status status-accepted">Accepted</span>
+        </div>
+        <div class="adr-body">
+          <div class="adr-section">
+            <h5>決定事項</h5>
+            <p><strong>RESTful API（OpenAPI 3.0仕様書付き）を採用する</strong></p>
+          </div>
+          <div class="adr-section">
+            <h5>検討した代替案</h5>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>選択肢</th><th>向いているケース</th><th>今回の判断</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>REST</strong></td><td>汎用的なWeb API、HTTP標準に準拠</td><td>✅ 採用：最も広く理解されており、ツール資産が豊富</td></tr>
+                  <tr><td>GraphQL</td><td>クライアントが必要なデータを選択、多様なクライアント</td><td>❌ 不採用：Webのみでオーバーフェッチが問題にならない</td></tr>
+                  <tr><td>gRPC</td><td>マイクロサービス間通信、高スループット</td><td>❌ 不採用：ブラウザクライアント対応が複雑</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../sidebar.js"></script>
+</body>
+</html>
+

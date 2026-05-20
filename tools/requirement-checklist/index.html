@@ -53,6 +53,7 @@ h2:first-child { margin-top: 0; }
 <body>
 <header>
   <h1>ヒアリングチェックリスト（要件確認漏れ防止）</h1>
+  <button onclick="loadSample()">📋 サンプル</button>
   <button onclick="resetAll()">リセット</button>
   <button onclick="exportMarkdown()">レポートエクスポート</button>
   <button onclick="checkAllOK()">全項目「確認済」にする</button>
@@ -306,6 +307,65 @@ function exportMarkdown() {
     md += '\n';
   });
   saveFile(md, 'hearing-checklist.md', 'text/markdown');
+}
+
+function loadSample() {
+  if (!confirm('サンプルデータを読み込みます。現在の回答状況は上書きされます。よろしいですか？')) return;
+  const d = {};
+  // 業務フロー・目的
+  d['business_0_status']='ok'; d['business_0_memo']='現状はExcel管理。月次集計に4時間かかっている。システム化で1時間以内に短縮したい。';
+  d['business_1_status']='ok'; d['business_1_memo']='As-Is: 申請書をExcelで作成→メール送付→承認者が印鑑押印→スキャンして保管。To-Be: システム上でワンストップ完結。';
+  d['business_2_status']='ok'; d['business_2_memo']='主要フロー: ①申請登録→②上長承認→③経理確認→④支払処理→⑤完了通知。差し戻し・却下フローも必要。';
+  d['business_3_status']='ok'; d['business_3_memo']='差し戻し（修正して再申請）・却下（理由記載）・期限切れ自動却下を考慮する。';
+  d['business_4_status']='ok'; d['business_4_memo']='現行はExcel+メール運用。申請書テンプレート5種類あり。田中部長から共有済み。';
+  // ユーザー・権限
+  d['users_0_status']='ok'; d['users_0_memo']='①一般ユーザー（申請者）②上長（直属承認）③経理担当（最終承認）④システム管理者（設定・マスタ管理）の4ロール。';
+  d['users_1_status']='ok'; d['users_1_memo']='一般ユーザー: 自分の申請のみ閲覧・編集可。上長: 部下の申請一覧閲覧・承認操作可。経理: 全申請閲覧・CSVエクスポート可。管理者: 全機能。';
+  d['users_2_status']='ok'; d['users_2_memo']='社員数150名。同時アクセスは最大50名程度。月次締め日前後にピーク集中。';
+  d['users_3_status']='ok'; d['users_3_memo']='IT習熟度は中程度。スマホ操作には慣れているが業務システムは不慣れ。ヘルプ機能・ツールチップを充実させる必要あり。';
+  d['users_4_status']='na'; d['users_4_memo']='社内専用システムのためイントラネット限定。外部アクセス不要。';
+  // 機能要件
+  d['functions_0_status']='ok'; d['functions_0_memo']='Must: ログイン・申請CRUD・承認フロー・メール通知・CSV出力。Should: ダッシュボード・帳票PDF。Could: モバイルアプリ。';
+  d['functions_1_status']='ok'; d['functions_1_memo']='申請（C/R/U/D）・ユーザー（C/R/U/D）・部署（C/R/U）・承認フロー設定（C/R/U/D）。';
+  d['functions_2_status']='ok'; d['functions_2_memo']='申請一覧: ステータス・申請種別・申請者・期間で絞り込み。ページネーション20件/ページ。氏名・件名でキーワード検索。';
+  d['functions_3_status']='ok'; d['functions_3_memo']='月次申請サマリーのExcel出力が必要。PDFは今回なし（次フェーズ）。CSVは申請一覧を全項目出力。';
+  d['functions_4_status']='ok'; d['functions_4_memo']='夜間バッチ: 承認期限切れチェック（毎日0時）、月次集計（毎月末）。失敗時はシステム管理者にメール通知。';
+  d['functions_5_status']='ok'; d['functions_5_memo']='領収書PDF・Excelのアップロード必要。上限10MB/ファイル・最大5ファイル/申請。AWSのS3に保管予定。';
+  d['functions_6_status']='ok'; d['functions_6_memo']='申請提出→承認者へ通知。承認完了→申請者へ通知。却下・差し戻し→申請者へ理由付きで通知。SendGrid利用予定。';
+  d['functions_7_status']='ok'; d['functions_7_memo']='SalesforceのAPIから社員情報を同期（1日1回夜間）。将来的にSAP連携の可能性あり（今回対象外）。';
+  // データ・マスタ
+  d['data_0_status']='ok'; d['data_0_memo']='主要エンティティ: users・departments・applications・application_types・approval_flows・approval_steps・attachments。';
+  d['data_1_status']='ok'; d['data_1_memo']='マスタ: 申請種別・部署・承認フロー設定・通知テンプレート。管理者が画面から更新可能にする。';
+  d['data_2_status']='ok'; d['data_2_memo']='既存Excelデータ約2000件を移行。フォーマット確認済み。クレンジング（重複・不正値）が必要。移行ツールを別途作成。';
+  d['data_3_status']='ok'; d['data_3_memo']='申請データは5年間保持（税法上の要件）。5年経過後はアーカイブテーブルへ移動、物理削除はしない。';
+  d['data_4_status']='ok'; d['data_4_memo']='氏名・メールアドレス・振込先情報が個人情報に該当。暗号化保存・アクセスログ取得・外部持ち出し制限が必要。';
+  // 非機能要件
+  d['nonfunc_0_status']='ok'; d['nonfunc_0_memo']='一覧表示3秒以内、登録・更新1秒以内。ピーク時（同時50ユーザー）でも遵守。';
+  d['nonfunc_1_status']='ok'; d['nonfunc_1_memo']='平日8:00-22:00は99.9%以上の稼働率。夜間バッチ実行中（0:00-2:00）はメンテナンスモード可。';
+  d['nonfunc_2_status']='ok'; d['nonfunc_2_memo']='スマートフォン（iOS/Android）での承認操作が必要。レスポンシブ対応。専用アプリは不要。';
+  d['nonfunc_3_status']='ok'; d['nonfunc_3_memo']='Chrome・Edge最新版必須対応。Firefox・Safariは動作確認のみ。IE11は対象外（社内標準廃止済み）。';
+  d['nonfunc_4_status']='ok'; d['nonfunc_4_memo']='日次フルバックアップ（AWS S3）。RTO: 4時間以内、RPO: 24時間以内。DR環境は今回なし。';
+  d['nonfunc_5_status']='ok'; d['nonfunc_5_memo']='操作ログ・ログインログ・エラーログを取得。CloudWatch Logsに保管、3年間保持。';
+  // セキュリティ
+  d['security_0_status']='ok'; d['security_0_memo']='メールアドレス+パスワード認証。将来的にはAzure AD連携を検討（今回対象外）。';
+  d['security_1_status']='ok'; d['security_1_memo']='8文字以上・英大小文字+数字必須。有効期限90日。5回失敗でアカウントロック（管理者が解除）。';
+  d['security_2_status']='ok'; d['security_2_memo']='HTTPS必須（TLS1.2以上）。HTTP→HTTPSリダイレクト設定。';
+  d['security_3_status']='ok'; d['security_3_memo']='本番リリース前に外部ベンダーによる脆弱性診断を実施予定（予算確認中）。';
+  d['security_4_status']='ok'; d['security_4_memo']='社内ISMS認証（ISO27001）準拠が必要。個人情報保護法対応も必須。';
+  // 運用・移行
+  d['operation_0_status']='ok'; d['operation_0_memo']='社内情報システム部が担当（2名）。夜間・休日の緊急対応はベンダー保守契約で対応。';
+  d['operation_1_status']='ok'; d['operation_1_memo']='情報システム部がシステム管理者画面から管理。入社・退職時の手順書を作成する。';
+  d['operation_2_status']='ok'; d['operation_2_memo']='障害発生時は情報システム部→開発ベンダーの連絡フロー。SLA違反時のエスカレーション先も定義済み。';
+  d['operation_3_status']='ok'; d['operation_3_memo']='部署ごとに段階リリース（営業部→経理部→全社）。旧Excel運用と2週間並行稼働後に切り替え。';
+  d['operation_4_status']='ok'; d['operation_4_memo']='キーユーザー向け操作マニュアル（PDF）と管理者向けマニュアルを作成。リリース前にオンライン説明会を実施。';
+  // スケジュール・制約
+  d['constraint_0_status']='ok'; d['constraint_0_memo']='2026年10月1日（期初）に本番稼働が必須。期末処理（3月）前の安定稼働が求められる。';
+  d['constraint_1_status']='ok'; d['constraint_1_memo']='開発費用上限1,500万円。ランニング（AWS・保守）は月次30万円以内を目標。';
+  d['constraint_2_status']='ok'; d['constraint_2_memo']='フェーズ1: 申請・承認コア機能（8月末）。フェーズ2: ダッシュボード・帳票（11月末）。';
+  d['constraint_3_status']='ok'; d['constraint_3_memo']='AWSの使用は承認済み（東京リージョン限定）。RDSはPostgreSQL。S3は社内データ利用規定の適用あり。';
+  d['constraint_4_status']='ok'; d['constraint_4_memo']='Salesforce（社員マスタ）との連携必須。SalesforceのAPIバージョンはv58で固定（情報システム部制約）。';
+  save(d);
+  render();
 }
 
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }

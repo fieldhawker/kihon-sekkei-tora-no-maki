@@ -87,6 +87,7 @@ textarea.output { width: 100%; font-size: 12px; font-family: monospace; border: 
 
     <div style="margin-top:16px">
       <button class="btn btn-primary" onclick="generate()">チェックリスト生成</button>
+      <button class="btn-sm" onclick="loadSample()" style="margin-top:8px;width:100%">📋 サンプル（メールアドレス）</button>
     </div>
   </div>
 
@@ -406,6 +407,53 @@ async function importJSON() {
     } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
   };
   reader.readAsText(file);
+}
+
+function loadSample() {
+  const samples = [
+    {
+      name: 'メールアドレス',
+      checkboxes: { 'req-required': true, 'fmt-email': true, 'char-nosymbol': false, 'char-noemoji': true, 'opt-unique': true, 'opt-trim': true },
+      inputs: { 'field-name': 'メールアドレス', 'len-min': '5', 'len-max': '254' }
+    },
+    {
+      name: 'パスワード',
+      checkboxes: { 'req-required': true, 'char-halfalnum': false, 'char-noemoji': true },
+      inputs: { 'field-name': 'パスワード', 'len-min': '8', 'len-max': '128' }
+    },
+    {
+      name: '電話番号',
+      checkboxes: { 'req-required': false, 'fmt-tel': true, 'char-halfnum': false },
+      inputs: { 'field-name': '電話番号（ハイフンあり）', 'len-min': '12', 'len-max': '13' }
+    },
+    {
+      name: '氏名（全角）',
+      checkboxes: { 'req-required': true, 'char-full': true, 'char-noemoji': true, 'opt-trim': true },
+      inputs: { 'field-name': '氏名', 'len-min': '1', 'len-max': '50' }
+    },
+    {
+      name: '年齢（数値範囲）',
+      checkboxes: { 'req-required': true, 'num-range': true, 'fmt-integer': true },
+      inputs: { 'field-name': '年齢', 'len-min': '', 'len-max': '', 'num-min': '0', 'num-max': '150' }
+    },
+    {
+      name: '申請日（日付）',
+      checkboxes: { 'req-required': true, 'fmt-date': true, 'opt-past': false, 'opt-future': false },
+      inputs: { 'field-name': '申請日', 'len-min': '', 'len-max': '' }
+    },
+  ];
+  const labels = samples.map(s => s.name).join(' / ');
+  const choice = prompt(`サンプル項目を選択してください（番号を入力）:\n${samples.map((s,i) => `${i+1}: ${s.name}`).join('\n')}`, '1');
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= samples.length) { alert('無効な選択です'); return; }
+  const s = samples[idx];
+  VC_CHECKBOXES.forEach(id => { document.getElementById(id).checked = false; });
+  VC_INPUTS.forEach(id => { document.getElementById(id).value = ''; });
+  Object.entries(s.checkboxes).forEach(([id, val]) => { if (document.getElementById(id)) document.getElementById(id).checked = val; });
+  Object.entries(s.inputs).forEach(([id, val]) => { if (document.getElementById(id)) document.getElementById(id).value = val; });
+  autoSave();
+  generate();
 }
 
 // ページロード時に復元

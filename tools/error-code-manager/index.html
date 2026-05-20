@@ -324,15 +324,34 @@ function clearAll() {
 
 function loadSample() {
   const sample = [
-    { code: 'E001', http: '400', message: '入力値が不正です', desc: '必須項目が未入力、または形式不正', location: '全APIの入力バリデーション', category: 'バリデーション' },
-    { code: 'E002', http: '400', message: 'メールアドレスの形式が不正です', desc: 'メールアドレスの形式チェックエラー', location: '会員登録API / ログインAPI', category: 'バリデーション' },
-    { code: 'E003', http: '401', message: 'ログインが必要です', desc: '認証トークンが未設定、または期限切れ', location: '認証が必要な全API', category: '認証・認可' },
-    { code: 'E004', http: '401', message: 'メールアドレスまたはパスワードが違います', desc: 'ログイン失敗', location: 'ログインAPI', category: '認証・認可' },
-    { code: 'E005', http: '403', message: 'この操作を行う権限がありません', desc: 'ロール不足による認可エラー', location: '管理者専用API', category: '認証・認可' },
-    { code: 'E006', http: '404', message: 'リソースが見つかりません', desc: '指定IDのリソースが存在しない', location: '詳細取得・更新・削除API', category: 'ビジネスロジック' },
-    { code: 'E007', http: '409', message: 'このメールアドレスは既に登録されています', desc: 'メールアドレスの一意制約違反', location: '会員登録API', category: 'ビジネスロジック' },
-    { code: 'E008', http: '429', message: 'リクエストが多すぎます。しばらくしてからお試しください', desc: 'レートリミット超過', location: '全API', category: 'システム' },
-    { code: 'E099', http: '500', message: 'サーバーエラーが発生しました。時間をおいてお試しください', desc: '予期しないサーバーサイドエラー', location: '全API', category: 'システム' },
+    // バリデーション系
+    { code: 'E001', http: '400', message: '入力値が不正です', desc: '必須項目が未入力、または入力形式が不正（汎用）', location: '全APIの入力バリデーション', category: 'バリデーション' },
+    { code: 'E002', http: '400', message: 'メールアドレスの形式が不正です', desc: 'RFC5321に準拠していないメールアドレス形式', location: 'ユーザー登録API・プロフィール更新API', category: 'バリデーション' },
+    { code: 'E003', http: '400', message: '文字数の上限を超えています（最大{max}文字）', desc: 'テキスト項目の文字数上限超過', location: '申請作成API・更新API', category: 'バリデーション' },
+    { code: 'E004', http: '400', message: '申請日は今日以降の日付を入力してください', desc: '過去日付が入力された場合のエラー', location: '申請作成API', category: 'バリデーション' },
+    { code: 'E005', http: '400', message: 'ファイルサイズが上限（10MB）を超えています', desc: '添付ファイルのサイズ超過', location: 'ファイルアップロードAPI', category: 'バリデーション' },
+    { code: 'E006', http: '400', message: '許可されていないファイル形式です（PDF・Excel・JPG・PNGのみ）', desc: 'サポート外MIMEタイプのアップロード試行', location: 'ファイルアップロードAPI', category: 'バリデーション' },
+    // 認証・認可系
+    { code: 'E010', http: '401', message: 'ログインが必要です', desc: '認証トークンが未設定、または期限切れ（有効期限1時間）', location: '認証が必要な全API', category: '認証・認可' },
+    { code: 'E011', http: '401', message: '認証セッションが期限切れです。再度ログインしてください', desc: 'リフレッシュトークンも期限切れの場合', location: '認証が必要な全API', category: '認証・認可' },
+    { code: 'E012', http: '403', message: 'この操作を行う権限がありません', desc: 'ロール不足による認可エラー（例: 一般ユーザーが承認操作を試みた）', location: '承認API・管理者専用API', category: '認証・認可' },
+    { code: 'E013', http: '403', message: '他のユーザーのデータにはアクセスできません', desc: '自分以外のリソースへのアクセス試行', location: '申請詳細API（自分以外）', category: '認証・認可' },
+    { code: 'E014', http: '403', message: 'アカウントが無効化されています。管理者にお問い合わせください', desc: '管理者によって無効化されたアカウントのアクセス', location: '全API', category: '認証・認可' },
+    // ビジネスロジック系
+    { code: 'E020', http: '404', message: '申請が見つかりません', desc: '指定IDの申請が存在しない、または削除済み', location: '申請詳細・更新・承認API', category: 'ビジネスロジック' },
+    { code: 'E021', http: '404', message: 'ユーザーが見つかりません', desc: '指定IDのユーザーが存在しない', location: 'ユーザー詳細・更新API', category: 'ビジネスロジック' },
+    { code: 'E022', http: '409', message: 'このメールアドレスは既に登録されています', desc: 'ユーザー登録時のメールアドレス一意制約違反', location: 'ユーザー登録API', category: 'ビジネスロジック' },
+    { code: 'E023', http: '422', message: 'この申請は現在のステータスでは操作できません', desc: '申請のステータス遷移違反（例: 承認済み申請を再提出しようとした）', location: '申請提出・承認・却下API', category: 'ビジネスロジック' },
+    { code: 'E024', http: '422', message: '差し戻し理由を入力してください', desc: '差し戻し操作でコメントが空の場合', location: '申請差し戻しAPI', category: 'ビジネスロジック' },
+    { code: 'E025', http: '422', message: '添付ファイルの上限（5件）に達しています', desc: '1申請あたりのファイル数上限超過', location: 'ファイルアップロードAPI', category: 'ビジネスロジック' },
+    { code: 'E026', http: '409', message: '承認フローが設定されていません。管理者にお問い合わせください', desc: '申請種別に対応する承認フローが未設定', location: '申請提出API', category: 'ビジネスロジック' },
+    // 外部連携系
+    { code: 'E030', http: '503', message: 'SalesforceとのAPI通信でエラーが発生しました', desc: 'Salesforce API呼び出し失敗（タイムアウト・認証エラー）', location: '社員マスタ同期バッチ', category: '外部連携' },
+    { code: 'E031', http: '503', message: 'メール送信に失敗しました', desc: 'SendGrid APIエラーによるメール送信失敗', location: '通知送信機能', category: '外部連携' },
+    // システム系
+    { code: 'E090', http: '429', message: 'リクエストが多すぎます。しばらくしてからお試しください', desc: 'レートリミット超過（100 req/分/IP）', location: '全API', category: 'システム' },
+    { code: 'E091', http: '503', message: 'ただいまメンテナンス中です', desc: 'メンテナンスモード有効時のアクセス', location: '全API', category: 'システム' },
+    { code: 'E099', http: '500', message: 'サーバーエラーが発生しました。時間をおいてお試しください', desc: '予期しないサーバーサイドエラー。エラーIDをログに記録', location: '全API', category: 'システム' },
   ];
   save(sample);
   renderList();

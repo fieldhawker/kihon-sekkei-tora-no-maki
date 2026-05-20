@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -118,61 +118,61 @@ flowchart LR
           <h3>全体フロー・HowTo</h3>
           <div class="phase-meta">参照資料マップ・作業時間目安・PHASE 0 前提確認</div>
         </a>
-        <a href="basic-design.html" class="phase-card bg-phase1">
+        <a href="basic/design.html" class="phase-card bg-phase1">
           <span class="phase-icon">📐</span>
           <div class="phase-number">Phase 1</div>
           <h3>基本設計 手順書</h3>
           <div class="phase-meta">STEP 0〜8 チェックリスト / 目安 19〜34日</div>
         </a>
-        <a href="basic-deliverables.html" class="phase-card bg-phase1" style="opacity:.85">
+        <a href="basic/deliverables.html" class="phase-card bg-phase1" style="opacity:.85">
           <span class="phase-icon">📋</span>
           <div class="phase-number">Phase 1 — 成果物</div>
           <h3>基本設計 成果物ガイド</h3>
           <div class="phase-meta">B-01〜B-19 / ツール選定・ADR管理</div>
         </a>
-        <a href="detailed-design.html" class="phase-card bg-phase2">
+        <a href="detailed/design.html" class="phase-card bg-phase2">
           <span class="phase-icon">🔬</span>
           <div class="phase-number">Phase 2</div>
           <h3>詳細設計 手順書</h3>
           <div class="phase-meta">STEP 0〜9 チェックリスト / 目安 25〜47日</div>
         </a>
-        <a href="detailed-deliverables.html" class="phase-card bg-phase2" style="opacity:.85">
+        <a href="detailed/deliverables.html" class="phase-card bg-phase2" style="opacity:.85">
           <span class="phase-icon">📋</span>
           <div class="phase-number">Phase 2 — 成果物</div>
           <h3>詳細設計 成果物ガイド</h3>
           <div class="phase-meta">D-01〜D-18 / OpenAPI・Mermaid・Flyway</div>
         </a>
-        <a href="common-libs.html" class="phase-card bg-phase5">
+        <a href="detailed/common-libs.html" class="phase-card bg-phase5">
           <span class="phase-icon">📦</span>
           <div class="phase-number">Phase 2 — 先行</div>
           <h3>共通ライブラリ設計</h3>
           <div class="phase-meta">C-01〜C-17 / 認証・エラー・ログ・DB共通処理</div>
         </a>
-        <a href="implementation.html" class="phase-card bg-phase3">
+        <a href="impl/implementation.html" class="phase-card bg-phase3">
           <span class="phase-icon">💻</span>
           <div class="phase-number">Phase 3</div>
           <h3>実装手順</h3>
           <div class="phase-meta">タスク分割・ブランチ戦略・PR・進捗管理</div>
         </a>
-        <a href="testing.html" class="phase-card bg-phase4">
+        <a href="impl/testing.html" class="phase-card bg-phase4">
           <span class="phase-icon">🧪</span>
           <div class="phase-number">Phase 4</div>
           <h3>テスト実施手順</h3>
           <div class="phase-meta">単体〜UAT〜カットオーバー / V字モデル</div>
         </a>
-        <a href="templates.html" class="phase-card bg-phase6">
+        <a href="reference/templates.html" class="phase-card bg-phase6">
           <span class="phase-icon">📝</span>
           <div class="phase-number">テンプレート集</div>
           <h3>設計書テンプレート</h3>
           <div class="phase-meta">T-01〜T-11 / コピーしてすぐ使える</div>
         </a>
-        <a href="adr.html" class="phase-card bg-phase7">
+        <a href="reference/adr.html" class="phase-card bg-phase7">
           <span class="phase-icon">🏛️</span>
           <div class="phase-number">ADR</div>
           <h3>ADR サンプル集</h3>
           <div class="phase-meta">ADR-001〜007 / 7つの意思決定サンプル</div>
         </a>
-        <a href="ai-consult.html" class="phase-card bg-phase0" style="opacity:.85">
+        <a href="reference/ai-consult.html" class="phase-card bg-phase0" style="opacity:.85">
           <span class="phase-icon">🤖</span>
           <div class="phase-number">AI活用</div>
           <h3>AI相談テンプレート</h3>
@@ -198,20 +198,20 @@ flowchart LR
           <table>
             <thead><tr><th>調べたいこと</th><th>参照ページ</th></tr></thead>
             <tbody>
-              <tr><td>基本設計の全体の流れ</td><td><a href="basic-design.html">基本設計 手順書</a></td></tr>
-              <tr><td>詳細設計の全体の流れ</td><td><a href="detailed-design.html">詳細設計 手順書</a></td></tr>
-              <tr><td>ADRの書き方・管理方法</td><td><a href="adr.html">ADR サンプル集</a></td></tr>
-              <tr><td>ALTER文・Flyway の使い方</td><td><a href="basic-deliverables.html#data">基本設計 成果物ガイド（データ設計）</a></td></tr>
-              <tr><td>OpenAPI を Excel/PDF に変換</td><td><a href="basic-deliverables.html#api">基本設計 成果物ガイド（API設計）</a></td></tr>
-              <tr><td>権限マトリクスの書き方</td><td><a href="basic-deliverables.html#security">基本設計 成果物ガイド（セキュリティ）</a></td></tr>
-              <tr><td>Mermaid シーケンス図の書き方</td><td><a href="detailed-deliverables.html#external">詳細設計 成果物ガイド（外部IF）</a></td></tr>
-              <tr><td>共通ライブラリを作るタイミング</td><td><a href="common-libs.html">共通ライブラリ設計</a></td></tr>
-              <tr><td>コードレビューの観点チェックリスト</td><td><a href="implementation.html#review">実装手順（PR・レビュー）</a></td></tr>
-              <tr><td>テストの進め方（単体〜システム）</td><td><a href="testing.html">テスト実施手順</a></td></tr>
-              <tr><td>詳細設計技法の種類・具体例</td><td><a href="detailed-design-techniques.html">詳細設計技法まとめ</a></td></tr>
-              <tr><td>単体テスト設計技法の種類・具体例</td><td><a href="unit-test-techniques.html">単体テスト設計技法まとめ</a></td></tr>
-              <tr><td>リリース判定基準</td><td><a href="testing.html#release">テスト実施手順（完了判定）</a></td></tr>
-              <tr><td>AIへの相談テンプレート</td><td><a href="ai-consult.html">AI相談テンプレート</a></td></tr>
+              <tr><td>基本設計の全体の流れ</td><td><a href="basic/design.html">基本設計 手順書</a></td></tr>
+              <tr><td>詳細設計の全体の流れ</td><td><a href="detailed/design.html">詳細設計 手順書</a></td></tr>
+              <tr><td>ADRの書き方・管理方法</td><td><a href="reference/adr.html">ADR サンプル集</a></td></tr>
+              <tr><td>ALTER文・Flyway の使い方</td><td><a href="basic/deliverables.html#data">基本設計 成果物ガイド（データ設計）</a></td></tr>
+              <tr><td>OpenAPI を Excel/PDF に変換</td><td><a href="basic/deliverables.html#api">基本設計 成果物ガイド（API設計）</a></td></tr>
+              <tr><td>権限マトリクスの書き方</td><td><a href="basic/deliverables.html#security">基本設計 成果物ガイド（セキュリティ）</a></td></tr>
+              <tr><td>Mermaid シーケンス図の書き方</td><td><a href="detailed/deliverables.html#external">詳細設計 成果物ガイド（外部IF）</a></td></tr>
+              <tr><td>共通ライブラリを作るタイミング</td><td><a href="detailed/common-libs.html">共通ライブラリ設計</a></td></tr>
+              <tr><td>コードレビューの観点チェックリスト</td><td><a href="impl/implementation.html#review">実装手順（PR・レビュー）</a></td></tr>
+              <tr><td>テストの進め方（単体〜システム）</td><td><a href="impl/testing.html">テスト実施手順</a></td></tr>
+              <tr><td>詳細設計技法の種類・具体例</td><td><a href="detailed/techniques.html">詳細設計技法まとめ</a></td></tr>
+              <tr><td>単体テスト設計技法の種類・具体例</td><td><a href="impl/unit-test.html">単体テスト設計技法まとめ</a></td></tr>
+              <tr><td>リリース判定基準</td><td><a href="impl/testing.html#release">テスト実施手順（完了判定）</a></td></tr>
+              <tr><td>AIへの相談テンプレート</td><td><a href="reference/ai-consult.html">AI相談テンプレート</a></td></tr>
             </tbody>
           </table>
         </div>

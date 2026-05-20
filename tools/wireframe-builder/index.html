@@ -48,6 +48,7 @@ header button:hover { background: rgba(255,255,255,0.15); }
 <body>
 <header>
   <h1>画面ワイヤーフレームビルダー</h1>
+  <button onclick="loadSample()">📋 サンプル</button>
   <button onclick="clearCanvas()">クリア</button>
   <button onclick="exportPNG()">PNG保存</button>
   <button onclick="exportHTML()">HTMLコピー</button>
@@ -316,6 +317,70 @@ async function importJSON() {
     } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
   };
   reader.readAsText(file);
+}
+
+const WF_SAMPLES = {
+  'ログイン画面': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">ロゴ</span><span style="color:#fff;font-size:13px">〇〇業務システム</span>' },
+    { type: 'heading', x: 330, y: 80, text: 'ログイン' },
+    { type: 'label', x: 270, y: 145, text: 'メールアドレス' },
+    { type: 'input', x: 270, y: 168, text: 'example@company.com' },
+    { type: 'label', x: 270, y: 215, text: 'パスワード' },
+    { type: 'input', x: 270, y: 238, text: '●●●●●●●●' },
+    { type: 'checkbox', x: 270, y: 285, html: '<input type="checkbox" disabled> ログイン状態を保持する' },
+    { type: 'button', x: 270, y: 320, text: 'ログイン' },
+    { type: 'button-sec', x: 440, y: 320, text: 'キャンセル' },
+    { type: 'text', x: 290, y: 370, text: 'パスワードをお忘れの方はこちら' },
+    { type: 'divider', x: 270, y: 400 },
+    { type: 'text', x: 290, y: 415, text: 'アカウントをお持ちでない方は管理者にお問い合わせください' },
+  ],
+  'ユーザー一覧画面': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">〇〇システム</span><span style="color:#fff;font-size:13px">ダッシュボード</span><span style="color:#fff;font-size:13px">ユーザー管理</span><span style="color:#fff;font-size:13px">設定</span>' },
+    { type: 'heading', x: 20, y: 60, text: 'ユーザー一覧' },
+    { type: 'input', x: 20, y: 100, text: '名前・メールアドレスで検索' },
+    { type: 'select', x: 300, y: 100, text: '▼ ロールで絞り込み' },
+    { type: 'select', x: 460, y: 100, text: '▼ ステータス' },
+    { type: 'button', x: 620, y: 100, text: '検索' },
+    { type: 'button', x: 700, y: 100, text: '＋ 新規登録' },
+    { type: 'table', x: 20, y: 150, html: '<tr><th>ID</th><th>氏名</th><th>メールアドレス</th><th>ロール</th><th>ステータス</th><th>登録日</th><th>操作</th></tr><tr><td>001</td><td>山田 太郎</td><td>yamada@example.com</td><td>一般ユーザー</td><td>有効</td><td>2026-01-10</td><td>編集 / 削除</td></tr><tr><td>002</td><td>鈴木 花子</td><td>suzuki@example.com</td><td>承認者</td><td>有効</td><td>2026-02-05</td><td>編集 / 削除</td></tr><tr><td>003</td><td>佐藤 次郎</td><td>sato@example.com</td><td>管理者</td><td>無効</td><td>2026-03-15</td><td>編集 / 削除</td></tr>' },
+    { type: 'text', x: 20, y: 350, text: '全3件 / ページ 1/1' },
+  ],
+  '申請登録フォーム': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">〇〇システム</span><span style="color:#fff;font-size:13px">申請一覧</span><span style="color:#fff;font-size:13px">新規申請</span>' },
+    { type: 'heading', x: 20, y: 60, text: '経費申請 — 新規登録' },
+    { type: 'label', x: 20, y: 110, text: '申請種別 *' },
+    { type: 'select', x: 20, y: 132, text: '▼ 経費申請' },
+    { type: 'label', x: 20, y: 175, text: '件名 *' },
+    { type: 'input', x: 20, y: 197, text: '申請件名を入力してください' },
+    { type: 'label', x: 20, y: 240, text: '申請日 *' },
+    { type: 'input', x: 20, y: 262, text: '2026-05-20' },
+    { type: 'label', x: 20, y: 305, text: '金額（円）*' },
+    { type: 'input', x: 20, y: 327, text: '0' },
+    { type: 'label', x: 20, y: 370, text: '内容・理由' },
+    { type: 'textarea', x: 20, y: 392, text: '申請の内容・理由を入力してください' },
+    { type: 'label', x: 20, y: 475, text: '添付ファイル（領収書等）' },
+    { type: 'button-sec', x: 20, y: 497, text: '📎 ファイルを選択' },
+    { type: 'button', x: 20, y: 545, text: '申請を提出する' },
+    { type: 'button-sec', x: 160, y: 545, text: 'キャンセル' },
+  ],
+  'モーダル（確認ダイアログ）': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">〇〇システム</span>' },
+    { type: 'text', x: 50, y: 60, text: '（背景コンテンツ — ダイアログ表示中は操作不可）' },
+    { type: 'modal', x: 260, y: 130, html: '<div class="el-modal-title">申請を提出しますか？</div><div style="font-size:12px;color:#555;margin-bottom:16px">この操作は取り消せません。承認者にメールで通知が送信されます。</div><div style="display:flex;gap:8px;justify-content:flex-end"><div style="border:1px solid #999;padding:6px 16px;font-size:13px;background:#fff;color:#333;border-radius:3px;cursor:pointer">キャンセル</div><div style="border:1px solid #4a90e2;padding:6px 16px;font-size:13px;background:#4a90e2;color:#fff;border-radius:3px;cursor:pointer">提出する</div></div>' },
+  ],
+};
+
+function loadSample() {
+  const names = Object.keys(WF_SAMPLES);
+  const choice = prompt(
+    `サンプル画面を選択（番号を入力）:\n${names.map((n,i)=>`${i+1}: ${n}`).join('\n')}`, '1'
+  );
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= names.length) { alert('無効な選択です'); return; }
+  canvas.innerHTML = '';
+  restoreCanvas(WF_SAMPLES[names[idx]]);
+  autoSave();
 }
 
 // 要素追加・移動時に自動保存

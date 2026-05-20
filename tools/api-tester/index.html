@@ -45,6 +45,7 @@ pre { background: #1e1e1e; color: #d4d4d4; padding: 14px; border-radius: 6px; fo
 <body>
 <header style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
   <span style="font-size:16px;font-weight:bold">APIテスト送信フォーム</span>
+  <button onclick="loadSample()" style="padding:5px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:4px;cursor:pointer;font-size:13px">📋 サンプル</button>
   <button onclick="exportJSON()" style="padding:5px 12px;border:1px solid #a0c4ff;background:transparent;color:#fff;border-radius:4px;cursor:pointer;font-size:13px">💾 保存</button>
   <button onclick="importJSON()" style="padding:5px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:4px;cursor:pointer;font-size:13px">📂 読み込み</button>
 </header>
@@ -374,6 +375,78 @@ async function importJSON() {
     } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
   };
   reader.readAsText(file);
+}
+
+const API_SAMPLES = [
+  {
+    label: 'GET ユーザー一覧',
+    method: 'GET',
+    url: 'https://api.example.com/v1/users',
+    headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.sample', 'Accept': 'application/json' },
+    query: { 'page': '1', 'per_page': '20', 'sort': 'created_at', 'order': 'desc' },
+    bodyMode: 'none', bodyJson: '',
+  },
+  {
+    label: 'POST ユーザー登録',
+    method: 'POST',
+    url: 'https://api.example.com/v1/users',
+    headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.sample', 'Content-Type': 'application/json' },
+    query: {},
+    bodyMode: 'json',
+    bodyJson: JSON.stringify({ name: '山田 太郎', email: 'yamada@example.com', role: 'user', department: '営業部', phone: '090-1234-5678' }, null, 2),
+  },
+  {
+    label: 'PUT ユーザー更新',
+    method: 'PUT',
+    url: 'https://api.example.com/v1/users/123',
+    headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.sample', 'Content-Type': 'application/json' },
+    query: {},
+    bodyMode: 'json',
+    bodyJson: JSON.stringify({ name: '山田 太郎（更新）', role: 'admin', updated_by: 'admin_user' }, null, 2),
+  },
+  {
+    label: 'DELETE ユーザー削除',
+    method: 'DELETE',
+    url: 'https://api.example.com/v1/users/123',
+    headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.sample' },
+    query: {},
+    bodyMode: 'none', bodyJson: '',
+  },
+  {
+    label: 'POST ログイン',
+    method: 'POST',
+    url: 'https://api.example.com/v1/auth/login',
+    headers: { 'Content-Type': 'application/json' },
+    query: {},
+    bodyMode: 'json',
+    bodyJson: JSON.stringify({ email: 'yamada@example.com', password: 'P@ssw0rd123' }, null, 2),
+  },
+  {
+    label: 'GET 申請一覧（絞り込み）',
+    method: 'GET',
+    url: 'https://api.example.com/v1/applications',
+    headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.sample', 'Accept': 'application/json' },
+    query: { 'status': 'pending', 'from': '2026-01-01', 'to': '2026-12-31', 'page': '1', 'per_page': '50' },
+    bodyMode: 'none', bodyJson: '',
+  },
+];
+
+function loadSample() {
+  const choice = prompt(
+    `サンプルリクエストを選択（番号を入力）:\n${API_SAMPLES.map((s,i)=>`${i+1}: ${s.label}`).join('\n')}`, '1'
+  );
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= API_SAMPLES.length) { alert('無効な選択です'); return; }
+  const s = API_SAMPLES[idx];
+  document.getElementById('method').value = s.method;
+  document.getElementById('url').value = s.url;
+  document.getElementById('body-json-text').value = s.bodyJson;
+  switchBodyTab(s.bodyMode);
+  document.getElementById('headers-list').innerHTML = '';
+  Object.entries(s.headers).forEach(([k,v]) => { const row = makeKVRow('headers-list','ヘッダー名','値'); row.querySelectorAll('input')[0].value=k; row.querySelectorAll('input')[1].value=v; });
+  document.getElementById('query-list').innerHTML = '';
+  Object.entries(s.query).forEach(([k,v]) => { const row = makeKVRow('query-list','パラメータ名','値'); row.querySelectorAll('input')[0].value=k; row.querySelectorAll('input')[1].value=v; });
 }
 
 addHeader();

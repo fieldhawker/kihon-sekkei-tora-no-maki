@@ -320,14 +320,21 @@ function exportCSV() {
 
 function loadSample() {
   const sample = [
-    { _id:1, reqId:'REQ-001', name:'ユーザーログイン機能', desc:'メール・パスワードで認証', moscow:'must', cost:'2', impact:'3', owner:'フロントエンド' },
-    { _id:2, reqId:'REQ-002', name:'パスワードリセット', desc:'メール経由でリセットリンク送付', moscow:'must', cost:'2', impact:'3', owner:'バックエンド' },
-    { _id:3, reqId:'REQ-003', name:'ユーザー一覧表示', desc:'管理者が全ユーザーを確認', moscow:'must', cost:'1', impact:'2', owner:'フロントエンド' },
-    { _id:4, reqId:'REQ-004', name:'CSVエクスポート', desc:'ユーザーデータをCSVで出力', moscow:'should', cost:'2', impact:'2', owner:'' },
-    { _id:5, reqId:'REQ-005', name:'メール通知機能', desc:'申請承認時にメール送信', moscow:'should', cost:'3', impact:'2', owner:'バックエンド' },
-    { _id:6, reqId:'REQ-006', name:'ダッシュボードグラフ', desc:'統計をグラフで表示', moscow:'could', cost:'3', impact:'1', owner:'' },
-    { _id:7, reqId:'REQ-007', name:'モバイルアプリ版', desc:'iOS/Android対応', moscow:'wont', cost:'3', impact:'1', owner:'' },
-    { _id:8, reqId:'REQ-008', name:'二段階認証', desc:'SMS/アプリでの2FA', moscow:'should', cost:'3', impact:'3', owner:'バックエンド' },
+    { _id:1, reqId:'REQ-001', name:'ユーザーログイン（Azure AD SSO）', desc:'Azure AD SSOによる認証。パスワード管理はAD側に委任', moscow:'must', cost:'2', impact:'3', owner:'バックエンドチーム' },
+    { _id:2, reqId:'REQ-002', name:'申請作成・提出', desc:'各種申請フォームの入力・確認・提出機能', moscow:'must', cost:'2', impact:'3', owner:'フロントエンドチーム' },
+    { _id:3, reqId:'REQ-003', name:'申請承認・却下・差し戻し', desc:'承認者による承認フロー操作', moscow:'must', cost:'2', impact:'3', owner:'バックエンドチーム' },
+    { _id:4, reqId:'REQ-004', name:'申請一覧・検索・絞り込み', desc:'ステータス・期間・種別での絞り込み検索', moscow:'must', cost:'2', impact:'3', owner:'フロントエンドチーム' },
+    { _id:5, reqId:'REQ-005', name:'メール通知（申請提出・承認・却下）', desc:'申請イベント発生時のメール自動送信', moscow:'must', cost:'2', impact:'3', owner:'バックエンドチーム' },
+    { _id:6, reqId:'REQ-006', name:'ファイルアップロード・ダウンロード', desc:'領収書等の添付ファイル管理（S3保存）', moscow:'must', cost:'2', impact:'2', owner:'バックエンドチーム' },
+    { _id:7, reqId:'REQ-007', name:'ユーザー管理（管理者機能）', desc:'ユーザーCRUD・ロール設定・有効/無効切替', moscow:'must', cost:'1', impact:'2', owner:'フロントエンドチーム' },
+    { _id:8, reqId:'REQ-008', name:'CSVエクスポート', desc:'申請データ・ユーザーデータのCSV出力（経理連携）', moscow:'must', cost:'1', impact:'2', owner:'フロントエンドチーム' },
+    { _id:9, reqId:'REQ-009', name:'Salesforce社員マスタ連携', desc:'Salesforce APIからの社員情報日次同期', moscow:'must', cost:'2', impact:'2', owner:'バックエンドチーム' },
+    { _id:10, reqId:'REQ-010', name:'マスタ管理画面（申請種別・承認フロー）', desc:'管理者が画面からマスタを設定できる機能', moscow:'should', cost:'2', impact:'2', owner:'フロントエンドチーム' },
+    { _id:11, reqId:'REQ-011', name:'二段階認証（Azure AD MFA）', desc:'Azure AD MFAによる追加認証。AD側設定で対応可能', moscow:'should', cost:'1', impact:'3', owner:'インフラチーム' },
+    { _id:12, reqId:'REQ-012', name:'ダッシュボード（集計グラフ）', desc:'申請件数・承認率・処理時間の可視化', moscow:'could', cost:'3', impact:'2', owner:'' },
+    { _id:13, reqId:'REQ-013', name:'操作ログ・監査ログ閲覧', desc:'管理者によるユーザー操作履歴の確認', moscow:'should', cost:'2', impact:'2', owner:'バックエンドチーム' },
+    { _id:14, reqId:'REQ-014', name:'モバイルアプリ版（iOS/Android）', desc:'ネイティブアプリ開発。Webレスポンシブ対応は必須', moscow:'wont', cost:'3', impact:'2', owner:'' },
+    { _id:15, reqId:'REQ-015', name:'AIによる申請自動分類・異常検知', desc:'機械学習による申請内容の自動仕分けと不正申請検知', moscow:'wont', cost:'3', impact:'1', owner:'' },
   ];
   save(sample);
   render();

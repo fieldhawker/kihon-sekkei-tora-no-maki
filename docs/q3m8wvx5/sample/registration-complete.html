@@ -1,0 +1,821 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登録完了画面 — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../sidebar.js" defer></script>
+  <style>
+    /* ========== 共通レイアウト ========== */
+    .demo-wrap {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+    }
+    .demo-label {
+      background: var(--bg-nav);
+      border-bottom: 1px solid var(--border);
+      padding: .45rem 1rem;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .demo-label .badge { font-size: .7rem; }
+    .demo-body { padding: 2rem; background: var(--bg); }
+
+    /* ========== パターン共通 ========== */
+    .complete-icon {
+      width: 64px; height: 64px;
+      background: #dcfce7;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1rem;
+    }
+    .complete-title {
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--text); text-align: center; margin-bottom: .4rem;
+    }
+    .complete-subtitle {
+      font-size: .88rem; color: var(--text-muted);
+      text-align: center; margin-bottom: 1.5rem;
+    }
+
+    /* ========== パターン1: 閉じるだけ ========== */
+    .p1-box {
+      max-width: 400px; margin: 0 auto;
+      text-align: center;
+    }
+    .p1-note {
+      font-size: .82rem; color: var(--text-muted);
+      margin-bottom: 1.5rem; line-height: 1.7;
+    }
+    .btn-close-only {
+      padding: .65rem 2.5rem; border-radius: 8px; border: none;
+      background: var(--primary); color: #fff; font-size: .95rem;
+      font-family: inherit; font-weight: 600; cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-close-only:hover { background: #1e40af; }
+
+    /* ========== パターン2: 登録内容確認＋次のアクション ========== */
+    .p2-box { max-width: 600px; margin: 0 auto; }
+    .confirm-card {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .confirm-card-header {
+      background: var(--bg-nav);
+      padding: .6rem 1.1rem;
+      font-size: .82rem; font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .confirm-table { width: 100%; border-collapse: collapse; }
+    .confirm-table tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+    .confirm-table td {
+      padding: .7rem 1.1rem; font-size: .88rem; line-height: 1.6;
+    }
+    .confirm-table td:first-child {
+      width: 9rem;
+      font-weight: 600; color: var(--text-muted);
+      background: var(--bg-nav);
+      white-space: nowrap;
+    }
+    .confirm-table td:last-child { color: var(--text); }
+    .action-row {
+      display: flex; gap: .75rem; flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .btn-primary {
+      padding: .6rem 1.5rem; border-radius: 8px; border: none;
+      background: var(--primary); color: #fff; font-size: .9rem;
+      font-family: inherit; font-weight: 600; cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-primary:hover { background: #1e40af; }
+    .btn-secondary {
+      padding: .6rem 1.5rem; border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--bg-card); color: var(--text); font-size: .9rem;
+      font-family: inherit; font-weight: 600; cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .btn-secondary:hover { background: var(--bg-nav); border-color: var(--primary); }
+    .btn-danger-outline {
+      padding: .6rem 1.5rem; border-radius: 8px;
+      border: 1.5px solid var(--danger);
+      background: transparent; color: var(--danger); font-size: .9rem;
+      font-family: inherit; font-weight: 600; cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-danger-outline:hover { background: #fff5f5; }
+
+    /* ========== パターン3: インライン編集 ========== */
+    .p3-box { max-width: 600px; margin: 0 auto; }
+    .editable-row {
+      display: grid;
+      grid-template-columns: 9rem 1fr auto;
+      align-items: start;
+      gap: .5rem;
+      padding: .7rem 1.1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .editable-row:last-of-type { border-bottom: none; }
+    .editable-label {
+      font-size: .85rem; font-weight: 600;
+      color: var(--text-muted); padding-top: .35rem;
+    }
+    .editable-value { font-size: .88rem; color: var(--text); line-height: 1.6; }
+    .editable-input {
+      width: 100%; padding: .4rem .7rem; border-radius: 6px;
+      border: 1.5px solid var(--primary);
+      background: var(--bg-card); color: var(--text);
+      font-size: .88rem; font-family: inherit; outline: none;
+      box-shadow: 0 0 0 3px rgba(26,86,219,.12);
+    }
+    .btn-edit-inline {
+      padding: .3rem .75rem; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg-nav);
+      color: var(--text-muted); font-size: .78rem;
+      font-family: inherit; cursor: pointer; white-space: nowrap;
+      transition: background .15s, border-color .15s;
+    }
+    .btn-edit-inline:hover { background: var(--bg-card); border-color: var(--primary); color: var(--primary); }
+    .btn-save-inline {
+      padding: .3rem .75rem; border-radius: 6px;
+      border: none; background: var(--primary);
+      color: #fff; font-size: .78rem;
+      font-family: inherit; cursor: pointer; white-space: nowrap;
+    }
+    .btn-cancel-inline {
+      padding: .3rem .6rem; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg-nav);
+      color: var(--text-muted); font-size: .78rem;
+      font-family: inherit; cursor: pointer; white-space: nowrap;
+    }
+    .inline-actions { display: flex; gap: .3rem; }
+
+    /* ========== パターン4: タブ切り替え（確認＋編集） ========== */
+    .p4-box { max-width: 600px; margin: 0 auto; }
+    .tab-bar {
+      display: flex; border-bottom: 2px solid var(--border);
+      margin-bottom: 0;
+    }
+    .tab-btn {
+      padding: .6rem 1.4rem; border: none; background: none;
+      font-family: inherit; font-size: .88rem; font-weight: 600;
+      color: var(--text-muted); cursor: pointer;
+      border-bottom: 3px solid transparent; margin-bottom: -2px;
+      transition: color .15s, border-color .15s;
+    }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-panel { display: none; padding: 1.25rem; }
+    .tab-panel.active { display: block; }
+    .p4-card {
+      border: 1.5px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .p4-form-group { margin-bottom: 1.2rem; }
+    .p4-label {
+      display: block; font-size: .85rem; font-weight: 600;
+      color: var(--text); margin-bottom: .3rem;
+    }
+    .p4-input {
+      width: 100%; padding: .5rem .8rem; border-radius: 6px;
+      border: 1.5px solid var(--border); background: var(--bg-card);
+      color: var(--text); font-size: .88rem; font-family: inherit;
+      box-sizing: border-box; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .p4-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,219,.12); }
+
+    /* ========== 比較表 ========== */
+    .comparison-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .comparison-table th, .comparison-table td {
+      padding: .65rem .9rem; border: 1px solid var(--border); vertical-align: top;
+    }
+    .comparison-table th { background: var(--bg-nav); font-weight: 700; }
+    .comparison-table tr:nth-child(even) td { background: var(--bg-nav); }
+    .score { font-weight: 700; }
+    .score-good { color: var(--secondary); }
+    .score-mid  { color: var(--warning); }
+    .score-bad  { color: var(--danger); }
+
+    /* ========== コードブロック ========== */
+    .code-note {
+      background: var(--bg-nav);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      font-size: .8rem; line-height: 1.8;
+      color: var(--text-muted);
+      margin-top: .75rem;
+    }
+    .code-note code {
+      background: rgba(0,0,0,.06);
+      border-radius: 3px; padding: .1em .35em;
+      font-size: .82em; font-family: monospace;
+    }
+
+    /* ========== トースト ========== */
+    .toast-area {
+      position: fixed; top: 1.2rem; right: 1.2rem; z-index: 9999;
+      display: flex; flex-direction: column; gap: .5rem;
+      pointer-events: none;
+    }
+    .toast {
+      padding: .75rem 1.2rem; border-radius: 8px;
+      font-size: .88rem; font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,.15);
+      animation: toast-in .25s ease;
+      pointer-events: auto;
+    }
+    .toast-success { background: #dcfce7; color: #15803d; border-left: 4px solid #15803d; }
+    .toast-info    { background: #dbeafe; color: #1e40af; border-left: 4px solid #1e40af; }
+    @keyframes toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+  </style>
+</head>
+<body>
+<div id="toast-area" class="toast-area"></div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-libs">
+      <div class="subtitle">Sample Screen — Registration Complete</div>
+      <h1>🎉 登録完了画面</h1>
+      <p class="description">
+        登録したデータをその場で確認・修正できる「完了画面」の設計パターン。
+        単純な「閉じるだけ」から、インライン編集・タブ切り替えまで4パターンを比較します。
+      </p>
+    </div>
+
+    <div class="content">
+
+      <!-- ====================================================
+           設計方針の概要
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">0</span>なぜ完了画面の設計が重要か</h2>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <div class="callout-title">登録完了画面の役割</div>
+          <p style="margin: .4rem 0 0; line-height: 1.8; font-size: .9rem;">
+            ユーザーが「登録に成功した」と確信できる<b>フィードバック</b>と、
+            登録内容に誤りがあった場合に<b>すぐ修正できる導線</b>の両方を提供するのが目的です。
+            単に「完了しました」と表示するだけでは、
+            入力ミスに気付いたユーザーが戻るボタンを何度も押してやり直す手間が発生します。
+          </p>
+        </div>
+      </div>
+
+      <!-- ====================================================
+           パターン比較表
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">1</span>パターン比較</h2>
+
+      <div class="table-wrap">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>パターン</th>
+              <th>確認のしやすさ</th>
+              <th>修正のしやすさ</th>
+              <th>実装コスト</th>
+              <th>向いている場面</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>① 閉じるだけ</b></td>
+              <td><span class="score score-bad">×</span> 表示なし</td>
+              <td><span class="score score-bad">×</span> 戻って再入力</td>
+              <td><span class="score score-good">低</span></td>
+              <td>入力項目が少ない・修正不可（確定操作）など</td>
+            </tr>
+            <tr>
+              <td><b>② 確認カード＋次アクション</b></td>
+              <td><span class="score score-good">○</span> 一覧表示</td>
+              <td><span class="score score-mid">△</span> 別画面遷移</td>
+              <td><span class="score score-mid">中</span></td>
+              <td>一般的な登録フロー。最もよく使われるパターン</td>
+            </tr>
+            <tr>
+              <td><b>③ インライン編集</b></td>
+              <td><span class="score score-good">○</span> 一覧表示</td>
+              <td><span class="score score-good">◎</span> その場で修正</td>
+              <td><span class="score score-mid">中〜高</span></td>
+              <td>入力項目が少なく、軽微な修正を想定している場合</td>
+            </tr>
+            <tr>
+              <td><b>④ タブ切り替え</b></td>
+              <td><span class="score score-good">◎</span> 一覧表示</td>
+              <td><span class="score score-good">◎</span> タブで編集フォームへ</td>
+              <td><span class="score score-good">中</span></td>
+              <td>入力項目が多い・複雑なフォームの完了画面</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ====================================================
+           パターン1: 閉じるだけ
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">2</span>パターン① — 閉じるだけ（最シンプル）</h2>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <b>このパターンが適切な場面は限られる</b><br>
+          「入力項目が1〜2個」「確定後は変更不可のビジネスルール」など、明確な理由がある場合のみ採用を検討してください。
+          一般的な登録フローでは後述のパターン②以上を選ぶべきです。
+        </div>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">
+          <span>DEMO</span>
+          <span class="badge badge-danger">非推奨パターン（限定ケースのみ）</span>
+        </div>
+        <div class="demo-body">
+          <div class="p1-box">
+            <div class="complete-icon">✅</div>
+            <div class="complete-title">登録が完了しました</div>
+            <p class="p1-note">
+              メールアドレス宛に確認メールをお送りしました。<br>
+              この画面は閉じていただいて構いません。
+            </p>
+            <button class="btn-close-only" onclick="showToast('画面を閉じました（デモ）', 'info')">
+              閉じる
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-note">
+        <b>設計上の問題点：</b><br>
+        ・ユーザーは何を登録したか確認できない<br>
+        ・誤入力に気付いても「戻る」→「最初から入力し直し」になる<br>
+        ・<code>window.close()</code> はブラウザのセキュリティポリシーで動作しないことが多い
+      </div>
+
+      <!-- ====================================================
+           パターン2: 確認カード＋次アクション
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">3</span>パターン② — 登録内容確認＋次アクション（標準推奨）</h2>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <b>最も汎用的なパターン。迷ったらこれを選ぶ。</b><br>
+          登録内容を読み取り専用で表示し、誤りがあれば「編集する」ボタンで編集画面へ遷移します。
+          「次のアクション」ボタンでユーザーを次の作業へ自然に誘導できます。
+        </div>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">
+          <span>DEMO</span>
+          <span class="badge badge-success">推奨パターン</span>
+        </div>
+        <div class="demo-body">
+          <div class="p2-box">
+            <div class="complete-icon">🎉</div>
+            <div class="complete-title">ユーザー登録が完了しました</div>
+            <div class="complete-subtitle">以下の内容で登録されました。内容をご確認ください。</div>
+
+            <div class="confirm-card">
+              <div class="confirm-card-header">登録内容</div>
+              <table class="confirm-table">
+                <tr>
+                  <td>氏名</td>
+                  <td>田中 太郎</td>
+                </tr>
+                <tr>
+                  <td>メールアドレス</td>
+                  <td>tanaka@example.com</td>
+                </tr>
+                <tr>
+                  <td>電話番号</td>
+                  <td>090-1234-5678</td>
+                </tr>
+                <tr>
+                  <td>所属部署</td>
+                  <td>営業部 第一グループ</td>
+                </tr>
+                <tr>
+                  <td>権限ロール</td>
+                  <td>一般ユーザー</td>
+                </tr>
+                <tr>
+                  <td>登録日時</td>
+                  <td>2026年5月20日 14:32</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="action-row">
+              <button class="btn-danger-outline" onclick="showToast('削除はデモのため無効です', 'info')">
+                削除する
+              </button>
+              <button class="btn-secondary" onclick="showToast('編集画面へ遷移（デモ）', 'info')">
+                編集する
+              </button>
+              <button class="btn-primary" onclick="showToast('一覧画面へ遷移（デモ）', 'success')">
+                ユーザー一覧へ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-note">
+        <b>設計のポイント：</b><br>
+        ・登録内容はすべて<b>読み取り専用</b>で表示。誤操作での上書きを防ぐ<br>
+        ・「編集する」は<b>別の編集画面</b>へ遷移する（完了画面で直接編集させない）<br>
+        ・「削除する」ボタンは確認ダイアログを必ず挟む（<code>window.confirm()</code> ではなくカスタムモーダルを推奨）<br>
+        ・主アクション（一覧へ）は右端・強調色。副アクションは左へ配置し視線誘導を設計する
+      </div>
+
+      <!-- ====================================================
+           パターン3: インライン編集
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">4</span>パターン③ — インライン編集（その場で修正）</h2>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <b>入力項目が少なく「軽微な修正」を想定する場合に有効。</b><br>
+          各行の「編集」ボタンで対象フィールドだけをインプットに切り替え、「保存」で確定します。
+          画面遷移なしに修正できるため、ユーザーのコンテキスト維持に優れています。
+        </div>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">
+          <span>DEMO</span>
+          <span class="badge badge-primary">インライン編集パターン</span>
+        </div>
+        <div class="demo-body">
+          <div class="p3-box">
+            <div class="complete-icon">✅</div>
+            <div class="complete-title">登録が完了しました</div>
+            <div class="complete-subtitle">内容を確認し、誤りがあれば行右の「編集」から修正できます。</div>
+
+            <div class="confirm-card">
+              <div class="confirm-card-header">登録内容（クリックして編集可）</div>
+
+              <!-- 行: 氏名 -->
+              <div class="editable-row" id="row-name">
+                <div class="editable-label">氏名</div>
+                <div class="editable-value" id="val-name">田中 太郎</div>
+                <div class="inline-actions">
+                  <button class="btn-edit-inline" onclick="startEdit('name', '田中 太郎')">編集</button>
+                </div>
+              </div>
+
+              <!-- 行: メール -->
+              <div class="editable-row" id="row-email">
+                <div class="editable-label">メールアドレス</div>
+                <div class="editable-value" id="val-email">tanaka@example.com</div>
+                <div class="inline-actions">
+                  <button class="btn-edit-inline" onclick="startEdit('email', 'tanaka@example.com')">編集</button>
+                </div>
+              </div>
+
+              <!-- 行: 電話 -->
+              <div class="editable-row" id="row-phone">
+                <div class="editable-label">電話番号</div>
+                <div class="editable-value" id="val-phone">090-1234-5678</div>
+                <div class="inline-actions">
+                  <button class="btn-edit-inline" onclick="startEdit('phone', '090-1234-5678')">編集</button>
+                </div>
+              </div>
+
+              <!-- 行: 部署 -->
+              <div class="editable-row" id="row-dept">
+                <div class="editable-label">所属部署</div>
+                <div class="editable-value" id="val-dept">営業部 第一グループ</div>
+                <div class="inline-actions">
+                  <button class="btn-edit-inline" onclick="startEdit('dept', '営業部 第一グループ')">編集</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-row" style="margin-top: 1rem;">
+              <button class="btn-secondary" onclick="showToast('一覧画面へ遷移（デモ）', 'info')">
+                一覧へ戻る
+              </button>
+              <button class="btn-primary" onclick="showToast('変更を保存しました', 'success')">
+                変更を保存して続ける
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-note">
+        <b>設計のポイント：</b><br>
+        ・編集中の行以外は読み取り専用を維持する（同時に複数行を編集させない）<br>
+        ・「保存」押下時はAPIを呼び出して即時更新し、成功後に表示値を差し替える<br>
+        ・バリデーションエラーはインプット直下にインラインで表示する<br>
+        ・項目数が6項目を超えると行が多すぎてUXが低下する。その場合はパターン④を選ぶ
+      </div>
+
+      <!-- ====================================================
+           パターン4: タブ切り替え
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">5</span>パターン④ — タブ切り替え（確認 / 編集）</h2>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <b>入力項目が多く、フォーム全体を再表示したい場合に有効。</b><br>
+          「確認」タブで登録内容をサマリー表示、「編集」タブで元のフォームを再表示します。
+          完了後に「フォームを再表示したい」というニーズを1画面でカバーできます。
+        </div>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="demo-label">
+          <span>DEMO</span>
+          <span class="badge badge-warning">タブ切り替えパターン</span>
+        </div>
+        <div class="demo-body">
+          <div class="p4-box">
+            <div class="complete-icon">🎉</div>
+            <div class="complete-title">登録が完了しました</div>
+            <div class="complete-subtitle">「確認」タブで登録内容を確認。誤りがあれば「編集」タブへ。</div>
+
+            <div class="p4-card">
+              <div class="tab-bar">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-confirm')">📋 確認</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-edit')">✏️ 編集</button>
+              </div>
+
+              <!-- 確認タブ -->
+              <div id="tab-confirm" class="tab-panel active">
+                <table class="confirm-table">
+                  <tr>
+                    <td style="width:9rem;">氏名</td>
+                    <td id="p4-val-name">田中 太郎</td>
+                  </tr>
+                  <tr>
+                    <td>メールアドレス</td>
+                    <td id="p4-val-email">tanaka@example.com</td>
+                  </tr>
+                  <tr>
+                    <td>電話番号</td>
+                    <td id="p4-val-phone">090-1234-5678</td>
+                  </tr>
+                  <tr>
+                    <td>所属部署</td>
+                    <td id="p4-val-dept">営業部 第一グループ</td>
+                  </tr>
+                  <tr>
+                    <td>権限ロール</td>
+                    <td>一般ユーザー</td>
+                  </tr>
+                </table>
+                <div style="padding: 1rem; display: flex; gap: .75rem; justify-content: flex-end;">
+                  <button class="btn-secondary" onclick="showToast('一覧画面へ遷移（デモ）', 'info')">一覧へ戻る</button>
+                  <button class="btn-primary" onclick="showToast('次の作業へ（デモ）', 'success')">次の作業へ</button>
+                </div>
+              </div>
+
+              <!-- 編集タブ -->
+              <div id="tab-edit" class="tab-panel">
+                <div class="p4-form-group">
+                  <label class="p4-label" for="p4-name">氏名</label>
+                  <input class="p4-input" id="p4-name" type="text" value="田中 太郎">
+                </div>
+                <div class="p4-form-group">
+                  <label class="p4-label" for="p4-email">メールアドレス</label>
+                  <input class="p4-input" id="p4-email" type="email" value="tanaka@example.com">
+                </div>
+                <div class="p4-form-group">
+                  <label class="p4-label" for="p4-phone">電話番号</label>
+                  <input class="p4-input" id="p4-phone" type="tel" value="090-1234-5678">
+                </div>
+                <div class="p4-form-group">
+                  <label class="p4-label" for="p4-dept">所属部署</label>
+                  <input class="p4-input" id="p4-dept" type="text" value="営業部 第一グループ">
+                </div>
+                <div style="display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1rem;">
+                  <button class="btn-secondary" onclick="switchTabByName('tab-confirm')">キャンセル</button>
+                  <button class="btn-primary" onclick="saveP4Edit()">変更を保存</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-note">
+        <b>設計のポイント：</b><br>
+        ・「確認タブ」はデフォルトで表示。ユーザーはまず完了メッセージと登録内容を確認できる<br>
+        ・「編集タブ」には<b>登録時と同じバリデーション</b>を必ず適用する<br>
+        ・「変更を保存」後は確認タブに自動的に戻し、更新後の内容を再表示する<br>
+        ・サーバー側の更新APIはPUT/PATCHで設計し、完了画面から呼び出す
+      </div>
+
+      <!-- ====================================================
+           設計判断フロー
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">6</span>パターン選択フロー</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>質問</th>
+              <th>Yes → 採用パターン</th>
+              <th>No → 次の質問へ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>登録後の変更がビジネスルール上不可能か？（例: 注文確定・申請）</td>
+              <td>① 閉じるだけ（変更ボタン不要）</td>
+              <td>↓</td>
+            </tr>
+            <tr>
+              <td>入力項目が5項目以下かつ、修正頻度が高いと想定されるか？</td>
+              <td>③ インライン編集</td>
+              <td>↓</td>
+            </tr>
+            <tr>
+              <td>入力項目が多い（6項目以上）か、フォーム全体を再表示したいか？</td>
+              <td>④ タブ切り替え</td>
+              <td>② 確認カード＋次アクション（デフォルト）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ====================================================
+           共通の注意点
+      ===================================================== -->
+      <h2 class="section-title"><span class="title-icon">7</span>共通設計の注意点</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>推奨する実装</th>
+              <th>避けるべき実装</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>成功フィードバック</b></td>
+              <td>完了アイコン＋タイトル＋登録内容表示</td>
+              <td>トーストだけで画面遷移（内容確認できない）</td>
+            </tr>
+            <tr>
+              <td><b>削除ボタン</b></td>
+              <td>確認モーダルを挟む。危険色（赤系）で配置</td>
+              <td>確認なしに即削除。主アクションボタンと並べる</td>
+            </tr>
+            <tr>
+              <td><b>ページ離脱防止</b></td>
+              <td>編集中は <code>beforeunload</code> イベントで警告</td>
+              <td>未保存の変更をそのまま失わせる</td>
+            </tr>
+            <tr>
+              <td><b>URLとステート</b></td>
+              <td><code>/users/123/complete</code> など IDを含む URL</td>
+              <td>完了画面をリロード不可にする（状態のみ管理）</td>
+            </tr>
+            <tr>
+              <td><b>二重登録防止</b></td>
+              <td>完了画面到達後はフォーム送信ボタンを無効化</td>
+              <td>ブラウザの「戻る」で再送信できる状態を放置</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- .content -->
+  </main>
+</div>
+
+<script>
+  /* ========== サイドバー読み込み ========== */
+
+  /* ========== トースト表示 ========== */
+  function showToast(message, type = 'success') {
+    const area = document.getElementById('toast-area');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    area.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  /* ========== パターン③: インライン編集 ========== */
+  let currentEditing = null;
+
+  function startEdit(field, currentValue) {
+    if (currentEditing) cancelEdit(currentEditing);
+    currentEditing = field;
+
+    const row = document.getElementById(`row-${field}`);
+    const valEl = document.getElementById(`val-${field}`);
+    const actEl = row.querySelector('.inline-actions');
+
+    const input = document.createElement('input');
+    input.className = 'editable-input';
+    input.value = currentValue;
+    input.id = `input-${field}`;
+
+    valEl.replaceWith(input);
+    input.focus();
+
+    actEl.innerHTML = `
+      <button class="btn-save-inline" onclick="saveEdit('${field}')">保存</button>
+      <button class="btn-cancel-inline" onclick="cancelEdit('${field}', '${currentValue}')">戻す</button>
+    `;
+  }
+
+  function saveEdit(field) {
+    const input = document.getElementById(`input-${field}`);
+    const newValue = input.value.trim() || input.value;
+    finishEdit(field, newValue);
+    showToast(`${fieldLabel(field)}を更新しました`, 'success');
+    currentEditing = null;
+  }
+
+  function cancelEdit(field, originalValue) {
+    if (!originalValue) {
+      const input = document.getElementById(`input-${field}`);
+      originalValue = input ? input.value : '';
+    }
+    finishEdit(field, originalValue);
+    currentEditing = null;
+  }
+
+  function finishEdit(field, value) {
+    const row = document.getElementById(`row-${field}`);
+    const input = document.getElementById(`input-${field}`);
+    const actEl = row.querySelector('.inline-actions');
+
+    const valEl = document.createElement('div');
+    valEl.className = 'editable-value';
+    valEl.id = `val-${field}`;
+    valEl.textContent = value;
+
+    input.replaceWith(valEl);
+    actEl.innerHTML = `<button class="btn-edit-inline" onclick="startEdit('${field}', '${value.replace(/'/g, "\\'")}')">編集</button>`;
+  }
+
+  function fieldLabel(field) {
+    const labels = { name: '氏名', email: 'メールアドレス', phone: '電話番号', dept: '所属部署' };
+    return labels[field] || field;
+  }
+
+  /* ========== パターン④: タブ切り替え ========== */
+  function switchTab(event, targetId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById(targetId).classList.add('active');
+  }
+
+  function switchTabByName(targetId) {
+    const idx = targetId === 'tab-confirm' ? 0 : 1;
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(targetId).classList.add('active');
+  }
+
+  function saveP4Edit() {
+    const fields = [
+      { id: 'p4-name',  valId: 'p4-val-name' },
+      { id: 'p4-email', valId: 'p4-val-email' },
+      { id: 'p4-phone', valId: 'p4-val-phone' },
+      { id: 'p4-dept',  valId: 'p4-val-dept' },
+    ];
+    fields.forEach(({ id, valId }) => {
+      const input = document.getElementById(id);
+      const valEl = document.getElementById(valId);
+      if (input && valEl) valEl.textContent = input.value;
+    });
+    showToast('変更を保存しました', 'success');
+    switchTabByName('tab-confirm');
+  }
+</script>
+</body>
+</html>

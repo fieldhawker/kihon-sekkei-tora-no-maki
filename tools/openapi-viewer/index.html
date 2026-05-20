@@ -236,73 +236,171 @@ function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 function loadSample() {
   document.getElementById('yaml-input').value = `openapi: "3.0.3"
 info:
-  title: サンプルAPI
+  title: 社内申請管理システム API
   version: "1.0.0"
-  description: 基本設計虎の巻 サンプルREST API
+  description: |
+    社内申請管理システムのREST API仕様書。
+    認証はAzure AD SSOによるOIDC + JWTトークン方式。
+    Authorization: Bearer {token} ヘッダーが必要（ログインAPI除く）。
 servers:
-  - url: https://api.example.com/v1
+  - url: https://api.approval-system.example.com/api/v1
+    description: 本番環境
+  - url: https://api-stg.approval-system.example.com/api/v1
+    description: ステージング環境
 paths:
-  /users:
-    get:
-      tags: [users]
-      summary: ユーザー一覧取得
-      parameters:
-        - name: page
-          in: query
-          schema: { type: integer }
-          description: ページ番号
-        - name: limit
-          in: query
-          schema: { type: integer }
-          description: 取得件数
+  /auth/login:
+    post:
+      tags: [認証]
+      summary: ログイン（Azure AD SSOコールバック）
+      description: Azure AD OIDCの認証コードをJWTトークンに交換する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, redirect_uri]
+              properties:
+                code: { type: string, description: Azure ADから受け取った認証コード }
+                redirect_uri: { type: string, description: リダイレクトURI }
       responses:
         "200":
-          description: 成功
+          description: ログイン成功
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  data: { type: array }
+                  access_token: { type: string }
+                  refresh_token: { type: string }
+                  expires_in: { type: integer, description: アクセストークン有効期間（秒） }
+                  user: { type: object, properties: { id: { type: integer }, name: { type: string }, role: { type: string } } }
+        "401":
+          description: 認証失敗（コード無効・期限切れ）
+  /applications:
+    get:
+      tags: [申請管理]
+      summary: 申請一覧取得
+      description: 権限に応じた申請一覧を返す。一般ユーザーは自分の申請のみ。承認者・管理者は全申請。
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [draft, pending, approved, rejected, returned, cancelled] }
+          description: ステータス絞り込み
+        - name: application_type_id
+          in: query
+          schema: { type: integer }
+          description: 申請種別ID
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+          description: 申請日（開始）YYYY-MM-DD
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+          description: 申請日（終了）YYYY-MM-DD
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 20, maximum: 100 }
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array, items: { type: object } }
                   total: { type: integer }
+                  page: { type: integer }
+                  per_page: { type: integer }
         "401":
           description: 認証エラー
     post:
-      tags: [users]
-      summary: ユーザー作成
+      tags: [申請管理]
+      summary: 申請作成（下書き保存）
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [application_type_id, title, applied_at]
               properties:
-                email: { type: string }
-                name: { type: string }
-                password: { type: string }
+                application_type_id: { type: integer }
+                title: { type: string, maxLength: 200 }
+                content: { type: string }
+                amount: { type: integer, minimum: 0 }
+                applied_at: { type: string, format: date }
       responses:
         "201":
-          description: 作成成功
+          description: 作成成功（ステータス: draft）
         "400":
           description: バリデーションエラー
-  /users/{id}:
+        "401":
+          description: 認証エラー
+  /applications/{id}:
     get:
-      tags: [users]
-      summary: ユーザー詳細取得
+      tags: [申請管理]
+      summary: 申請詳細取得
       parameters:
         - name: id
           in: path
           required: true
           schema: { type: integer }
-          description: ユーザーID
+          description: 申請ID
       responses:
         "200":
-          description: 成功
+          description: 取得成功
+        "403":
+          description: アクセス権限なし
         "404":
-          description: 未存在
-    put:
-      tags: [users]
-      summary: ユーザー更新
+          description: 申請が見つからない
+  /applications/{id}/submit:
+    post:
+      tags: [申請管理]
+      summary: 申請提出
+      description: 下書き状態の申請を提出する。ステータスがpendingに変更され、承認者にメール通知が送信される。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: 提出成功（ステータス: pending）
+        "422":
+          description: 提出不可（ステータス不正・承認フロー未設定等）
+  /applications/{id}/approve:
+    post:
+      tags: [承認フロー]
+      summary: 申請承認
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment: { type: string, description: 承認コメント（任意） }
+      responses:
+        "200":
+          description: 承認成功
+        "403":
+          description: 承認権限なし
+        "422":
+          description: 承認不可（ステータス不正）
+  /applications/{id}/reject:
+    post:
+      tags: [承認フロー]
+      summary: 申請却下
       parameters:
         - name: id
           in: path
@@ -314,22 +412,127 @@ paths:
           application/json:
             schema:
               type: object
+              required: [comment]
               properties:
-                name: { type: string }
+                comment: { type: string, description: 却下理由（必須・50文字以上推奨） }
       responses:
         "200":
-          description: 更新成功
-    delete:
-      tags: [users]
-      summary: ユーザー削除
+          description: 却下成功（ステータス: rejected）
+        "403":
+          description: 却下権限なし
+  /applications/{id}/return:
+    post:
+      tags: [承認フロー]
+      summary: 申請差し戻し
       parameters:
         - name: id
           in: path
           required: true
           schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [comment]
+              properties:
+                comment: { type: string, description: 差し戻し理由（必須） }
       responses:
-        "204":
-          description: 削除成功
+        "200":
+          description: 差し戻し成功（ステータス: returned）
+  /applications/{id}/attachments:
+    post:
+      tags: [ファイル管理]
+      summary: ファイルアップロード
+      description: 申請に添付ファイルをアップロード。上限10MB・最大5ファイル/申請。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        "201":
+          description: アップロード成功
+        "400":
+          description: ファイルサイズ超過・形式不正
+        "422":
+          description: ファイル数上限超過
+  /users:
+    get:
+      tags: [ユーザー管理]
+      summary: ユーザー一覧取得（管理者のみ）
+      parameters:
+        - name: keyword
+          in: query
+          schema: { type: string }
+          description: 氏名・メールアドレスで検索
+        - name: role
+          in: query
+          schema: { type: string, enum: [user, approver, accounting, admin, sysadmin] }
+        - name: is_active
+          in: query
+          schema: { type: boolean }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+      responses:
+        "200":
+          description: 取得成功
+        "403":
+          description: 管理者権限が必要
+    post:
+      tags: [ユーザー管理]
+      summary: ユーザー新規登録
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name, department_id, role]
+              properties:
+                email: { type: string, format: email }
+                name: { type: string, maxLength: 100 }
+                name_kana: { type: string, maxLength: 100 }
+                department_id: { type: integer }
+                role: { type: string, enum: [user, approver, accounting, admin] }
+      responses:
+        "201":
+          description: 登録成功
+        "409":
+          description: メールアドレス重複
+  /applications/export/csv:
+    get:
+      tags: [エクスポート]
+      summary: 申請データCSVエクスポート
+      description: 絞り込み条件に一致する申請データをCSV形式で出力（UTF-8 BOMあり）
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: CSVファイル
+          content:
+            text/csv:
+              schema: { type: string }
+        "403":
+          description: 経理担当・管理者権限が必要
 `;
   parseSpec();
 }

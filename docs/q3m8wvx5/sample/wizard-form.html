@@ -1,0 +1,633 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マルチステップフォーム（ウィザード） — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ステップインジケーター */
+    .wizard-indicator {
+      display: flex; align-items: center; margin-bottom: 2rem; gap: 0;
+    }
+    .wiz-step {
+      display: flex; flex-direction: column; align-items: center; position: relative; flex: 1;
+    }
+    .wiz-step:not(:last-child)::after {
+      content: ''; position: absolute; top: 18px; left: 50%; width: 100%; height: 2px;
+      background: var(--border); z-index: 0;
+    }
+    .wiz-step.done::after  { background: var(--secondary); }
+    .wiz-step.active::after { background: var(--border); }
+    .wiz-circle {
+      width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border);
+      background: var(--bg-card); display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: var(--text-muted); z-index: 1;
+      transition: all 0.25s;
+    }
+    .wiz-step.done .wiz-circle   { background: var(--secondary); border-color: var(--secondary); color: #fff; }
+    .wiz-step.active .wiz-circle { background: var(--primary);   border-color: var(--primary);   color: #fff; }
+    .wiz-label {
+      font-size: 0.75rem; margin-top: 0.4rem; color: var(--text-muted); text-align: center;
+      white-space: nowrap;
+    }
+    .wiz-step.active .wiz-label { color: var(--primary); font-weight: 600; }
+    .wiz-step.done .wiz-label   { color: var(--secondary); }
+
+    /* ウィザードコンテナ */
+    .wizard-box {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; max-width: 580px;
+    }
+    .wiz-panel-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #7e3af2 100%);
+      padding: 1.2rem 1.5rem; color: #fff;
+    }
+    .wiz-panel-header h3 { margin: 0; font-size: 1.05rem; }
+    .wiz-panel-header p  { margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.85; }
+    .wiz-panel-body { padding: 1.5rem; }
+    .wiz-panel-footer {
+      padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg);
+    }
+
+    /* フォームグループ（ウィザード内） */
+    .wf-group { margin-bottom: 1.2rem; }
+    .wf-label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--text); margin-bottom: 0.3rem; }
+    .wf-label .req { color: var(--danger); margin-left: 0.25rem; }
+    .wf-input {
+      width: 100%; padding: 0.5rem 0.8rem; border-radius: 6px; border: 1.5px solid var(--border);
+      background: var(--bg-card); color: var(--text); font-size: 0.9rem; font-family: inherit;
+      box-sizing: border-box; transition: border-color 0.2s; outline: none;
+    }
+    .wf-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,219,0.15); }
+    .wf-input.err   { border-color: var(--danger); background: #fff5f5; }
+    .wf-err { color: var(--danger); font-size: 0.78rem; margin-top: 0.25rem; display: none; }
+    .wf-err.show { display: block; }
+    .wf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ボタン */
+    .wiz-btn {
+      padding: 0.55rem 1.4rem; border-radius: 8px; border: none; cursor: pointer;
+      font-size: 0.9rem; font-family: inherit; font-weight: 600; transition: all 0.2s;
+    }
+    .wiz-btn-primary  { background: var(--primary); color: #fff; }
+    .wiz-btn-primary:hover:not(:disabled) { background: #1e40af; }
+    .wiz-btn-secondary { background: var(--bg-hover); color: var(--text); border: 1px solid var(--border); }
+    .wiz-btn-secondary:hover { background: var(--border); }
+    .wiz-btn-success  { background: var(--secondary); color: #fff; }
+    .wiz-btn-success:hover { background: #047857; }
+    .wiz-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* 確認画面 */
+    .confirm-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .confirm-table tr { border-bottom: 1px solid var(--border); }
+    .confirm-table th { text-align: left; padding: 0.5rem 0.8rem; color: var(--text-muted); font-weight: 600; width: 40%; background: var(--bg); }
+    .confirm-table td { padding: 0.5rem 0.8rem; color: var(--text); }
+
+    /* 完了画面 */
+    .wiz-complete { text-align: center; padding: 2rem 1rem; }
+    .wiz-complete-icon { font-size: 4rem; margin-bottom: 0.5rem; }
+    .wiz-complete h3 { font-size: 1.3rem; color: var(--secondary); margin-bottom: 0.5rem; }
+    .wiz-complete p { color: var(--text-muted); font-size: 0.9rem; }
+    .wiz-complete-actions { margin-top: 1.5rem; display: flex; gap: 0.8rem; justify-content: center; }
+
+    /* ステップ表示切替 */
+    .wiz-step-content { display: none; }
+    .wiz-step-content.active { display: block; }
+
+    /* チェックボックス */
+    .wf-check { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.8rem; font-size: 0.88rem; }
+    .wf-check input { margin-top: 2px; flex-shrink: 0; width: 16px; height: 16px; cursor: pointer; }
+
+    /* ステップカウンター */
+    .step-counter { font-size: 0.82rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-libs">
+      <div class="subtitle">Sample Screen — Multi-Step Wizard Form</div>
+      <h1>🧭 マルチステップフォーム（ウィザード）</h1>
+      <p class="description">入力項目が多い場合にフォームをステップに分割するウィザードパターンです。戻るボタンで入力内容を失わない実装を確認できます。</p>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <b>ウィザードが適している場面</b><br>
+          入力項目が10個以上・ステップ間に依存関係がある（前の入力によって次の質問が変わる）・ユーザーが途中で離脱しやすい長いフォーム。<b>「戻る」を押しても入力内容を失わないことが最重要UX要件</b>です。
+        </div>
+      </div>
+
+      <!-- セクション1: 設計原則 -->
+      <h2 class="section-title"><span class="title-icon">1</span>ウィザード設計の5原則</h2>
+      <div class="step-flow">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <b>現在地を常に示す</b><br>
+            ステップインジケーターで「全体の何ステップ中いくつ目か」を常に表示する。ゴールが見えないと離脱率が上がる。完了済みステップはクリックで戻れるようにする。
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <b>入力内容を保持する</b><br>
+            「戻る」を押しても入力データが消えてはいけない。フォームデータはメモリ（JavaScriptオブジェクト）またはsessionStorageに保持する。ブラウザの「戻る」ボタン対応はPopstateイベントで制御する。
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <b>各ステップでバリデーションする</b><br>
+            「次へ」押下時にそのステップの項目だけをバリデーションする。最後の送信まで全項目を溜め込まない。エラーがあれば次ステップに進めない。
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <b>最後に確認画面を設ける</b><br>
+            送信前に入力内容を一覧表示する確認ステップを設ける。誤りに気づいたときに戻って修正できるようにする。「送信する」ボタンは確認画面にのみ配置する。
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <b>途中離脱を確認する</b><br>
+            入力途中でページを離れようとした場合（他のリンクをクリック・ブラウザ閉じる）に確認ダイアログを表示する。データが消えることへの不安を軽減できる。
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション2: 動くウィザードデモ -->
+      <h2 class="section-title" style="margin-top:2.5rem;"><span class="title-icon">2</span>実際に動くウィザードデモ（会員登録）</h2>
+      <p style="color:var(--text-muted);margin-bottom:1.5rem;">「次へ」「戻る」で操作できます。戻っても入力内容が保持されています。ステップインジケーターのクリックでも移動できます。</p>
+
+      <!-- ステップインジケーター -->
+      <div class="wizard-indicator" id="wizard-indicator">
+        <div class="wiz-step active" data-step="1">
+          <div class="wiz-circle">1</div>
+          <div class="wiz-label">基本情報</div>
+        </div>
+        <div class="wiz-step" data-step="2">
+          <div class="wiz-circle">2</div>
+          <div class="wiz-label">個人情報</div>
+        </div>
+        <div class="wiz-step" data-step="3">
+          <div class="wiz-circle">3</div>
+          <div class="wiz-label">確認事項</div>
+        </div>
+        <div class="wiz-step" data-step="4">
+          <div class="wiz-circle">4</div>
+          <div class="wiz-label">入力確認</div>
+        </div>
+      </div>
+
+      <!-- ウィザードボックス -->
+      <div class="wizard-box">
+
+        <!-- Step 1: 基本情報 -->
+        <div class="wiz-step-content active" id="wiz-content-1">
+          <div class="wiz-panel-header">
+            <h3>👤 STEP 1 — 基本情報</h3>
+            <p>アカウントに使用するメールアドレスとパスワードを設定してください</p>
+          </div>
+          <div class="wiz-panel-body">
+            <div class="wf-row">
+              <div class="wf-group">
+                <label class="wf-label" for="w-lastname">姓<span class="req">*</span></label>
+                <input class="wf-input" type="text" id="w-lastname" placeholder="山田">
+                <div class="wf-err" id="w-lastname-err">姓を入力してください</div>
+              </div>
+              <div class="wf-group">
+                <label class="wf-label" for="w-firstname">名<span class="req">*</span></label>
+                <input class="wf-input" type="text" id="w-firstname" placeholder="太郎">
+                <div class="wf-err" id="w-firstname-err">名を入力してください</div>
+              </div>
+            </div>
+            <div class="wf-group">
+              <label class="wf-label" for="w-email">メールアドレス<span class="req">*</span></label>
+              <input class="wf-input" type="email" id="w-email" placeholder="user@example.com">
+              <div class="wf-err" id="w-email-err">正しいメールアドレスを入力してください</div>
+            </div>
+            <div class="wf-group">
+              <label class="wf-label" for="w-pw">パスワード<span class="req">*</span></label>
+              <input class="wf-input" type="password" id="w-pw" placeholder="8文字以上">
+              <div class="wf-err" id="w-pw-err">パスワードは8文字以上で入力してください</div>
+            </div>
+            <div class="wf-group">
+              <label class="wf-label" for="w-pw2">パスワード（確認）<span class="req">*</span></label>
+              <input class="wf-input" type="password" id="w-pw2" placeholder="もう一度入力">
+              <div class="wf-err" id="w-pw2-err">パスワードが一致しません</div>
+            </div>
+          </div>
+          <div class="wiz-panel-footer">
+            <span class="step-counter">ステップ 1 / 4</span>
+            <button class="wiz-btn wiz-btn-primary" onclick="goNext(1)">次へ →</button>
+          </div>
+        </div>
+
+        <!-- Step 2: 個人情報 -->
+        <div class="wiz-step-content" id="wiz-content-2">
+          <div class="wiz-panel-header">
+            <h3>📋 STEP 2 — 個人情報</h3>
+            <p>お届け先や連絡先として使用します</p>
+          </div>
+          <div class="wiz-panel-body">
+            <div class="wf-group">
+              <label class="wf-label" for="w-tel">電話番号<span class="req">*</span></label>
+              <input class="wf-input" type="tel" id="w-tel" placeholder="09012345678">
+              <div class="wf-err" id="w-tel-err">10〜11桁の電話番号を入力してください</div>
+            </div>
+            <div class="wf-group">
+              <label class="wf-label" for="w-zip">郵便番号<span class="req">*</span></label>
+              <input class="wf-input" type="text" id="w-zip" placeholder="1234567（ハイフンなし）" maxlength="7">
+              <div class="wf-err" id="w-zip-err">7桁の郵便番号を入力してください</div>
+            </div>
+            <div class="wf-group">
+              <label class="wf-label" for="w-address">住所<span class="req">*</span></label>
+              <input class="wf-input" type="text" id="w-address" placeholder="東京都渋谷区〇〇 1-2-3">
+              <div class="wf-err" id="w-address-err">住所を入力してください</div>
+            </div>
+            <div class="wf-group">
+              <label class="wf-label" for="w-birth">生年月日<span class="req">*</span></label>
+              <input class="wf-input" type="date" id="w-birth">
+              <div class="wf-err" id="w-birth-err">生年月日を選択してください</div>
+            </div>
+          </div>
+          <div class="wiz-panel-footer">
+            <button class="wiz-btn wiz-btn-secondary" onclick="goBack(2)">← 戻る</button>
+            <span class="step-counter">ステップ 2 / 4</span>
+            <button class="wiz-btn wiz-btn-primary" onclick="goNext(2)">次へ →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: 確認事項 -->
+        <div class="wiz-step-content" id="wiz-content-3">
+          <div class="wiz-panel-header">
+            <h3>✅ STEP 3 — 確認事項</h3>
+            <p>利用規約をご確認のうえ、同意してください</p>
+          </div>
+          <div class="wiz-panel-body">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.8rem 1rem;max-height:120px;overflow-y:auto;font-size:0.82rem;color:var(--text-muted);margin-bottom:1.2rem;line-height:1.7;">
+              <b>利用規約（サンプル）</b><br>
+              第1条（目的）本規約は、サービスの利用条件を定めるものです。<br>
+              第2条（禁止事項）違法行為・他者への迷惑行為・不正アクセスを禁じます。<br>
+              第3条（免責事項）サービスの停止・変更について当社は責任を負いません。<br>
+              第4条（個人情報）個人情報は別途プライバシーポリシーに従い取り扱います。<br>
+              第5条（準拠法）本規約は日本法に準拠するものとします。
+            </div>
+            <div class="wf-group">
+              <label class="wf-check">
+                <input type="checkbox" id="w-terms">
+                <span><b>利用規約</b>に同意します <span class="req">*</span></span>
+              </label>
+              <div class="wf-err" id="w-terms-err">利用規約への同意が必要です</div>
+              <label class="wf-check">
+                <input type="checkbox" id="w-privacy">
+                <span><b>プライバシーポリシー</b>に同意します <span class="req">*</span></span>
+              </label>
+              <div class="wf-err" id="w-privacy-err">プライバシーポリシーへの同意が必要です</div>
+              <label class="wf-check" style="margin-top:0.5rem;">
+                <input type="checkbox" id="w-newsletter">
+                <span>お得なお知らせメールを受け取る（任意）</span>
+              </label>
+            </div>
+          </div>
+          <div class="wiz-panel-footer">
+            <button class="wiz-btn wiz-btn-secondary" onclick="goBack(3)">← 戻る</button>
+            <span class="step-counter">ステップ 3 / 4</span>
+            <button class="wiz-btn wiz-btn-primary" onclick="goNext(3)">確認画面へ →</button>
+          </div>
+        </div>
+
+        <!-- Step 4: 確認 -->
+        <div class="wiz-step-content" id="wiz-content-4">
+          <div class="wiz-panel-header">
+            <h3>🔍 STEP 4 — 入力内容の確認</h3>
+            <p>以下の内容で登録します。修正がある場合は「戻る」を押してください</p>
+          </div>
+          <div class="wiz-panel-body">
+            <table class="confirm-table" id="confirm-table">
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="wiz-panel-footer">
+            <button class="wiz-btn wiz-btn-secondary" onclick="goBack(4)">← 戻る</button>
+            <span class="step-counter">ステップ 4 / 4</span>
+            <button class="wiz-btn wiz-btn-success" onclick="submitWizard()">✓ 登録する</button>
+          </div>
+        </div>
+
+        <!-- 完了画面 -->
+        <div class="wiz-step-content" id="wiz-content-complete">
+          <div class="wiz-panel-body">
+            <div class="wiz-complete">
+              <div class="wiz-complete-icon">🎉</div>
+              <h3>会員登録が完了しました！</h3>
+              <p>ご登録のメールアドレスに確認メールを送信しました。<br>メール内のリンクをクリックしてアカウントを有効化してください。</p>
+              <div class="wiz-complete-actions">
+                <button class="wiz-btn wiz-btn-primary" onclick="resetWizard()">もう一度試す（デモリセット）</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.wizard-box -->
+
+      <!-- セクション3: ステップ数の決め方 -->
+      <h2 class="section-title" style="margin-top:2.5rem;"><span class="title-icon">3</span>ステップ数の決め方</h2>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <b>目安: 1ステップあたり5〜7項目まで</b><br>
+          それ以上になると「まだ終わらない」感が強くなり離脱率が上昇します。関連性の高い項目をグループ化してステップを設計しましょう。また、ステップ数は多くても6〜7まで。それ以上になる場合はフォームの設計自体を見直すべきサインです。
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">✅</span><span>良いグループ分けの例</span></div>
+          <div style="padding:0 1.2rem 1.2rem;">
+            <ul style="margin-top:0.8rem;padding-left:1.2rem;font-size:0.88rem;line-height:2;">
+              <li>STEP1: アカウント情報（メール・パスワード）</li>
+              <li>STEP2: プロフィール（名前・生年月日・性別）</li>
+              <li>STEP3: 連絡先（電話・住所）</li>
+              <li>STEP4: 設定（通知・メルマガ）</li>
+              <li>STEP5: 確認・送信</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">❌</span><span>悪いグループ分けの例</span></div>
+          <div style="padding:0 1.2rem 1.2rem;">
+            <ul style="margin-top:0.8rem;padding-left:1.2rem;font-size:0.88rem;line-height:2;color:var(--text-muted);">
+              <li>STEP1: 全20項目をまとめて表示</li>
+              <li>（1ページに詰め込み過ぎ）</li>
+              <li style="margin-top:0.5rem;">STEP1〜10で1項目ずつ</li>
+              <li>（細かく分けすぎて煩雑）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション4: よくある失敗 -->
+      <h2 class="section-title" style="margin-top:2.5rem;"><span class="title-icon">4</span>よくある失敗と対策</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>失敗パターン</th>
+              <th>ユーザーへの影響</th>
+              <th>正しい対策</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>「戻る」で入力が消える</td>
+              <td>入力のやり直しが必要。強烈な離脱要因</td>
+              <td>JavaScriptオブジェクト / sessionStorageに入力データを保持し、戻ったときにフォームを復元する</td>
+            </tr>
+            <tr>
+              <td>最後の送信時に全エラーが出る</td>
+              <td>「なぜ最初に教えてくれなかった？」とユーザーが不満を感じる</td>
+              <td>各ステップの「次へ」押下時にそのステップの項目のみバリデーションする</td>
+            </tr>
+            <tr>
+              <td>確認画面がない</td>
+              <td>誤入力に気づかず送信してしまう</td>
+              <td>最終ステップは必ず全入力内容のサマリー確認画面にする</td>
+            </tr>
+            <tr>
+              <td>途中離脱の確認なし</td>
+              <td>うっかりリンクをクリックして全データが消える</td>
+              <td>beforeunloadイベントで「ページを離れますか？」ダイアログを表示する</td>
+            </tr>
+            <tr>
+              <td>完了後に次のアクションを示さない</td>
+              <td>「登録完了しました」だけでは次に何をすべきか分からない</td>
+              <td>完了画面に「メールを確認する」「ダッシュボードへ」などのCTAボタンを配置する</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /.content -->
+  </main>
+</div>
+
+<script>
+// フォームデータを保持するオブジェクト（「戻る」時に復元するため）
+const formData = {};
+
+// 現在のステップ
+let currentStep = 1;
+const TOTAL_STEPS = 4;
+
+// ステップインジケーター更新
+function updateIndicator(step) {
+  document.querySelectorAll('.wiz-step[data-step]').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.remove('done', 'active');
+    if (s < step) el.classList.add('done');
+    else if (s === step) el.classList.add('active');
+  });
+}
+
+// ステップコンテンツ切替
+function showStep(step) {
+  document.querySelectorAll('.wiz-step-content').forEach(el => el.classList.remove('active'));
+  const target = document.getElementById('wiz-content-' + step) || document.getElementById('wiz-content-complete');
+  if (target) target.classList.add('active');
+  if (step <= TOTAL_STEPS) updateIndicator(step);
+  currentStep = step;
+}
+
+// フォームデータの保存（各ステップの「次へ」押下時）
+function saveStep1() {
+  formData.lastname  = document.getElementById('w-lastname').value.trim();
+  formData.firstname = document.getElementById('w-firstname').value.trim();
+  formData.email     = document.getElementById('w-email').value.trim();
+  formData.pw        = document.getElementById('w-pw').value;
+  formData.pw2       = document.getElementById('w-pw2').value;
+}
+function saveStep2() {
+  formData.tel     = document.getElementById('w-tel').value.trim();
+  formData.zip     = document.getElementById('w-zip').value.trim();
+  formData.address = document.getElementById('w-address').value.trim();
+  formData.birth   = document.getElementById('w-birth').value;
+}
+function saveStep3() {
+  formData.terms      = document.getElementById('w-terms').checked;
+  formData.privacy    = document.getElementById('w-privacy').checked;
+  formData.newsletter = document.getElementById('w-newsletter').checked;
+}
+
+// フォームデータの復元（「戻る」時）
+function restoreStep1() {
+  if (formData.lastname)  document.getElementById('w-lastname').value  = formData.lastname;
+  if (formData.firstname) document.getElementById('w-firstname').value = formData.firstname;
+  if (formData.email)     document.getElementById('w-email').value     = formData.email;
+  if (formData.pw)        document.getElementById('w-pw').value        = formData.pw;
+  if (formData.pw2)       document.getElementById('w-pw2').value       = formData.pw2;
+}
+function restoreStep2() {
+  if (formData.tel)     document.getElementById('w-tel').value     = formData.tel;
+  if (formData.zip)     document.getElementById('w-zip').value     = formData.zip;
+  if (formData.address) document.getElementById('w-address').value = formData.address;
+  if (formData.birth)   document.getElementById('w-birth').value   = formData.birth;
+}
+function restoreStep3() {
+  document.getElementById('w-terms').checked      = !!formData.terms;
+  document.getElementById('w-privacy').checked    = !!formData.privacy;
+  document.getElementById('w-newsletter').checked = !!formData.newsletter;
+}
+
+// バリデーション
+function showErr(id, msg, show) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg || el.textContent;
+  el.classList.toggle('show', show);
+  const input = document.getElementById(id.replace('-err', ''));
+  if (input) input.classList.toggle('err', show);
+}
+function validateStep1() {
+  let ok = true;
+  const lastname  = document.getElementById('w-lastname').value.trim();
+  const firstname = document.getElementById('w-firstname').value.trim();
+  const email     = document.getElementById('w-email').value.trim();
+  const pw        = document.getElementById('w-pw').value;
+  const pw2       = document.getElementById('w-pw2').value;
+  showErr('w-lastname-err',  '姓を入力してください', !lastname);  if (!lastname) ok = false;
+  showErr('w-firstname-err', '名を入力してください', !firstname); if (!firstname) ok = false;
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  showErr('w-email-err', 'メールアドレスの形式で入力してください', !emailOk); if (!emailOk) ok = false;
+  showErr('w-pw-err', 'パスワードは8文字以上で入力してください', pw.length < 8); if (pw.length < 8) ok = false;
+  showErr('w-pw2-err', 'パスワードが一致しません', pw !== pw2 || !pw2); if (pw !== pw2 || !pw2) ok = false;
+  return ok;
+}
+function validateStep2() {
+  let ok = true;
+  const tel     = document.getElementById('w-tel').value.replace(/-/g,'');
+  const zip     = document.getElementById('w-zip').value.trim();
+  const address = document.getElementById('w-address').value.trim();
+  const birth   = document.getElementById('w-birth').value;
+  const telOk = /^0[0-9]{9,10}$/.test(tel);
+  showErr('w-tel-err', '10〜11桁の電話番号を入力してください（ハイフン不要）', !telOk); if (!telOk) ok = false;
+  const zipOk = /^[0-9]{7}$/.test(zip);
+  showErr('w-zip-err', '7桁の郵便番号を入力してください（ハイフンなし）', !zipOk); if (!zipOk) ok = false;
+  showErr('w-address-err', '住所を入力してください', !address); if (!address) ok = false;
+  showErr('w-birth-err', '生年月日を選択してください', !birth); if (!birth) ok = false;
+  return ok;
+}
+function validateStep3() {
+  let ok = true;
+  showErr('w-terms-err',   '利用規約への同意が必要です',           !document.getElementById('w-terms').checked);
+  showErr('w-privacy-err', 'プライバシーポリシーへの同意が必要です', !document.getElementById('w-privacy').checked);
+  if (!document.getElementById('w-terms').checked)   ok = false;
+  if (!document.getElementById('w-privacy').checked) ok = false;
+  return ok;
+}
+
+// 確認画面のテーブル更新
+function buildConfirm() {
+  const rows = [
+    ['氏名',          (formData.lastname||'') + ' ' + (formData.firstname||'')],
+    ['メールアドレス',  formData.email || ''],
+    ['パスワード',     '●●●●●●●●'],
+    ['電話番号',       formData.tel || ''],
+    ['郵便番号',       formData.zip ? '〒' + formData.zip : ''],
+    ['住所',           formData.address || ''],
+    ['生年月日',       formData.birth || ''],
+    ['利用規約',       formData.terms   ? '✅ 同意済み' : '-'],
+    ['プライバシーポリシー', formData.privacy ? '✅ 同意済み' : '-'],
+    ['メルマガ',       formData.newsletter ? '受け取る' : '受け取らない'],
+  ];
+  const tbody = document.querySelector('#confirm-table tbody');
+  tbody.innerHTML = rows.map(([k,v]) =>
+    '<tr><th>' + k + '</th><td>' + v + '</td></tr>'
+  ).join('');
+}
+
+// 「次へ」
+function goNext(step) {
+  if (step === 1) {
+    if (!validateStep1()) return;
+    saveStep1();
+  } else if (step === 2) {
+    if (!validateStep2()) return;
+    saveStep2();
+  } else if (step === 3) {
+    if (!validateStep3()) return;
+    saveStep3();
+    buildConfirm();
+  }
+  showStep(step + 1);
+  window.scrollTo({ top: document.querySelector('.wizard-indicator').getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' });
+}
+
+// 「戻る」
+function goBack(step) {
+  const target = step - 1;
+  showStep(target);
+  if (target === 1) restoreStep1();
+  if (target === 2) restoreStep2();
+  if (target === 3) restoreStep3();
+}
+
+// ステップインジケーターのクリック（完了済みステップに戻る）
+document.querySelectorAll('.wiz-step[data-step]').forEach(el => {
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', () => {
+    const clickedStep = parseInt(el.dataset.step);
+    if (clickedStep < currentStep) {
+      showStep(clickedStep);
+      if (clickedStep === 1) restoreStep1();
+      if (clickedStep === 2) restoreStep2();
+      if (clickedStep === 3) restoreStep3();
+    }
+  });
+});
+
+// 送信
+function submitWizard() {
+  // 実際にはAPIコール
+  showStep('complete');
+  document.querySelectorAll('.wiz-step[data-step]').forEach(el => el.classList.add('done'));
+}
+
+// デモリセット
+function resetWizard() {
+  Object.keys(formData).forEach(k => delete formData[k]);
+  ['w-lastname','w-firstname','w-email','w-pw','w-pw2','w-tel','w-zip','w-address','w-birth'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['w-terms','w-privacy','w-newsletter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = false;
+  });
+  document.querySelectorAll('.wf-err.show').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.wf-input.err').forEach(e => e.classList.remove('err'));
+  showStep(1);
+}
+
+// 途中離脱確認（入力済みの場合）
+window.addEventListener('beforeunload', e => {
+  if (currentStep > 1 || document.getElementById('w-lastname').value) {
+    e.preventDefault();
+    e.returnValue = '入力内容が失われます。ページを離れますか？';
+  }
+});
+</script>
+<script src="../sidebar.js"></script>
+</body>
+</html>

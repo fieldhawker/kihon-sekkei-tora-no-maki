@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画面作成チェックリスト — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-impl">
+      <div class="subtitle">チェックリスト</div>
+      <h1>🖥️ 画面作成チェックリスト</h1>
+      <p class="description">画面（フロントエンド）を新規作成・レビューする際に確認すべき項目のチェックリストです。UX・セキュリティ・アクセシビリティの観点を網羅しています。</p>
+    </div>
+
+    <div class="content">
+
+      <!-- 1. 要件・UX設計 -->
+      <h2 class="section-title"><span class="title-icon">1</span> 要件・UX設計</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="s1-1"><label for="s1-1">画面の目的・ユーザーゴールが明確になっている</label></li>
+          <li><input type="checkbox" id="s1-2"><label for="s1-2">対象ユーザー（ロール・権限）が定義されている</label></li>
+          <li><input type="checkbox" id="s1-3"><label for="s1-3">画面遷移図・フローが設計されている</label></li>
+          <li><input type="checkbox" id="s1-4"><label for="s1-4">各項目の入力形式（テキスト・選択・日付など）が定義されている</label></li>
+          <li><input type="checkbox" id="s1-5"><label for="s1-5">必須項目・任意項目が明確になっている</label></li>
+          <li><input type="checkbox" id="s1-6"><label for="s1-6">初期値・デフォルト値が定義されている</label></li>
+        </ul>
+
+        <div class="table-wrap" style="margin-top:1.5rem">
+          <table>
+            <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>画面の目的</td>
+                <td>「注文管理画面」ではなく「担当者が当日の未出荷注文を一覧確認し、出荷指示を行う」と定義する。目的が明確でないと、表示すべき列・操作ボタンの優先度が決まらない</td>
+              </tr>
+              <tr>
+                <td>対象ユーザー</td>
+                <td>「一般ユーザー」「管理者」「CSオペレーター」など、ロールごとに「見える項目」「操作できる項目」を洗い出す。同じ画面でもロールによって表示が変わる場合は仕様書に明記する</td>
+              </tr>
+              <tr>
+                <td>画面遷移</td>
+                <td>「一覧 → 詳細 → 編集 → 確認 → 完了」の遷移を図に起こす。戻るボタンで前の画面に戻れるか、入力中にブラウザバックした場合の動作（確認ダイアログの要否）も定義する</td>
+              </tr>
+              <tr>
+                <td>初期値・デフォルト値</td>
+                <td>日付選択は「本日」をデフォルト表示。ステータスドロップダウンは「全て」を初期選択。デフォルト値が未定義だと、実装者がそれぞれ判断してバラバラな動作になる</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. バリデーション -->
+      <h2 class="section-title"><span class="title-icon">2</span> バリデーション</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="s2-1"><label for="s2-1">必須チェックが実装されている</label></li>
+          <li><input type="checkbox" id="s2-2"><label for="s2-2">文字数制限が定義・実装されている</label></li>
+          <li><input type="checkbox" id="s2-3"><label for="s2-3">入力形式チェック（数値・日付・メールアドレスなど）が実装されている</label></li>
+          <li><input type="checkbox" id="s2-4"><label for="s2-4">相関チェック（開始日 ≤ 終了日など）が実装されている</label></li>
+          <li><input type="checkbox" id="s2-5"><label for="s2-5">サーバーサイドでも同等のバリデーションが実装されている</label></li>
+          <li><input type="checkbox" id="s2-6"><label for="s2-6">エラーメッセージが具体的でユーザーに分かりやすい</label></li>
+        </ul>
+
+        <div class="callout callout-warning" style="margin-top:1.5rem">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <b>クライアントサイドだけではダメな理由</b><br>
+            ブラウザの開発者ツールや curl でバリデーションを迂回できるため、クライアントサイドのバリデーションはあくまで UX 向上のためのもの。サーバーサイドで必ず同等のチェックを実施すること。
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:1rem">
+          <table>
+            <thead><tr><th>バリデーション種別</th><th>具体例</th><th>NGなメッセージ例 → OKな例</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>必須チェック</td>
+                <td>「会社名」「メールアドレス」など、DB の NOT NULL 制約と対応させる</td>
+                <td>「入力してください」→「会社名は必須です」</td>
+              </tr>
+              <tr>
+                <td>文字数制限</td>
+                <td>「氏名: 最大50文字」「備考: 最大500文字」。DB カラムの VARCHAR(n) と必ず合わせる</td>
+                <td>「文字数オーバー」→「備考は500文字以内で入力してください（現在: 523文字）」</td>
+              </tr>
+              <tr>
+                <td>形式チェック</td>
+                <td>電話番号: <code>/^\d{10,11}$/</code>、メール: <code>RFC5322</code> 準拠の正規表現、日付: <code>YYYY-MM-DD</code> かつ実在する日付</td>
+                <td>「形式が違います」→「電話番号はハイフンなしの10〜11桁で入力してください」</td>
+              </tr>
+              <tr>
+                <td>相関チェック</td>
+                <td>「開始日 ≤ 終了日」「数量 &gt; 0 かつ在庫数以下」「パスワードと確認パスワードが一致」</td>
+                <td>「エラーです」→「終了日は開始日以降の日付を入力してください」</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. データ表示・操作 -->
+      <h2 class="section-title"><span class="title-icon">3</span> データ表示・操作</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="s3-1"><label for="s3-1">一覧画面の表示件数上限・ページネーションが定義されている</label></li>
+          <li><input type="checkbox" id="s3-2"><label for="s3-2">ソート・フィルタ条件が定義されている</label></li>
+          <li><input type="checkbox" id="s3-3"><label for="s3-3">大量データ時のパフォーマンスが考慮されている</label></li>
+          <li><input type="checkbox" id="s3-4"><label for="s3-4">楽観的ロック・排他制御が考慮されている（更新系）</label></li>
+          <li><input type="checkbox" id="s3-5"><label for="s3-5">削除時の確認ダイアログが実装されている</label></li>
+          <li><input type="checkbox" id="s3-6"><label for="s3-6">保存・送信前の確認フローが定義されている</label></li>
+        </ul>
+
+        <div class="table-wrap" style="margin-top:1.5rem">
+          <table>
+            <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>ページネーション</td>
+                <td>1ページあたり20件表示。全件数と現在位置を表示（「123件中 21〜40件」）。「全件CSV出力」と「画面表示」は別のAPI にする。画面で全件取得すると表示が重くなる</td>
+              </tr>
+              <tr>
+                <td>ソート・フィルタ</td>
+                <td>一覧のヘッダークリックでソート（昇順↔降順）。フィルタ条件はURL パラメータに保持し、ページ再読み込みでも条件が維持されるようにする</td>
+              </tr>
+              <tr>
+                <td>楽観的ロック</td>
+                <td>編集画面を開いた時点の <code>updated_at</code> を hidden に保持する。保存時にサーバーで「DB の updated_at = 画面の updated_at」を確認し、不一致なら「他のユーザーが更新しました。再読込してください」と表示する</td>
+              </tr>
+              <tr>
+                <td>削除の確認</td>
+                <td>「本当に削除しますか？この操作は元に戻せません。」とダイアログで確認する。対象が何か（例: 「注文 #12345 を削除しますか？」）を明示する。論理削除か物理削除かを仕様に明記する</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. セキュリティ -->
+      <h2 class="section-title"><span class="title-icon">4</span> セキュリティ</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="s4-1"><label for="s4-1">認証・認可チェックが実装されている（未認証アクセスの排除）</label></li>
+          <li><input type="checkbox" id="s4-2"><label for="s4-2">ロールに応じた表示制御・操作制御が実装されている</label></li>
+          <li><input type="checkbox" id="s4-3"><label for="s4-3">XSS対策が実施されている（出力のエスケープ）</label></li>
+          <li><input type="checkbox" id="s4-4"><label for="s4-4">CSRF対策が実施されている（トークン検証）</label></li>
+          <li><input type="checkbox" id="s4-5"><label for="s4-5">直接URL入力・パラメータ改ざんによる不正アクセスが防止されている</label></li>
+          <li><input type="checkbox" id="s4-6"><label for="s4-6">個人情報・機密情報の表示がマスキングされている</label></li>
+        </ul>
+
+        <div class="table-wrap" style="margin-top:1.5rem">
+          <table>
+            <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>認証・認可</td>
+                <td>未ログイン状態でのアクセスはログイン画面にリダイレクト。ロール確認はサーバーサイドで実施する（フロントのボタン非表示だけでは不十分）</td>
+              </tr>
+              <tr>
+                <td>ロール別制御</td>
+                <td>一般ユーザーには「削除ボタン」を非表示。しかしボタン非表示だけでは API を直接叩けば削除できてしまう。サーバーサイドの認可チェックが必須</td>
+              </tr>
+              <tr>
+                <td>XSS対策</td>
+                <td>テンプレートエンジンの自動エスケープ機能を使う（React の JSX、Thymeleaf の <code>th:text</code> など）。<code>innerHTML</code> や <code>v-html</code> にユーザー入力を渡さない。外部から受け取った文字列を DOM に直接挿入しない</td>
+              </tr>
+              <tr>
+                <td>CSRF対策</td>
+                <td>セッションクッキーと CSRF トークンを組み合わせる。POST/PUT/DELETE リクエストのヘッダー（<code>X-CSRF-Token</code>）またはボディにトークンを含め、サーバーで検証する</td>
+              </tr>
+              <tr>
+                <td>パラメータ改ざん</td>
+                <td>URL に <code>?user_id=999</code> を直接入力して他人のデータを閲覧できる「IDOR（Insecure Direct Object Reference）」に注意。サーバーサイドで「ログインユーザーがそのリソースにアクセスできるか」を必ず確認する</td>
+              </tr>
+              <tr>
+                <td>マスキング</td>
+                <td>クレジットカード番号は下4桁のみ表示（<code>**** **** **** 1234</code>）。マイナンバーは参照権限を持つ画面のみ表示。ログや画面の印刷物にも個人情報が出ないよう配慮する</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 5. アクセシビリティ・ユーザビリティ -->
+      <h2 class="section-title"><span class="title-icon">5</span> アクセシビリティ・ユーザビリティ</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="s5-1"><label for="s5-1">キーボード操作（Tab移動・Enter送信）が適切に動作する</label></li>
+          <li><input type="checkbox" id="s5-2"><label for="s5-2">エラー時はスクロールしてエラー箇所にフォーカスが当たる</label></li>
+          <li><input type="checkbox" id="s5-3"><label for="s5-3">ローディング中の状態が視覚的に分かる（スピナーなど）</label></li>
+          <li><input type="checkbox" id="s5-4"><label for="s5-4">処理成功時のフィードバック（完了メッセージなど）が実装されている</label></li>
+          <li><input type="checkbox" id="s5-5"><label for="s5-5">戻るボタン・パンくずリストなど、ナビゲーションが整備されている</label></li>
+          <li><input type="checkbox" id="s5-6"><label for="s5-6">レスポンシブ対応の要否が定義されている</label></li>
+        </ul>
+
+        <div class="table-wrap" style="margin-top:1.5rem">
+          <table>
+            <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>キーボード操作</td>
+                <td>入力フォームは Tab で次の項目に移動できる（tabindex の順序を確認）。モーダルダイアログを開いた場合、フォーカスがダイアログ内に留まること（フォーカストラップ）</td>
+              </tr>
+              <tr>
+                <td>エラー時のUX</td>
+                <td>フォーム送信後、バリデーションエラーがある場合は最初のエラー項目まで自動スクロールしフォーカスを当てる。エラーメッセージは赤字＋アイコンで視覚的に分かりやすく表示する</td>
+              </tr>
+              <tr>
+                <td>ローディング表示</td>
+                <td>API 呼び出し中はボタンを disabled にしスピナーを表示する。二重送信防止にもなる。応答が3秒以上かかる場合は「処理中です。しばらくお待ちください」のメッセージも表示する</td>
+              </tr>
+              <tr>
+                <td>成功フィードバック</td>
+                <td>保存成功後に「保存しました ✓」のトースト通知を3秒表示する。一覧に戻る場合は、保存したレコードが一覧に反映されていることを確認できる状態にする</td>
+              </tr>
+              <tr>
+                <td>レスポンシブ</td>
+                <td>社内管理画面（PC専用）なのか、外部ユーザー向けのスマホ対応が必要なのかを明確にする。対応する場合は iPhone Safari / Android Chrome での動作確認も必須</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 6. 非機能・運用 -->
+      <h2 class="section-title"><span class="title-icon">6</span> 非機能・運用</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="s6-1"><label for="s6-1">ページタイトル・メタ情報が適切に設定されている</label></li>
+          <li><input type="checkbox" id="s6-2"><label for="s6-2">ブラウザ対応範囲が定義・確認されている</label></li>
+          <li><input type="checkbox" id="s6-3"><label for="s6-3">画面表示の応答時間の目標値が定義されている</label></li>
+          <li><input type="checkbox" id="s6-4"><label for="s6-4">エラーページ（404・500など）のデザインが用意されている</label></li>
+          <li><input type="checkbox" id="s6-5"><label for="s6-5">操作ログ（誰が・いつ・何を）が記録される設計になっている</label></li>
+        </ul>
+
+        <div class="table-wrap" style="margin-top:1.5rem">
+          <table>
+            <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>ページタイトル</td>
+                <td><code>&lt;title&gt;注文詳細 #12345 | 受注管理システム&lt;/title&gt;</code> のように、ページの内容が分かるタイトルにする。タブを複数開いたときに区別できるようにする</td>
+              </tr>
+              <tr>
+                <td>ブラウザ対応</td>
+                <td>「Chrome 最新版・Firefox 最新版・Edge 最新版・Safari 16以上」と明記する。IE11対応が必要な場合は別途工数が大きくかかることを合意しておく</td>
+              </tr>
+              <tr>
+                <td>応答時間目標</td>
+                <td>一覧表示: 2秒以内、詳細表示: 1秒以内、検索: 3秒以内。超過する場合は遅延箇所（API・DB・フロント）を特定し対策する</td>
+              </tr>
+              <tr>
+                <td>エラーページ</td>
+                <td>404: 「お探しのページが見つかりません」＋トップへのリンク。500: 「システムエラーが発生しました。管理者にお問い合わせください」＋問い合わせ先。スタックトレースは絶対に見せない</td>
+              </tr>
+              <tr>
+                <td>操作ログ</td>
+                <td>「誰が（user_id）・いつ（timestamp）・何を（action: UPDATE, resource: /orders/123, diff: {status: pending→shipped}）」を記録する。個人情報を含む操作は特に監査目的で必須</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 7. テスト -->
+      <h2 class="section-title"><span class="title-icon">7</span> テスト</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li><input type="checkbox" id="s7-1"><label for="s7-1">正常系の入力・送信・遷移が動作確認されている</label></li>
+          <li><input type="checkbox" id="s7-2"><label for="s7-2">各バリデーションエラーの表示が確認されている</label></li>
+          <li><input type="checkbox" id="s7-3"><label for="s7-3">権限外ユーザーのアクセスが拒否されることが確認されている</label></li>
+          <li><input type="checkbox" id="s7-4"><label for="s7-4">複数タブ・並行操作時の挙動が確認されている</label></li>
+          <li><input type="checkbox" id="s7-5"><label for="s7-5">実機・対象ブラウザでの表示確認が実施されている</label></li>
+        </ul>
+
+        <div class="table-wrap" style="margin-top:1.5rem">
+          <table>
+            <thead><tr><th>テストケース</th><th>確認内容</th></tr></thead>
+            <tbody>
+              <tr><td>正常系（入力→送信→遷移）</td><td>全必須項目を正しく入力し送信した場合、登録が完了し確認画面/一覧に遷移することを確認</td></tr>
+              <tr><td>バリデーションエラー表示</td><td>必須項目を空にして送信、最大文字数超過、不正形式（メール・電話番号）のそれぞれでエラーメッセージが正しく表示されることを確認</td></tr>
+              <tr><td>権限外アクセス</td><td>一般ユーザーで管理者専用URLに直接アクセスした場合、403エラーまたはログイン画面にリダイレクトされることを確認</td></tr>
+              <tr><td>複数タブ・並行操作</td><td>同じレコードを2つのタブで同時に編集し、後から保存したほうで「他のユーザーが更新しました」エラーが表示されることを確認（楽観的ロック）</td></tr>
+              <tr><td>ブラウザ対応確認</td><td>Chrome・Firefox・Edge・Safari（指定バージョン）でレイアウト崩れ・JS エラーがないことを確認。スマホ対応の場合は実機での動作確認も実施する</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../sidebar.js"></script>
+</body>
+</html>

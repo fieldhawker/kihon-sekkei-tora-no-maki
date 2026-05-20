@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIレスポンス設計サンプル — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    pre.json {
+      background: #0d1117; color: #c9d1d9; border-radius: 8px; padding: 1rem 1.2rem;
+      font-size: 0.82rem; overflow-x: auto; line-height: 1.6; margin: 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .json .key { color: #79c0ff; }
+    .json .str { color: #a5d6ff; }
+    .json .num { color: #f2cc60; }
+    .json .bool { color: #ff7b72; }
+    .json .null { color: #8b949e; }
+    .json .comment { color: #8b949e; font-style: italic; }
+    .endpoint-label {
+      display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;
+      font-family: monospace; font-size: 0.9rem;
+    }
+    .method {
+      padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 700; font-size: 0.78rem;
+    }
+    .method-get { background: #dbeafe; color: #1e40af; }
+    .method-post { background: #dcfce7; color: #166534; }
+    .method-put { background: #fef3c7; color: #92400e; }
+    .method-delete { background: #fee2e2; color: #991b1b; }
+    .method-patch { background: #f3e8ff; color: #6b21a8; }
+    .status-code {
+      padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; font-family: monospace;
+    }
+    .s200 { background: #dcfce7; color: #166534; }
+    .s201 { background: #d1fae5; color: #065f46; }
+    .s204 { background: #f3f4f6; color: #4b5563; }
+    .s400 { background: #fef3c7; color: #92400e; }
+    .s401 { background: #fee2e2; color: #991b1b; }
+    .s404 { background: #fee2e2; color: #991b1b; }
+    .s409 { background: #fee2e2; color: #991b1b; }
+    .s422 { background: #fef3c7; color: #92400e; }
+    .s500 { background: #fee2e2; color: #7f1d1d; }
+    .tab-content { margin-top: 1rem; }
+    .principle-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+    .principle-item {
+      display: flex; gap: 0.7rem; align-items: flex-start;
+      padding: 0.7rem 1rem; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;
+    }
+    .principle-num { font-weight: 800; color: #1a56db; font-size: 1.1rem; flex-shrink: 0; width: 1.5rem; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-adr">
+      <div class="page-header-content">
+        <div class="page-header-label">サンプル画面集</div>
+        <h1 class="page-header-title">🔌 APIレスポンス設計サンプル</h1>
+        <p class="page-header-desc">REST APIのレスポンス構造パターンと設計方針を示すサンプルです。チーム全体で統一することが重要です。</p>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-info">
+        <strong>💡 APIのレスポンス構造はチーム全体で統一する：</strong>
+        レスポンス形式がエンドポイントごとにバラバラだと、実装者が毎回仕様書を確認しなければならずミスも増えます。
+        このページのパターンをチームの標準として採用し、OpenAPI(Swagger)等でドキュメント化することを推奨します。
+      </div>
+
+      <!-- セクション1: 基本設計方針 -->
+      <h2 class="section-title"><span class="title-icon">📐</span>基本設計方針</h2>
+
+      <div class="callout callout-success">
+        <strong>✅ 4つの原則</strong>
+        <ul class="principle-list" style="margin-top: 0.8rem;">
+          <li class="principle-item">
+            <span class="principle-num">1</span>
+            <div><strong>一貫性：</strong>成功・エラーともに必ず同じトップレベル構造 <code>{ "data": ..., "meta": ..., "error": null }</code> を返す。フィールドの有無でレスポンス型を判断しない。</div>
+          </li>
+          <li class="principle-item">
+            <span class="principle-num">2</span>
+            <div><strong>機械可読なエラーコード：</strong>エラー時は <code>"code": "USER_NOT_FOUND"</code> のような文字列コードを返す。日本語メッセージだけでは実装者がif分岐を書けない。</div>
+          </li>
+          <li class="principle-item">
+            <span class="principle-num">3</span>
+            <div><strong>日時はISO 8601：</strong><code>"2026-05-20T12:00:00.000Z"</code> 形式で返す。Unixタイムスタンプは人間が読めないため避ける（ログ・内部用途は除く）。</div>
+          </li>
+          <li class="principle-item">
+            <span class="principle-num">4</span>
+            <div><strong>nullと省略の使い分け：</strong>フィールドが「値が存在するが空」→ <code>null</code> を返す。「そのフィールド自体が関係ない」→ フィールドを省略する（undefinedとして扱われる）。</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- セクション2: レスポンスパターン集 -->
+      <h2 class="section-title"><span class="title-icon">📦</span>レスポンスパターン集</h2>
+      <p>タブを切り替えて各パターンのJSONサンプルを確認してください。</p>
+
+      <div class="card">
+        <div style="padding: 0 0 0;">
+          <div class="tab-nav" id="apiTabs">
+            <button class="tab-btn active" data-tab="get-single">単一取得</button>
+            <button class="tab-btn" data-tab="get-list">一覧+ページング</button>
+            <button class="tab-btn" data-tab="post-create">作成</button>
+            <button class="tab-btn" data-tab="put-update">更新</button>
+            <button class="tab-btn" data-tab="delete">削除</button>
+            <button class="tab-btn" data-tab="batch">一括操作</button>
+            <button class="tab-btn" data-tab="error">エラー</button>
+          </div>
+
+          <div style="padding: 1.2rem;">
+            <!-- 単一取得 -->
+            <div class="tab-pane active" id="tab-get-single">
+              <div class="endpoint-label">
+                <span class="method method-get">GET</span>
+                <code>/api/v1/users/123</code>
+                <span class="status-code s200">200 OK</span>
+              </div>
+              <pre class="json">{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"123"</span>,            <span class="comment">// IDは文字列推奨（BigIntでもJSONの精度が保たれる）</span>
+    <span class="key">"name"</span>: <span class="str">"山田 太郎"</span>,
+    <span class="key">"email"</span>: <span class="str">"yamada@example.com"</span>,
+    <span class="key">"role"</span>: <span class="str">"editor"</span>,
+    <span class="key">"avatarUrl"</span>: <span class="null">null</span>,        <span class="comment">// 未設定 = null（フィールドは存在する）</span>
+    <span class="key">"createdAt"</span>: <span class="str">"2026-01-15T03:21:00.000Z"</span>,  <span class="comment">// ISO 8601 UTC</span>
+    <span class="key">"updatedAt"</span>: <span class="str">"2026-05-20T09:00:00.000Z"</span>
+  },
+  <span class="key">"meta"</span>: <span class="null">null</span>,              <span class="comment">// 単一リソースはmetaなし</span>
+  <span class="key">"error"</span>: <span class="null">null</span>              <span class="comment">// 成功時は常にnull</span>
+}</pre>
+            </div>
+
+            <!-- 一覧+ページング -->
+            <div class="tab-pane" id="tab-get-list">
+              <div class="endpoint-label">
+                <span class="method method-get">GET</span>
+                <code>/api/v1/users?page=2&amp;limit=20&amp;sort=createdAt&amp;order=desc</code>
+                <span class="status-code s200">200 OK</span>
+              </div>
+              <pre class="json">{
+  <span class="key">"data"</span>: [
+    { <span class="key">"id"</span>: <span class="str">"121"</span>, <span class="key">"name"</span>: <span class="str">"鈴木 花子"</span>, <span class="key">"email"</span>: <span class="str">"suzuki@example.com"</span>, <span class="key">"role"</span>: <span class="str">"viewer"</span> },
+    { <span class="key">"id"</span>: <span class="str">"122"</span>, <span class="key">"name"</span>: <span class="str">"田中 次郎"</span>, <span class="key">"email"</span>: <span class="str">"tanaka@example.com"</span>, <span class="key">"role"</span>: <span class="str">"editor"</span> }
+    <span class="comment">// … 最大20件</span>
+  ],
+  <span class="key">"meta"</span>: {
+    <span class="key">"total"</span>: <span class="num">87</span>,           <span class="comment">// 全件数（ページネーション表示用）</span>
+    <span class="key">"page"</span>: <span class="num">2</span>,            <span class="comment">// 現在のページ番号（1始まり）</span>
+    <span class="key">"limit"</span>: <span class="num">20</span>,           <span class="comment">// 1ページあたりの件数</span>
+    <span class="key">"totalPages"</span>: <span class="num">5</span>,       <span class="comment">// 総ページ数 = Math.ceil(total / limit)</span>
+    <span class="key">"hasNextPage"</span>: <span class="bool">true</span>,   <span class="comment">// 次ページがあるか（無限スクロールUIで使用）</span>
+    <span class="key">"hasPrevPage"</span>: <span class="bool">true</span>    <span class="comment">// 前ページがあるか</span>
+  },
+  <span class="key">"error"</span>: <span class="null">null</span>
+}</pre>
+            </div>
+
+            <!-- 作成 -->
+            <div class="tab-pane" id="tab-post-create">
+              <div class="endpoint-label">
+                <span class="method method-post">POST</span>
+                <code>/api/v1/users</code>
+                <span class="status-code s201">201 Created</span>
+              </div>
+              <p style="font-size:0.85rem; color:#6b7280; margin:0 0 0.8rem;">
+                作成成功時は <strong>201 Created</strong> を返し、作成されたリソース全体（サーバーが付与したID・日時を含む）をレスポンスボディに含めます。
+                クライアントが再度GETしなくてもリソースを取得できます。
+              </p>
+              <p style="font-size:0.85rem; color:#374151; margin:0 0 0.5rem; font-weight:600;">リクエストボディ（POST body）</p>
+              <pre class="json" style="margin-bottom:0.8rem;">{
+  <span class="key">"name"</span>: <span class="str">"佐藤 三郎"</span>,
+  <span class="key">"email"</span>: <span class="str">"sato@example.com"</span>,
+  <span class="key">"role"</span>: <span class="str">"viewer"</span>
+}</pre>
+              <p style="font-size:0.85rem; color:#374151; margin:0.8rem 0 0.5rem; font-weight:600;">レスポンスボディ</p>
+              <pre class="json">{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"201"</span>,              <span class="comment">// サーバーが採番したID</span>
+    <span class="key">"name"</span>: <span class="str">"佐藤 三郎"</span>,
+    <span class="key">"email"</span>: <span class="str">"sato@example.com"</span>,
+    <span class="key">"role"</span>: <span class="str">"viewer"</span>,
+    <span class="key">"avatarUrl"</span>: <span class="null">null</span>,
+    <span class="key">"createdAt"</span>: <span class="str">"2026-05-20T12:34:56.789Z"</span>,
+    <span class="key">"updatedAt"</span>: <span class="str">"2026-05-20T12:34:56.789Z"</span>
+  },
+  <span class="key">"meta"</span>: <span class="null">null</span>,
+  <span class="key">"error"</span>: <span class="null">null</span>
+}</pre>
+            </div>
+
+            <!-- 更新 -->
+            <div class="tab-pane" id="tab-put-update">
+              <div class="endpoint-label">
+                <span class="method method-put">PUT</span>
+                <code>/api/v1/users/123</code>
+                <span class="status-code s200">200 OK</span>
+              </div>
+              <p style="font-size:0.85rem; color:#6b7280; margin:0 0 0.8rem;">
+                PUT（全体更新）・PATCH（部分更新）ともに、更新後のリソース全体を返します。
+                更新されたフィールドだけでなくリソース全体を返すことで、クライアントの状態管理が簡単になります。
+              </p>
+              <pre class="json">{
+  <span class="key">"data"</span>: {
+    <span class="key">"id"</span>: <span class="str">"123"</span>,
+    <span class="key">"name"</span>: <span class="str">"山田 太郎（更新済み）"</span>,
+    <span class="key">"email"</span>: <span class="str">"yamada-new@example.com"</span>,
+    <span class="key">"role"</span>: <span class="str">"admin"</span>,
+    <span class="key">"avatarUrl"</span>: <span class="str">"https://cdn.example.com/avatars/123.jpg"</span>,
+    <span class="key">"createdAt"</span>: <span class="str">"2026-01-15T03:21:00.000Z"</span>,
+    <span class="key">"updatedAt"</span>: <span class="str">"2026-05-20T15:00:00.000Z"</span>  <span class="comment">// 更新日時が変わる</span>
+  },
+  <span class="key">"meta"</span>: <span class="null">null</span>,
+  <span class="key">"error"</span>: <span class="null">null</span>
+}</pre>
+            </div>
+
+            <!-- 削除 -->
+            <div class="tab-pane" id="tab-delete">
+              <div class="endpoint-label">
+                <span class="method method-delete">DELETE</span>
+                <code>/api/v1/users/123</code>
+                <span class="status-code s204">204 No Content</span>
+              </div>
+              <div class="callout callout-info" style="margin-top:0;">
+                <strong>204 No Content について：</strong>
+                削除成功時はHTTPステータス <strong>204 No Content</strong> を返し、レスポンスボディは空にします（JSONも返しません）。
+                クライアント側は <code>response.status === 204</code> で判定します。
+              </div>
+              <p style="font-size:0.85rem; color:#6b7280;">レスポンスボディ: <strong>なし（空）</strong></p>
+              <pre class="json" style="color:#8b949e;">// HTTP/1.1 204 No Content
+// Content-Length: 0
+// （ボディなし）</pre>
+              <div class="callout callout-warning" style="margin-top:0.8rem;">
+                <strong>⚠️ 論理削除 vs 物理削除：</strong>
+                業務システムでは「削除フラグを立てる」論理削除が一般的です。論理削除の場合も204を返します。
+                削除後にリソースを返す設計（200 + 削除されたリソース）はチームで統一してください。
+              </div>
+            </div>
+
+            <!-- 一括操作 -->
+            <div class="tab-pane" id="tab-batch">
+              <div class="endpoint-label">
+                <span class="method method-post">POST</span>
+                <code>/api/v1/users/batch</code>
+                <span class="status-code s200">200 OK</span>
+              </div>
+              <p style="font-size:0.85rem; color:#6b7280; margin:0 0 0.8rem;">
+                複数リソースの一括操作では、一部が成功・一部が失敗する「部分成功」が発生します。
+                この場合は <strong>200 OK</strong> を返し、succeeded/failedの2配列で結果を返します。
+              </p>
+              <pre class="json">{
+  <span class="key">"data"</span>: {
+    <span class="key">"succeeded"</span>: [
+      { <span class="key">"id"</span>: <span class="str">"101"</span>, <span class="key">"name"</span>: <span class="str">"田中 一郎"</span> },
+      { <span class="key">"id"</span>: <span class="str">"102"</span>, <span class="key">"name"</span>: <span class="str">"伊藤 二郎"</span> }
+    ],
+    <span class="key">"failed"</span>: [
+      {
+        <span class="key">"id"</span>: <span class="str">"103"</span>,              <span class="comment">// 失敗したリソースのID</span>
+        <span class="key">"code"</span>: <span class="str">"USER_NOT_FOUND"</span>,    <span class="comment">// 機械可読なエラーコード</span>
+        <span class="key">"message"</span>: <span class="str">"ユーザーが見つかりません"</span>
+      }
+    ]
+  },
+  <span class="key">"meta"</span>: {
+    <span class="key">"total"</span>: <span class="num">3</span>,
+    <span class="key">"succeededCount"</span>: <span class="num">2</span>,
+    <span class="key">"failedCount"</span>: <span class="num">1</span>
+  },
+  <span class="key">"error"</span>: <span class="null">null</span>
+}</pre>
+            </div>
+
+            <!-- エラー -->
+            <div class="tab-pane" id="tab-error">
+              <p style="font-size:0.85rem; color:#6b7280; margin:0 0 1rem;">
+                エラー時は <code>data: null</code> にし、<code>error</code> オブジェクトにコード・メッセージ・詳細を含めます。
+              </p>
+              <p style="font-weight:600; font-size:0.85rem;">バリデーションエラー <span class="status-code s422">422 Unprocessable Entity</span></p>
+              <pre class="json" style="margin-bottom:0.8rem;">{
+  <span class="key">"data"</span>: <span class="null">null</span>,
+  <span class="key">"meta"</span>: <span class="null">null</span>,
+  <span class="key">"error"</span>: {
+    <span class="key">"code"</span>: <span class="str">"VALIDATION_ERROR"</span>,
+    <span class="key">"message"</span>: <span class="str">"入力内容に誤りがあります"</span>,
+    <span class="key">"details"</span>: [           <span class="comment">// フィールドごとのエラー詳細</span>
+      { <span class="key">"field"</span>: <span class="str">"email"</span>, <span class="key">"message"</span>: <span class="str">"有効なメールアドレスを入力してください"</span> },
+      { <span class="key">"field"</span>: <span class="str">"name"</span>,  <span class="key">"message"</span>: <span class="str">"名前は50文字以内で入力してください"</span> }
+    ]
+  }
+}</pre>
+              <p style="font-weight:600; font-size:0.85rem; margin-top:0.8rem;">認証エラー <span class="status-code s401">401 Unauthorized</span></p>
+              <pre class="json" style="margin-bottom:0.8rem;">{
+  <span class="key">"data"</span>: <span class="null">null</span>,
+  <span class="key">"meta"</span>: <span class="null">null</span>,
+  <span class="key">"error"</span>: {
+    <span class="key">"code"</span>: <span class="str">"TOKEN_EXPIRED"</span>,
+    <span class="key">"message"</span>: <span class="str">"アクセストークンの有効期限が切れています"</span>,
+    <span class="key">"details"</span>: <span class="null">null</span>
+  }
+}</pre>
+              <p style="font-weight:600; font-size:0.85rem; margin-top:0.8rem;">サーバーエラー <span class="status-code s500">500 Internal Server Error</span></p>
+              <pre class="json">{
+  <span class="key">"data"</span>: <span class="null">null</span>,
+  <span class="key">"meta"</span>: <span class="null">null</span>,
+  <span class="key">"error"</span>: {
+    <span class="key">"code"</span>: <span class="str">"INTERNAL_SERVER_ERROR"</span>,
+    <span class="key">"message"</span>: <span class="str">"サーバー内部エラーが発生しました"</span>,
+    <span class="key">"requestId"</span>: <span class="str">"req_a1b2c3d4"</span>,  <span class="comment">// ログ追跡用のリクエストID</span>
+    <span class="key">"details"</span>: <span class="null">null</span>              <span class="comment">// スタックトレース等は本番では含めない</span>
+  }
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション3: データ型の表現 -->
+      <h2 class="section-title"><span class="title-icon">🔢</span>データ型の表現</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>型</th><th>推奨形式</th><th>NGパターン</th><th>理由</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>日時</td>
+              <td><code>"2026-05-20T12:00:00.000Z"</code><br>ISO 8601 UTC文字列</td>
+              <td><code>1748001234</code> (Unixタイムスタンプ)</td>
+              <td>ISO形式は人間が読める。タイムゾーン情報も含まれる。Unixタイムスタンプはデバッグが困難</td>
+            </tr>
+            <tr>
+              <td>金額</td>
+              <td><code>12800</code> (整数・円単位)</td>
+              <td><code>"¥12,800"</code> (文字列・フォーマット込み)</td>
+              <td>文字列にすると計算・比較ができない。表示フォーマットはフロントで行う。小数点以下は避ける（浮動小数点誤差）</td>
+            </tr>
+            <tr>
+              <td>真偽値</td>
+              <td><code>true</code> / <code>false</code></td>
+              <td><code>1</code> / <code>0</code> または <code>"1"</code> / <code>"0"</code></td>
+              <td>JSONにはboolean型がある。数値や文字列で代替するとif文の条件が曖昧になる</td>
+            </tr>
+            <tr>
+              <td>列挙値（enum）</td>
+              <td><code>"active"</code> / <code>"inactive"</code> (文字列)</td>
+              <td><code>1</code> / <code>2</code> (数値)</td>
+              <td>数値は意味が分からない。文字列ならAPIレスポンスを見るだけで値の意味が理解できる</td>
+            </tr>
+            <tr>
+              <td>ID</td>
+              <td><code>"123"</code> (文字列)</td>
+              <td><code>123</code> (数値)</td>
+              <td>JavaScriptのNumber型は2^53-1を超えるとUUID・DB連番で精度が失われる。文字列なら安全</td>
+            </tr>
+            <tr>
+              <td>null vs 省略</td>
+              <td>値が存在するが未設定 → <code>null</code></td>
+              <td>フィールドが存在しないことを<code>null</code>で表現</td>
+              <td>「フィールドがないこと」と「フィールドが空であること」は意味が違う。フィールド自体が関係ない場合は省略（undefined）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- セクション4: バージョニング -->
+      <h2 class="section-title"><span class="title-icon">🏷️</span>バージョニング</h2>
+
+      <div class="callout callout-info">
+        <strong>💡 APIバージョニングの2つのアプローチ：</strong><br><br>
+        <strong>方法1 - URLパスに含める（推奨・シンプル）：</strong><br>
+        <code>GET /api/v1/users</code> → <code>GET /api/v2/users</code><br>
+        ブラウザのアドレスバー・curl・ログで一目でバージョンが分かる。最も一般的な方式。<br><br>
+        <strong>方法2 - リクエストヘッダーで指定：</strong><br>
+        <code>Accept: application/vnd.myapi.v2+json</code><br>
+        URLをクリーンに保てるが、ヘッダーを意識する必要があり複雑。GraphQLなどで使われることがある。<br><br>
+        <strong>チームではどちらかに統一すること。混在は最も悪い。</strong>
+      </div>
+
+      <!-- セクション5: よくある設計ミス -->
+      <h2 class="section-title"><span class="title-icon">❌</span>よくある設計ミス</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>NGパターン</th><th>何が問題か</th><th>正しい設計</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>エラー時も <code>200 OK</code> を返す</td>
+              <td>HTTPクライアントのエラーハンドリングが機能しない。監視ツールがエラーを検知できない</td>
+              <td>適切なHTTPステータスコード（4xx/5xx）を返す</td>
+            </tr>
+            <tr>
+              <td>エラーメッセージが日本語のみ</td>
+              <td><code>if (error.message === 'ユーザーが見つかりません')</code> という条件分岐は壊れやすい</td>
+              <td><code>error.code</code> に英語の定数（<code>"USER_NOT_FOUND"</code>）を必ず含める</td>
+            </tr>
+            <tr>
+              <td>成功・失敗でレスポンス構造が異なる</td>
+              <td>実装者が毎回「どっちのパターンか」を意識しなければならない</td>
+              <td>常に <code>{data, meta, error}</code> のトップレベル構造を維持する</td>
+            </tr>
+            <tr>
+              <td>コレクション取得で総件数を返さない</td>
+              <td>フロントエンドでページネーション UIを実装できない</td>
+              <td><code>meta.total</code> に全件数を必ず含める</td>
+            </tr>
+            <tr>
+              <td>DELETEで削除済みリソースを返す / 返さないが統一されていない</td>
+              <td>実装者が混乱し、フロントで不要な処理が発生する</td>
+              <td>DELETEは <strong>204 No Content</strong> に統一する（ボディなし）</td>
+            </tr>
+            <tr>
+              <td>500エラーにスタックトレースを含める</td>
+              <td>内部実装・ライブラリバージョン・ファイルパスが露出し、攻撃者に情報を与える</td>
+              <td>本番では汎用メッセージのみ。<code>requestId</code> でサーバーログと紐付けられるようにする</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /.content -->
+  </main>
+</div>
+
+<script>
+// タブ切り替え
+document.getElementById('apiTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('#apiTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const pane = document.getElementById('tab-' + btn.dataset.tab);
+  if (pane) pane.classList.add('active');
+});
+</script>
+<script src="../sidebar.js"></script>
+</body>
+</html>

@@ -279,20 +279,65 @@ function clearForm() {
   generate();
 }
 
+const ADR_SAMPLES = [
+  {
+    num:'003', title:'バックエンドフレームワークの選定', status:'Accepted', author:'山田 太郎',
+    context:'新規WebシステムのバックエンドAPI開発にあたり、Java/Pythonベースのフレームワークを選定する必要がある。チームは全員Javaの経験者であり、本番稼働規模は月間100万リクエスト程度を想定。SLAは99.9%稼働。',
+    decision:'バックエンドフレームワークにSpring Boot 3.2を採用する。',
+    rationale:'1. チーム全員がJavaに習熟しており学習コストがゼロ\n2. エンタープライズ向けの豊富なエコシステム（Security / Data / AOP / Actuator）\n3. 本番実績が多く、社内の既存システムとの一貫性がある\n4. Spring Security によるOAuth2/JWT対応が容易',
+    consequences:'Good:\n- 開発速度が高い（チームスキル活用）\n- セキュリティ・トランザクション管理が容易\n- Spring Actuatorでメトリクス収集可能\n\nBad:\n- 起動時間がやや長い（GraalVM Native Imageで改善可能）\n- メモリ使用量が他フレームワークより多い（コンテナサイズ 512MB確保必要）',
+    refs:'ADR-001（技術スタック選定方針）\nADR-002（インフラ・クラウド選定）\nhttps://spring.io/projects/spring-boot',
+    alternatives:[
+      { name:'FastAPI (Python)', desc:'Pythonの非同期対応フレームワーク。OpenAPI自動生成に強み', pros:'高速・シンプル・自動ドキュメント生成・型ヒント対応', cons:'チームにPython経験者がいない（習得コスト大）' },
+      { name:'Quarkus', desc:'GraalVM対応の軽量Javaフレームワーク。クラウドネイティブ向け', pros:'起動時間・メモリ効率が優秀。Kubernetesとの親和性高い', cons:'チームの習熟度が低く、導入リスクあり。エコシステムがSpringより小さい' },
+    ]
+  },
+  {
+    num:'004', title:'認証方式の選定（パスワード認証 vs SSO）', status:'Accepted', author:'鈴木 花子',
+    context:'社内申請管理システムの認証方式として、独自パスワード認証とAzure AD SSOの2方式を検討している。社内にはすでにAzure AD環境があり、150名の社員アカウントが管理されている。IT部門からはAD連携を強く推奨されている。',
+    decision:'Azure AD SSOを採用し、SAML 2.0/OpenID Connectでシングルサインオンを実現する。パスワード管理は完全にAzure AD側に委任する。',
+    rationale:'1. 既存のAzure ADアカウントをそのまま使えるため、ユーザーの利便性が高い\n2. パスワード管理・ロック・MFA等のセキュリティ機能をAD側に委任できる\n3. 退職者アカウントのAD無効化がシステムに即反映される\n4. ISMSの認証管理要件を最小工数で満たせる',
+    consequences:'Good:\n- ユーザーはパスワードを覚えなくてよい（UX向上）\n- アカウント管理の運用コスト削減\n- MFA・条件付きアクセスポリシーをAD側で一元管理\n\nBad:\n- Azure ADが停止した場合にシステムにアクセス不可\n- 外部ユーザー（委託先等）のアクセスにはゲストアカウント発行が必要\n- 初期実装コストがパスワード認証より高い（+1週間程度）',
+    refs:'ADR-001（技術スタック選定方針）\nhttps://learn.microsoft.com/ja-jp/azure/active-directory/',
+    alternatives:[
+      { name:'独自パスワード認証', desc:'メールアドレス+パスワードによる従来型認証', pros:'実装が簡単。Azure ADへの依存がない。', cons:'パスワード管理の運用負荷が高い。退職者アカウント管理が手動になる。' },
+      { name:'Google Workspace SSO', desc:'Googleアカウントを使ったSSO（OpenID Connect）', pros:'導入実績多数。実装が容易。', cons:'社内はAzure AD利用のため二重管理が発生する。' },
+    ]
+  },
+  {
+    num:'005', title:'クラウドインフラ・ホスティング先の選定', status:'Accepted', author:'佐藤 次郎',
+    context:'社内申請管理システムのインフラとして、AWS / Azure / オンプレミスを比較検討している。セキュリティ部門から「データを国内に保存すること」という要件がある。予算は初期50万円・月次20万円以内。',
+    decision:'AWS（東京リージョン）を採用する。構成はECS Fargate + RDS Aurora PostgreSQL + S3 + CloudFront。',
+    rationale:'1. 社内のクラウド利用規定でAWSが承認済み（Azure, GCPは申請中）\n2. 東京リージョンでデータ国内保存要件を満たせる\n3. チームにAWS経験者が2名おりノウハウがある\n4. Fargate採用によりサーバー管理レスで運用工数を削減\n5. Aurora Serverless v2で夜間・週末のコスト最適化が可能',
+    consequences:'Good:\n- サーバー管理が不要（Fargate）\n- 従量課金でコスト最適化しやすい\n- Auto Scalingでピークアクセスへのスケールアウトが自動化\n\nBad:\n- AWSの費用が変動する（予算オーバーリスク、Cost Explorerで監視）\n- クラウド障害時の対応はAWS依存\n- チームがFargateに不慣れのため、初期設定に追加工数が必要',
+    refs:'ADR-001（技術スタック選定方針）\n社内クラウド利用規定 v2.3\nhttps://aws.amazon.com/jp/fargate/',
+    alternatives:[
+      { name:'Azure (East Japan)', desc:'AzureのApp Service + Azure SQL Databaseを使った構成', pros:'Azure ADとのネイティブ連携が容易', cons:'AWSより社内経験が少ない。現状は利用申請中で未承認。' },
+      { name:'オンプレミス（社内データセンター）', desc:'既存の社内サーバーへのデプロイ', pros:'データが完全に社内に留まる。固定費のみ。', cons:'インフラ調達リードタイム3ヶ月。スケールアップが困難。インフラ担当の運用負荷増大。' },
+    ]
+  },
+];
+
 function loadSample() {
-  document.getElementById('adr-num').value = '003';
+  const choice = prompt(
+    `ADRサンプルを選択（番号を入力）:\n${ADR_SAMPLES.map((s,i)=>`${i+1}: ADR-${s.num} ${s.title}`).join('\n')}`, '1'
+  );
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= ADR_SAMPLES.length) { alert('無効な選択です'); return; }
+  const s = ADR_SAMPLES[idx];
+  document.getElementById('adr-num').value = s.num;
   document.getElementById('adr-date').value = new Date().toISOString().slice(0, 10);
-  document.getElementById('adr-title').value = 'バックエンドフレームワークの選定';
-  document.getElementById('adr-status').value = 'Accepted';
-  document.getElementById('adr-author').value = '山田太郎';
-  document.getElementById('adr-context').value = '新規WebシステムのバックエンドAPI開発にあたり、JavaまたはPythonベースのフレームワークを選定する必要がある。チームは全員Javaの経験者であり、本番稼働規模は月間100万リクエスト程度を想定。';
-  document.getElementById('adr-decision').value = 'バックエンドフレームワークにSpring Boot 3.2を採用する。';
-  document.getElementById('adr-rationale').value = '1. チーム全員がJavaに習熟しており学習コストがゼロ\n2. エンタープライズ向けの豊富なエコシステム（Security, Data, AOP等）\n3. 本番実績が多く、社内の既存システムとの一貫性がある';
-  document.getElementById('adr-consequences').value = 'Good:\n- 開発速度が高い（チームスキル活用）\n- セキュリティ・トランザクション管理が容易\n\nBad:\n- 起動時間がやや長い（GraalVM Native Imageで改善可能）\n- メモリ使用量が他フレームワークより多い';
-  document.getElementById('adr-refs').value = 'ADR-001（技術スタック選定方針）\nhttps://spring.io/projects/spring-boot';
+  document.getElementById('adr-title').value = s.title;
+  document.getElementById('adr-status').value = s.status;
+  document.getElementById('adr-author').value = s.author;
+  document.getElementById('adr-context').value = s.context;
+  document.getElementById('adr-decision').value = s.decision;
+  document.getElementById('adr-rationale').value = s.rationale;
+  document.getElementById('adr-consequences').value = s.consequences;
+  document.getElementById('adr-refs').value = s.refs;
   document.getElementById('alternatives-list').innerHTML = '';
-  addAlternative('FastAPI (Python)', 'Pythonの非同期対応フレームワーク', '高速・シンプル・自動ドキュメント生成', 'チームにPython経験者がいない');
-  addAlternative('Quarkus', 'GraalVM対応の軽量Javaフレームワーク', '起動時間・メモリ効率が優秀', 'チームの習熟度が低く、導入リスクあり');
+  s.alternatives.forEach(a => addAlternative(a.name, a.desc, a.pros, a.cons));
   generate();
 }
 

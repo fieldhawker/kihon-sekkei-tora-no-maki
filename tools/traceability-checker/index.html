@@ -238,47 +238,116 @@ function exportCSV() {
 }
 
 function loadSample() {
-  document.getElementById('reqs').value = `REQ-001,ユーザーログイン機能
-REQ-002,パスワードリセット機能
-REQ-003,ユーザー一覧表示
-REQ-004,ユーザー詳細表示・編集
-REQ-005,ユーザー削除機能`;
-  document.getElementById('funcs').value = `FUNC-001,認証機能
-FUNC-002,ユーザー管理機能`;
+  document.getElementById('reqs').value = `REQ-001,ユーザーログイン（Azure AD SSO）
+REQ-002,申請作成・提出
+REQ-003,申請承認・却下・差し戻し
+REQ-004,申請一覧・検索・絞り込み
+REQ-005,申請詳細閲覧
+REQ-006,メール通知（提出・承認・却下）
+REQ-007,ファイルアップロード・ダウンロード
+REQ-008,ユーザー管理（管理者機能）
+REQ-009,CSVエクスポート
+REQ-010,Salesforce社員マスタ連携`;
+  document.getElementById('funcs').value = `FUNC-001,認証機能（Azure AD SSO連携）
+FUNC-002,申請管理機能
+FUNC-003,承認フロー管理機能
+FUNC-004,ファイル管理機能（S3）
+FUNC-005,通知機能（SendGrid）
+FUNC-006,ユーザー・ロール管理機能
+FUNC-007,データエクスポート機能
+FUNC-008,外部API連携機能（Salesforce）`;
   document.getElementById('screens').value = `SCR-001,ログイン画面
-SCR-002,パスワードリセット画面
-SCR-003,ユーザー一覧画面
-SCR-004,ユーザー詳細・編集画面`;
-  document.getElementById('apis').value = `API-001,ログインAPI
-API-002,パスワードリセットAPI
-API-003,ユーザー一覧取得API
-API-004,ユーザー詳細取得API
-API-005,ユーザー更新API
-API-006,ユーザー削除API`;
-  document.getElementById('tests').value = `TEST-001,ログインテスト
-TEST-002,パスワードリセットテスト
-TEST-003,ユーザー一覧テスト
-TEST-004,ユーザー編集テスト
-TEST-005,ユーザー削除テスト`;
+SCR-002,ダッシュボード
+SCR-003,申請一覧画面
+SCR-004,申請詳細画面
+SCR-005,申請新規作成画面
+SCR-006,申請確認画面
+SCR-007,申請完了画面
+SCR-008,承認待ち一覧画面
+SCR-009,ユーザー一覧画面
+SCR-010,ユーザー登録・編集画面`;
+  document.getElementById('apis').value = `API-001,POST /api/v1/auth/login
+API-002,POST /api/v1/auth/logout
+API-003,GET /api/v1/applications
+API-004,POST /api/v1/applications
+API-005,GET /api/v1/applications/{id}
+API-006,PUT /api/v1/applications/{id}
+API-007,POST /api/v1/applications/{id}/submit
+API-008,POST /api/v1/applications/{id}/approve
+API-009,POST /api/v1/applications/{id}/reject
+API-010,POST /api/v1/applications/{id}/return
+API-011,POST /api/v1/applications/{id}/attachments
+API-012,GET /api/v1/applications/{id}/attachments/{fileId}
+API-013,GET /api/v1/users
+API-014,POST /api/v1/users
+API-015,PUT /api/v1/users/{id}
+API-016,DELETE /api/v1/users/{id}
+API-017,GET /api/v1/applications/export/csv
+API-018,POST /api/v1/batch/sync-salesforce`;
+  document.getElementById('tests').value = `TEST-001,ログイン正常系テスト
+TEST-002,ログイン異常系（認証失敗・ロック）テスト
+TEST-003,申請作成・提出テスト
+TEST-004,申請バリデーションテスト
+TEST-005,承認フロー正常系テスト
+TEST-006,却下・差し戻しテスト
+TEST-007,申請一覧・検索テスト
+TEST-008,ファイルアップロード・ダウンロードテスト
+TEST-009,メール通知テスト
+TEST-010,ユーザー管理テスト
+TEST-011,CSVエクスポートテスト
+TEST-012,Salesforce連携テスト
+TEST-013,権限制御テスト（ロール別アクセス）`;
   document.getElementById('mappings').value = `REQ-001,FUNC-001
 REQ-001,SCR-001
 REQ-001,API-001
+REQ-001,API-002
 REQ-001,TEST-001
-REQ-002,FUNC-001
-REQ-002,SCR-002
-REQ-002,API-002
-REQ-002,TEST-002
-REQ-003,FUNC-002
-REQ-003,SCR-003
-REQ-003,API-003
-REQ-003,TEST-003
+REQ-001,TEST-002
+REQ-002,FUNC-002
+REQ-002,SCR-005
+REQ-002,SCR-006
+REQ-002,SCR-007
+REQ-002,API-004
+REQ-002,API-007
+REQ-002,TEST-003
+REQ-002,TEST-004
+REQ-003,FUNC-003
+REQ-003,SCR-008
+REQ-003,SCR-004
+REQ-003,API-008
+REQ-003,API-009
+REQ-003,API-010
+REQ-003,TEST-005
+REQ-003,TEST-006
 REQ-004,FUNC-002
-REQ-004,SCR-004
-REQ-004,API-004
-REQ-004,API-005
-REQ-004,TEST-004
+REQ-004,SCR-003
+REQ-004,API-003
+REQ-004,TEST-007
 REQ-005,FUNC-002
-REQ-005,API-006`;
+REQ-005,SCR-004
+REQ-005,API-005
+REQ-005,TEST-007
+REQ-006,FUNC-005
+REQ-006,TEST-009
+REQ-007,FUNC-004
+REQ-007,API-011
+REQ-007,API-012
+REQ-007,TEST-008
+REQ-008,FUNC-006
+REQ-008,SCR-009
+REQ-008,SCR-010
+REQ-008,API-013
+REQ-008,API-014
+REQ-008,API-015
+REQ-008,API-016
+REQ-008,TEST-010
+REQ-008,TEST-013
+REQ-009,FUNC-007
+REQ-009,API-017
+REQ-009,TEST-011
+REQ-010,FUNC-008
+REQ-010,API-018
+REQ-010,TEST-012`;
   buildMatrix();
 }
 

@@ -1,0 +1,397 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>サンプル画面集 — 設計手順書 虎の巻</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .category-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-500, #6b7280);
+      margin: 2rem 0 .75rem;
+      padding-left: .25rem;
+    }
+    .phase-card .card-count {
+      font-size: .75rem;
+      opacity: .75;
+      margin-top: .3rem;
+    }
+    .learning-path {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 1rem 0;
+    }
+    .lp-item {
+      display: grid;
+      grid-template-columns: 2rem 1fr;
+      gap: 0 .75rem;
+      align-items: start;
+    }
+    .lp-item:not(:last-child)::before {
+      content: '';
+      grid-column: 1;
+      height: 100%;
+    }
+    .lp-num {
+      width: 2rem; height: 2rem;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: .8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .lp-body {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      margin-bottom: .5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .lp-body strong { font-size: .9rem; color: var(--gray-800); }
+    .lp-body span { font-size: .8rem; color: var(--gray-600); display: block; margin-top: .15rem; }
+    .sample-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .sample-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: box-shadow var(--transition), transform var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .sample-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+    .sample-card .sc-icon { font-size: 1.6rem; margin-bottom: .4rem; display: block; }
+    .sample-card .sc-title { font-weight: 700; font-size: .9rem; color: var(--gray-800); margin-bottom: .3rem; }
+    .sample-card .sc-desc { font-size: .78rem; color: var(--gray-600); line-height: 1.5; }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin: 2rem 0 .75rem;
+      padding-bottom: .4rem;
+      border-bottom: 2px solid var(--gray-200);
+    }
+    .category-header .cat-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .category-header h2 { font-size: 1rem; font-weight: 700; color: var(--gray-700); }
+    .category-header .cat-count { font-size: .78rem; color: var(--gray-400); margin-left: auto; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-libs">
+      <div class="subtitle">Sample Gallery</div>
+      <h1>🗂️ サンプル画面集</h1>
+      <p class="description">初心者がWebシステム開発で直面する典型的なUIパターンを実際の画面サンプルで学べます。実際に操作して動作を確認し、コードをコピペして活用してください。</p>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <div class="callout-title">このサンプル集の使い方</div>
+          <ul style="margin: .4rem 0 0 1rem; line-height: 2;">
+            <li><strong>実際に操作しながら学ぶ</strong> — ボタンを押したり、フォームを入力して動作を確認する</li>
+            <li><strong>コピペして使う</strong> — ブラウザの開発者ツール（F12）でHTMLを確認してコードを参考にする</li>
+            <li><strong>「なぜそうするか」を読む</strong> — 各ページには設計の理由と注意点が書いてある</li>
+            <li><strong>良い例・悪い例を比較する</strong> — どう違うかを視覚的に確認できる</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ★必須基礎 -->
+      <div class="category-header">
+        <div class="cat-dot" style="background: #7c3aed;"></div>
+        <h2>★ 必須基礎 — まずここから始める</h2>
+        <span class="cat-count">3件</span>
+      </div>
+      <div class="sample-grid">
+        <a href="layout.html" class="sample-card">
+          <span class="sc-icon">🏗️</span>
+          <div class="sc-title">レイアウト・ナビゲーション構造</div>
+          <div class="sc-desc">ヘッダー・サイドバー・フッターの役割とパンくずリスト、タブ切り替えのパターンを学ぶ</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-purple">基礎</span></div>
+        </a>
+        <a href="ui-components.html" class="sample-card">
+          <span class="sc-icon">🧩</span>
+          <div class="sc-title">UIコンポーネント状態一覧</div>
+          <div class="sc-desc">ボタン・入力欄・チェックボックスが持つすべての状態（通常・ホバー・エラー・無効）を確認する</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-purple">基礎</span></div>
+        </a>
+        <a href="responsive.html" class="sample-card">
+          <span class="sc-icon">📱</span>
+          <div class="sc-title">レスポンシブデザイン</div>
+          <div class="sc-desc">PC・タブレット・スマホでレイアウトが変化する仕組みとブレークポイントの設計を学ぶ</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-purple">基礎</span></div>
+        </a>
+      </div>
+
+      <!-- 入力・フォーム -->
+      <div class="category-header">
+        <div class="cat-dot" style="background: #1a56db;"></div>
+        <h2>入力・フォーム</h2>
+        <span class="cat-count">5件</span>
+      </div>
+      <div class="sample-grid">
+        <a href="registration-complete.html" class="sample-card">
+          <span class="sc-icon">🎉</span>
+          <div class="sc-title">登録完了画面</div>
+          <div class="sc-desc">登録内容を表示しその場で修正できる完了画面の4パターン（インライン編集・タブ切替など）</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-primary">フォーム</span></div>
+        </a>
+        <a href="form-validation.html" class="sample-card">
+          <span class="sc-icon">✅</span>
+          <div class="sc-title">フォームバリデーション</div>
+          <div class="sc-desc">リアルタイム検証・送信時検証・エラーメッセージ表示のパターンを確認する</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-primary">フォーム</span></div>
+        </a>
+        <a href="wizard-form.html" class="sample-card">
+          <span class="sc-icon">🧭</span>
+          <div class="sc-title">ステップフォーム（ウィザード）</div>
+          <div class="sc-desc">複数ステップに分けた入力フォームの進捗表示と前後移動の実装パターン</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-primary">フォーム</span></div>
+        </a>
+        <a href="datetime-input.html" class="sample-card">
+          <span class="sc-icon">📅</span>
+          <div class="sc-title">日付・時刻入力</div>
+          <div class="sc-desc">日付ピッカー・時刻入力・期間選択のUI設計と注意点（タイムゾーン・形式）</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-primary">フォーム</span></div>
+        </a>
+        <a href="input-assist.html" class="sample-card">
+          <span class="sc-icon">💡</span>
+          <div class="sc-title">入力補助・オートコンプリート</div>
+          <div class="sc-desc">サジェスト表示・候補絞り込み・タグ入力のUX向上テクニック</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-primary">フォーム</span></div>
+        </a>
+      </div>
+
+      <!-- データ表示 -->
+      <div class="category-header">
+        <div class="cat-dot" style="background: #0e9f6e;"></div>
+        <h2>データ表示</h2>
+        <span class="cat-count">3件</span>
+      </div>
+      <div class="sample-grid">
+        <a href="data-table.html" class="sample-card">
+          <span class="sc-icon">📊</span>
+          <div class="sc-title">テーブル・一覧画面</div>
+          <div class="sc-desc">ソート・絞り込み・ページネーション付きの一覧テーブルの設計と実装パターン</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-success">データ</span></div>
+        </a>
+        <a href="log-viewer.html" class="sample-card">
+          <span class="sc-icon">📋</span>
+          <div class="sc-title">ログ出力・ビューア</div>
+          <div class="sc-desc">システムログのレベル別表示・フィルタリング・自動スクロールのUI設計</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-success">データ</span></div>
+        </a>
+        <a href="audit-log.html" class="sample-card">
+          <span class="sc-icon">📜</span>
+          <div class="sc-title">監査ログ・操作履歴</div>
+          <div class="sc-desc">誰が・いつ・何をしたかを記録する監査ログの表示設計と設計上の要件</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-success">データ</span></div>
+        </a>
+      </div>
+
+      <!-- インタラクション -->
+      <div class="category-header">
+        <div class="cat-dot" style="background: #d97706;"></div>
+        <h2>インタラクション</h2>
+        <span class="cat-count">4件</span>
+      </div>
+      <div class="sample-grid">
+        <a href="notifications.html" class="sample-card">
+          <span class="sc-icon">🔔</span>
+          <div class="sc-title">通知・フィードバック</div>
+          <div class="sc-desc">トースト・モーダル・インライン通知など操作結果をユーザーに伝えるパターン</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-warning">UX</span></div>
+        </a>
+        <a href="async-states.html" class="sample-card">
+          <span class="sc-icon">⏳</span>
+          <div class="sc-title">非同期処理の状態管理</div>
+          <div class="sc-desc">ローディング・成功・エラー・空の4状態を正しく実装するパターン</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-warning">UX</span></div>
+        </a>
+        <a href="search-ui.html" class="sample-card">
+          <span class="sc-icon">🔍</span>
+          <div class="sc-title">検索UI</div>
+          <div class="sc-desc">インクリメンタルサーチ・絞り込みフィルター・検索結果のハイライト表示</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-warning">UX</span></div>
+        </a>
+        <a href="file-upload.html" class="sample-card">
+          <span class="sc-icon">📁</span>
+          <div class="sc-title">ファイルアップロード</div>
+          <div class="sc-desc">ドラッグ＆ドロップ・プレビュー・進捗表示・エラー処理のファイル操作UI</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-warning">UX</span></div>
+        </a>
+      </div>
+
+      <!-- セキュリティ・エラー -->
+      <div class="category-header">
+        <div class="cat-dot" style="background: #dc2626;"></div>
+        <h2>セキュリティ・エラー処理</h2>
+        <span class="cat-count">3件</span>
+      </div>
+      <div class="sample-grid">
+        <a href="error-patterns.html" class="sample-card">
+          <span class="sc-icon">⚠️</span>
+          <div class="sc-title">エラーハンドリング</div>
+          <div class="sc-desc">404・500・ネットワークエラーなど典型的なエラー画面の設計と復旧導線</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-danger">エラー</span></div>
+        </a>
+        <a href="auth-flow.html" class="sample-card">
+          <span class="sc-icon">🔐</span>
+          <div class="sc-title">認証・認可フロー</div>
+          <div class="sc-desc">ログイン・ログアウト・セッション切れ・権限不足の画面遷移パターン</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-danger">セキュリティ</span></div>
+        </a>
+        <a href="rbac-display.html" class="sample-card">
+          <span class="sc-icon">🛡️</span>
+          <div class="sc-title">権限・ロール別表示</div>
+          <div class="sc-desc">管理者・一般・閲覧者など役割によって表示・操作が変わる画面の設計</div>
+          <div style="margin-top: .5rem;"><span class="badge badge-danger">セキュリティ</span></div>
+        </a>
+      </div>
+
+      <!-- 設計・参照 -->
+      <div class="category-header">
+        <div class="cat-dot" style="background: #0284c7;"></div>
+        <h2>設計・参照用</h2>
+        <span class="cat-count">3件</span>
+      </div>
+      <div class="sample-grid">
+        <a href="api-response.html" class="sample-card">
+          <span class="sc-icon">🔌</span>
+          <div class="sc-title">APIレスポンス設計</div>
+          <div class="sc-desc">成功・エラー・バリデーションエラーのJSONフォーマット設計と画面への反映</div>
+          <div style="margin-top: .5rem;"><span class="badge" style="background:#e0f2fe;color:#0c4a6e;">API</span></div>
+        </a>
+        <a href="dashboard.html" class="sample-card">
+          <span class="sc-icon">📈</span>
+          <div class="sc-title">ダッシュボード</div>
+          <div class="sc-desc">KPIカード・グラフ・アクティビティフィードを組み合わせた管理画面トップ</div>
+          <div style="margin-top: .5rem;"><span class="badge" style="background:#e0f2fe;color:#0c4a6e;">参照</span></div>
+        </a>
+        <a href="wizard-form.html" class="sample-card">
+          <span class="sc-icon">🧭</span>
+          <div class="sc-title">マルチステップフォーム設計</div>
+          <div class="sc-desc">複雑な入力フローをステップ分割する設計判断と状態管理の考え方</div>
+          <div style="margin-top: .5rem;"><span class="badge" style="background:#e0f2fe;color:#0c4a6e;">設計</span></div>
+        </a>
+      </div>
+
+      <!-- 学習順序 -->
+      <h2 class="section-title">
+        <span class="title-icon">🎓</span>
+        初心者向け推奨学習順序
+      </h2>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background: #ede9fe;">🗺️</div>
+          <h2>どの順番で学ぶべきか</h2>
+        </div>
+        <p style="font-size: .875rem; color: var(--gray-600); margin-bottom: 1rem;">
+          いきなりすべてを学ぼうとせず、基礎から順番に積み上げることが重要です。以下の順序で進めると効率的です。
+        </p>
+        <div class="learning-path">
+          <div class="lp-item">
+            <div class="lp-num">1</div>
+            <div class="lp-body">
+              <strong>🏗️ レイアウト・ナビゲーション構造</strong>
+              <span>まず「画面の骨格」を理解する。すべてのWebシステムはこの構造の上に成り立っている</span>
+            </div>
+          </div>
+          <div class="lp-item">
+            <div class="lp-num">2</div>
+            <div class="lp-body">
+              <strong>🧩 UIコンポーネント状態一覧</strong>
+              <span>ボタンや入力欄が「複数の状態を持つ」ことを理解する。設計漏れの最大原因はここにある</span>
+            </div>
+          </div>
+          <div class="lp-item">
+            <div class="lp-num">3</div>
+            <div class="lp-body">
+              <strong>⏳ 非同期処理の状態管理</strong>
+              <span>APIを呼ぶすべての操作に「4つの状態」が存在する。これを設計に反映できるかが初中級者の分かれ目</span>
+            </div>
+          </div>
+          <div class="lp-item">
+            <div class="lp-num">4</div>
+            <div class="lp-body">
+              <strong>✅ フォームバリデーション</strong>
+              <span>入力データの検証は「いつ・どこで・何をチェックするか」の三軸で設計する</span>
+            </div>
+          </div>
+          <div class="lp-item">
+            <div class="lp-num">5</div>
+            <div class="lp-body">
+              <strong>⚠️ エラーハンドリング</strong>
+              <span>エラーは「ユーザーに何をしてもらうか」から逆算して設計する</span>
+            </div>
+          </div>
+          <div class="lp-item">
+            <div class="lp-num">6</div>
+            <div class="lp-body">
+              <strong>📱 レスポンシブデザイン</strong>
+              <span>スマホ対応は最初から設計に組み込む。後から追加すると大幅なやり直しになる</span>
+            </div>
+          </div>
+          <div class="lp-item">
+            <div class="lp-num">7</div>
+            <div class="lp-body">
+              <strong>🔐 認証・認可フロー → 🛡️ 権限・ロール別表示</strong>
+              <span>セキュリティは設計段階で組み込まないと後から修正が難しい</span>
+            </div>
+          </div>
+          <div class="lp-item">
+            <div class="lp-num">8</div>
+            <div class="lp-body">
+              <strong>残りのサンプル（必要なものから参照）</strong>
+              <span>ダッシュボード・テーブル・ファイルアップロードなどは機能に応じて参照する</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-success">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <div class="callout-title">学習のコツ</div>
+          実際のプロジェクトで「このUIを作る必要がある」と思ったときに該当サンプルを参照するのが最も効果的です。
+          必要性を感じながら学ぶと、内容が定着しやすくなります。
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+<script src="../js/main.js"></script>
+<script src="../sidebar.js"></script>
+</body>
+</html>

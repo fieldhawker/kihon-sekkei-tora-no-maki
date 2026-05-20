@@ -147,25 +147,88 @@ function loadSample() {
 | カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
 |---------|--------|----|----|-----------|------|
 | id | ユーザーID | BIGINT | PK, AI | - | |
-| email | メールアドレス | VARCHAR(255) | NN, UQ | - | |
+| employee_code | 社員番号 | VARCHAR(20) | NN, UQ | - | Salesforceから同期 |
+| email | メールアドレス | VARCHAR(255) | NN, UQ | - | Azure ADと連携 |
 | name | 氏名 | VARCHAR(100) | NN | - | |
-| password_hash | パスワードハッシュ | VARCHAR(255) | NN | - | bcrypt |
-| role | ロール | ENUM | NN | 'user' | user/admin |
+| name_kana | 氏名（カナ） | VARCHAR(100) | - | NULL | |
+| department_id | 部署ID | BIGINT | FK, NN | - | departments.id |
+| role | ロール | ENUM | NN | 'user' | user/approver/accounting/admin/sysadmin |
+| is_active | 有効フラグ | BOOLEAN | NN | TRUE | FALSE=無効化済み |
+| last_login_at | 最終ログイン日時 | DATETIME | - | NULL | |
 | created_at | 作成日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
 | updated_at | 更新日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
 | deleted_at | 削除日時 | DATETIME | - | NULL | 論理削除 |
 
-## posts テーブル（投稿）
+## departments テーブル（部署）
 
 | カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
 |---------|--------|----|----|-----------|------|
-| id | 投稿ID | BIGINT | PK, AI | - | |
-| user_id | 投稿者ID | BIGINT | FK, NN | - | users.id |
-| title | タイトル | VARCHAR(200) | NN | - | |
-| body | 本文 | TEXT | NN | - | |
-| status | ステータス | ENUM | NN | 'draft' | draft/published |
-| published_at | 公開日時 | DATETIME | - | NULL | |
+| id | 部署ID | BIGINT | PK, AI | - | |
+| code | 部署コード | VARCHAR(20) | NN, UQ | - | |
+| name | 部署名 | VARCHAR(100) | NN | - | |
+| parent_id | 親部署ID | BIGINT | FK | NULL | departments.id 階層構造 |
+| sort_order | 表示順 | INT | NN | 0 | |
+| is_active | 有効フラグ | BOOLEAN | NN | TRUE | |
 | created_at | 作成日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+| updated_at | 更新日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+
+## application_types テーブル（申請種別）
+
+| カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
+|---------|--------|----|----|-----------|------|
+| id | 申請種別ID | BIGINT | PK, AI | - | |
+| code | 申請種別コード | VARCHAR(20) | NN, UQ | - | |
+| name | 申請種別名 | VARCHAR(100) | NN | - | 経費申請・休暇申請等 |
+| approval_flow_id | 承認フローID | BIGINT | FK, NN | - | approval_flows.id |
+| is_active | 有効フラグ | BOOLEAN | NN | TRUE | |
+| sort_order | 表示順 | INT | NN | 0 | |
+| created_at | 作成日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+| updated_at | 更新日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+
+## applications テーブル（申請）
+
+| カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
+|---------|--------|----|----|-----------|------|
+| id | 申請ID | BIGINT | PK, AI | - | |
+| application_number | 申請番号 | VARCHAR(20) | NN, UQ | - | APP-YYYYMM-NNNNN形式 |
+| application_type_id | 申請種別ID | BIGINT | FK, NN | - | application_types.id |
+| applicant_id | 申請者ID | BIGINT | FK, NN | - | users.id |
+| title | 件名 | VARCHAR(200) | NN | - | |
+| content | 申請内容 | TEXT | - | NULL | |
+| amount | 金額 | DECIMAL(12,0) | - | NULL | 経費申請時のみ |
+| applied_at | 申請日 | DATE | NN | - | |
+| status | ステータス | ENUM | NN | 'draft' | draft/pending/approved/rejected/returned/cancelled |
+| current_step | 現在承認ステップ | INT | NN | 0 | |
+| submitted_at | 提出日時 | DATETIME | - | NULL | |
+| completed_at | 完了日時 | DATETIME | - | NULL | |
+| created_at | 作成日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+| updated_at | 更新日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+| deleted_at | 削除日時 | DATETIME | - | NULL | 論理削除（管理者のみ） |
+
+## approval_actions テーブル（承認操作履歴）
+
+| カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
+|---------|--------|----|----|-----------|------|
+| id | 操作ID | BIGINT | PK, AI | - | |
+| application_id | 申請ID | BIGINT | FK, NN | - | applications.id |
+| approver_id | 承認者ID | BIGINT | FK, NN | - | users.id |
+| step | 承認ステップ | INT | NN | - | |
+| action | 操作種別 | ENUM | NN | - | approved/rejected/returned |
+| comment | コメント | TEXT | - | NULL | 却下・差し戻し時は必須 |
+| acted_at | 操作日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+
+## attachments テーブル（添付ファイル）
+
+| カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
+|---------|--------|----|----|-----------|------|
+| id | 添付ファイルID | BIGINT | PK, AI | - | |
+| application_id | 申請ID | BIGINT | FK, NN | - | applications.id |
+| uploader_id | アップロード者ID | BIGINT | FK, NN | - | users.id |
+| original_filename | 元ファイル名 | VARCHAR(255) | NN | - | |
+| s3_key | S3オブジェクトキー | VARCHAR(500) | NN, UQ | - | |
+| mime_type | MIMEタイプ | VARCHAR(100) | NN | - | |
+| file_size | ファイルサイズ | INT | NN | - | バイト単位 上限10MB |
+| created_at | アップロード日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
 `;
   parse();
 }

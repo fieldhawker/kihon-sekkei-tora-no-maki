@@ -1,0 +1,453 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>監査ログ・操作履歴 — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .filter-bar {
+      display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;
+      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;
+      padding: 0.75rem 1rem; margin-bottom: 1rem;
+    }
+    .filter-bar label { font-size: 0.85rem; font-weight: 600; color: #374151; white-space: nowrap; }
+    .filter-bar select, .filter-bar input[type=text] {
+      padding: 0.35rem 0.6rem; border: 1px solid #d1d5db; border-radius: 6px;
+      font-size: 0.85rem; background: #fff;
+    }
+    .op-badge {
+      display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em;
+    }
+    .op-CREATE { background: #d1fae5; color: #065f46; }
+    .op-UPDATE { background: #dbeafe; color: #1e40af; }
+    .op-DELETE { background: #fee2e2; color: #991b1b; }
+    .op-VIEW   { background: #f3f4f6; color: #374151; }
+    .op-EXPORT { background: #ede9fe; color: #5b21b6; }
+    .op-LOGIN  { background: #fef9c3; color: #92400e; }
+
+    .audit-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .audit-table th {
+      background: #f3f4f6; padding: 0.65rem 0.9rem; text-align: left;
+      border-bottom: 2px solid #e5e7eb; white-space: nowrap;
+    }
+    .audit-table td { padding: 0.6rem 0.9rem; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+    .audit-table tr:hover td { background: #f0f9ff; cursor: pointer; }
+    .audit-table tr.hidden-row { display: none; }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 12px; padding: 2rem;
+      max-width: 640px; width: 90%; max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .modal-header h3 { margin: 0; font-size: 1.05rem; }
+    .modal-close { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #6b7280; padding: 0.25rem; }
+    .modal-section { margin-bottom: 1rem; }
+    .modal-section h4 { margin: 0 0 0.5rem; font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.88rem; }
+    .modal-kv { display: flex; flex-direction: column; background: #f9fafb; padding: 0.5rem 0.75rem; border-radius: 6px; }
+    .modal-kv span:first-child { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.15rem; }
+    .modal-kv span:last-child  { font-weight: 600; color: #1f2937; }
+
+    /* 差分表示 */
+    .diff-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.75rem; }
+    .diff-table th { background: #f3f4f6; padding: 0.5rem 0.75rem; text-align: left; border-bottom: 2px solid #e5e7eb; font-size: 0.82rem; }
+    .diff-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f3f4f6; }
+    .diff-added   { background: #d1fae5; color: #065f46; }
+    .diff-removed { background: #fee2e2; color: #991b1b; }
+    .diff-changed { background: #fef9c3; color: #92400e; }
+    .diff-icon { margin-right: 0.3rem; font-size: 0.8rem; }
+    .diff-before { text-decoration: line-through; opacity: 0.7; }
+
+    .record-count { font-size: 0.85rem; color: #6b7280; margin-bottom: 0.5rem; }
+    .hash-chain-box {
+      background: #0d1117; color: #c9d1d9;
+      border-radius: 8px; padding: 1rem 1.25rem;
+      font-family: 'Consolas', monospace; font-size: 0.8rem;
+      line-height: 1.8; margin-top: 0.75rem;
+    }
+    .hash-chain-box .hc-entry { margin-bottom: 0.5rem; }
+    .hash-chain-box .hc-field { color: #58a6ff; }
+    .hash-chain-box .hc-val   { color: #a5d6ff; }
+    .hash-chain-box .hc-hash  { color: #7ee787; }
+    .hash-chain-box .hc-prev  { color: #d29922; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-adr">
+      <div class="page-header-content">
+        <h1>📜 監査ログ・操作履歴</h1>
+        <p>誰が・いつ・何を・どう変えたか — トレーサビリティを確保する設計パターン</p>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-info">
+        <strong>📌 監査ログとは何か</strong><br>
+        監査ログは「いつでもトレースできる状態」を保つためのもの。何か問題が起きたとき「誰が・いつ・何を・なぜ変えたか」を後から辿れることが目的。
+        法的要件（個人情報保護法・GDPR・SOX法など）や内部統制（J-SOX）で<strong>必須</strong>になる場合が多い。設計の早い段階で組み込む必要がある。
+      </div>
+
+      <!-- セクション1: 何を記録すべきか -->
+      <h2 class="section-title"><span class="title-icon">📋</span>1. 記録すべき操作の考え方</h2>
+      <p>全操作を記録するとデータ量が膨大になる。重要度に応じて記録レベルを決める。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>操作種別</th><th>記録必須</th><th>記録推奨</th><th>記録任意</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="op-badge op-LOGIN">LOGIN</span> 認証操作</td>
+              <td>ログイン成功・失敗、ログアウト、パスワード変更</td>
+              <td>セッションタイムアウト、MFA認証</td>
+              <td>ページ遷移</td>
+            </tr>
+            <tr>
+              <td><span class="op-badge op-CREATE">CREATE</span> 作成</td>
+              <td>マスターデータ・注文・ユーザー作成</td>
+              <td>ドラフト保存、テンプレート作成</td>
+              <td>一時データ作成</td>
+            </tr>
+            <tr>
+              <td><span class="op-badge op-UPDATE">UPDATE</span> 更新</td>
+              <td>個人情報・金額・ステータス変更、承認操作</td>
+              <td>メモ・コメント変更、設定変更</td>
+              <td>表示設定・ソート順変更</td>
+            </tr>
+            <tr>
+              <td><span class="op-badge op-DELETE">DELETE</span> 削除</td>
+              <td>ほぼ全ての削除操作（論理・物理どちらも）</td>
+              <td>一時ファイル削除</td>
+              <td>キャッシュクリア</td>
+            </tr>
+            <tr>
+              <td><span class="op-badge op-EXPORT">EXPORT</span> エクスポート</td>
+              <td>個人情報・財務データのダウンロード、CSV出力</td>
+              <td>レポート出力</td>
+              <td>画面印刷</td>
+            </tr>
+            <tr>
+              <td><span class="op-badge op-VIEW">VIEW</span> 参照</td>
+              <td>機密情報・個人情報の参照（金融・医療系）</td>
+              <td>管理画面へのアクセス</td>
+              <td>一般ページ閲覧</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- セクション2: 構造 -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🏗️</span>2. 監査ログの構造（理想形）</h2>
+      <p>1件の監査ログに含めるべきフィールドを定義する。後から「あの情報があれば…」とならないよう最初から設計する。</p>
+      <pre>{
+  "audit_id":   "aud_20260520_001823",      // 監査ログの一意ID
+  "timestamp":  "2026-05-20T14:23:11+09:00", // ISO 8601 タイムゾーン付き
+  "actor": {
+    "user_id":   "usr_00042",               // 操作者のID（削除されても残す）
+    "user_name": "田中 太郎",               // 操作時点の表示名（変更前の名前でも記録）
+    "role":      "admin",                   // 操作時点のロール
+    "ip_address": "203.0.113.45",           // クライアントIP
+    "user_agent": "Mozilla/5.0 ..."         // ブラウザ情報
+  },
+  "action": {
+    "type":     "UPDATE",                   // CREATE / UPDATE / DELETE / VIEW / EXPORT / LOGIN
+    "resource": "User",                     // 操作対象のリソース種別
+    "resource_id": "usr_00108",             // 操作対象のID
+    "description": "ユーザー情報を更新"     // 人が読める説明
+  },
+  "changes": {                              // UPDATEの場合: 変更前後の値
+    "email": {
+      "before": "old@example.com",
+      "after":  "new@example.com"
+    },
+    "phone": {
+      "before": null,
+      "after":  "090-1234-5678"
+    }
+  },
+  "request": {
+    "method": "PUT",
+    "path":   "/api/v1/users/usr_00108",
+    "trace_id": "trace_abc123"              // 分散トレース用ID（ログとの紐付け）
+  },
+  "prev_hash": "sha256:a3f9c2...",          // 前のレコードのハッシュ（改ざん検知）
+  "hash":      "sha256:b7e1d4..."           // このレコード全体のハッシュ
+}</pre>
+
+      <!-- セクション3: 一覧デモ -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">📊</span>3. 操作履歴一覧デモ</h2>
+      <p>行をクリックすると詳細モーダルが開く。フィルタで絞り込みも可能。</p>
+
+      <div class="filter-bar">
+        <label>操作種別：</label>
+        <select id="filter-op">
+          <option value="">すべて</option>
+          <option value="CREATE">CREATE</option>
+          <option value="UPDATE">UPDATE</option>
+          <option value="DELETE">DELETE</option>
+          <option value="VIEW">VIEW</option>
+          <option value="EXPORT">EXPORT</option>
+          <option value="LOGIN">LOGIN</option>
+        </select>
+        <label>操作者：</label>
+        <select id="filter-actor">
+          <option value="">すべて</option>
+          <option value="田中 太郎">田中 太郎</option>
+          <option value="山田 花子">山田 花子</option>
+          <option value="鈴木 一郎">鈴木 一郎</option>
+          <option value="佐藤 美咲">佐藤 美咲</option>
+        </select>
+        <label>キーワード：</label>
+        <input type="text" id="filter-text" placeholder="対象・変更概要…" style="width:160px;">
+        <button onclick="applyFilter()" style="padding:0.35rem 0.9rem;border-radius:6px;border:none;background:#1a56db;color:#fff;font-size:0.85rem;cursor:pointer;">絞込</button>
+        <button onclick="clearFilter()" style="padding:0.35rem 0.9rem;border-radius:6px;border:1px solid #d1d5db;background:#fff;color:#374151;font-size:0.85rem;cursor:pointer;">クリア</button>
+      </div>
+
+      <div class="record-count" id="record-count"></div>
+      <div class="table-wrap">
+        <table class="audit-table" id="audit-table">
+          <thead>
+            <tr>
+              <th>日時</th>
+              <th>操作者</th>
+              <th>操作種別</th>
+              <th>対象リソース</th>
+              <th>変更概要</th>
+            </tr>
+          </thead>
+          <tbody id="audit-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- セクション4: 差分表示 -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🔍</span>4. 変更差分表示デモ</h2>
+      <p>UPDATE操作の変更前後を視覚的に比較する。緑=追加・赤=削除・黄=変更のカラーコーディングで一目で把握できる。</p>
+
+      <div class="card" style="margin-top:1rem;">
+        <div class="card-header">
+          ユーザー情報変更 — usr_00108（山田 花子） ·
+          <span class="op-badge op-UPDATE" style="vertical-align:middle;">UPDATE</span>
+          <span style="float:right;font-size:0.82rem;color:#6b7280;">2026-05-20 14:23:11 · 田中 太郎</span>
+        </div>
+        <div style="padding:1rem 1.5rem;">
+          <table class="diff-table">
+            <thead>
+              <tr>
+                <th>フィールド</th>
+                <th>変更前</th>
+                <th>変更後</th>
+                <th>変更種別</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="diff-changed">
+                <td><code>email</code></td>
+                <td><span class="diff-before">yamada_old@example.com</span></td>
+                <td>yamada@example.com</td>
+                <td><span class="diff-icon">🔄</span>変更</td>
+              </tr>
+              <tr class="diff-added">
+                <td><code>phone</code></td>
+                <td style="color:#9ca3af;font-style:italic;">（未設定）</td>
+                <td>090-2345-6789</td>
+                <td><span class="diff-icon">➕</span>追加</td>
+              </tr>
+              <tr class="diff-changed">
+                <td><code>department</code></td>
+                <td><span class="diff-before">総務部</span></td>
+                <td>人事部</td>
+                <td><span class="diff-icon">🔄</span>変更</td>
+              </tr>
+              <tr class="diff-removed">
+                <td><code>manager_id</code></td>
+                <td>usr_00003</td>
+                <td style="color:#9ca3af;font-style:italic;">（削除）</td>
+                <td><span class="diff-icon">➖</span>削除</td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>山田 花子</td>
+                <td>山田 花子</td>
+                <td style="color:#9ca3af;">変更なし</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.82rem;color:#6b7280;margin:0.75rem 0 0;">
+            ※ 変更なしのフィールドは通常は非表示にして変更があったものだけ表示するとログが読みやすくなる。
+          </p>
+        </div>
+      </div>
+
+      <!-- セクション5: 保存と改ざん防止 -->
+      <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🔐</span>5. 保存期間と改ざん防止</h2>
+
+      <div class="callout callout-warning">
+        <strong>⚠️ 設計時に決めておくべき考慮点</strong>
+        <ul style="margin:0.5rem 0 0 1.2rem;line-height:2;">
+          <li><strong>保存期間：</strong>業界・法律によって異なる（医療系は10年、金融系は7年など）。削除ポリシーも設計段階で決める。</li>
+          <li><strong>RDB vs 追記専用DB：</strong>通常のDBはUPDATE/DELETEができてしまう。PostgreSQLのRow-level TTL、Amazon Timestream、Apache Iceberg等の追記専用構造を検討する。</li>
+          <li><strong>ハッシュチェーン：</strong>各レコードに「前のレコードのハッシュ」を含めることで改ざん検知が可能。ブロックチェーンと同じ原理。</li>
+          <li><strong>アクセス制限：</strong>監査ログ自体へのアクセスも監査する。無限ループに見えるが、監査ログDBへのアクセスログはOSレベルで記録する。</li>
+          <li><strong>検索性：</strong>user_id・timestamp・resource_idにはインデックスを必ず貼る。数百万件になっても検索できる設計が必要。</li>
+        </ul>
+      </div>
+
+      <p>ハッシュチェーンのイメージ（改ざんするとチェーンが切れる）：</p>
+      <div class="hash-chain-box">
+        <div class="hc-entry">
+          <span class="hc-field">レコード #001</span> |
+          <span class="hc-field">prev_hash:</span> <span class="hc-prev">genesis（なし）</span> |
+          <span class="hc-field">hash:</span> <span class="hc-hash">sha256:a3f9c2d1...</span>
+        </div>
+        <div class="hc-entry">
+          <span class="hc-field">レコード #002</span> |
+          <span class="hc-field">prev_hash:</span> <span class="hc-prev">sha256:a3f9c2d1...</span> ← #001のhash |
+          <span class="hc-field">hash:</span> <span class="hc-hash">sha256:b7e1d4f8...</span>
+        </div>
+        <div class="hc-entry">
+          <span class="hc-field">レコード #003</span> |
+          <span class="hc-field">prev_hash:</span> <span class="hc-prev">sha256:b7e1d4f8...</span> ← #002のhash |
+          <span class="hc-field">hash:</span> <span class="hc-hash">sha256:c9a2e5b3...</span>
+        </div>
+        <div style="color:#f85149;margin-top:0.5rem;">
+          ↑ #002を書き換えると hashが変わる → #003のprev_hashと一致しない → 改ざん検知！
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- モーダル -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-title">操作詳細</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const AUDIT_LOGS = [
+  { id:'aud001', ts:'2026-05-20 14:23:11', actor:'田中 太郎', op:'UPDATE', resource:'User', resource_id:'usr_00108', desc:'メールアドレス・部署を変更', ip:'203.0.113.45', detail:'メール: yamada_old@example.com → yamada@example.com / 部署: 総務部 → 人事部' },
+  { id:'aud002', ts:'2026-05-20 14:15:02', actor:'山田 花子', op:'CREATE', resource:'Order', resource_id:'ord_00892', desc:'新規注文を作成（¥48,000）', ip:'203.0.113.66', detail:'注文ID: ord_00892 / 金額: ¥48,000 / 顧客: 株式会社サンプル' },
+  { id:'aud003', ts:'2026-05-20 13:58:44', actor:'鈴木 一郎', op:'VIEW',   resource:'PersonalData', resource_id:'usr_00234', desc:'個人情報を参照', ip:'10.0.1.22', detail:'閲覧対象: 佐藤 美咲 の個人情報（閲覧ロール）' },
+  { id:'aud004', ts:'2026-05-20 13:45:30', actor:'田中 太郎', op:'DELETE', resource:'Document', resource_id:'doc_00556', desc:'添付ファイルを削除', ip:'203.0.113.45', detail:'ファイル名: 見積書_v2_draft.pdf / サイズ: 245KB' },
+  { id:'aud005', ts:'2026-05-20 13:32:17', actor:'佐藤 美咲', op:'EXPORT', resource:'OrderList',  resource_id:'exp_00031', desc:'注文一覧をCSVエクスポート', ip:'192.168.1.55', detail:'件数: 1,234件 / 期間: 2026-04-01〜2026-04-30 / ファイル名: orders_202604.csv' },
+  { id:'aud006', ts:'2026-05-20 12:10:05', actor:'山田 花子', op:'UPDATE', resource:'Order', resource_id:'ord_00885', desc:'注文ステータスを承認済みに変更', ip:'203.0.113.66', detail:'ステータス: 審査中 → 承認済み' },
+  { id:'aud007', ts:'2026-05-20 11:55:22', actor:'鈴木 一郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00412', desc:'ログイン成功', ip:'10.0.1.22', detail:'認証方法: パスワード+TOTP / ブラウザ: Chrome 125' },
+  { id:'aud008', ts:'2026-05-20 11:40:09', actor:'田中 太郎', op:'CREATE', resource:'User', resource_id:'usr_00245', desc:'新規ユーザーを作成（役職: 一般）', ip:'203.0.113.45', detail:'氏名: 高橋 健太 / メール: takahashi@example.com / ロール: user' },
+  { id:'aud009', ts:'2026-05-20 11:23:00', actor:'佐藤 美咲', op:'UPDATE', resource:'Product', resource_id:'prd_00334', desc:'商品単価を変更', ip:'192.168.1.55', detail:'商品名: ノートPC 14インチ / 単価: ¥98,000 → ¥89,800' },
+  { id:'aud010', ts:'2026-05-20 10:58:37', actor:'田中 太郎', op:'DELETE', resource:'User', resource_id:'usr_00099', desc:'退職ユーザーを無効化（論理削除）', ip:'203.0.113.45', detail:'対象: 中村 次郎 / 理由: 2026-05-20退職' },
+  { id:'aud011', ts:'2026-05-20 10:30:15', actor:'山田 花子', op:'VIEW',   resource:'ReportData', resource_id:'rpt_00078', desc:'月次レポートを参照', ip:'203.0.113.66', detail:'レポート: 2026年4月 売上集計 / アクセス権: 承認済み' },
+  { id:'aud012', ts:'2026-05-20 09:45:52', actor:'鈴木 一郎', op:'CREATE', resource:'Comment', resource_id:'cmt_01122', desc:'注文へのコメントを追加', ip:'10.0.1.22', detail:'対象注文: ord_00872 / コメント: 「発送前に在庫確認要」' },
+  { id:'aud013', ts:'2026-05-20 09:22:33', actor:'佐藤 美咲', op:'UPDATE', resource:'User', resource_id:'usr_00042', desc:'パスワードリセット実施', ip:'192.168.1.55', detail:'対象: 田中 太郎 / 管理者によるリセット / 有効期限: 24時間' },
+  { id:'aud014', ts:'2026-05-20 09:10:08', actor:'田中 太郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00411', desc:'ログイン成功', ip:'203.0.113.45', detail:'認証方法: パスワード+TOTP / ブラウザ: Chrome 125' },
+  { id:'aud015', ts:'2026-05-19 18:34:55', actor:'山田 花子', op:'EXPORT', resource:'UserList', resource_id:'exp_00030', desc:'ユーザー一覧をCSVエクスポート', ip:'203.0.113.66', detail:'件数: 58件 / 個人情報含む / 承認者: 田中 太郎' },
+  { id:'aud016', ts:'2026-05-19 17:12:40', actor:'鈴木 一郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00410', desc:'ログイン失敗（3回目）→アカウントロック', ip:'10.0.2.99', detail:'失敗理由: パスワード不一致 / IPアドレスが普段と異なる' },
+  { id:'aud017', ts:'2026-05-19 16:55:21', actor:'佐藤 美咲', op:'DELETE', resource:'Order', resource_id:'ord_00878', desc:'重複注文を削除（論理削除）', ip:'192.168.1.55', detail:'注文金額: ¥15,000 / 削除理由: システムエラーによる重複登録' },
+];
+
+const OP_LABELS = { CREATE:'CREATE', UPDATE:'UPDATE', DELETE:'DELETE', VIEW:'VIEW', EXPORT:'EXPORT', LOGIN:'LOGIN' };
+
+function renderTable(logs) {
+  const tbody = document.getElementById('audit-tbody');
+  tbody.innerHTML = logs.map(log => `
+    <tr data-id="${log.id}">
+      <td style="white-space:nowrap;font-size:0.82rem;">${log.ts}</td>
+      <td>${log.actor}</td>
+      <td><span class="op-badge op-${log.op}">${log.op}</span></td>
+      <td><code style="font-size:0.8rem;">${log.resource}</code> <span style="color:#9ca3af;font-size:0.78rem;">#${log.resource_id}</span></td>
+      <td>${log.desc}</td>
+    </tr>
+  `).join('');
+  document.getElementById('record-count').textContent = `${logs.length} 件を表示`;
+
+  tbody.querySelectorAll('tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const id = tr.dataset.id;
+      const log = AUDIT_LOGS.find(l => l.id === id);
+      openModal(log);
+    });
+  });
+}
+
+function applyFilter() {
+  const op    = document.getElementById('filter-op').value;
+  const actor = document.getElementById('filter-actor').value;
+  const text  = document.getElementById('filter-text').value.toLowerCase();
+  const filtered = AUDIT_LOGS.filter(l =>
+    (!op    || l.op    === op) &&
+    (!actor || l.actor === actor) &&
+    (!text  || l.desc.toLowerCase().includes(text) || l.resource.toLowerCase().includes(text))
+  );
+  renderTable(filtered);
+}
+
+function clearFilter() {
+  document.getElementById('filter-op').value = '';
+  document.getElementById('filter-actor').value = '';
+  document.getElementById('filter-text').value = '';
+  renderTable(AUDIT_LOGS);
+}
+
+function openModal(log) {
+  document.getElementById('modal-title').textContent = `操作詳細 — ${log.id}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-section">
+      <h4>基本情報</h4>
+      <div class="modal-grid">
+        <div class="modal-kv"><span>日時</span><span>${log.ts}</span></div>
+        <div class="modal-kv"><span>操作種別</span><span><span class="op-badge op-${log.op}">${log.op}</span></span></div>
+        <div class="modal-kv"><span>操作者</span><span>${log.actor}</span></div>
+        <div class="modal-kv"><span>IPアドレス</span><span>${log.ip}</span></div>
+        <div class="modal-kv"><span>対象リソース</span><span>${log.resource}</span></div>
+        <div class="modal-kv"><span>リソースID</span><span>${log.resource_id}</span></div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>変更概要</h4>
+      <div style="background:#f9fafb;border-radius:6px;padding:0.75rem;font-size:0.88rem;">${log.desc}</div>
+    </div>
+    <div class="modal-section">
+      <h4>詳細情報</h4>
+      <div style="background:#f9fafb;border-radius:6px;padding:0.75rem;font-size:0.85rem;color:#374151;line-height:1.7;">${log.detail}</div>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// フィルターのEnterキー対応
+document.getElementById('filter-text').addEventListener('keydown', e => { if (e.key === 'Enter') applyFilter(); });
+
+// 初期描画
+renderTable(AUDIT_LOGS);
+</script>
+<script src="../sidebar.js"></script>
+</body>
+</html>

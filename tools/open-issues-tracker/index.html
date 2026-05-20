@@ -317,14 +317,21 @@ function exportMarkdown() {
 }
 
 function loadSample() {
-  const today = new Date().toISOString().slice(0, 10);
-  const next = new Date(Date.now() + 7*86400000).toISOString().slice(0, 10);
+  const d = (offset=0) => new Date(Date.now() + offset*86400000).toISOString().slice(0, 10);
+  const now = new Date().toISOString();
   const sample = [
-    { id:1, meeting:'2024-01-15 第1回ヒアリング', title:'ログイン失敗時のアカウントロック回数', desc:'何回連続失敗でロックするか未定。セキュリティ要件として重要。', owner:'顧客（田中様）', deadline: next, priority:'high', status:'open', resolution:'', createdAt: new Date().toISOString() },
-    { id:2, meeting:'2024-01-15 第1回ヒアリング', title:'パスワードの複雑さ要件', desc:'大文字・小文字・数字・記号の組み合わせが必要か確認が必要。', owner:'顧客（田中様）', deadline: next, priority:'high', status:'checking', resolution:'', createdAt: new Date().toISOString() },
-    { id:3, meeting:'2024-01-15 第1回ヒアリング', title:'既存ExcelデータのフォーマットとDB移行方針', desc:'現行システムのExcelデータをどの形式で受け取るか、移行ツールが必要か確認。', owner:'顧客・ITインフラ担当', deadline:'', priority:'mid', status:'open', resolution:'', createdAt: new Date().toISOString() },
-    { id:4, meeting:'2024-01-22 第2回ヒアリング', title:'CSVエクスポートの対象データと項目', desc:'どのテーブルのどの列をエクスポートするか仕様を確認。', owner:'業務担当 佐藤様', deadline:'', priority:'mid', status:'resolved', resolution:'ユーザーマスタ全項目（パスワード除く）のエクスポート。頻度は月次想定。2024-01-22確認済。', createdAt: new Date().toISOString() },
-    { id:5, meeting:'2024-01-22 第2回ヒアリング', title:'同時接続ユーザー数の想定', desc:'非機能要件として同時接続数の目安が必要。', owner:'顧客（田中様）', deadline:'', priority:'low', status:'open', resolution:'', createdAt: new Date().toISOString() },
+    { id:1, meeting:'2026-05-08 第1回ヒアリング', title:'ログイン失敗時のアカウントロック回数', desc:'何回連続失敗でアカウントをロックするか未定。セキュリティポリシー上は5回が一般的だが、業務特性（頻繁な入力誤りの有無）を確認したい。', owner:'田中部長', deadline:d(7), priority:'high', status:'open', resolution:'', createdAt:now },
+    { id:2, meeting:'2026-05-08 第1回ヒアリング', title:'パスワードポリシーの詳細（文字種・有効期限）', desc:'大文字・小文字・数字・記号の混在要件と有効期限（90日 or 180日）を確認が必要。社内セキュリティ規定があれば共有してほしい。', owner:'田中部長', deadline:d(7), priority:'high', status:'checking', resolution:'', createdAt:now },
+    { id:3, meeting:'2026-05-08 第1回ヒアリング', title:'承認フローのパターン数と各フロー', desc:'部署によって承認フローが異なると聞いている。具体的に何パターンあるか、各フローの承認ステップ数と承認者ロールを整理してほしい。', owner:'田中部長・業務担当 佐藤様', deadline:d(14), priority:'high', status:'open', resolution:'', createdAt:now },
+    { id:4, meeting:'2026-05-08 第1回ヒアリング', title:'既存ExcelデータのフォーマットとDB移行件数', desc:'現行のExcel申請データをどのシートからどの形式で受け取るか確認。移行対象の件数（概算）と過去データの扱いも確認が必要。', owner:'IT部門 鈴木様', deadline:d(14), priority:'high', status:'open', resolution:'', createdAt:now },
+    { id:5, meeting:'2026-05-08 第1回ヒアリング', title:'添付ファイルのサイズ上限・種類', desc:'ファイルアップロード機能についてサイズ上限（5MB or 10MB？）と許可するMIMEタイプ（PDF/Excel/画像のみ？）の確認が必要。', owner:'業務担当 佐藤様', deadline:d(10), priority:'mid', status:'checking', resolution:'', createdAt:now },
+    { id:6, meeting:'2026-05-15 第2回ヒアリング', title:'CSVエクスポートの対象データと出力項目', desc:'月次集計で使うCSVエクスポートの対象範囲（全申請 or 部署別）と出力項目の一覧を確認。列名・並び順の指定があればExcelサンプルで共有してほしい。', owner:'経理担当 山田様', deadline:d(5), priority:'mid', status:'resolved', resolution:'全申請対象（ステータス絞り込みあり）。出力項目は申請ID・申請種別・申請者名・申請日・金額・ステータス・承認日・承認者名の8項目。2026-05-15確認済。', createdAt:now },
+    { id:7, meeting:'2026-05-15 第2回ヒアリング', title:'同時接続ユーザー数の想定とピークタイミング', desc:'非機能要件（性能設計）として同時接続数の目安が必要。月次締め処理時にピークになると想定されるが、具体的な人数と時間帯を確認。', owner:'田中部長', deadline:d(7), priority:'mid', status:'open', resolution:'', createdAt:now },
+    { id:8, meeting:'2026-05-15 第2回ヒアリング', title:'差し戻し後の申請フロー（修正→再申請の扱い）', desc:'承認者が差し戻した場合、申請者が修正して再申請するフローの詳細が未確認。新規IDを発行するか、同一IDで版管理するかの確認が必要。', owner:'業務担当 佐藤様', deadline:d(10), priority:'high', status:'open', resolution:'', createdAt:now },
+    { id:9, meeting:'2026-05-15 第2回ヒアリング', title:'メール通知の送信タイミングと宛先ルール', desc:'通知メールの送信タイミング（提出時・承認時・却下時）と宛先（申請者本人のみ or CC設定あり？）の詳細を確認。メールテンプレートの文面も確認が必要。', owner:'田中部長', deadline:d(14), priority:'mid', status:'open', resolution:'', createdAt:now },
+    { id:10, meeting:'2026-05-15 第2回ヒアリング', title:'Salesforce連携のAPI仕様・バージョン', desc:'社員マスタをSalesforceから同期する要件あり。利用するSalesforce APIのバージョンとエンドポイント、認証方式（OAuth2）の詳細をIT部門から取得する必要あり。', owner:'IT部門 鈴木様', deadline:d(21), priority:'mid', status:'checking', resolution:'', createdAt:now },
+    { id:11, meeting:'2026-05-22 第3回ヒアリング', title:'外部ベンダーへの脆弱性診断の実施有無と予算', desc:'本番リリース前の脆弱性診断（外部委託）が必要かどうか、予算が確保されているか確認。診断範囲と実施タイミングも合わせて確認。', owner:'田中部長', deadline:d(30), priority:'low', status:'open', resolution:'', createdAt:now },
+    { id:12, meeting:'2026-05-22 第3回ヒアリング', title:'ユーザー向けトレーニング・マニュアルの範囲', desc:'マニュアル作成の対象範囲（一般ユーザー向け操作マニュアル、管理者向け管理マニュアル）と作成形式（PDF or Web）を確認。', owner:'業務担当 佐藤様', deadline:d(45), priority:'low', status:'resolved', resolution:'PDF形式で2種類作成する。一般ユーザー向けと管理者向けそれぞれ20ページ程度。納品はリリース2週間前。2026-05-22確認済。', createdAt:now },
   ];
   save(sample);
   renderList();

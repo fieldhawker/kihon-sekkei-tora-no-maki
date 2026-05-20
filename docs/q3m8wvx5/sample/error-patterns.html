@@ -1,0 +1,444 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エラーハンドリングパターン — 設計手順書</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .tab-nav { display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:1rem; border-bottom:2px solid var(--border); padding-bottom:0; }
+    .tab-btn {
+      padding:0.45rem 0.9rem; border-radius:6px 6px 0 0; border:1px solid transparent;
+      background:transparent; color:var(--text-muted); cursor:pointer; font-size:0.85rem;
+      font-family:inherit; transition:all 0.15s; border-bottom:none; margin-bottom:-2px;
+    }
+    .tab-btn:hover { background:var(--bg-hover); color:var(--text); }
+    .tab-btn.active { background:var(--bg-card); border-color:var(--border); border-bottom-color:var(--bg-card); color:var(--primary); font-weight:600; }
+    .tab-pane { display:none; }
+    .tab-pane.active { display:block; }
+
+    .error-screen-mini {
+      border: 1px solid var(--border); border-radius: 8px; overflow:hidden; max-width:440px;
+    }
+    .esm-header { padding:1rem 1.2rem; font-weight:700; color:#fff; font-size:1rem; }
+    .esm-body { padding:1.2rem; background:var(--bg-card); }
+    .esm-code { font-size:2.5rem; font-weight:900; margin-bottom:0.2rem; }
+    .esm-title { font-size:1rem; font-weight:600; margin-bottom:0.5rem; }
+    .esm-msg { color:var(--text-muted); font-size:0.88rem; line-height:1.6; }
+    .esm-actions { margin-top:1rem; display:flex; gap:0.5rem; }
+    .esm-btn { padding:0.4rem 1rem; border-radius:6px; border:none; cursor:pointer; font-size:0.85rem; font-family:inherit; }
+    .esm-btn-primary { background:var(--primary); color:#fff; }
+    .esm-btn-secondary { background:var(--bg-hover); color:var(--text); border:1px solid var(--border); }
+
+    .status-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-top:1rem; }
+    .status-card { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .status-card-header { padding:0.6rem 1rem; font-weight:700; font-size:0.85rem; color:#fff; display:flex; align-items:center; gap:0.5rem; }
+    .status-card-body { padding:0.8rem 1rem; font-size:0.82rem; color:var(--text-muted); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-adr">
+      <div class="subtitle">Sample Screen — Error Handling Patterns</div>
+      <h1>⚠️ エラーハンドリングパターン</h1>
+      <p class="description">HTTPステータスコードとエラーレスポンスの設計パターンを示します。適切なエラーレスポンスはAPIを使うフロントエンド・クライアントの開発効率を大きく左右します。</p>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚫</span>
+        <div class="callout-body">
+          <b>やってはいけない 3大NG</b><br>
+          <b>(1) 全エラーに200を返す</b> — クライアントがエラー判定できず、ログ監視も機能しない<br>
+          <b>(2) スタックトレースをそのまま返す</b> — 内部構造・フレームワーク情報が攻撃者に渡る<br>
+          <b>(3) エラーメッセージが「システムエラー」だけ</b> — 利用者もサポートも原因が全く分からない
+        </div>
+      </div>
+
+      <!-- セクション1: 標準構造 -->
+      <h2 class="section-title"><span class="title-icon">1</span>エラーレスポンスの標準構造</h2>
+      <p style="color:var(--text-muted);margin-bottom:1rem;">プロジェクト全体で統一したエラー構造を定めることで、クライアントの実装が単純になります。</p>
+      <pre>{
+  "error": {
+    "code": "INSUFFICIENT_STOCK",        <span style="color:#6e7681;">// 機械可読なエラーコード。クライアントがswitch文で処理</span>
+    "message": "商品の在庫が不足しています",  <span style="color:#6e7681;">// ユーザー向けメッセージ（日本語OK）</span>
+    "details": [                         <span style="color:#6e7681;">// フィールドエラーなど複数の詳細（省略可）</span>
+      {
+        "field": "items[0].quantity",
+        "message": "在庫数(2)を超えた数量(5)が指定されました",
+        "code": "EXCEEDS_STOCK"
+      }
+    ],
+    "errorId": "err_20260520_abc123"     <span style="color:#6e7681;">// サポート問い合わせ用の一意ID。ログと紐付け可能</span>
+  }
+}</pre>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;">
+        <div class="callout callout-success">
+          <span class="callout-icon">✅</span>
+          <div class="callout-body">
+            <b>codeフィールドを設ける理由</b><br>
+            HTTPステータスコードだけでは粒度が粗い。<code>INSUFFICIENT_STOCK</code> vs <code>ITEM_DISCONTINUED</code> のように業務ロジックのエラーを区別し、クライアントがエラー種別に応じた処理（リトライ・再入力誘導など）を実装できる。
+          </div>
+        </div>
+        <div class="callout callout-success">
+          <span class="callout-icon">✅</span>
+          <div class="callout-body">
+            <b>errorIdを発行する理由</b><br>
+            ユーザーが「エラーID: err_20260520_abc123 が出ました」とサポートに連絡すると、サーバーログから即座に詳細（スタックトレース・リクエスト内容）を特定できる。スタックトレースを返さずに問題を追跡できる。
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション2: ステータスコード別タブ -->
+      <h2 class="section-title" style="margin-top:2.5rem;"><span class="title-icon">2</span>HTTPステータスコード別パターン</h2>
+      <p style="color:var(--text-muted);margin-bottom:1rem;">各ステータスコードの使いどころとレスポンス例を確認できます。</p>
+
+      <div class="tab-nav" id="status-tabs">
+        <button class="tab-btn active" data-tab="s400">400</button>
+        <button class="tab-btn" data-tab="s401">401</button>
+        <button class="tab-btn" data-tab="s403">403</button>
+        <button class="tab-btn" data-tab="s404">404</button>
+        <button class="tab-btn" data-tab="s409">409</button>
+        <button class="tab-btn" data-tab="s422">422</button>
+        <button class="tab-btn" data-tab="s429">429</button>
+        <button class="tab-btn" data-tab="s500">500</button>
+        <button class="tab-btn" data-tab="s503">503</button>
+      </div>
+
+      <div id="s400" class="tab-pane active">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>400 Bad Request — リクエスト自体が不正</b><br>クライアントが送ったデータが不正な場合。フィールドごとのエラー詳細を返すことで、フロントエンドが各入力欄にエラーを表示できる。</div></div>
+        <pre>{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "入力内容に誤りがあります",
+    "details": [
+      { "field": "email",    "message": "メールアドレスの形式が正しくありません", "code": "INVALID_FORMAT" },
+      { "field": "password", "message": "パスワードは8文字以上で入力してください",  "code": "TOO_SHORT", "min": 8 },
+      { "field": "age",      "message": "年齢は0〜150の整数で入力してください",    "code": "OUT_OF_RANGE" }
+    ],
+    "errorId": "err_20260520_val001"
+  }
+}</pre>
+      </div>
+
+      <div id="s401" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>401 Unauthorized — 認証が必要 / トークンが無効</b><br>未ログインとトークン期限切れは <code>code</code> で区別する。クライアントは TOKEN_EXPIRED の場合はリフレッシュトークンで再取得を試みられる。</div></div>
+        <pre><span style="color:#6e7681;">// パターンA: トークン期限切れ（リフレッシュで対応可能）</span>
+{
+  "error": {
+    "code": "TOKEN_EXPIRED",
+    "message": "セッションの有効期限が切れました。再ログインしてください",
+    "expiredAt": "2026-05-20T13:00:00Z"
+  }
+}
+
+<span style="color:#6e7681;">// パターンB: 未認証（ログインが必要）</span>
+{
+  "error": {
+    "code": "NOT_AUTHENTICATED",
+    "message": "このAPIはログインが必要です"
+  }
+}</pre>
+      </div>
+
+      <div id="s403" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>403 Forbidden — 認証済みだが権限不足</b><br>401と混同しやすい。401は「誰ですか？」、403は「あなたには権限がありません」。必要なロールを明示することでクライアントが適切なメッセージを出せる。</div></div>
+        <pre>{
+  "error": {
+    "code": "PERMISSION_DENIED",
+    "message": "この操作を行う権限がありません",
+    "details": {
+      "requiredRole": "ADMIN",
+      "currentRole":  "VIEWER",
+      "resource":     "/api/admin/users",
+      "action":       "DELETE"
+    }
+  }
+}</pre>
+      </div>
+
+      <div id="s404" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>404 Not Found — リソースが存在しない</b><br>「何が」見つからないかを具体的に伝える。IDを含めることでクライアントがデバッグしやすくなる。</div></div>
+        <pre>{
+  "error": {
+    "code": "ORDER_NOT_FOUND",
+    "message": "注文が見つかりません",
+    "details": {
+      "resourceType": "Order",
+      "resourceId":   "ord_20260520_999",
+      "hint":         "削除済みまたはIDが誤っている可能性があります"
+    }
+  }
+}</pre>
+      </div>
+
+      <div id="s409" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>409 Conflict — 楽観的ロック競合 / 重複登録</b><br>「誰かが先に更新した」ことを知らせる。version情報を返すことでクライアントが最新データを取得して再試行できる。</div></div>
+        <pre><span style="color:#6e7681;">// パターンA: 楽観的ロック競合</span>
+{
+  "error": {
+    "code": "OPTIMISTIC_LOCK_CONFLICT",
+    "message": "他のユーザーが先にデータを更新しました。最新のデータを確認してください",
+    "details": {
+      "yourVersion":   3,
+      "currentVersion": 4,
+      "lastUpdatedBy": "user_0421",
+      "lastUpdatedAt": "2026-05-20T14:31:55Z"
+    }
+  }
+}
+
+<span style="color:#6e7681;">// パターンB: ユニーク制約違反（重複登録）</span>
+{
+  "error": {
+    "code": "DUPLICATE_EMAIL",
+    "message": "このメールアドレスはすでに登録されています"
+  }
+}</pre>
+      </div>
+
+      <div id="s422" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>422 Unprocessable Entity — 業務ルール違反</b><br>400との違い: 400はデータ形式の問題、422は業務ロジックに違反している場合。「形式は合っているが業務上受け付けられない」状況に使う。</div></div>
+        <pre><span style="color:#6e7681;">// 在庫不足</span>
+{
+  "error": {
+    "code": "INSUFFICIENT_STOCK",
+    "message": "在庫が不足しているため注文できません",
+    "details": {
+      "itemId":        "item_456",
+      "itemName":      "ワイヤレスイヤホン Pro",
+      "requestedQty":  5,
+      "availableQty":  2
+    }
+  }
+}
+
+<span style="color:#6e7681;">// クーポン期限切れ</span>
+{
+  "error": {
+    "code": "COUPON_EXPIRED",
+    "message": "クーポンの有効期限が切れています",
+    "details": {
+      "couponCode": "SPRING2026",
+      "expiredAt":  "2026-03-31T23:59:59Z"
+    }
+  }
+}</pre>
+      </div>
+
+      <div id="s429" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>429 Too Many Requests — レート制限超過</b><br>Retry-After ヘッダーと残カウントをレスポンスに含めることで、クライアントが適切に待機して再試行できる。</div></div>
+        <pre><span style="color:#6e7681;">// HTTP Headers</span>
+X-RateLimit-Limit:     100
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset:     1716210600
+Retry-After:           60
+
+<span style="color:#6e7681;">// Response Body</span>
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "リクエスト制限を超えました。しばらく待ってから再試行してください",
+    "details": {
+      "limit":          100,
+      "windowSeconds":  3600,
+      "retryAfterSeconds": 60,
+      "resetAt":        "2026-05-20T15:30:00Z"
+    }
+  }
+}</pre>
+      </div>
+
+      <div id="s500" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>500 Internal Server Error — サーバー内部エラー</b><br>スタックトレースは絶対に返さない。errorIdのみ返してサーバーログと紐付ける。ユーザー向けメッセージは「時間をおいて再試行」など一般的なものに留める。</div></div>
+        <pre><span style="color:#6e7681;">// ユーザーに返すレスポンス（スタックトレースは含めない）</span>
+{
+  "error": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "message": "サーバー内部でエラーが発生しました。しばらくしてから再度お試しください。",
+    "errorId": "err_20260520_srv_abc123"
+  }
+}
+
+<span style="color:#6e7681;">// サーバーログには詳細を記録（外部には出さない）</span>
+{
+  "level": "ERROR",
+  "errorId": "err_20260520_srv_abc123",
+  "message": "NullPointerException at OrderService.java:142",
+  "stackTrace": "java.lang.NullPointerException\n  at ...",
+  "requestBody": { ... }
+}</pre>
+      </div>
+
+      <div id="s503" class="tab-pane">
+        <div class="callout callout-info"><span class="callout-icon">📌</span><div class="callout-body"><b>503 Service Unavailable — メンテナンス中 / 一時的に利用不可</b><br>Retry-Afterヘッダーとメンテ終了予定時刻を必ず返す。ロードバランサーレベルで返すことが多い。</div></div>
+        <pre><span style="color:#6e7681;">// HTTP Headers</span>
+Retry-After: 3600
+
+<span style="color:#6e7681;">// Response Body</span>
+{
+  "error": {
+    "code": "SERVICE_UNAVAILABLE",
+    "message": "システムメンテナンス中です",
+    "details": {
+      "maintenanceStart":    "2026-05-20T02:00:00Z",
+      "scheduledEndTime":    "2026-05-20T05:00:00Z",
+      "maintenancePageUrl":  "https://status.example.com",
+      "contactEmail":        "support@example.com"
+    }
+  }
+}</pre>
+      </div>
+
+      <!-- セクション3: ユーザー向けエラー画面 -->
+      <h2 class="section-title" style="margin-top:2.5rem;"><span class="title-icon">3</span>ユーザー向けエラー画面の例</h2>
+      <p style="color:var(--text-muted);margin-bottom:1rem;">APIエラーをフロントエンドで受けた際に表示するエラー画面の例です。</p>
+
+      <div class="status-grid">
+
+        <div class="error-screen-mini">
+          <div class="esm-header" style="background:#d97706;">⚠️ 入力エラー</div>
+          <div class="esm-body">
+            <div class="esm-code" style="color:#d97706;">400</div>
+            <div class="esm-title">入力内容を確認してください</div>
+            <div class="esm-msg">
+              <span style="color:#e02424;">• メールアドレスの形式が正しくありません</span><br>
+              <span style="color:#e02424;">• パスワードは8文字以上で入力してください</span>
+            </div>
+            <div class="esm-actions">
+              <button class="esm-btn esm-btn-primary">入力画面に戻る</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-screen-mini">
+          <div class="esm-header" style="background:#1a56db;">🔐 ログインが必要です</div>
+          <div class="esm-body">
+            <div class="esm-code" style="color:#1a56db;">401</div>
+            <div class="esm-title">セッションの有効期限が切れました</div>
+            <div class="esm-msg">セキュリティのため、30分操作がない場合は自動的にログアウトされます。再度ログインしてください。</div>
+            <div class="esm-actions">
+              <button class="esm-btn esm-btn-primary">ログイン画面へ</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-screen-mini">
+          <div class="esm-header" style="background:#7e3af2;">🚫 アクセス権限なし</div>
+          <div class="esm-body">
+            <div class="esm-code" style="color:#7e3af2;">403</div>
+            <div class="esm-title">このページへのアクセス権限がありません</div>
+            <div class="esm-msg">管理者ページにアクセスするには管理者権限が必要です。権限が必要な場合はシステム管理者にお問い合わせください。</div>
+            <div class="esm-actions">
+              <button class="esm-btn esm-btn-secondary">トップへ戻る</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-screen-mini">
+          <div class="esm-header" style="background:#374151;">🔍 見つかりません</div>
+          <div class="esm-body">
+            <div class="esm-code" style="color:#374151;">404</div>
+            <div class="esm-title">ページが見つかりません</div>
+            <div class="esm-msg">URLが間違っているか、削除された可能性があります。URLをご確認いただくか、トップページからお探しください。</div>
+            <div class="esm-actions">
+              <button class="esm-btn esm-btn-primary">トップへ戻る</button>
+              <button class="esm-btn esm-btn-secondary">前のページへ</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-screen-mini">
+          <div class="esm-header" style="background:#e02424;">💥 サーバーエラー</div>
+          <div class="esm-body">
+            <div class="esm-code" style="color:#e02424;">500</div>
+            <div class="esm-title">システムエラーが発生しました</div>
+            <div class="esm-msg">申し訳ありません。処理中にエラーが発生しました。しばらくしてから再度お試しください。<br><br>解決しない場合はエラーID <code style="background:var(--bg-hover);padding:0.1rem 0.3rem;border-radius:3px;">err_20260520_abc</code> をサポートにお伝えください。</div>
+            <div class="esm-actions">
+              <button class="esm-btn esm-btn-primary">再試行</button>
+              <button class="esm-btn esm-btn-secondary">サポートへ連絡</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-screen-mini">
+          <div class="esm-header" style="background:#0e9f6e;">🔧 メンテナンス中</div>
+          <div class="esm-body">
+            <div class="esm-code" style="color:#0e9f6e;">503</div>
+            <div class="esm-title">ただいまメンテナンス中です</div>
+            <div class="esm-msg">システムの改善作業を実施しています。<br><br>
+              終了予定: <b>2026-05-20 05:00</b><br>
+              <a href="https://status.example.com" style="color:var(--primary);">状況はこちらで確認できます</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- セクション4: よくある実装ミス -->
+      <h2 class="section-title" style="margin-top:2.5rem;"><span class="title-icon">4</span>よくある実装ミス</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>NGパターン</th>
+              <th>なぜ問題か</th>
+              <th>正しい対応</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>全エラーに200を返す</td>
+              <td>ログ監視ツールがエラーを検知できない。HTTPクライアントのエラーハンドリングが機能しない</td>
+              <td>適切なHTTPステータスコードを返す。4xx/5xxを正しく使い分ける</td>
+            </tr>
+            <tr>
+              <td>スタックトレースをレスポンスに含める</td>
+              <td>フレームワーク名・バージョン・内部パスが露出し、攻撃の手がかりになる</td>
+              <td>errorIdのみ返し、詳細はサーバーログで管理する</td>
+            </tr>
+            <tr>
+              <td>エラーメッセージが英語（Exception名そのまま）</td>
+              <td>一般ユーザーが理解できない。サポートコストが増加する</td>
+              <td>ユーザー向けは日本語で具体的に。codeで機械可読なキーを提供する</td>
+            </tr>
+            <tr>
+              <td>404と403を混同する</td>
+              <td>リソースが存在するが権限がない場合に404を返すのはセキュリティ上の判断だが、一般業務システムでは混乱を招く</td>
+              <td>セキュリティ要件に応じて使い分けを設計段階で決定し、一貫性を保つ</td>
+            </tr>
+            <tr>
+              <td>バリデーションエラーを1件ずつしか返さない</td>
+              <td>ユーザーが修正 → 再送信 → 次のエラー、を繰り返す羽目になる</td>
+              <td>400/422のdetailsに全フィールドのエラーをまとめて返す</td>
+            </tr>
+            <tr>
+              <td>エラーレスポンスの構造がAPIによってバラバラ</td>
+              <td>フロントエンドが各APIのエラー構造を個別に対応しなければならない</td>
+              <td>プロジェクト全体でエラーレスポンスの構造を標準化し、共通ミドルウェアで整形する</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /.content -->
+  </main>
+</div>
+
+<script>
+  document.getElementById('status-tabs').addEventListener('click', e => {
+    if (!e.target.matches('.tab-btn')) return;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById(e.target.dataset.tab).classList.add('active');
+  });
+</script>
+<script src="../sidebar.js"></script>
+</body>
+</html>

@@ -308,20 +308,30 @@ function exportCSV() {
 }
 
 function loadSample() {
+  const now = new Date().toISOString().slice(0,10);
   const sample = [
-    { _id:1, reqId:'REQ-001', cat:'機能', name:'ユーザーログイン', desc:'メール・パスワードで認証', scope:'in', reason:'', updatedAt:'' },
-    { _id:2, reqId:'REQ-002', cat:'機能', name:'パスワードリセット', desc:'メール経由でリセット', scope:'in', reason:'', updatedAt:'' },
-    { _id:3, reqId:'REQ-003', cat:'機能', name:'ユーザー一覧・検索', desc:'管理者が確認', scope:'in', reason:'', updatedAt:'' },
-    { _id:4, reqId:'REQ-004', cat:'機能', name:'CSVエクスポート', desc:'ユーザーデータをCSV出力', scope:'in', reason:'月次集計業務で必須', updatedAt:'' },
-    { _id:5, reqId:'REQ-005', cat:'機能', name:'メール通知機能', desc:'申請承認時にメール送信', scope:'in', reason:'', updatedAt:'' },
-    { _id:6, reqId:'REQ-006', cat:'機能', name:'二段階認証（2FA）', desc:'SMS/アプリでOTP', scope:'out', reason:'セキュリティ要件としては望ましいが、スケジュール・予算制約により今回は対象外。次フェーズで実装予定。', updatedAt:'' },
-    { _id:7, reqId:'REQ-007', cat:'機能', name:'ダッシュボードグラフ', desc:'統計をグラフで可視化', scope:'out', reason:'必須機能ではなくあると良い程度。第1フェーズでは一覧表示で代替。', updatedAt:'' },
-    { _id:8, reqId:'REQ-008', cat:'機能', name:'モバイルアプリ版', desc:'iOS/Android', scope:'out', reason:'初期リリースはWebブラウザのみ。レスポンシブ対応はIN。', updatedAt:'' },
-    { _id:9, reqId:'REQ-009', cat:'機能', name:'AIによる自動仕分け', desc:'機械学習で自動分類', scope:'future', reason:'技術的な調査が必要。第3フェーズ以降で検討。', updatedAt:'' },
-    { _id:10, reqId:'REQ-010', cat:'非機能', name:'外部API連携（会計システム）', desc:'会計ソフトとの自動連携', scope:'future', reason:'会計システム側の要件定義が未完了。別プロジェクトとして進める。', updatedAt:'' },
-    { _id:11, reqId:'REQ-011', cat:'画面', name:'ログイン画面', desc:'', scope:'in', reason:'', updatedAt:'' },
-    { _id:12, reqId:'REQ-012', cat:'画面', name:'ユーザー一覧画面', desc:'', scope:'in', reason:'', updatedAt:'' },
-    { _id:13, reqId:'REQ-013', cat:'画面', name:'管理者設定画面', desc:'権限・マスタ管理', scope:'out', reason:'当面は直接DB操作で対応。利用頻度が低いため優先度低。', updatedAt:'' },
+    // IN: 今回作る
+    { _id:1,  reqId:'REQ-001', cat:'機能', name:'Azure AD SSOログイン', desc:'Azure ADを使ったシングルサインオン認証', scope:'in', reason:'社内AD環境が整備済みのため追加コストなしで高セキュリティ認証を実現できる', updatedAt:now },
+    { _id:2,  reqId:'REQ-002', cat:'機能', name:'申請作成・提出', desc:'各種申請フォームの入力・確認・提出', scope:'in', reason:'システム化の中核機能。これがなければシステムの存在意義がない', updatedAt:now },
+    { _id:3,  reqId:'REQ-003', cat:'機能', name:'申請承認・却下・差し戻し', desc:'承認者によるフロー操作', scope:'in', reason:'申請機能と一体。承認フローがなければ単なる記録システムになる', updatedAt:now },
+    { _id:4,  reqId:'REQ-004', cat:'機能', name:'申請一覧・検索・絞り込み', desc:'ステータス・期間・種別での絞り込み', scope:'in', reason:'申請数が増えると検索なしでは使いものにならない。初日から必要', updatedAt:now },
+    { _id:5,  reqId:'REQ-005', cat:'機能', name:'メール通知（提出・承認・却下）', desc:'申請イベント時のメール自動送信', scope:'in', reason:'承認者への催促を減らし、申請者が状況把握できるようにするために必須', updatedAt:now },
+    { _id:6,  reqId:'REQ-006', cat:'機能', name:'ファイルアップロード・ダウンロード', desc:'領収書等の添付ファイル管理', scope:'in', reason:'経費申請には証憑添付が必須。会計監査対応のため外せない', updatedAt:now },
+    { _id:7,  reqId:'REQ-007', cat:'機能', name:'CSVエクスポート', desc:'申請データのCSV出力（経理連携）', scope:'in', reason:'経理システムへのデータ取り込みに必要。経理担当から強く要望', updatedAt:now },
+    { _id:8,  reqId:'REQ-008', cat:'機能', name:'ユーザー管理（管理者）', desc:'ユーザーCRUD・ロール設定', scope:'in', reason:'社員の入退職対応と権限管理のために必要。運用開始日から必要', updatedAt:now },
+    { _id:9,  reqId:'REQ-009', cat:'機能', name:'Salesforce社員マスタ連携', desc:'Salesforce APIからの日次同期', scope:'in', reason:'HR部門がSalesforceで社員管理。二重管理を避けるために連携が必須', updatedAt:now },
+    { _id:10, reqId:'REQ-010', cat:'非機能', name:'レスポンシブ対応（スマホ閲覧・承認）', desc:'モバイルブラウザからの承認操作', scope:'in', reason:'外出先での承認操作の要望が強い。専用アプリではなくWebレスポンシブで対応', updatedAt:now },
+    { _id:11, reqId:'REQ-011', cat:'画面', name:'申請マスタ管理画面', desc:'申請種別・承認フロー設定', scope:'in', reason:'管理者がIT部門不要で設定変更できることがRFPの要件', updatedAt:now },
+    // OUT: 今回は作らない
+    { _id:12, reqId:'REQ-012', cat:'機能', name:'ネイティブモバイルアプリ（iOS/Android）', desc:'専用アプリ開発', scope:'out', reason:'Webレスポンシブ対応で承認操作の要件は満たせる。ネイティブアプリは開発コストが高く（+500万円）、スケジュールにも収まらない', updatedAt:now },
+    { _id:13, reqId:'REQ-013', cat:'機能', name:'二段階認証（SMS/アプリOTP）', desc:'Azure AD MFA以外の2FA', scope:'out', reason:'Azure AD MFAを活用すれば独自2FA実装は不要。Azure AD MFAの設定はインフラ側で対応', updatedAt:now },
+    { _id:14, reqId:'REQ-014', cat:'機能', name:'ダッシュボード（集計グラフ）', desc:'申請件数・承認率の可視化', scope:'out', reason:'あると便利だが必須ではない。一覧画面のCSVエクスポートでExcel分析可能。フェーズ2で実装', updatedAt:now },
+    { _id:15, reqId:'REQ-015', cat:'機能', name:'会計システム自動連携', desc:'CSVなしでの直接データ送受信', scope:'out', reason:'会計システム側のAPI仕様が未確定。CSVエクスポートで代替し、連携は次フェーズ', updatedAt:now },
+    { _id:16, reqId:'REQ-016', cat:'非機能', name:'DR（ディザスタリカバリ）環境', desc:'本番とは別のDR環境構築', scope:'out', reason:'コスト（月+15万円）と構築工数が大きい。RTO/RPO要件がSLAを超えないため今回は不要', updatedAt:now },
+    // Future: 将来検討
+    { _id:17, reqId:'REQ-017', cat:'機能', name:'AIによる申請不正検知', desc:'機械学習を使った異常申請の自動フラグ', scope:'future', reason:'技術的調査が必要。十分な学習データが溜まってから検討（1年後以降）', updatedAt:now },
+    { _id:18, reqId:'REQ-018', cat:'機能', name:'外部取引先ポータル', desc:'委託先・取引先ユーザーがアクセス可能なポータル', scope:'future', reason:'セキュリティアーキテクチャの再設計が必要。社内の要件定義が完了してから別プロジェクトで実施', updatedAt:now },
+    { _id:19, reqId:'REQ-019', cat:'非機能', name:'マルチテナント対応', desc:'グループ会社が別テナントとして利用可能', scope:'future', reason:'現時点では1社のみ利用。グループ展開が決定した際にアーキテクチャを再検討する', updatedAt:now },
   ];
   save(sample);
   render();
