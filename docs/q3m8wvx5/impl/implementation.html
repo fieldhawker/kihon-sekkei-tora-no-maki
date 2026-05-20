@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>実装手順 — 実装</title>
+  <title>実装手順</title>
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -59,7 +59,7 @@
 - [ ] ステージング環境で動作確認済み
 
 ## 見積もり
-Story Point: 3
+Story Point: 3  ← 規模感の相対見積もり（1=小・3=中・5=大・8=大きすぎ→分割検討）
 
 ## 優先度
 High / Medium / Low</code></pre>
@@ -142,15 +142,80 @@ High / Medium / Low</code></pre>
               <tr><td>Issue消化率の確認</td><td>毎日</td><td>GitHub/Jira のバーンダウンチャート</td></tr>
               <tr><td>遅延タスクの洗い出し</td><td>週次</td><td>週次ミーティング</td></tr>
               <tr><td>ブロッカーの解消</td><td>随時</td><td>Slack・MTG</td></tr>
-              <tr><td>設計変更の記録</td><td>変更の都度</td><td>設計書更新 + レビュー</td></tr>
+              <tr><td>リスク登録簿の更新</td><td>週次</td><td>週次ミーティングでリスク状況を報告</td></tr>
+              <tr><td>設計変更の記録</td><td>変更の都度</td><td>変更要求票（CR）を起票 → CCBで承認 → 設計書更新</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="callout callout-warning" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
+      </div>
+
+      <!-- STEP 4（PMBOKリスク管理・変更管理） -->
+      <h2 class="section-title"><span class="title-icon">4</span> STEP 4 — 変更管理・リスク管理（PMBOK）</h2>
+
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚫</span>
+        <div class="callout-body">
+          <b>設計変更が発生したとき、勝手に実装を変えてはいけません。</b><br>
+          「仕様書に書いてないけど、こうすれば動くのでは？」という自己判断による実装は、後から「それは想定外の動作です」と言われてすべて作り直しになります。<b>変更はすべて変更要求票（CR）を起票し、PLの承認を得てから進めます。</b>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#dbeafe">🔄</span><h2>変更管理プロセス（CCBフロー）</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ステップ</th><th>実施内容</th><th>担当</th><th>ポイント</th></tr></thead>
+            <tbody>
+              <tr><td>① 変更要求票の起票</td><td>変更内容・理由・対象成果物を記載</td><td>発見者（誰でも可）</td><td>「気づいた当日中」に起票する</td></tr>
+              <tr><td>② 影響分析</td><td>スコープ・スケジュール・コスト・品質への影響を見積もる</td><td>SE</td><td>影響範囲（設計書/API/DB/テスト）をリストアップする</td></tr>
+              <tr><td>③ CCB判定</td><td>PL（必要に応じて顧客）が承認・否決・保留を決定</td><td>PL・顧客</td><td>承認なしに実装を進めてはならない</td></tr>
+              <tr><td>④ 設計書更新</td><td>承認された変更内容を設計書に反映。バージョンを上げる</td><td>SE</td><td>変更IDを設計書の変更履歴欄に記録する</td></tr>
+              <tr><td>⑤ 関係者周知</td><td>変更内容と承認結果を関係者全員に通知</td><td>PL</td><td>Slackや議事録で記録を残す</td></tr>
+              <tr><td>⑥ 実装・テスト反映</td><td>変更後の設計書に基づいて実装・テストケースを更新する</td><td>実装担当</td><td>変更前のコードをそのまま残すと混乱するため不要部分を削除する</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-info" style="margin-top:1rem">
+          <span class="callout-icon">📋</span>
           <div class="callout-body">
-            <b>設計変更が発生したとき</b>: 勝手に実装を変えてはいけません。必ず ① 変更内容を上位SE・PLに報告 → ② 設計書を更新 → ③ 関係者レビュー → ④ 承認後に実装変更 の順で進めてください。
+            変更要求票のテンプレートと詳細なCCBプロセスは <a href="../howto.html">全体フロー・HowTo（変更管理）</a> を参照してください。
           </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fee2e2">⚠️</span><h2>実装フェーズのリスク管理チェック</h2></div>
+        <div class="callout callout-info" style="margin-bottom:1rem">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            実装フェーズは「リスクが顕在化する」フェーズです。設計フェーズで識別したリスクが実際に発生し始める可能性があります。週次ミーティングでリスク登録簿を更新し、発生済みリスクは「課題（Issue）」として別途管理します。
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>リスク種別</th><th>早期警戒サイン</th><th>対処法</th></tr></thead>
+            <tbody>
+              <tr><td>スコープクリープ</td><td>設計書に記載のないIssueが増えている</td><td>変更管理プロセスを通じていない追加を全てストップ。PLに報告する</td></tr>
+              <tr><td>スケジュール遅延</td><td>バーンダウンチャートの消化率が計画を下回っている</td><td>遅延を当日中にPLへ報告。タスクを再分割するか担当を見直す</td></tr>
+              <tr><td>技術的負債の急増</td><td>「一旦動けばいい」コードが増え始めた</td><td>コードレビューで指摘。リファクタリングIssueを起票しスプリント計画に組み込む</td></tr>
+              <tr><td>コミュニケーション断絶</td><td>メンバーからの発信が減り、進捗が把握できない</td><td>デイリースタンドアップ（日次15分ミーティング）を導入する</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-wrap" style="margin-top:1rem">
+          <table>
+            <thead><tr><th colspan="2">課題管理票（Issue Log）テンプレート</th></tr></thead>
+            <tbody>
+              <tr><td style="width:30%"><b>課題ID</b></td><td>ISS-001（連番管理）</td></tr>
+              <tr><td><b>発生日 / 発見者</b></td><td>YYYY-MM-DD / 氏名</td></tr>
+              <tr><td><b>課題の内容</b></td><td>具体的に何が問題か（事実ベースで記載）</td></tr>
+              <tr><td><b>影響・緊急度</b></td><td>高 / 中 / 低（放置するとどうなるか）</td></tr>
+              <tr><td><b>対応方針</b></td><td>誰が・何を・いつまでに行うか</td></tr>
+              <tr><td><b>担当者 / 期限</b></td><td>氏名 / YYYY-MM-DD</td></tr>
+              <tr><td><b>ステータス</b></td><td>未対応 / 対応中 / 解決済み / 継続監視</td></tr>
+              <tr><td><b>解決日 / 解決内容</b></td><td>YYYY-MM-DD / 行った対処内容</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -170,8 +235,8 @@ High / Medium / Low</code></pre>
           <table>
             <thead><tr><th>トラブル</th><th>原因</th><th>対処法</th></tr></thead>
             <tbody>
-              <tr><td>N+1問題</td><td>ループ内でDB呼び出し</td><td>JOINまたはバッチ取得に変更</td></tr>
-              <tr><td>デッドロック</td><td>トランザクション内での複数テーブル更新</td><td>更新順序の統一・タイムアウト設定</td></tr>
+              <tr><td>N+1問題<br><small class="text-muted">一覧10件を取得するSELECTの後、各件の詳細を取るSELECTが10回走り合計11回DBが呼ばれる問題</small></td><td>ループ内でDB呼び出し</td><td>JOINまたはバッチ取得（IN句で一括取得）に変更。コードレビューで「ループの中にDB呼び出しがないか」を必ず確認する</td></tr>
+              <tr><td>デッドロック<br><small class="text-muted">AがテーブルXを、BがテーブルYをロックしたまま互いに相手のロックを待ち、永久に処理が進まなくなる状態</small></td><td>トランザクション内での複数テーブル更新順序がトランザクションごとに異なる</td><td>更新順序をシステム全体で統一（常にX→Yの順）・タイムアウト設定で検知</td></tr>
               <tr><td>セッションタイムアウト</td><td>長時間処理中のセッション切れ</td><td>バックグラウンド処理化・タイムアウト延長</td></tr>
               <tr><td>文字コード不整合</td><td>DB・アプリ・接続文字列のUTF-8設定ミス</td><td>全レイヤでUTF-8を統一</td></tr>
               <tr><td>テスト環境のみでエラー</td><td>環境依存の設定・モックの挙動差異</td><td>環境変数の確認・Dockerで環境統一</td></tr>

@@ -136,6 +136,35 @@ body {
   font-weight: 700;
 }
 
+/* sidebar collapsible groups */
+.sidebar details.sidebar-group {
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.sidebar details.sidebar-group summary {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem 1rem;
+  font-size: .82rem;
+  color: #9ca3af;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.sidebar details.sidebar-group summary::-webkit-details-marker { display: none; }
+.sidebar details.sidebar-group summary::after {
+  content: '›';
+  margin-left: auto;
+  font-size: 1rem;
+  transition: transform .15s;
+}
+.sidebar details.sidebar-group[open] summary::after { transform: rotate(90deg); }
+.sidebar details.sidebar-group summary:hover { color: #fff; }
+.sidebar details.sidebar-group nav a {
+  padding-left: 2.2rem;
+  font-size: .8rem;
+}
+
 /* ===== MAIN CONTENT ===== */
 .main {
   overflow: auto;

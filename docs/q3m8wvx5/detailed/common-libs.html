@@ -100,8 +100,8 @@
 @PreAuthorize("hasRole('ADMIN')")
 public ResponseEntity&lt;?&gt; adminOnly() { ... }
 
-// 現在ユーザー取得
-@AuthenticationPrincipal UserDetails user = ...;</code></pre>
+// SecurityContextHolder 経由でリクエストスコープのユーザー情報を注入
+@AuthenticationPrincipal UserDetails currentUser = ...;</code></pre>
       </div>
 
       <div class="lib-card" id="c02">

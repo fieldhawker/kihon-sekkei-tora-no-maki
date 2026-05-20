@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>詳細設計 成果物ガイド — 詳細設計</title>
+  <title>詳細設計 成果物ガイド</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 </head>
@@ -89,7 +89,7 @@
             <tbody>
               <tr><td>正常系</td><td>入力→検証→永続化→レスポンス</td><td>トランザクション境界</td></tr>
               <tr><td>例外系</td><td>認証/認可/入力NG/整合性/外部失敗</td><td>リトライ可否・通知</td></tr>
-              <tr><td>状態遷移</td><td>ステータスと遷移条件</td><td>並行更新（楽観/悲観）</td></tr>
+              <tr><td>状態遷移</td><td>ステータスと遷移条件</td><td>並行更新（楽観/悲観ロック）<br><small class="text-muted">楽観ロック＝「更新時にバージョン番号が変わっていたらエラー」方式（衝突を後から検知）。悲観ロック＝SELECT FOR UPDATEで先にDBをロックする方式（衝突を事前に防止）。更新頻度が低いなら楽観ロックが一般的</small></td></tr>
             </tbody>
           </table>
         </div>

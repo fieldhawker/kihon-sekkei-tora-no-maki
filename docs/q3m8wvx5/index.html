@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -6,7 +6,6 @@
   <title>システム開発 設計手順書 — 虎の巻</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <style>
     .hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1a56db 100%); color: #fff; padding: 3.5rem 3rem 3rem; position: relative; overflow: hidden; }
     .hero::before { content:''; position:absolute; top:-60px; right:-60px; width:280px; height:280px; border-radius:50%; background:rgba(255,255,255,.04); }
@@ -178,18 +177,15 @@ flowchart LR
           <h3>AI相談テンプレート</h3>
           <div class="phase-meta">フェーズ別AIへの相談テンプレート集</div>
         </a>
+        <a href="reference/readable-naming.html" class="phase-card bg-phase7">
+          <span class="phase-icon">📖</span>
+          <div class="phase-number">命名規則</div>
+          <h3>命名規則ガイド</h3>
+          <div class="phase-meta">リーダブルコードの原則 / 変数・DB・API・設計書</div>
+        </a>
       </div>
 
-      <!-- 作業時間グラフ -->
-      <h2 class="section-title"><span class="title-icon">⏱️</span> 作業時間目安（小規模システム）</h2>
-      <div class="chart-container">
-        <div class="chart-title">📊 基本設計 各STEP 作業日数目安</div>
-        <canvas id="chartBasic" height="100"></canvas>
-      </div>
-      <div class="chart-container">
-        <div class="chart-title">📊 詳細設計 各STEP 作業日数目安</div>
-        <canvas id="chartDetail" height="100"></canvas>
-      </div>
+
 
       <!-- 逆引きクイックリファレンス -->
       <h2 class="section-title"><span class="title-icon">🔍</span> よく使う逆引き</h2>
@@ -212,6 +208,12 @@ flowchart LR
               <tr><td>単体テスト設計技法の種類・具体例</td><td><a href="impl/unit-test.html">単体テスト設計技法まとめ</a></td></tr>
               <tr><td>リリース判定基準</td><td><a href="impl/testing.html#release">テスト実施手順（完了判定）</a></td></tr>
               <tr><td>AIへの相談テンプレート</td><td><a href="reference/ai-consult.html">AI相談テンプレート</a></td></tr>
+              <tr><td>変数・関数・DB・APIの命名ルール</td><td><a href="reference/readable-naming.html">命名規則ガイド</a></td></tr>
+              <tr><td>設計書ファイル名・バージョン管理の命名</td><td><a href="reference/readable-naming.html#docs">命名規則ガイド（設計書）</a></td></tr>
+              <tr><td>リスク登録簿の書き方・管理方法</td><td><a href="howto.html">全体フロー・HowTo（リスク管理）</a></td></tr>
+              <tr><td>変更要求票（CR）の書き方・CCBフロー</td><td><a href="howto.html">全体フロー・HowTo（変更管理）</a></td></tr>
+              <tr><td>エスカレーションルート・RACI</td><td><a href="howto.html">全体フロー・HowTo（コミュニケーション計画）</a></td></tr>
+              <tr><td>教訓（Lessons Learned）の書き方</td><td><a href="impl/testing.html">テスト実施手順（プロジェクトクローズ）</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -224,39 +226,7 @@ flowchart LR
 <script>
 mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'linear' } });
 
-// 基本設計グラフ
-const ctxB = document.getElementById('chartBasic').getContext('2d');
-new Chart(ctxB, {
-  type: 'bar',
-  data: {
-    labels: ['STEP0\nインプット確認', 'STEP1\nアーキテクチャ', 'STEP2\n機能設計', 'STEP3\nデータ設計', 'STEP4\n外部IF', 'STEP5\n非機能要件', 'STEP6\nセキュリティ', 'STEP7\n運用移行', 'STEP7b\nテスト戦略', 'STEP8\nレビュー'],
-    datasets: [
-      { label: '最小(日)', data: [0.5,3,5,3,1,1,1,2,0.5,2], backgroundColor: 'rgba(26,86,219,.25)', borderColor: 'rgba(26,86,219,1)', borderWidth:2 },
-      { label: '最大(日)', data: [1,5,8,5,3,2,2,3,1,4], backgroundColor: 'rgba(26,86,219,.5)', borderColor: 'rgba(26,86,219,1)', borderWidth:2 }
-    ]
-  },
-  options: {
-    responsive: true, plugins: { legend: { position:'top' } },
-    scales: { y: { beginAtZero:true, title: { display:true, text:'作業日数' } } }
-  }
-});
 
-// 詳細設計グラフ
-const ctxD = document.getElementById('chartDetail').getContext('2d');
-new Chart(ctxD, {
-  type: 'bar',
-  data: {
-    labels: ['STEP0\nインプット', 'STEP先\n共通ライブラリ', 'STEP1\n詳細機能', 'STEP2\n詳細画面', 'STEP3\n詳細API', 'STEP4\n詳細データ', 'STEP5-6\n外部IF・セキュリティ', 'STEP7\nテスト設計', 'STEP8\n開発環境', 'STEP9\nレビュー'],
-    datasets: [
-      { label: '最小(日)', data: [0.5,3,5,4,3,2,2,3,1,2], backgroundColor: 'rgba(14,159,110,.25)', borderColor: 'rgba(14,159,110,1)', borderWidth:2 },
-      { label: '最大(日)', data: [0.5,5,10,7,6,4,4,5,2,4], backgroundColor: 'rgba(14,159,110,.5)', borderColor: 'rgba(14,159,110,1)', borderWidth:2 }
-    ]
-  },
-  options: {
-    responsive: true, plugins: { legend: { position:'top' } },
-    scales: { y: { beginAtZero:true, title: { display:true, text:'作業日数' } } }
-  }
-});
 </script>
 <script src="js/main.js"></script>
 <script src="sidebar.js"></script>

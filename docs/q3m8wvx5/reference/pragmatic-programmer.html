@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>達人プログラマー — 虎の巻</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* NG/OK 対比カード */
+    .compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1rem 0; }
+    @media(max-width:680px){ .compare-grid{grid-template-columns:1fr;} }
+    .compare-card { border-radius:var(--radius-lg); padding:1rem 1.25rem; }
+    .compare-card.ng { background:#fef2f2; border:1.5px solid #fca5a5; }
+    .compare-card.ok { background:#f0fdf4; border:1.5px solid #86efac; }
+    .compare-label { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.5rem; }
+    .compare-card.ng .compare-label { color:#dc2626; }
+    .compare-card.ok .compare-label { color:#16a34a; }
+    .compare-card pre { margin:.5rem 0 0; background:#1e293b; color:#e2e8f0; padding:.85rem 1rem; border-radius:6px; font-size:.82rem; line-height:1.6; overflow-x:auto; }
+    .compare-card pre code { background:transparent; color:inherit; padding:0; border-radius:0; font-size:inherit; }
+    /* 原則バッジ */
+    .principle-badge { display:inline-block; background:#7c3aed; color:#ede9fe; border-radius:6px; padding:.15rem .6rem; font-size:.72rem; font-weight:700; margin-left:.5rem; vertical-align:middle; }
+    /* セクション分割線 */
+    .rule-section { border-left:4px solid #7c3aed; padding-left:1rem; margin:1.5rem 0 .75rem; }
+    .rule-section h3 { margin:0; font-size:1rem; color:#7c3aed; }
+    .rule-section p { margin:.25rem 0 0; font-size:.87rem; color:var(--gray-600); }
+    /* NG/OK インライン */
+    .ng-text { color:#dc2626; font-weight:600; }
+    .ok-text { color:#16a34a; font-weight:600; }
+    /* 表内コード */
+    table code { font-size:.82rem; }
+    /* コラムグリッド */
+    .three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1rem 0; }
+    .two-col   { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin:1rem 0; }
+    @media(max-width:760px){ .three-col,.two-col{grid-template-columns:1fr;} }
+    .mini-card { background:#f8fafc; border:1px solid var(--gray-200); border-radius:var(--radius); padding:.85rem 1rem; }
+    .mini-card-title { font-size:.8rem; font-weight:700; color:var(--gray-700); margin-bottom:.4rem; }
+    /* TOC */
+    .toc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+    @media(max-width:700px){ .toc-grid{grid-template-columns:1fr 1fr;} }
+    .toc-link { display:block; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:var(--radius); padding:.5rem .75rem; font-size:.83rem; text-decoration:none; color:#4c1d95; }
+    .toc-link:hover { background:#ede9fe; }
+    /* 重要ポイント吹き出し */
+    .point-box { background:#faf5ff; border:1.5px solid #c4b5fd; border-radius:var(--radius); padding:.75rem 1rem; margin:.75rem 0; font-size:.87rem; }
+    .point-box strong { color:#5b21b6; }
+    /* 格言カード */
+    .proverb-card { background:linear-gradient(135deg,#4c1d95,#6d28d9); color:#fff; border-radius:var(--radius-lg); padding:1.25rem 1.5rem; margin:.75rem 0; }
+    .proverb-en { font-size:1.05rem; font-weight:700; font-style:italic; color:#ede9fe; margin-bottom:.4rem; }
+    .proverb-ja { font-size:.9rem; color:#c4b5fd; margin-bottom:.6rem; }
+    .proverb-desc { font-size:.85rem; color:#ddd6fe; line-height:1.7; }
+    /* ステップバッジ */
+    .step-badge { display:inline-flex; align-items:center; justify-content:center; width:1.75rem; height:1.75rem; border-radius:50%; background:#7c3aed; color:#fff; font-size:.78rem; font-weight:700; margin-right:.5rem; flex-shrink:0; }
+    .step-row { display:flex; align-items:flex-start; gap:.5rem; margin:.6rem 0; font-size:.87rem; line-height:1.6; }
+    /* チップ */
+    .chip { display:inline-block; background:#ede9fe; color:#4c1d95; border-radius:999px; padding:.15rem .65rem; font-size:.75rem; font-weight:600; margin:.1rem; }
+    /* セクションヘッダー（section-title オーバーライド） */
+    h2.pp-section { border-left:4px solid #7c3aed !important; }
+    h2.pp-section .title-icon { background:#7c3aed !important; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-header" style="background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 60%,#7c3aed 100%); color:#fff; padding:3rem 3rem 2.5rem;">
+      <div class="subtitle" style="color:#c4b5fd; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:.5rem;">Reference — プログラマー哲学</div>
+      <h1 style="font-size:2rem; font-weight:700; margin-bottom:.75rem;">🧙 達人プログラマー<br><span style="font-size:1.1rem; font-weight:400; color:#ddd6fe;">The Pragmatic Programmer — 実務適用ガイド</span></h1>
+      <p style="color:#ede9fe; font-size:.93rem; max-width:620px; line-height:1.8;">
+        David Thomas / Andrew Hunt 著「<b style="color:#fff;">達人プログラマー ―― 熟達に向けたあなたの旅（第2版）</b>」で提言されている
+        プログラマとしての哲学・原則・習慣を、システム開発の現場で実践するための資料です。
+        コードの書き方だけでなく、考え方・チームとの関わり方・キャリアの磨き方まで幅広くカバーします。
+      </p>
+      <div style="margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
+        <span style="background:rgba(255,255,255,.12); color:#e9d5ff; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">DRY原則</span>
+        <span style="background:rgba(255,255,255,.12); color:#e9d5ff; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">直交性</span>
+        <span style="background:rgba(255,255,255,.12); color:#e9d5ff; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">壊れ窓理論</span>
+        <span style="background:rgba(255,255,255,.12); color:#e9d5ff; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">契約による設計</span>
+        <span style="background:rgba(255,255,255,.12); color:#e9d5ff; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">トレーサー弾</span>
+        <span style="background:rgba(255,255,255,.12); color:#e9d5ff; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">知識のポートフォリオ</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- 達人とは -->
+      <div class="callout" style="background:#f5f3ff; border:1.5px solid #c4b5fd; margin-top:0;">
+        <span class="callout-icon">🧙</span>
+        <div class="callout-body">
+          <div class="callout-title" style="color:#4c1d95;">達人プログラマーとは</div>
+          問題を単に「解く」のではなく、<b>問題を正しく理解し</b>、<b>適切なツールと判断で解決し</b>、<b>継続的に自分自身を改善し続ける</b>エンジニア。
+          特定の言語や技術への依存ではなく、<b>普遍的な原則・思考様式</b>を身につけることが達人への道。
+        </div>
+      </div>
+
+      <!-- 目次 -->
+      <div class="card" style="margin-top:1.25rem">
+        <div style="font-weight:700; margin-bottom:.75rem;">目次</div>
+        <div class="toc-grid">
+          <a class="toc-link" href="#responsibility">1. 責任を持つ姿勢</a>
+          <a class="toc-link" href="#dry">2. DRY原則</a>
+          <a class="toc-link" href="#orthogonality">3. 直交性</a>
+          <a class="toc-link" href="#broken-window">4. 壊れ窓理論</a>
+          <a class="toc-link" href="#tracer">5. トレーサー弾</a>
+          <a class="toc-link" href="#dbc">6. 契約による設計</a>
+          <a class="toc-link" href="#estimation">7. 見積もりの技法</a>
+          <a class="toc-link" href="#automation">8. 自動化の哲学</a>
+          <a class="toc-link" href="#testing">9. テストへの姿勢</a>
+          <a class="toc-link" href="#portfolio">10. 知識のポートフォリオ</a>
+          <a class="toc-link" href="#checklist">11. 実務チェックリスト</a>
+        </div>
+      </div>
+
+      <!-- ===== 1. 責任を持つ姿勢 ===== -->
+      <h2 class="section-title" id="responsibility"><span class="title-icon">🎯</span> 1. 達人の姿勢 — 責任・誠実さ・積極性</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Take Responsibility"</div>
+        <div class="proverb-ja">自分のキャリア、学習、プロジェクトの成否に責任を持つ</div>
+        <div class="proverb-desc">
+          達人は言い訳をしない。問題の原因がどこにあるかを問わず、解決策を提示できるよう行動する。
+          「○○のせいでできません」ではなく「こうすれば前進できます」という姿勢が達人を定義する。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>猫がソースコードを食べた？— 言い訳の代わりに選択肢を提示する <span class="principle-badge">言い訳禁止</span></h3>
+        <p>問題が起きたとき、「できない理由」を並べるのではなく「どうすれば前進できるか」を提示するのが達人の姿勢。</p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card ng">
+          <div class="compare-label">✗ 言い訳型 — 問題をそのまま投げる</div>
+          <pre><code>// 開発中の報告例
+「テストが間に合いません。
+ 仕様変更が多すぎたので。」
+
+「本番でバグが出ました。
+ レビューで指摘がなかったので。」
+
+「ドキュメントが古くて
+ 理解に時間がかかりました。」
+</code></pre>
+        </div>
+        <div class="compare-card ok">
+          <div class="compare-label">✓ 選択肢型 — 解決案を添えて相談する</div>
+          <pre><code>// 達人的な報告例
+「テスト完了が金曜になります。
+ 優先度を下げる機能はありますか？」
+
+「本番バグの原因と対処案を
+ 3パターン用意しました。」
+
+「ドキュメントを最新化しました。
+ 今後は変更時に合わせて更新します。」
+</code></pre>
+        </div>
+      </div>
+
+      <div class="rule-section" style="margin-top:1.5rem;">
+        <h3>十分によいソフトウェア — 完璧主義とのバランス <span class="principle-badge">現実的完璧主義</span></h3>
+        <p>「完璧」を求めるあまり何もリリースしないのは悪。ユーザーが今必要な品質で届け、フィードバックを得て改善し続ける。</p>
+      </div>
+
+      <div class="point-box">
+        <strong>💡 実務ポイント：</strong>
+        品質のトレードオフを意識的に決定する。「このリリースでは○○の品質レベルを保証するが、△△は次のスプリントで対応する」と
+        ステークホルダーと合意することが達人的アプローチ。品質の妥協を「見えない形で」行うのは悪、<b>明示的に議論する</b>のは良。
+      </div>
+
+      <!-- ===== 2. DRY原則 ===== -->
+      <h2 class="section-title" id="dry"><span class="title-icon">🔁</span> 2. DRY原則 — Don't Repeat Yourself</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Every piece of knowledge must have a single, unambiguous, authoritative representation within a system."</div>
+        <div class="proverb-ja">システム内のあらゆる知識は、単一の・明確な・信頼できる表現を持たなければならない</div>
+        <div class="proverb-desc">
+          DRY はコードの重複を避けることだけではない。<b>知識の重複</b>を避けることが本質。
+          同じ情報が複数の場所に存在すると、一方を変更したときに他方が古くなり、矛盾が生まれる。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>DRY違反の4パターン <span class="principle-badge">知識の重複</span></h3>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:25%;">パターン</th><th>説明</th><th>対処法</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>コードの重複</b></td>
+                <td>同じロジックが複数のクラス・メソッドに散在する</td>
+                <td>関数・クラスに抽出して一元化する</td>
+              </tr>
+              <tr>
+                <td><b>コメントとコードの重複</b></td>
+                <td>コードに書いてある内容をコメントで繰り返す</td>
+                <td>コメントは「なぜ」だけ書く。「何」はコードを読めばわかる</td>
+              </tr>
+              <tr>
+                <td><b>データ構造の重複</b></td>
+                <td>DBスキーマ・APIスキーマ・コードの構造が別々に管理される</td>
+                <td>スキーマを単一のソースから自動生成する（OpenAPI → DTO、Prisma → 型定義など）</td>
+              </tr>
+              <tr>
+                <td><b>ドキュメントとコードの重複</b></td>
+                <td>設計書に書いた仕様がコードに二重に存在する</td>
+                <td>コードから設計書を生成する。または設計書をコードに近い場所に置く（ADR等）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card ng">
+          <div class="compare-label">✗ DRY違反 — 税率が3箇所に散在</div>
+          <pre><code>// OrderService.java
+double tax = price * 0.10;
+
+// InvoiceService.java
+double taxAmount = subtotal * 0.10;
+
+// ReportService.java
+BigDecimal tax = amount.multiply(
+  new BigDecimal("0.10")
+);
+// → 税率変更時に3箇所を漏れなく直す必要がある
+</code></pre>
+        </div>
+        <div class="compare-card ok">
+          <div class="compare-label">✓ DRY準拠 — 税率の定義は1箇所</div>
+          <pre><code>// TaxConstants.java
+public final class TaxConstants {
+  public static final BigDecimal STANDARD_RATE
+      = new BigDecimal("0.10");
+}
+
+// 各サービスは定数を参照するだけ
+BigDecimal tax = price.multiply(
+  TaxConstants.STANDARD_RATE
+);
+// → 税率変更は TaxConstants の1箇所だけ
+</code></pre>
+        </div>
+      </div>
+
+      <!-- ===== 3. 直交性 ===== -->
+      <h2 class="section-title" id="orthogonality"><span class="title-icon">📐</span> 3. 直交性 — Orthogonality</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Eliminate Effects Between Unrelated Things."</div>
+        <div class="proverb-ja">関係のないものどうしが影響し合わないようにする</div>
+        <div class="proverb-desc">
+          直交性とは「ある機能を変更しても他の機能に影響しない」という性質。
+          コンポーネントが直交していると、変更の影響範囲が局所化され、テストが容易になり、再利用性が高まる。
+          逆に「どこかを直したら別のところが壊れた」は直交性の欠如が原因。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>直交性を確認するテスト質問 <span class="principle-badge">直交テスト</span></h3>
+        <p>設計レビュー・コードレビュー時に以下を自問する。</p>
+      </div>
+
+      <div class="three-col">
+        <div class="mini-card">
+          <div class="mini-card-title">Q1. 変更の局所性</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">「この機能を変えるとき、変更が必要なファイルはいくつか？」 → 1〜3ファイルで収まるなら直交性が高い</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">Q2. 独立性</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">「このモジュールを単独でテストできるか？」 → モックなしでテストできるなら直交性が高い</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">Q3. 再利用性</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">「このコンポーネントを別のシステムで使えるか？」 → 使えるなら直交性が高い</span>
+        </div>
+      </div>
+
+      <div class="compare-grid" style="margin-top:1rem;">
+        <div class="compare-card ng">
+          <div class="compare-label">✗ 直交性なし — UIとビジネスロジックが密結合</div>
+          <pre><code>// UI コンポーネントの中に
+// ビジネスロジックが直接書かれている
+function OrderButton({ orderId }) {
+  const handleClick = async () => {
+    // 税計算がUIに直接ある
+    const tax = price * 0.1;
+    const total = price + tax;
+    // DB操作もUIに直接ある
+    await db.orders.update(orderId, { total });
+    alert("注文確定: " + total + "円");
+  };
+}
+</code></pre>
+        </div>
+        <div class="compare-card ok">
+          <div class="compare-label">✓ 直交性あり — UI・ロジック・データが分離</div>
+          <pre><code">// UI はイベントを発火するだけ
+function OrderButton({ orderId }) {
+  const { confirmOrder } = useOrderService();
+  const handleClick = () => confirmOrder(orderId);
+  return &lt;button onClick={handleClick}&gt;確定&lt;/button&gt;;
+}
+
+// ビジネスロジックは独立したサービスに
+class OrderService {
+  async confirmOrder(orderId: string) {
+    const order = await this.repo.findById(orderId);
+    const total = this.calc.calculateTotal(order);
+    await this.repo.confirm(orderId, total);
+  }
+}
+</code></pre>
+        </div>
+      </div>
+
+      <!-- ===== 4. 壊れ窓理論 ===== -->
+      <h2 class="section-title" id="broken-window"><span class="title-icon">🪟</span> 4. 壊れ窓理論 — No Broken Windows</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Don't leave broken windows (bad designs, wrong decisions, or poor code) unrepaired."</div>
+        <div class="proverb-ja">壊れた窓（悪い設計・誤った判断・粗悪なコード）を放置するな</div>
+        <div class="proverb-desc">
+          犯罪学の「壊れ窓理論」と同じ原理。ビルの窓が1枚割れたまま放置されると、
+          やがて全ての窓が割られる。コードベースでも「少し汚いコード」「TODO コメントの放置」「テストのスキップ」が
+          蓄積すると、チーム全体の規律が崩れていく。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>開発現場における「壊れ窓」の例 <span class="principle-badge">品質維持</span></h3>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:30%;">壊れ窓の例</th><th>放置した場合の悪化</th><th>直し方</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>// TODO: あとで直す</code> の放置</td>
+                <td>誰も直さないまま増殖し、コードの意図が読めなくなる</td>
+                <td>期限を設定してチケット化するか、即座に修正する</td>
+              </tr>
+              <tr>
+                <td>テストを <code>@Ignore</code> / <code>skip</code> したまま放置</td>
+                <td>「テストをスキップしてもいい」という文化が定着する</td>
+                <td>スキップの理由をコメントに書き、期限付きで復活させる</td>
+              </tr>
+              <tr>
+                <td>警告（Warning）を無視し続ける</td>
+                <td>警告が増えて本当に重要な警告が埋もれる</td>
+                <td>CI でゼロ警告を強制する。or 警告を抑制した理由をコメントする</td>
+              </tr>
+              <tr>
+                <td>設計書と実装の乖離を放置</td>
+                <td>設計書は参照されなくなり、口伝えの知識だけが残る</td>
+                <td>変更時に必ず設計書も更新するルールをチームで合意する</td>
+              </tr>
+              <tr>
+                <td>命名規則の例外を「一時的に」許可</td>
+                <td>例外が標準になり、規則が形骸化する</td>
+                <td>例外を認めるときは理由をコメントに残し、技術的負債として記録する</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="point-box">
+        <strong>💡 実務ポイント：</strong>
+        壊れ窓を「今すぐ直せない」場合は、<b>意図的に汚くした</b>ことをコメントで明示する。
+        <code>// FIXME: 暫定対応（CR-025 で正式対応予定 2026-06-30）</code> のように、
+        「誰かがちゃんと認識している問題」にするだけで、品質劣化のスピードが大きく変わる。
+      </div>
+
+      <!-- ===== 5. トレーサー弾 ===== -->
+      <h2 class="section-title" id="tracer"><span class="title-icon">🎯</span> 5. トレーサー弾 — Tracer Bullets</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Use Tracer Bullets to Find the Target."</div>
+        <div class="proverb-ja">トレーサー弾を使って目標を見つけよ</div>
+        <div class="proverb-desc">
+          機能を1つ1つ完璧に作りこんでから結合するのではなく、
+          エンドツーエンドで薄く動くものを最初に作る。
+          UI → API → DB まで貫通する「骨格」を先に完成させ、
+          そこにフィードバックを得ながら肉付けしていく手法。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>プロトタイプとの違い <span class="principle-badge">開発戦略</span></h3>
+      </div>
+
+      <div class="two-col">
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.5rem; color:#7c3aed;">🎯 トレーサー弾</div>
+          <ul style="font-size:.85rem; margin:.4rem 0 0; padding-left:1.2rem; line-height:1.9; color:var(--gray-700);">
+            <li><b>捨てない</b>。本番コードとして育てる</li>
+            <li>エンドツーエンドで動く最小限の実装</li>
+            <li>本番品質のコード（テスト・エラー処理含む）</li>
+            <li>フィードバックを得て機能を追加していく</li>
+            <li>例：注文機能の画面・API・DB保存が最低限動く状態</li>
+          </ul>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.5rem; color:var(--gray-500);">🔬 プロトタイプ</div>
+          <ul style="font-size:.85rem; margin:.4rem 0 0; padding-left:1.2rem; line-height:1.9; color:var(--gray-700);">
+            <li><b>捨てる</b>。学習のための使い捨て</li>
+            <li>特定のリスク・不確実性を検証するため</li>
+            <li>品質は問わない（エラー処理・テスト不要）</li>
+            <li>検証が終わったら破棄し、本番コードを書き直す</li>
+            <li>例：新しいライブラリのAPIを試すためのコード</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="point-box" style="margin-top:.75rem;">
+        <strong>💡 実務ポイント：</strong>
+        スプリントの最初に「薄く全層を貫通するストーリー」を選ぶ。
+        「商品一覧を表示する」だけでもUI→API→DBが全部通ると、
+        環境構築・デプロイパイプライン・チーム間の役割分担の問題が早期に露見する。
+        後半の「いざ結合したら動かない」を防ぐ最も有効な手段。
+      </div>
+
+      <!-- ===== 6. 契約による設計 ===== -->
+      <h2 class="section-title" id="dbc"><span class="title-icon">📜</span> 6. 契約による設計 — Design by Contract</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Design with Contracts."</div>
+        <div class="proverb-ja">契約によって設計せよ</div>
+        <div class="proverb-desc">
+          すべての関数・メソッドには「事前条件（呼び出し側の責任）」と「事後条件（実装側の保証）」と
+          「不変条件（常に成立すべき状態）」がある。
+          これを明示的に設計・実装することで、バグの原因特定が格段に速くなる。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>事前条件・事後条件・不変条件の実装 <span class="principle-badge">DbC</span></h3>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card ng">
+          <div class="compare-label">✗ 契約なし — どこでエラーが起きたか不明</div>
+          <pre><code>// 何でも受け入れ、どこかで失敗する
+function calculateDiscount(
+  price: number,
+  discountRate: number
+): number {
+  return price - (price * discountRate);
+}
+// price が負でも、rate が 2.0 でも動いてしまう
+// 結果がおかしくてもどこが問題か不明
+</code></pre>
+        </div>
+        <div class="compare-card ok">
+          <div class="compare-label">✓ 契約あり — 違反箇所が即座に明確になる</div>
+          <pre><code">function calculateDiscount(
+  price: number,       // 事前条件: price > 0
+  discountRate: number // 事前条件: 0 <= rate <= 1
+): number {
+  // 事前条件チェック（呼び出し側の責任を強制）
+  if (price <= 0) throw new Error("price must be > 0");
+  if (discountRate < 0 || discountRate > 1)
+    throw new Error("rate must be 0..1");
+
+  const result = price - (price * discountRate);
+
+  // 事後条件チェック（実装の保証を検証）
+  if (result < 0 || result > price)
+    throw new Error("postcondition violated");
+
+  return result; // 不変条件: 0 <= result <= price
+}
+</code></pre>
+        </div>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-top:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:25%;">契約の種類</th><th>意味</th><th>誰の責任か</th><th>実装例</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>事前条件（Precondition）</b></td>
+                <td>関数を呼び出す前に満たされていなければならない条件</td>
+                <td>呼び出し側（クライアント）</td>
+                <td>引数バリデーション・Guard Clause</td>
+              </tr>
+              <tr>
+                <td><b>事後条件（Postcondition）</b></td>
+                <td>関数が完了した後に保証される状態</td>
+                <td>実装側（サプライヤー）</td>
+                <td>戻り値のアサーション</td>
+              </tr>
+              <tr>
+                <td><b>不変条件（Invariant）</b></td>
+                <td>オブジェクトの生存期間中に常に成立すべき状態</td>
+                <td>クラス設計者</td>
+                <td>コンストラクタ・各メソッドの終了時に検証</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== 7. 見積もり ===== -->
+      <h2 class="section-title" id="estimation"><span class="title-icon">⏱️</span> 7. 見積もりの技法</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Estimate to Avoid Surprises."</div>
+        <div class="proverb-ja">驚きを避けるために見積もれ</div>
+        <div class="proverb-desc">
+          見積もりは「予言」ではなく「精度付きの予測」。重要なのは精度の幅を明示すること。
+          「2週間でできます」より「うまくいけば1週間、通常は2週間、問題が出れば1ヶ月」の方が
+          正直かつ有用な情報。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>見積もり単位と精度の関係 <span class="principle-badge">精度</span></h3>
+        <p>答える単位によって精度の期待値を調整できる。「130日」と言うより「約4ヶ月」と言う方が適切な精度を伝えられる。</p>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>答える単位</th><th>暗示する精度</th><th>使いどき</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1〜15 <b>分</b></td><td>±5分程度</td><td>「ちょっと見てくる」レベルのタスク</td></tr>
+              <tr><td>1〜数 <b>時間</b></td><td>±30%程度</td><td>1日以内で終わるタスク</td></tr>
+              <tr><td>1〜3 <b>日</b></td><td>±1日程度</td><td>機能単位のタスク</td></tr>
+              <tr><td>1〜数 <b>週</b></td><td>±数日程度</td><td>小機能・バグ修正スプリント</td></tr>
+              <tr><td>1〜数 <b>ヶ月</b></td><td>±1〜2週間</td><td>機能リリース・フェーズ</td></tr>
+              <tr><td>数 <b>ヶ月〜半年</b></td><td>±1ヶ月以上</td><td>プロジェクト全体の概算</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>見積もりを改善するPRACTICE <span class="principle-badge">見積技法</span></h3>
+      </div>
+
+      <div class="three-col">
+        <div class="mini-card">
+          <div class="mini-card-title">① 何を聞かれているか理解する</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">「実装」だけか、「テスト・レビュー・デプロイ」も含むか確認してから答える</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">② 類似タスクの実績を参照する</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">過去の類似案件の実績を残しておき、根拠として使う（ベロシティの活用）</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">③ 不確実な要素を明示する</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">「○○の仕様が確定していないため±1週間のブレがある」と添える</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">④ 見積もりを分解する</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">「画面実装3日＋API実装2日＋テスト2日」のように積み上げで見積もる</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⑤ 実績を記録して精度を上げる</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">見積もりと実績の差を記録し、次の見積もりに活かす継続的改善</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⑥ 「わからない」と言う勇気</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">不確実なまま答えるより「○○を調査してから答えます」が誠実で正確</span>
+        </div>
+      </div>
+
+      <!-- ===== 8. 自動化 ===== -->
+      <h2 class="section-title" id="automation"><span class="title-icon">🤖</span> 8. 自動化の哲学 — Shell Games & Power Editing</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Don't Use Manual Procedures."</div>
+        <div class="proverb-ja">手作業の手順を使うな</div>
+        <div class="proverb-desc">
+          人間は繰り返し作業でミスをする。手順書を読みながら手動でやる作業は、必ずいつかミスをする。
+          繰り返し行う作業はスクリプト化・自動化し、人間の判断が必要なことだけに集中する。
+        </div>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:30%;">自動化すべき作業</th><th>自動化の手段</th><th>期待される効果</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ビルド・テスト実行</td>
+                <td>CI/CD パイプライン（GitHub Actions, GitLab CI 等）</td>
+                <td>毎回確実に実行され、人的ミスがなくなる</td>
+              </tr>
+              <tr>
+                <td>コードフォーマット</td>
+                <td>Prettier, google-java-format, spotless（コミット時フック）</td>
+                <td>フォーマットの議論がなくなり、レビューに集中できる</td>
+              </tr>
+              <tr>
+                <td>静的解析・Lint</td>
+                <td>ESLint, Checkstyle, SpotBugs（PR時に自動実行）</td>
+                <td>コードレビューでの指摘を機械的なものに費やさなくなる</td>
+              </tr>
+              <tr>
+                <td>DBマイグレーション</td>
+                <td>Flyway, Liquibase（デプロイパイプラインに組込み）</td>
+                <td>手順漏れによるスキーマ不整合を防ぐ</td>
+              </tr>
+              <tr>
+                <td>リリース手順</td>
+                <td>デプロイスクリプト、Infrastructure as Code（Terraform等）</td>
+                <td>環境差分・手順抜けによる障害を防ぐ</td>
+              </tr>
+              <tr>
+                <td>ドキュメント生成</td>
+                <td>OpenAPI → API仕様書、Javadoc → リファレンス</td>
+                <td>コードと仕様書の乖離（DRY違反）を防ぐ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="point-box">
+        <strong>💡 実務ポイント：</strong>
+        「自動化する時間がない」は逆。自動化しない方が長期的なコストは高い。
+        1回10分の手作業が週3回あれば月1時間。それを5人のチームで1年続けると60時間の損失。
+        <b>自動化への投資は最も ROI の高い投資のひとつ。</b>
+      </div>
+
+      <!-- ===== 9. テスト ===== -->
+      <h2 class="section-title" id="testing"><span class="title-icon">🧪</span> 9. テストへの姿勢</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Test Early, Test Often, Test Automatically."</div>
+        <div class="proverb-ja">早くテストし、頻繁にテストし、自動でテストせよ</div>
+        <div class="proverb-desc">
+          テストはコードを書いた後にするものではない。設計・実装と並行して、可能なら先に書く。
+          バグは早期発見するほど修正コストが低い。本番で見つかるバグは、開発中に見つかるバグの100倍のコストがかかるとも言われる。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>達人のテスト哲学 <span class="principle-badge">テスト文化</span></h3>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:30%;">原則</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>テストは仕様書である</b></td>
+                <td>テストコードは「コードがどう動くべきか」を記述した生きたドキュメント。テストを読めば仕様がわかるように書く</td>
+              </tr>
+              <tr>
+                <td><b>テストしやすいコードを書く</b></td>
+                <td>テストが書きにくいコードは設計が悪いサイン。テスト容易性は良い設計の指標</td>
+              </tr>
+              <tr>
+                <td><b>自分のコードをテストするのは自分</b></td>
+                <td>「テストチームがやる」ではなく、実装者自身が単体テストを書く責任を持つ</td>
+              </tr>
+              <tr>
+                <td><b>バグが出たらテストを追加する</b></td>
+                <td>バグを修正するだけでなく、同じバグが再発しないようにテストを追加する。バグはテストの不足を示している</td>
+              </tr>
+              <tr>
+                <td><b>100% カバレッジは目的ではない</b></td>
+                <td>数値を追うのではなく、ビジネスロジックの重要なパスと境界値を必ずテストする</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== 10. 知識のポートフォリオ ===== -->
+      <h2 class="section-title" id="portfolio"><span class="title-icon">📈</span> 10. 知識のポートフォリオ</h2>
+
+      <div class="proverb-card">
+        <div class="proverb-en">"Invest Regularly in Your Knowledge Portfolio."</div>
+        <div class="proverb-ja">知識のポートフォリオに定期的に投資せよ</div>
+        <div class="proverb-desc">
+          エンジニアの知識は金融資産と同じ。定期的に投資し、リスク分散し、リバランスする。
+          特定の技術だけに依存すると、技術の陳腐化とともにキャリアが危うくなる。
+          「今使っていない技術」を学ぶことが、将来の選択肢を広げる。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>ポートフォリオ構築の指針 <span class="principle-badge">継続学習</span></h3>
+      </div>
+
+      <div class="three-col">
+        <div class="mini-card">
+          <div class="mini-card-title">📅 定期的に投資する</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">毎週/毎月「新しいことを学ぶ時間」を意図的に確保する。モチベーションに頼らず習慣にする</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">📊 多様化する</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">メイン言語の深掘りだけでなく、異なるパラダイム（関数型・宣言型）や隣接分野（インフラ・DB）も学ぶ</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⚖️ リスク管理する</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">枯れた技術（低リスク・低リターン）と新興技術（高リスク・高リターン）をバランスよく学ぶ</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">🔄 定期的に見直す</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">半年ごとに学習内容を振り返り、時代遅れになったスキルと伸ばすべきスキルを棚卸しする</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">📚 1年に1冊は新しい言語を学ぶ</div>
+          <span style="font-size:.84rem; color:var(--gray-700);">新しい言語を学ぶことで、使い慣れた言語の「当たり前」を疑う思考力が鍛えられる</span>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">💬 コミュニティに参加する</div>
+          <span style="font-size:.84dam; color:var(--gray-700);">読書・個人学習だけでなく、勉強会・OSS 貢献・技術ブログで「教える」ことで理解が深まる</span>
+        </div>
+      </div>
+
+      <div class="rule-section" style="margin-top:1.5rem;">
+        <h3>批判的思考 — 情報を鵜呑みにしない <span class="principle-badge">批判的思考</span></h3>
+        <p>「○○が最高のフレームワーク」「△△は使うべきでない」という主張を、文脈なしに信じない。</p>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>情報に対して問うべきこと</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>☐ 「誰が言っているのか？」— その人の経験・立場・利害関係は？</td></tr>
+              <tr><td>☐ 「なぜそう言っているのか？」— ベンダー推薦か、実体験か、理論か？</td></tr>
+              <tr><td>☐ 「いつの話か？」— 3年前に最適だった技術が今も最適とは限らない</td></tr>
+              <tr><td>☐ 「自分のコンテキストに適用できるか？」— GAFA の事例がスタートアップに当てはまるとは限らない</td></tr>
+              <tr><td>☐ 「実際に試したか？」— 読んだ知識と動かした知識は全く異なる</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== 11. チェックリスト ===== -->
+      <h2 class="section-title" id="checklist"><span class="title-icon">✅</span> 11. 達人への道 — 実務チェックリスト</h2>
+
+      <div class="two-col">
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.75rem; color:#7c3aed;">毎日の習慣チェック</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:8%;"></th><th>確認項目</th></tr></thead>
+              <tbody>
+                <tr><td>☐</td><td>今日書いたコードに DRY 違反はないか</td></tr>
+                <tr><td>☐</td><td>壊れ窓（TODO放置・テストスキップ）を増やしていないか</td></tr>
+                <tr><td>☐</td><td>繰り返しの手作業を1つでも自動化できないか考えたか</td></tr>
+                <tr><td>☐</td><td>変更した範囲に対してテストを追加・更新したか</td></tr>
+                <tr><td>☐</td><td>エラーが発生したとき、原因を理解してから修正したか</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.75rem; color:#7c3aed;">設計・レビュー時のチェック</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:8%;"></th><th>確認項目</th></tr></thead>
+              <tbody>
+                <tr><td>☐</td><td>コンポーネントは直交しているか（変更が局所化されているか）</td></tr>
+                <tr><td>☐</td><td>関数・メソッドの事前条件・事後条件が明確か</td></tr>
+                <tr><td>☐</td><td>知識の重複（DRY違反）がないか（定数・スキーマ・設計書）</td></tr>
+                <tr><td>☐</td><td>見積もりに根拠と不確実性の幅が含まれているか</td></tr>
+                <tr><td>☐</td><td>テストが「仕様書」として読めるように書かれているか</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem; padding:1.25rem 1.5rem;">
+        <div style="font-weight:700; margin-bottom:.75rem; color:#7c3aed;">月次・定期の振り返りチェック</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:5%;"></th><th>確認項目</th></tr></thead>
+            <tbody>
+              <tr><td>☐</td><td>先月と比べてコードベースの壊れ窓は増えているか・減っているか</td></tr>
+              <tr><td>☐</td><td>繰り返していた手作業を自動化できているか</td></tr>
+              <tr><td>☐</td><td>見積もりの精度はどうだったか（実績と比較して振り返ったか）</td></tr>
+              <tr><td>☐</td><td>知識のポートフォリオに新しい投資をしたか（本・技術記事・実験）</td></tr>
+              <tr><td>☐</td><td>チームに「達人的な習慣」を1つ以上提案・共有できたか</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 参考 -->
+      <div class="callout" style="background:#f5f3ff; border:1.5px solid #c4b5fd; margin-top:1.5rem;">
+        <span class="callout-icon">📚</span>
+        <div class="callout-body">
+          <div class="callout-title" style="color:#4c1d95;">参考文献・関連ページ</div>
+          <ul style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
+            <li>David Thomas / Andrew Hunt 著「<b>達人プログラマー ―― 熟達に向けたあなたの旅（第2版）</b>」（オーム社）</li>
+            <li>Andrew Hunt / David Thomas 著「<b>達人プログラマー 第1版</b>」— 原典。第2版と読み比べると変化と不変が見える</li>
+            <li><a href="../reference/readable-naming.html">命名規則ガイド</a> — DRY・直交性を命名に活かす実践例</li>
+            <li><a href="../reference/legacy-code.html">レガシーコードからの脱却</a> — 壊れ窓を直すための具体的技法</li>
+            <li><a href="../impl/unit-test.html">単体テスト設計技法</a> — 「早くテストし、自動でテストせよ」の実践</li>
+            <li><a href="../reference/adr.html">ADR サンプル集</a> — 設計の意思決定を「知識の単一表現」として残す</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../sidebar.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>テスト実施手順 — テスト</title>
+  <title>テスト実施手順</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
@@ -101,8 +101,8 @@
             <thead><tr><th>確認項目</th><th>ツール例</th><th>目標</th></tr></thead>
             <tbody>
               <tr><td>正常系・異常系の網羅</td><td>JUnit / Jest / pytest</td><td>命令カバレッジ 80%以上</td></tr>
-              <tr><td>境界値・同値分割</td><td>—</td><td>テスト設計書に明記</td></tr>
-              <tr><td>モック・スタブの活用</td><td>Mockito / Jest mock</td><td>外部依存を分離</td></tr>
+              <tr><td>境界値・同値分割<br><small class="text-muted">入力値をグループ分けして代表値でテストする（同値分割）＋境界の値（7文字と8文字など）を重点的にテストする（境界値分析）。詳細は <a href="unit-test.html">単体テスト設計技法まとめ</a> を参照</small></td><td>—</td><td>テスト設計書に明記</td></tr>
+              <tr><td>モック・スタブの活用<br><small class="text-muted">モック（Mock）＝テスト対象が使う外部依存（DBやメールサーバー等）を偽物で置き換えるオブジェクト。「DBが壊れていると単体テストが落ちる」を防ぎ、テスト対象の関数だけを独立して検証できる</small></td><td>Mockito / Jest mock</td><td>外部依存を分離</td></tr>
             </tbody>
           </table>
         </div>
@@ -222,7 +222,7 @@
           <li><input type="checkbox" id="t6-1"><label for="t6-1">カットオーバー手順書（<a href="../reference/templates.html">T-11テンプレート</a>）を作成した</label></li>
           <li><input type="checkbox" id="t6-2"><label for="t6-2">バックアウト手順と判定基準を合意した</label></li>
           <li><input type="checkbox" id="t6-3"><label for="t6-3">リリース前の本番環境バックアップを取得した</label></li>
-          <li><input type="checkbox" id="t6-4"><label for="t6-4">スモークテストを実施し、主要機能の動作を確認した</label></li>
+          <li><input type="checkbox" id="t6-4"><label for="t6-4">スモークテストを実施し、主要機能の動作を確認した<br><small class="text-muted">スモークテスト（Smoke Test）＝「起動して煙が出ないか」を確認する最低限のテスト。全機能を詳しく検証するのではなく、ログインできるか・主要画面が表示されるか・基本的なCRUDが動くかを素早く確認する。カットオーバー直後に実施し、NGなら即バックアウトを判断する材料になる</small></label></li>
           <li><input type="checkbox" id="t6-5"><label for="t6-5">稼働開始を関係者に周知した</label></li>
         </ul>
       </div>
@@ -269,6 +269,96 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+
+      <!-- ======================================================
+           PMBOK: 教訓（Lessons Learned）/ クローズ
+           ====================================================== -->
+      <h2 class="section-title"><span class="title-icon">📚</span> プロジェクトクローズ — 教訓（Lessons Learned）</h2>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <b>PMBOKにおける教訓（Lessons Learned）とは</b><br>
+          プロジェクトで経験した「うまくいったこと」「うまくいかなかったこと」「次回に活かすべきこと」を記録し、組織の知識資産として残すプロセスです。<br>
+          カットオーバー後に必ずチームで振り返りを行い、次のプロジェクトに活かします。「炎上した原因」だけでなく「うまくいった理由」も同様に重要です。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#dcfce7">📚</span><h2>教訓登録簿テンプレート</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>フェーズ</th>
+                <th>区分</th>
+                <th>事象（何が起きたか）</th>
+                <th>原因・背景</th>
+                <th>対処・結果</th>
+                <th>次回への推奨アクション</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LL-001</td>
+                <td>基本設計</td>
+                <td><span class="badge badge-danger">改善</span></td>
+                <td>外部IF仕様の確定が2週間遅延し、詳細設計がブロックされた</td>
+                <td>連携先担当者との確認会議を設定していなかった</td>
+                <td>週次確認MTGを設定して解消。最終的に1週間遅延</td>
+                <td>STEP 4完了前に連携先との定例会議を設定する</td>
+              </tr>
+              <tr>
+                <td>LL-002</td>
+                <td>実装</td>
+                <td><span class="badge badge-success">成功</span></td>
+                <td>OpenAPIでモックサーバーを立てたことでFE・BE並行開発ができた</td>
+                <td>詳細設計フェーズでD-03を最初に完成させる方針を採用</td>
+                <td>FE開発が2週間早く開始できた</td>
+                <td>次回もD-03（OpenAPI）を最優先で完成させる</td>
+              </tr>
+              <tr>
+                <td>LL-003</td>
+                <td>テスト</td>
+                <td><span class="badge badge-danger">改善</span></td>
+                <td>結合テスト直前にテスト環境が未整備で3日間テストが開始できなかった</td>
+                <td>テスト環境整備をテスト開始直前まで後回しにした</td>
+                <td>緊急でインフラ担当が環境を構築。3日遅延</td>
+                <td>STEP 8（開発環境整備）でステージング・テスト環境を同時に整備する</td>
+              </tr>
+              <tr style="opacity:.6">
+                <td>LL-XXX</td>
+                <td colspan="6">← プロジェクト固有の教訓を追記する</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-success" style="margin-top:1rem">
+          <span class="callout-icon">✅</span>
+          <div class="callout-body">
+            <b>振り返りミーティングの進め方（KPT法）</b><br>
+            <b>Keep</b>（続けること）：うまくいったプロセス・取り組みは何か？<br>
+            <b>Problem</b>（問題だったこと）：困ったこと・うまくいかなかったことは何か？<br>
+            <b>Try</b>（次回試すこと）：Problemへの対策として次回に具体的に何を変えるか？<br><br>
+            ミーティングは「責任追及」ではなく「改善」が目的です。非難なしのルール（No-blame culture）で進めます。
+          </div>
+        </div>
+      </div>
+
+      <!-- プロジェクトクローズチェックリスト -->
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#e0e7ff">🏁</span><h2>プロジェクトクローズチェックリスト</h2></div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="cl-1"><label for="cl-1">カットオーバー後の稼働監視（最低1週間）が完了した</label></li>
+          <li><input type="checkbox" id="cl-2"><label for="cl-2">残存バグの対応計画（次期リリースまたはホットフィックス）を顧客と合意した</label></li>
+          <li><input type="checkbox" id="cl-3"><label for="cl-3">全成果物（設計書・テスト結果・ソースコード・環境情報）を所定の場所に保管した</label></li>
+          <li><input type="checkbox" id="cl-4"><label for="cl-4">運用チームへの引き継ぎ（運用手順書説明・権限移管）が完了した</label></li>
+          <li><input type="checkbox" id="cl-5"><label for="cl-5">教訓登録簿（Lessons Learned）を作成し、チーム・組織で共有した</label></li>
+          <li><input type="checkbox" id="cl-6"><label for="cl-6">プロジェクトクローズ報告書をPL・顧客に提出し、正式承認を得た</label></li>
+          <li><input type="checkbox" id="cl-7"><label for="cl-7">リスク登録簿・変更要求票・課題管理票を最終版としてアーカイブした</label></li>
+        </ul>
       </div>
 
     </div>

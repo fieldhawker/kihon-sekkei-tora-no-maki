@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>基本設計 手順書 — 基本設計</title>
+  <title>基本設計 手順書</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
@@ -87,15 +87,23 @@ flowchart LR
         <div class="callout-body"><b>目的</b>: 要件定義成果物が基本設計を始めるのに十分な状態かを確認する。ここで時間をかけることが後工程の手戻りを防ぐ最大の投資です。</div>
       </div>
       <div class="card">
+        <div class="callout callout-info" style="margin-bottom:1rem">
+          <span class="callout-icon">👥</span>
+          <div class="callout-body">
+            <b>RACI確認（体制を最初に明確化する）</b><br>
+            設計書の各成果物に対して「誰が作成（R）」「誰が最終承認（A）」「誰に相談（C）」「誰に通知（I）」かをPLと合意してから進めます。
+            特に「承認者（A）が1名か」「顧客確認が必要か」を事前に確認しないと、レビュー前に差し戻しが発生します。
+          </div>
+        </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="s0-1"><label for="s0-1">要件定義書（正式版・承認済み）を受け取った</label></li>
-          <li><input type="checkbox" id="s0-2"><label for="s0-2">機能要件一覧（機能IDつき）を確認した</label></li>
-          <li><input type="checkbox" id="s0-3"><label for="s0-3">非機能要件（性能・可用性・セキュリティ等の数値）を確認した</label></li>
-          <li><input type="checkbox" id="s0-4"><label for="s0-4">画面一覧（概要）・ユーザーストーリーを確認した</label></li>
-          <li><input type="checkbox" id="s0-5"><label for="s0-5">ステークホルダー一覧（役割・連絡先）を確認した</label></li>
-          <li><input type="checkbox" id="s0-6"><label for="s0-6">未決事項（TBD）リストを確認し、解消済みか担当者を確認した</label></li>
-          <li><input type="checkbox" id="s0-7"><label for="s0-7">体制図・担当分担・スケジュールが確定している</label></li>
-          <li><input type="checkbox" id="s0-8"><label for="s0-8">成果物の提出先・フォーマット・レビュー方法を確認した</label></li>
+          <li><input type="checkbox" id="s0-1"><label for="s0-1">要件定義書（正式版・承認済み）を受け取った<br><small class="text-muted">設計のすべての根拠となる文書。承認が取れていない場合は設計を開始しないこと（後から「そんな仕様は合意していない」が発覚します）</small></label></li>
+          <li><input type="checkbox" id="s0-2"><label for="s0-2">機能要件一覧（機能IDつき）を確認した<br><small class="text-muted">機能IDがないと、設計書と要件書を対応づけられず抜け漏れを検出できません。IDがない場合は起票を依頼します</small></label></li>
+          <li><input type="checkbox" id="s0-3"><label for="s0-3">非機能要件（性能・可用性・セキュリティ等の数値）を確認した<br><small class="text-muted">「応答3秒以内」「稼働率99.9%」など具体的な数値がないと、インフラ・アーキテクチャ設計の基準が決まりません。数値がなければ顧客に確認します</small></label></li>
+          <li><input type="checkbox" id="s0-4"><label for="s0-4">画面一覧（概要）・ユーザーストーリーを確認した<br><small class="text-muted">機能設計の土台となります。ここを押さえることで、設計スコープの全体像が把握できます</small></label></li>
+          <li><input type="checkbox" id="s0-5"><label for="s0-5">ステークホルダー一覧（役割・連絡先）を確認した<br><small class="text-muted">確認事項が発生したときに「誰に聞けばよいか」を事前に把握しておきます。確認待ちで作業が止まると進捗が詰まります</small></label></li>
+          <li><input type="checkbox" id="s0-6"><label for="s0-6">未決事項（TBD）リストを確認し、解消済みか・未解消なら担当者と期限を把握した<br><small class="text-muted">設計中に「実はこれ未定でした」が発覚すると大きな手戻りになります。TBDが残っている場合は「誰が・いつまでに・何を決めるか」を明確にします</small></label></li>
+          <li><input type="checkbox" id="s0-7"><label for="s0-7">体制図・担当分担・スケジュールが確定している<br><small class="text-muted">「誰が何をいつまでに」が決まっていないと作業の依頼・確認ができません。自分の担当範囲と期限をここで確認します</small></label></li>
+          <li><input type="checkbox" id="s0-8"><label for="s0-8">成果物の提出先・フォーマット・レビュー方法を確認した<br><small class="text-muted">最後になって「このフォーマットでは受理できない」を防ぎます。レビューサイクル（誰がレビューして・何営業日で返答が来るか）も確認します</small></label></li>
         </ul>
       </div>
 
@@ -144,13 +152,14 @@ flowchart LR
           <li><input type="checkbox" id="s1-3"><label for="s1-3">採用する技術スタック（言語・FW・DB・ミドルウェア）を決定し、<b>選定理由を記録した</b><br><small class="text-muted">理由を記録しないと、後から「なぜこの技術を選んだのか」が分からなくなります → <a href="../reference/adr.html">ADRで記録</a></small></label></li>
           <li><input type="checkbox" id="s1-4"><label for="s1-4">デプロイ方式（オンプレ・クラウド・ハイブリッド）を決定した</label></li>
           <li><input type="checkbox" id="s1-5"><label for="s1-5">クラウドを使用する場合、利用サービス一覧を列挙した</label></li>
-          <li><input type="checkbox" id="s1-6"><label for="s1-6">冗長化・HA（高可用性）構成の方針を定義した</label></li>
+          <li><input type="checkbox" id="s1-6"><label for="s1-6">冗長化・HA（高可用性）構成の方針を定義した<br><small class="text-muted">HA（High Availability）＝サーバーが1台故障しても動き続けられる構成（Active-Active / Active-Standby 等）。単一障害点（SPOF：1箇所が壊れると全体が止まる設計）をなくすために検討します</small></label></li>
           <li><input type="checkbox" id="s1-7"><label for="s1-7">開発・ステージング・本番の環境分離方針を決定した</label></li>
           <li><input type="checkbox" id="s1-8"><label for="s1-8">APIアーキテクチャ方針（REST / GraphQL / gRPC 等）を決定した</label></li>
           <li><input type="checkbox" id="s1-9"><label for="s1-9">認証・認可の基本方針（セッション / JWT / OAuth2 等）を決定した</label></li>
           <li><input type="checkbox" id="s1-10"><label for="s1-10">ログ・監視の基本方針を定義した</label></li>
-          <li><input type="checkbox" id="s1-11"><label for="s1-11">CI/CDパイプラインの基本方針を定義した</label></li>
+          <li><input type="checkbox" id="s1-11"><label for="s1-11">CI/CDパイプラインの基本方針、および開発環境の標準化方針（Docker等のコンテナ使用の有無）を定義した</label></li>
           <li><input type="checkbox" id="s1-12"><label for="s1-12">ブランチ戦略（main / develop / feature等の運用ルール）を定義した</label></li>
+          <li><input type="checkbox" id="s1-13"><label for="s1-13">重大な技術選定・アーキテクチャ設計判断について、ADR（意思決定記録）を起票し、開発チームおよび関係者とレビュー・合意した</label></li>
         </ul>
       </div>
 
@@ -163,7 +172,7 @@ flowchart LR
       <div class="card">
         <div class="table-wrap" style="margin-bottom:1rem">
           <table>
-            <thead><tr><th>成果物</th><th>推奨ツール</th><th>参照</th></tr></thead>
+            <thead><tr><th>成果物</th><th>推奨ツール</th><th>成果物ガイド</th></tr></thead>
             <tbody>
               <tr><td>機能一覧（設計版）</td><td>Excel</td><td><a href="deliverables.html">B-03</a></td></tr>
               <tr><td>画面一覧</td><td>Excel</td><td><a href="deliverables.html">B-04</a></td></tr>
@@ -192,7 +201,7 @@ flowchart LR
       <div class="card">
         <div class="table-wrap" style="margin-bottom:1rem">
           <table>
-            <thead><tr><th>成果物</th><th>推奨ツール</th><th>参照</th></tr></thead>
+            <thead><tr><th>成果物</th><th>推奨ツール</th><th>成果物ガイド</th></tr></thead>
             <tbody>
               <tr><td>ER図（概念・論理）</td><td>dbdiagram.io / A5:SQL Mk-2</td><td><a href="deliverables.html#data">B-09</a></td></tr>
               <tr><td>テーブル定義書</td><td>A5:SQL Mk-2（Excel出力）/ Excel手動</td><td><a href="deliverables.html#data">B-10</a></td></tr>
@@ -207,7 +216,7 @@ flowchart LR
           <li><input type="checkbox" id="s3-4"><label for="s3-4">テーブル定義書（テーブル名・論理名・項目・型・必須/任意）を作成した<br><small class="text-muted">基本設計の段階では型・桁数は「おおよそ」で可。詳細設計で確定させる</small></label></li>
           <li><input type="checkbox" id="s3-5"><label for="s3-5">主キー・外部キー・制約を定義した</label></li>
           <li><input type="checkbox" id="s3-6"><label for="s3-6">コードマスタ（区分値）を一覧化した</label></li>
-          <li><input type="checkbox" id="s3-7"><label for="s3-7">正規化（第3正規形を目標）を確認した</label></li>
+          <li><input type="checkbox" id="s3-7"><label for="s3-7">正規化（第3正規形を目標）を確認した<br><small class="text-muted">正規化＝データの重複・矛盾を防ぐためにテーブルを適切に分割すること。第3正規形が基本目標ですが、パフォーマンス上の理由でわざと非正規化する場合はその判断を記録します。迷ったら先輩やアーキテクトに相談しましょう</small></label></li>
           <li><input type="checkbox" id="s3-8"><label for="s3-8">データ量の見積り（行数・増加量）を確認した</label></li>
         </ul>
       </div>
@@ -241,10 +250,11 @@ flowchart LR
         </div>
         <ul class="checklist">
           <li><input type="checkbox" id="s5-1"><label for="s5-1">性能要件（応答時間・スループット）の目標値を顧客と合意した</label></li>
-          <li><input type="checkbox" id="s5-2"><label for="s5-2">可用性要件（稼働率・RTO・RPO）を定義した</label></li>
+          <li><input type="checkbox" id="s5-2"><label for="s5-2">可用性要件（稼働率・RTO・RPO）を定義した<br><small class="text-muted">RTO（Recovery Time Objective）＝障害発生から何時間以内に復旧するか目標。RPO（Recovery Point Objective）＝最悪どの時点のデータまで戻ることを許容するか目標。例：「RTO 4時間・RPO 24時間」は「4時間以内に復旧し、最大1日分のデータ損失まで許容」を意味します</small></label></li>
           <li><input type="checkbox" id="s5-3"><label for="s5-3">拡張性・スケール方針を定義した</label></li>
           <li><input type="checkbox" id="s5-4"><label for="s5-4">バックアップ・リストア方針を定義した</label></li>
           <li><input type="checkbox" id="s5-5"><label for="s5-5">監視方針（死活監視・ログ監視・アラート閾値）を定義した</label></li>
+          <li><input type="checkbox" id="s5-6"><label for="s5-6">インフラ構築の自動化方針（Terraform等のIaC使用の有無）を定義した<br><small class="text-muted">IaC（Infrastructure as Code）＝サーバーやネットワーク設定をコードで管理する手法。手動でのインフラ構築は「誰がどう設定したか分からない」属人化・ミスを生みやすいため、IaCの採用有無をここで方針として決めます</small></label></li>
         </ul>
       </div>
 
@@ -258,7 +268,7 @@ flowchart LR
         <ul class="checklist">
           <li><input type="checkbox" id="s6-1"><label for="s6-1">認証方式の詳細設計（セッション管理・トークン有効期限等）を作成した</label></li>
           <li><input type="checkbox" id="s6-2"><label for="s6-2">認可設計（ロール・権限マトリクス）を作成した</label></li>
-          <li><input type="checkbox" id="s6-3"><label for="s6-3">OWASP Top 10 への対策方針を定義した<br><small class="text-muted">SQLインジェクション・XSS・CSRF・認証バイパス等</small></label></li>
+          <li><input type="checkbox" id="s6-3"><label for="s6-3">OWASP Top 10 への対策方針を定義した<br><small class="text-muted">OWASP Top 10＝世界的に広く参照されるWebアプリの脆弱性リスト上位10件（SQLインジェクション・XSS・CSRF・認証バイパス・不適切なアクセス制御 等）。詳細は <a href="https://owasp.org/Top10/ja/" target="_blank" rel="noopener">https://owasp.org/Top10/ja/</a> で日本語版を参照できます</small></label></li>
           <li><input type="checkbox" id="s6-4"><label for="s6-4">通信の暗号化方針（HTTPS・証明書管理）を定義した</label></li>
           <li><input type="checkbox" id="s6-5"><label for="s6-5">個人情報・機密データの取り扱い方針を定義した</label></li>
           <li><input type="checkbox" id="s6-6"><label for="s6-6">監査ログ（誰が・いつ・何をした）の設計をした</label></li>
@@ -287,6 +297,28 @@ flowchart LR
           <li><input type="checkbox" id="s7b-2"><label for="s7b-2">各テストレベルの完了基準（カバレッジ・バグ残存基準）を定義した</label></li>
           <li><input type="checkbox" id="s7b-3"><label for="s7b-3">テストツール（JUnit / Jest / Postman / k6等）を決定した</label></li>
           <li><input type="checkbox" id="s7b-4"><label for="s7b-4">テスト環境の構成を定義した</label></li>
+        </ul>
+      </div>
+
+      <!-- リスクレビュー（PMBOKリスク管理） -->
+      <h2 class="section-title"><span class="title-icon">⚠️</span> レビュー前 — リスクレビュー（承認前に必ず実施）</h2>
+      <div class="callout callout-warning">
+        <span class="callout-icon">📋</span>
+        <div class="callout-body">
+          <b>基本設計完了時点のリスク登録簿を確認・更新します。</b><br>
+          未解消のリスクを詳細設計に持ち込むと、後工程で突然炎上する原因になります。ここで全リスクに対応方針が決まっているかを確認してください。<br>
+          リスク管理の方法は <a href="../howto.html#risk">全体フロー・HowTo（リスク管理）</a> を参照してください。
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fef9c3">⚠️</span><h2>基本設計フェーズ リスクレビューチェック</h2></div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="risk-1"><label for="risk-1">リスク登録簿を作成・更新した（プロジェクト固有のリスクを識別済み）</label></li>
+          <li><input type="checkbox" id="risk-2"><label for="risk-2">スコアが高い（6以上）リスクに対して、具体的な対応方針と担当者を決めた</label></li>
+          <li><input type="checkbox" id="risk-3"><label for="risk-3">外部システム連携先との仕様合意状況を確認した（未合意の場合はリスク登録）</label></li>
+          <li><input type="checkbox" id="risk-4"><label for="risk-4">技術的に未確認の領域（新技術・高負荷処理）に対してPoCが完了している、またはリスクとして登録した</label></li>
+          <li><input type="checkbox" id="risk-5"><label for="risk-5">残存するTBD（未決事項）がすべてリスクとして登録され、解消期限と担当者が決まっている</label></li>
+          <li><input type="checkbox" id="risk-6"><label for="risk-6">リスク登録簿をPL・顧客に共有し、認識合わせが完了した</label></li>
         </ul>
       </div>
 
