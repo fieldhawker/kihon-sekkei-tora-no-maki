@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>テスト実施手順 — 設計手順書</title>
+  <title>テスト実施手順 — テスト</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
@@ -30,6 +30,15 @@
     </div>
 
     <div class="content">
+
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方</b><br>
+          1) V字モデルで「どの設計に対するテストか」を確認 → 2) STEP 1 から順に実施し、各STEPの完了基準（Exit Criteria）を満たしたら次へ進む。<br>
+          迷ったら「<b>再現手順が書けない不具合</b>」はまず再現条件の特定を優先します（原因調査より先）。
+        </div>
+      </div>
 
       <!-- V字モデル図 -->
       <h2 class="section-title"><span class="title-icon">📐</span> V字モデル — 設計とテストの対応</h2>
@@ -183,7 +192,7 @@
         </div>
         <p class="text-sm">顧客・エンドユーザーが実際の業務シナリオで動作確認・承認するテストです。</p>
         <ul class="checklist" style="margin-top:.75rem">
-          <li><input type="checkbox" id="t5-1"><label for="t5-1">UATシナリオを顧客と共同で作成した（<a href="templates.html">T-10テンプレート使用</a>）</label></li>
+          <li><input type="checkbox" id="t5-1"><label for="t5-1">UATシナリオを顧客と共同で作成した（<a href="../reference/templates.html">T-10テンプレート使用</a>）</label></li>
           <li><input type="checkbox" id="t5-2"><label for="t5-2">UAT環境を準備した（本番データのサブセット）</label></li>
           <li><input type="checkbox" id="t5-3"><label for="t5-3">顧客担当者へのUAT手順説明・操作研修を実施した</label></li>
           <li><input type="checkbox" id="t5-4"><label for="t5-4">全シナリオを顧客が実行し、結果を記録した</label></li>
@@ -210,7 +219,7 @@
           </table>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="t6-1"><label for="t6-1">カットオーバー手順書（<a href="templates.html">T-11テンプレート</a>）を作成した</label></li>
+          <li><input type="checkbox" id="t6-1"><label for="t6-1">カットオーバー手順書（<a href="../reference/templates.html">T-11テンプレート</a>）を作成した</label></li>
           <li><input type="checkbox" id="t6-2"><label for="t6-2">バックアウト手順と判定基準を合意した</label></li>
           <li><input type="checkbox" id="t6-3"><label for="t6-3">リリース前の本番環境バックアップを取得した</label></li>
           <li><input type="checkbox" id="t6-4"><label for="t6-4">スモークテストを実施し、主要機能の動作を確認した</label></li>

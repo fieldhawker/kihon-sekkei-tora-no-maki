@@ -73,7 +73,7 @@
         "code": "EXCEEDS_STOCK"
       }
     ],
-    "errorId": "err_20260520_abc123"     <span style="color:#6e7681;">// サポート問い合わせ用の一意ID。ログと紐付け可能</span>
+    "errorId": "err_YYYYMMDD_abc123"     <span style="color:#6e7681;">// サポート問い合わせ用の一意ID。ログと紐付け可能</span>
   }
 }</pre>
 
@@ -89,7 +89,7 @@
           <span class="callout-icon">✅</span>
           <div class="callout-body">
             <b>errorIdを発行する理由</b><br>
-            ユーザーが「エラーID: err_20260520_abc123 が出ました」とサポートに連絡すると、サーバーログから即座に詳細（スタックトレース・リクエスト内容）を特定できる。スタックトレースを返さずに問題を追跡できる。
+            ユーザーが「エラーID: err_YYYYMMDD_abc123 が出ました」とサポートに連絡すると、サーバーログから即座に詳細（スタックトレース・リクエスト内容）を特定できる。スタックトレースを返さずに問題を追跡できる。
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@
       { "field": "password", "message": "パスワードは8文字以上で入力してください",  "code": "TOO_SHORT", "min": 8 },
       { "field": "age",      "message": "年齢は0〜150の整数で入力してください",    "code": "OUT_OF_RANGE" }
     ],
-    "errorId": "err_20260520_val001"
+    "errorId": "err_YYYYMMDD_val001"
   }
 }</pre>
       </div>
@@ -133,7 +133,7 @@
   "error": {
     "code": "TOKEN_EXPIRED",
     "message": "セッションの有効期限が切れました。再ログインしてください",
-    "expiredAt": "2026-05-20T13:00:00Z"
+    "expiredAt": "YYYY-MM-DDThh:mm:ssZ"
   }
 }
 
@@ -170,7 +170,7 @@
     "message": "注文が見つかりません",
     "details": {
       "resourceType": "Order",
-      "resourceId":   "ord_20260520_999",
+      "resourceId":   "ord_YYYYMMDD_999",
       "hint":         "削除済みまたはIDが誤っている可能性があります"
     }
   }
@@ -188,7 +188,7 @@
       "yourVersion":   3,
       "currentVersion": 4,
       "lastUpdatedBy": "user_0421",
-      "lastUpdatedAt": "2026-05-20T14:31:55Z"
+      "lastUpdatedAt": "YYYY-MM-DDThh:mm:ssZ"
     }
   }
 }
@@ -248,7 +248,7 @@ Retry-After:           60
       "limit":          100,
       "windowSeconds":  3600,
       "retryAfterSeconds": 60,
-      "resetAt":        "2026-05-20T15:30:00Z"
+      "resetAt":        "YYYY-MM-DDThh:mm:ssZ"
     }
   }
 }</pre>
@@ -261,14 +261,14 @@ Retry-After:           60
   "error": {
     "code": "INTERNAL_SERVER_ERROR",
     "message": "サーバー内部でエラーが発生しました。しばらくしてから再度お試しください。",
-    "errorId": "err_20260520_srv_abc123"
+    "errorId": "err_YYYYMMDD_srv_abc123"
   }
 }
 
 <span style="color:#6e7681;">// サーバーログには詳細を記録（外部には出さない）</span>
 {
   "level": "ERROR",
-  "errorId": "err_20260520_srv_abc123",
+  "errorId": "err_YYYYMMDD_srv_abc123",
   "message": "NullPointerException at OrderService.java:142",
   "stackTrace": "java.lang.NullPointerException\n  at ...",
   "requestBody": { ... }
@@ -286,8 +286,8 @@ Retry-After: 3600
     "code": "SERVICE_UNAVAILABLE",
     "message": "システムメンテナンス中です",
     "details": {
-      "maintenanceStart":    "2026-05-20T02:00:00Z",
-      "scheduledEndTime":    "2026-05-20T05:00:00Z",
+      "maintenanceStart":    "YYYY-MM-DDThh:mm:ssZ",
+      "scheduledEndTime":    "YYYY-MM-DDThh:mm:ssZ",
       "maintenancePageUrl":  "https://status.example.com",
       "contactEmail":        "support@example.com"
     }
@@ -358,7 +358,7 @@ Retry-After: 3600
           <div class="esm-body">
             <div class="esm-code" style="color:#e02424;">500</div>
             <div class="esm-title">システムエラーが発生しました</div>
-            <div class="esm-msg">申し訳ありません。処理中にエラーが発生しました。しばらくしてから再度お試しください。<br><br>解決しない場合はエラーID <code style="background:var(--bg-hover);padding:0.1rem 0.3rem;border-radius:3px;">err_20260520_abc</code> をサポートにお伝えください。</div>
+            <div class="esm-msg">申し訳ありません。処理中にエラーが発生しました。しばらくしてから再度お試しください。<br><br>解決しない場合はエラーID <code style="background:var(--bg-hover);padding:0.1rem 0.3rem;border-radius:3px;">err_YYYYMMDD_abc</code> をサポートにお伝えください。</div>
             <div class="esm-actions">
               <button class="esm-btn esm-btn-primary">再試行</button>
               <button class="esm-btn esm-btn-secondary">サポートへ連絡</button>
@@ -372,7 +372,7 @@ Retry-After: 3600
             <div class="esm-code" style="color:#0e9f6e;">503</div>
             <div class="esm-title">ただいまメンテナンス中です</div>
             <div class="esm-msg">システムの改善作業を実施しています。<br><br>
-              終了予定: <b>2026-05-20 05:00</b><br>
+              終了予定: <b>YYYY-MM-DD hh:mm</b><br>
               <a href="https://status.example.com" style="color:var(--primary);">状況はこちらで確認できます</a>
             </div>
           </div>

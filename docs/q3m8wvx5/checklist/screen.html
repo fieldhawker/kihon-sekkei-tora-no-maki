@@ -19,6 +19,25 @@
 
     <div class="content">
 
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このチェックリストの使い方</b><br>
+          1) 画面を作る前に「1. 要件・UX設計」を固める → 2) 実装しながら「2. バリデーション」「4. セキュリティ」も並行確認 → 3) 最後に「7. テスト」で実機・対象ブラウザまで確認。<br>
+          UIの見た目だけでなく、<b>サーバー側の認可・入力検証</b>がセットで必要です。
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:1rem">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          <b>初心者が見落としがちな観点</b><br>
+          ① 「削除ボタン非表示＝権限制御」ではない（API側の認可が必須）<br>
+          ② 二重送信（連打・戻る・複数タブ）<br>
+          ③ 失敗時の導線（どこがエラーで、次に何をすればよいか）
+        </div>
+      </div>
+
       <!-- 1. 要件・UX設計 -->
       <h2 class="section-title"><span class="title-icon">1</span> 要件・UX設計</h2>
       <div class="card">

@@ -21,8 +21,25 @@
     </div>
 
     <div class="content">
+
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>どれを使うか迷ったら（早見表）</b><br>
+          処理手順を文章で誤解なく伝えたい → <b>IPO</b> / <b>フロー（アクティビティ/状態）</b><br>
+          画面・API・DBのやり取りを誤解なく伝えたい → <b>シーケンス図</b><br>
+          分岐が多くてテスト漏れが怖い → <b>デシジョンテーブル</b>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        <div class="font-bold" style="margin-bottom:.5rem">目次</div>
+        <div class="text-sm">
+          <a href="#logic">1. ロジックと処理</a> / <a href="#state">2. データと状態</a> / <a href="#structure">3. 構造と連携</a> / <a href="#interface">4. 外部IF</a> / <a href="#decision">5. 条件分岐</a>
+        </div>
+      </div>
       
-      <h2 class="section-title"><span class="title-icon">⚙️</span> 1. ロジックと処理の流れを整理する技法</h2>
+      <h2 class="section-title" id="logic"><span class="title-icon">⚙️</span> 1. ロジックと処理の流れを整理する技法</h2>
       <p style="margin-bottom:1rem; color:var(--gray-600);">複雑な計算やデータの加工処理を正確に伝えるための手法です。</p>
       
       <div class="card">
@@ -100,7 +117,7 @@
         </div>
       </div>
 
-      <h2 class="section-title"><span class="title-icon">💾</span> 2. データと状態を整理する技法</h2>
+      <h2 class="section-title" id="state"><span class="title-icon">💾</span> 2. データと状態を整理する技法</h2>
       <p style="margin-bottom:1rem; color:var(--gray-600);">データがどう保存され、どう変化していくかを定義します。</p>
 
       <div class="card">
@@ -154,7 +171,7 @@
         </div>
       </div>
 
-      <h2 class="section-title"><span class="title-icon">🧩</span> 3. プログラムの構造と連携を整理する技法</h2>
+      <h2 class="section-title" id="structure"><span class="title-icon">🧩</span> 3. プログラムの構造と連携を整理する技法</h2>
 
       <div class="card">
         <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
@@ -208,7 +225,7 @@
         </div>
       </div>
 
-      <h2 class="section-title"><span class="title-icon">🌐</span> 4. 外部とのインターフェースを取り決める技法</h2>
+      <h2 class="section-title" id="interface"><span class="title-icon">🌐</span> 4. 外部とのインターフェースを取り決める技法</h2>
 
       <div class="card">
         <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
@@ -233,7 +250,7 @@ path param:
         </div>
       </div>
 
-      <h2 class="section-title"><span class="title-icon">🎯</span> 5. 複雑な条件分岐の整理（テスト兼用）</h2>
+      <h2 class="section-title" id="decision"><span class="title-icon">🎯</span> 5. 複雑な条件分岐の整理（テスト兼用）</h2>
 
       <div class="card">
         <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">

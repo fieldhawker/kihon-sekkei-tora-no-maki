@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>詳細設計 成果物ガイド — 設計手順書</title>
+  <title>詳細設計 成果物ガイド — 詳細設計</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 </head>
@@ -19,6 +19,26 @@
     </div>
 
     <div class="content">
+
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>初心者向け：まず押さえる「必須」成果物</b><br>
+          迷ったら最初はここを優先すると手戻りが減ります：<b>D-03（OpenAPI）</b>、<b>D-06〜D-09（物理ER/インデックス/主要クエリ/マイグレーション）</b>、<b>D-12（セキュリティ）</b>、<b>D-13〜D-14（テスト設計）</b>、<b>D-15〜D-16（規約・環境）</b>。
+        </div>
+      </div>
+
+      <h2 class="section-title"><span class="title-icon">🗺️</span> 作成のおすすめ順（迷ったときの道順）</h2>
+      <div class="card">
+        <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
+          <li><b>共通ライブラリ（C-01〜C-05）</b> を先に固める（認証・エラー・レスポンス）</li>
+          <li><b>D-03</b> OpenAPI を先に書く（モックでフロントが先行できる）</li>
+          <li><b>D-01〜D-02</b> 主要機能/画面の処理フロー・入力ルールを固める</li>
+          <li><b>D-06〜D-09</b> DBを確定（型/桁/制約・インデックス・クエリ・マイグレーション）</li>
+          <li><b>D-12〜D-16</b> セキュリティ・テスト・規約・環境（実装の品質を揃える）</li>
+          <li><b>D-17〜D-18</b> 取りまとめ（総括・トレーサビリティ）</li>
+        </ol>
+      </div>
 
       <!-- 成果物一覧 -->
       <h2 class="section-title"><span class="title-icon">📑</span> 成果物一覧（D-01〜D-18）</h2>

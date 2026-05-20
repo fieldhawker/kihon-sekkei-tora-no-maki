@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>詳細設計 手順書 — 設計手順書</title>
+  <title>詳細設計 手順書 — 詳細設計</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 </head>
@@ -27,6 +27,15 @@
           <span class="text-sm text-muted progress-label">0 / 0 完了</span>
         </div>
         <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:1rem">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方</b><br>
+          1) STEP 0 で「基本設計が承認済みで揃っているか」を確認 → 2) まず <b>STEP 先（共通ライブラリ）</b> を固める → 3) STEP 1〜9 を順に埋めながらチェックを付ける。<br>
+          実装者が迷うポイント（入力の細かい条件・例外時の挙動・エラーコード・型/桁数）を、文章だけでなく<b>図（シーケンス等）と表</b>で残すとレビューが通りやすくなります。
+        </div>
       </div>
 
       <!-- 作業フロー -->
@@ -53,6 +62,9 @@ flowchart LR
   classDef lib  fill:#ede9fe,color:#4c1d95,stroke:#6d28d9
         </div>
       </div>
+      <p class="text-sm text-muted" style="margin-top:.5rem">
+        ★は難易度目安です（★☆☆: 軽い / ★★☆: 普通 / ★★★: 重い・影響大）。迷ったら先に「共通ライブラリ（認証・エラー・レスポンス）」を確定します。
+      </p>
 
       <!-- 基本設計 vs 詳細設計 -->
       <div class="callout callout-info">
@@ -212,7 +224,7 @@ flowchart LR
 
       <div class="callout callout-success">
         <span class="callout-icon">✅</span>
-        <div class="callout-body">詳細設計書の正式承認が取れたら <a href="implementation.html">実装フェーズ</a> へ進みます。</div>
+        <div class="callout-body">詳細設計書の正式承認が取れたら <a href="../impl/implementation.html">実装フェーズ</a> へ進みます。</div>
       </div>
 
     </div>

@@ -87,7 +87,7 @@
           </li>
           <li class="principle-item">
             <span class="principle-num">3</span>
-            <div><strong>日時はISO 8601：</strong><code>"2026-05-20T12:00:00.000Z"</code> 形式で返す。Unixタイムスタンプは人間が読めないため避ける（ログ・内部用途は除く）。</div>
+            <div><strong>日時はISO 8601：</strong><code>"YYYY-MM-DDThh:mm:ss.sssZ"</code> 形式で返す。Unixタイムスタンプは人間が読めないため避ける（ログ・内部用途は除く）。</div>
           </li>
           <li class="principle-item">
             <span class="principle-num">4</span>
@@ -127,8 +127,8 @@
     <span class="key">"email"</span>: <span class="str">"yamada@example.com"</span>,
     <span class="key">"role"</span>: <span class="str">"editor"</span>,
     <span class="key">"avatarUrl"</span>: <span class="null">null</span>,        <span class="comment">// 未設定 = null（フィールドは存在する）</span>
-    <span class="key">"createdAt"</span>: <span class="str">"2026-01-15T03:21:00.000Z"</span>,  <span class="comment">// ISO 8601 UTC</span>
-    <span class="key">"updatedAt"</span>: <span class="str">"2026-05-20T09:00:00.000Z"</span>
+    <span class="key">"createdAt"</span>: <span class="str">"YYYY-MM-DDThh:mm:ss.sssZ"</span>,  <span class="comment">// ISO 8601 UTC</span>
+    <span class="key">"updatedAt"</span>: <span class="str">"YYYY-MM-DDThh:mm:ss.sssZ"</span>
   },
   <span class="key">"meta"</span>: <span class="null">null</span>,              <span class="comment">// 単一リソースはmetaなし</span>
   <span class="key">"error"</span>: <span class="null">null</span>              <span class="comment">// 成功時は常にnull</span>
@@ -185,8 +185,8 @@
     <span class="key">"email"</span>: <span class="str">"sato@example.com"</span>,
     <span class="key">"role"</span>: <span class="str">"viewer"</span>,
     <span class="key">"avatarUrl"</span>: <span class="null">null</span>,
-    <span class="key">"createdAt"</span>: <span class="str">"2026-05-20T12:34:56.789Z"</span>,
-    <span class="key">"updatedAt"</span>: <span class="str">"2026-05-20T12:34:56.789Z"</span>
+    <span class="key">"createdAt"</span>: <span class="str">"YYYY-MM-DDThh:mm:ss.sssZ"</span>,
+    <span class="key">"updatedAt"</span>: <span class="str">"YYYY-MM-DDThh:mm:ss.sssZ"</span>
   },
   <span class="key">"meta"</span>: <span class="null">null</span>,
   <span class="key">"error"</span>: <span class="null">null</span>
@@ -211,8 +211,8 @@
     <span class="key">"email"</span>: <span class="str">"yamada-new@example.com"</span>,
     <span class="key">"role"</span>: <span class="str">"admin"</span>,
     <span class="key">"avatarUrl"</span>: <span class="str">"https://cdn.example.com/avatars/123.jpg"</span>,
-    <span class="key">"createdAt"</span>: <span class="str">"2026-01-15T03:21:00.000Z"</span>,
-    <span class="key">"updatedAt"</span>: <span class="str">"2026-05-20T15:00:00.000Z"</span>  <span class="comment">// 更新日時が変わる</span>
+    <span class="key">"createdAt"</span>: <span class="str">"YYYY-MM-DDThh:mm:ss.sssZ"</span>,
+    <span class="key">"updatedAt"</span>: <span class="str">"YYYY-MM-DDThh:mm:ss.sssZ"</span>  <span class="comment">// 更新日時が変わる</span>
   },
   <span class="key">"meta"</span>: <span class="null">null</span>,
   <span class="key">"error"</span>: <span class="null">null</span>
@@ -331,7 +331,7 @@
           <tbody>
             <tr>
               <td>日時</td>
-              <td><code>"2026-05-20T12:00:00.000Z"</code><br>ISO 8601 UTC文字列</td>
+              <td><code>"YYYY-MM-DDThh:mm:ss.sssZ"</code><br>ISO 8601 UTC文字列</td>
               <td><code>1748001234</code> (Unixタイムスタンプ)</td>
               <td>ISO形式は人間が読める。タイムゾーン情報も含まれる。Unixタイムスタンプはデバッグが困難</td>
             </tr>

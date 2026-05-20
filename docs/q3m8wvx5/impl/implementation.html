@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>実装手順 — 設計手順書</title>
+  <title>実装手順 — 実装</title>
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -18,6 +18,15 @@
     </div>
 
     <div class="content">
+
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方</b><br>
+          1) STEP 0 で「詳細設計が承認済みで、基盤（共通ライブラリ/CI/規約）が揃っているか」を確認 → 2) STEP 1 でタスクを小さく切る → 3) STEP 2 のルールに従ってPRを回す。<br>
+          迷ったら「小さく・早く・レビューしやすく」を優先します（1PR=1目的、差分は小さめ）。
+        </div>
+      </div>
 
       <!-- STEP 0 -->
       <h2 class="section-title"><span class="title-icon">0</span> STEP 0 — 実装開始前の確認</h2>
@@ -148,6 +157,15 @@ High / Medium / Low</code></pre>
       <!-- よくある実装トラブル -->
       <h2 class="section-title"><span class="title-icon">⚠️</span> よくある実装トラブルと対処法</h2>
       <div class="card">
+        <div class="callout callout-warning" style="margin-bottom:1rem">
+          <span class="callout-icon">📌</span>
+          <div class="callout-body">
+            <b>初心者がハマりやすい3点</b><br>
+            ① 先に機能実装を進めて共通仕様（エラー/レスポンス/認可）が後から変わる（→ まず基盤を固める）<br>
+            ② PRが巨大化してレビューできない（→ 小さく分割して早めに出す）<br>
+            ③ 仕様が曖昧なまま実装して手戻り（→ 設計書/TBDを先に潰す）
+          </div>
+        </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>トラブル</th><th>原因</th><th>対処法</th></tr></thead>

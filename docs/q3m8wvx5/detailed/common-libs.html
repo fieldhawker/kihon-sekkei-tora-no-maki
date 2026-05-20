@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>共通ライブラリ設計 — 設計手順書</title>
+  <title>共通ライブラリ設計 — 詳細設計</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
     .lib-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1rem; box-shadow:var(--shadow-sm); }
@@ -34,6 +34,15 @@
         <div class="callout-body">
           <b>なぜ先行させるのか？</b><br>
           共通ライブラリが後から変わると、すでに実装した全機能コードを修正することになります。特に認証・エラーハンドリング・レスポンス形式は、すべてのAPIが依存するため最初に確定させることが重要です。
+        </div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:1rem">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方（初心者向け）</b><br>
+          1) まず C-05（レスポンス形式）と C-02（エラーコード体系）を確定 → 2) 次に C-01（認証・認可） → 3) C-03（バリデーション）と C-04（ログ）を揃える。<br>
+          技術選定や方針変更が起きたら、決定理由を <b>ADR</b>（設計判断メモ）として残します（例：<code>../reference/adr.html</code>）。
         </div>
       </div>
 
@@ -126,7 +135,7 @@ public ResponseEntity&lt;?&gt; adminOnly() { ... }
   "success": true,
   "data": { /* 実際のデータ */ },
   "message": null,
-  "timestamp": "2024-01-15T10:30:00Z"
+  "timestamp": "YYYY-MM-DDThh:mm:ssZ"
 }
 
 // エラーレスポンス
@@ -137,7 +146,7 @@ public ResponseEntity&lt;?&gt; adminOnly() { ... }
   "errors": [
     { "field": "email", "message": "メールアドレスの形式が正しくありません" }
   ],
-  "timestamp": "2024-01-15T10:30:00Z"
+  "timestamp": "YYYY-MM-DDThh:mm:ssZ"
 }</code></pre>
       </div>
 

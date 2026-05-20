@@ -153,8 +153,8 @@
       <h2 class="section-title" style="margin-top:2.5rem"><span class="title-icon">🏗️</span>2. 監査ログの構造（理想形）</h2>
       <p>1件の監査ログに含めるべきフィールドを定義する。後から「あの情報があれば…」とならないよう最初から設計する。</p>
       <pre>{
-  "audit_id":   "aud_20260520_001823",      // 監査ログの一意ID
-  "timestamp":  "2026-05-20T14:23:11+09:00", // ISO 8601 タイムゾーン付き
+  "audit_id":   "aud_YYYYMMDD_001823",      // 監査ログの一意ID
+  "timestamp":  "YYYY-MM-DDThh:mm:ss+09:00", // ISO 8601 タイムゾーン付き
   "actor": {
     "user_id":   "usr_00042",               // 操作者のID（削除されても残す）
     "user_name": "田中 太郎",               // 操作時点の表示名（変更前の名前でも記録）
@@ -240,7 +240,7 @@
         <div class="card-header">
           ユーザー情報変更 — usr_00108（山田 花子） ·
           <span class="op-badge op-UPDATE" style="vertical-align:middle;">UPDATE</span>
-          <span style="float:right;font-size:0.82rem;color:#6b7280;">2026-05-20 14:23:11 · 田中 太郎</span>
+          <span style="float:right;font-size:0.82rem;color:#6b7280;">YYYY-MM-DD hh:mm:ss · 田中 太郎</span>
         </div>
         <div style="padding:1rem 1.5rem;">
           <table class="diff-table">
@@ -344,23 +344,23 @@
 
 <script>
 const AUDIT_LOGS = [
-  { id:'aud001', ts:'2026-05-20 14:23:11', actor:'田中 太郎', op:'UPDATE', resource:'User', resource_id:'usr_00108', desc:'メールアドレス・部署を変更', ip:'203.0.113.45', detail:'メール: yamada_old@example.com → yamada@example.com / 部署: 総務部 → 人事部' },
-  { id:'aud002', ts:'2026-05-20 14:15:02', actor:'山田 花子', op:'CREATE', resource:'Order', resource_id:'ord_00892', desc:'新規注文を作成（¥48,000）', ip:'203.0.113.66', detail:'注文ID: ord_00892 / 金額: ¥48,000 / 顧客: 株式会社サンプル' },
-  { id:'aud003', ts:'2026-05-20 13:58:44', actor:'鈴木 一郎', op:'VIEW',   resource:'PersonalData', resource_id:'usr_00234', desc:'個人情報を参照', ip:'10.0.1.22', detail:'閲覧対象: 佐藤 美咲 の個人情報（閲覧ロール）' },
-  { id:'aud004', ts:'2026-05-20 13:45:30', actor:'田中 太郎', op:'DELETE', resource:'Document', resource_id:'doc_00556', desc:'添付ファイルを削除', ip:'203.0.113.45', detail:'ファイル名: 見積書_v2_draft.pdf / サイズ: 245KB' },
-  { id:'aud005', ts:'2026-05-20 13:32:17', actor:'佐藤 美咲', op:'EXPORT', resource:'OrderList',  resource_id:'exp_00031', desc:'注文一覧をCSVエクスポート', ip:'192.168.1.55', detail:'件数: 1,234件 / 期間: 2026-04-01〜2026-04-30 / ファイル名: orders_202604.csv' },
-  { id:'aud006', ts:'2026-05-20 12:10:05', actor:'山田 花子', op:'UPDATE', resource:'Order', resource_id:'ord_00885', desc:'注文ステータスを承認済みに変更', ip:'203.0.113.66', detail:'ステータス: 審査中 → 承認済み' },
-  { id:'aud007', ts:'2026-05-20 11:55:22', actor:'鈴木 一郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00412', desc:'ログイン成功', ip:'10.0.1.22', detail:'認証方法: パスワード+TOTP / ブラウザ: Chrome 125' },
-  { id:'aud008', ts:'2026-05-20 11:40:09', actor:'田中 太郎', op:'CREATE', resource:'User', resource_id:'usr_00245', desc:'新規ユーザーを作成（役職: 一般）', ip:'203.0.113.45', detail:'氏名: 高橋 健太 / メール: takahashi@example.com / ロール: user' },
-  { id:'aud009', ts:'2026-05-20 11:23:00', actor:'佐藤 美咲', op:'UPDATE', resource:'Product', resource_id:'prd_00334', desc:'商品単価を変更', ip:'192.168.1.55', detail:'商品名: ノートPC 14インチ / 単価: ¥98,000 → ¥89,800' },
-  { id:'aud010', ts:'2026-05-20 10:58:37', actor:'田中 太郎', op:'DELETE', resource:'User', resource_id:'usr_00099', desc:'退職ユーザーを無効化（論理削除）', ip:'203.0.113.45', detail:'対象: 中村 次郎 / 理由: 2026-05-20退職' },
-  { id:'aud011', ts:'2026-05-20 10:30:15', actor:'山田 花子', op:'VIEW',   resource:'ReportData', resource_id:'rpt_00078', desc:'月次レポートを参照', ip:'203.0.113.66', detail:'レポート: 2026年4月 売上集計 / アクセス権: 承認済み' },
-  { id:'aud012', ts:'2026-05-20 09:45:52', actor:'鈴木 一郎', op:'CREATE', resource:'Comment', resource_id:'cmt_01122', desc:'注文へのコメントを追加', ip:'10.0.1.22', detail:'対象注文: ord_00872 / コメント: 「発送前に在庫確認要」' },
-  { id:'aud013', ts:'2026-05-20 09:22:33', actor:'佐藤 美咲', op:'UPDATE', resource:'User', resource_id:'usr_00042', desc:'パスワードリセット実施', ip:'192.168.1.55', detail:'対象: 田中 太郎 / 管理者によるリセット / 有効期限: 24時間' },
-  { id:'aud014', ts:'2026-05-20 09:10:08', actor:'田中 太郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00411', desc:'ログイン成功', ip:'203.0.113.45', detail:'認証方法: パスワード+TOTP / ブラウザ: Chrome 125' },
-  { id:'aud015', ts:'2026-05-19 18:34:55', actor:'山田 花子', op:'EXPORT', resource:'UserList', resource_id:'exp_00030', desc:'ユーザー一覧をCSVエクスポート', ip:'203.0.113.66', detail:'件数: 58件 / 個人情報含む / 承認者: 田中 太郎' },
-  { id:'aud016', ts:'2026-05-19 17:12:40', actor:'鈴木 一郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00410', desc:'ログイン失敗（3回目）→アカウントロック', ip:'10.0.2.99', detail:'失敗理由: パスワード不一致 / IPアドレスが普段と異なる' },
-  { id:'aud017', ts:'2026-05-19 16:55:21', actor:'佐藤 美咲', op:'DELETE', resource:'Order', resource_id:'ord_00878', desc:'重複注文を削除（論理削除）', ip:'192.168.1.55', detail:'注文金額: ¥15,000 / 削除理由: システムエラーによる重複登録' },
+  { id:'aud001', ts:'YYYY-MM-DD hh:mm:ss', actor:'田中 太郎', op:'UPDATE', resource:'User', resource_id:'usr_00108', desc:'メールアドレス・部署を変更', ip:'203.0.113.45', detail:'メール: yamada_old@example.com → yamada@example.com / 部署: 総務部 → 人事部' },
+  { id:'aud002', ts:'YYYY-MM-DD hh:mm:ss', actor:'山田 花子', op:'CREATE', resource:'Order', resource_id:'ord_00892', desc:'新規注文を作成（¥48,000）', ip:'203.0.113.66', detail:'注文ID: ord_00892 / 金額: ¥48,000 / 顧客: 株式会社サンプル' },
+  { id:'aud003', ts:'YYYY-MM-DD hh:mm:ss', actor:'鈴木 一郎', op:'VIEW',   resource:'PersonalData', resource_id:'usr_00234', desc:'個人情報を参照', ip:'10.0.1.22', detail:'閲覧対象: 佐藤 美咲 の個人情報（閲覧ロール）' },
+  { id:'aud004', ts:'YYYY-MM-DD hh:mm:ss', actor:'田中 太郎', op:'DELETE', resource:'Document', resource_id:'doc_00556', desc:'添付ファイルを削除', ip:'203.0.113.45', detail:'ファイル名: 見積書_v2_draft.pdf / サイズ: 245KB' },
+  { id:'aud005', ts:'YYYY-MM-DD hh:mm:ss', actor:'佐藤 美咲', op:'EXPORT', resource:'OrderList',  resource_id:'exp_00031', desc:'注文一覧をCSVエクスポート', ip:'192.168.1.55', detail:'件数: 1,234件 / 期間: 2026-04-01〜2026-04-30 / ファイル名: orders_202604.csv' },
+  { id:'aud006', ts:'YYYY-MM-DD hh:mm:ss', actor:'山田 花子', op:'UPDATE', resource:'Order', resource_id:'ord_00885', desc:'注文ステータスを承認済みに変更', ip:'203.0.113.66', detail:'ステータス: 審査中 → 承認済み' },
+  { id:'aud007', ts:'YYYY-MM-DD hh:mm:ss', actor:'鈴木 一郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00412', desc:'ログイン成功', ip:'10.0.1.22', detail:'認証方法: パスワード+TOTP / ブラウザ: Chrome 125' },
+  { id:'aud008', ts:'YYYY-MM-DD hh:mm:ss', actor:'田中 太郎', op:'CREATE', resource:'User', resource_id:'usr_00245', desc:'新規ユーザーを作成（役職: 一般）', ip:'203.0.113.45', detail:'氏名: 高橋 健太 / メール: takahashi@example.com / ロール: user' },
+  { id:'aud009', ts:'YYYY-MM-DD hh:mm:ss', actor:'佐藤 美咲', op:'UPDATE', resource:'Product', resource_id:'prd_00334', desc:'商品単価を変更', ip:'192.168.1.55', detail:'商品名: ノートPC 14インチ / 単価: ¥98,000 → ¥89,800' },
+  { id:'aud010', ts:'YYYY-MM-DD hh:mm:ss', actor:'田中 太郎', op:'DELETE', resource:'User', resource_id:'usr_00099', desc:'退職ユーザーを無効化（論理削除）', ip:'203.0.113.45', detail:'対象: 中村 次郎 / 理由: YYYY-MM-DD退職' },
+  { id:'aud011', ts:'YYYY-MM-DD hh:mm:ss', actor:'山田 花子', op:'VIEW',   resource:'ReportData', resource_id:'rpt_00078', desc:'月次レポートを参照', ip:'203.0.113.66', detail:'レポート: 2026年4月 売上集計 / アクセス権: 承認済み' },
+  { id:'aud012', ts:'YYYY-MM-DD hh:mm:ss', actor:'鈴木 一郎', op:'CREATE', resource:'Comment', resource_id:'cmt_01122', desc:'注文へのコメントを追加', ip:'10.0.1.22', detail:'対象注文: ord_00872 / コメント: 「発送前に在庫確認要」' },
+  { id:'aud013', ts:'YYYY-MM-DD hh:mm:ss', actor:'佐藤 美咲', op:'UPDATE', resource:'User', resource_id:'usr_00042', desc:'パスワードリセット実施', ip:'192.168.1.55', detail:'対象: 田中 太郎 / 管理者によるリセット / 有効期限: 24時間' },
+  { id:'aud014', ts:'YYYY-MM-DD hh:mm:ss', actor:'田中 太郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00411', desc:'ログイン成功', ip:'203.0.113.45', detail:'認証方法: パスワード+TOTP / ブラウザ: Chrome 125' },
+  { id:'aud015', ts:'YYYY-MM-DD hh:mm:ss', actor:'山田 花子', op:'EXPORT', resource:'UserList', resource_id:'exp_00030', desc:'ユーザー一覧をCSVエクスポート', ip:'203.0.113.66', detail:'件数: 58件 / 個人情報含む / 承認者: 田中 太郎' },
+  { id:'aud016', ts:'YYYY-MM-DD hh:mm:ss', actor:'鈴木 一郎', op:'LOGIN',  resource:'Session', resource_id:'ses_00410', desc:'ログイン失敗（3回目）→アカウントロック', ip:'10.0.2.99', detail:'失敗理由: パスワード不一致 / IPアドレスが普段と異なる' },
+  { id:'aud017', ts:'YYYY-MM-DD hh:mm:ss', actor:'佐藤 美咲', op:'DELETE', resource:'Order', resource_id:'ord_00878', desc:'重複注文を削除（論理削除）', ip:'192.168.1.55', detail:'注文金額: ¥15,000 / 削除理由: システムエラーによる重複登録' },
 ];
 
 const OP_LABELS = { CREATE:'CREATE', UPDATE:'UPDATE', DELETE:'DELETE', VIEW:'VIEW', EXPORT:'EXPORT', LOGIN:'LOGIN' };

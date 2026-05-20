@@ -19,6 +19,24 @@
 
     <div class="content">
 
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このチェックリストの使い方</b><br>
+          1) 実装前に「1. 設計・要件定義」で<b>対象範囲・再実行・依存関係</b>を確定 → 2) 実装時に「2. エラーハンドリング」「4. 実行管理・運用」を同時に作り込む → 3) 最後に「6. テスト」を本番相当データ量で確認。
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:1rem">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          <b>初心者がハマりやすい3点</b><br>
+          ① 途中失敗時に「どこまで処理したか」分からずリランできない（→ 進捗/再実行設計が必要）<br>
+          ② 全件を1トランザクションで処理してロールバック地獄（→ チャンク処理を検討）<br>
+          ③ 二重起動で二重更新（→ 排他・ロックが必要）
+        </div>
+      </div>
+
       <!-- 1. 設計・要件定義 -->
       <h2 class="section-title"><span class="title-icon">1</span> 設計・要件定義</h2>
       <div class="card">
@@ -38,12 +56,12 @@
             <tbody>
               <tr>
                 <td>実行トリガー</td>
-                <td>「毎日 02:00 JST に定時起動」「注文確定イベント受信時に起動」「手動実行コマンド <code>./run_batch.sh --date=2024-01-15</code>」</td>
+                <td>「毎日 02:00 JST に定時起動」「注文確定イベント受信時に起動」「手動実行コマンド <code>./run_batch.sh --date=YYYY-MM-DD</code>」</td>
                 <td>トリガーが曖昧だと二重実行・実行漏れの原因になる</td>
               </tr>
               <tr>
                 <td>タイムゾーン</td>
-                <td>cron設定は <code>0 17 * * * </code>（UTC）= JST 翌 02:00。サーバーのタイムゾーン設定を明記する</td>
+                <td>cron設定は <code>0 17 * * *</code>（UTC）= JST 翌 02:00。サーバー/コンテナのタイムゾーン設定を明記する</td>
                 <td>UTC/JSTの混在はサマータイム切替時に処理時刻がずれる</td>
               </tr>
               <tr>
@@ -95,7 +113,7 @@
             <tbody>
               <tr>
                 <td>ログフォーマット</td>
-                <td><code>[ERROR] 2024-01-15T02:03:45+09:00 batch=order-summary record_id=12345 msg="DB接続失敗" err="connection refused"</code></td>
+                <td><code>[ERROR] YYYY-MM-DDThh:mm:ss+09:00 batch=order-summary record_id=12345 msg="DB接続失敗" err="connection refused"</code></td>
                 <td>構造化ログにすることで、ログ集約ツール（Datadog等）での絞り込みが可能になる</td>
               </tr>
               <tr>
@@ -181,7 +199,7 @@
             <tbody>
               <tr>
                 <td>実行ログ</td>
-                <td><code>[INFO] batch=order-summary start_at=2024-01-15T02:00:00 target_date=2024-01-14</code><br><code>[INFO] batch=order-summary end_at=2024-01-15T02:12:33 processed=48320 skipped=5 errors=2 status=COMPLETED</code></td>
+                <td><code>[INFO] batch=order-summary start_at=YYYY-MM-DDThh:mm:ss target_date=YYYY-MM-DD</code><br><code>[INFO] batch=order-summary end_at=YYYY-MM-DDThh:mm:ss processed=48320 skipped=5 errors=2 status=COMPLETED</code></td>
               </tr>
               <tr>
                 <td>実行状態管理</td>
@@ -197,7 +215,7 @@
               </tr>
               <tr>
                 <td>手動実行・停止</td>
-                <td>手動実行: <code>./batch.sh --target-date=2024-01-14 --dry-run</code>（dry-run オプションで副作用なし確認可能）<br>強制停止: プロセス ID を <code>kill -TERM</code> で送信→ SIGTERM ハンドラでチャンク境界まで処理してから終了</td>
+                <td>手動実行: <code>./batch.sh --target-date=YYYY-MM-DD --dry-run</code>（dry-run オプションで副作用なし確認可能）<br>強制停止: プロセス ID を <code>kill -TERM</code> で送信→ SIGTERM ハンドラでチャンク境界まで処理してから終了</td>
               </tr>
             </tbody>
           </table>

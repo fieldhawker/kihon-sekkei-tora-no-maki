@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI相談テンプレート集 — 設計手順書</title>
+  <title>AI相談テンプレート集 — 参考資料</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
     .template-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-lg); margin-bottom:1.25rem; box-shadow:var(--shadow-sm); overflow:hidden; }
@@ -33,6 +33,14 @@
 
     <div class="content">
 
+      <div class="callout callout-warning" style="margin-top:0">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <b>注意（重要）</b>: AIに貼り付ける前に、社内規程・契約・セキュリティポリシーに従って機密情報（顧客名、個人情報、秘密鍵、内部URL等）を必ずマスクしてください。<br>
+          例: 実在の値 → <code>example.com</code> / <code>USER_ID=123</code> / <code>API_KEY=***</code>
+        </div>
+      </div>
+
       <!-- AIの使い分け -->
       <h2 class="section-title"><span class="title-icon">💡</span> AIの使い分け目安</h2>
       <div class="card">
@@ -55,6 +63,15 @@
 
       <!-- 基本設計フェーズ -->
       <h2 class="section-title"><span class="title-icon">📐</span> 基本設計フェーズ</h2>
+
+      <div class="callout callout-info" style="margin-top:1rem">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方</b><br>
+          1) 相談したいテーマを選ぶ → 2) そのテンプレートの <code>【例: ...】</code> をプロジェクトの情報で置き換える → 3) 期待する出力形式（表/箇条書き/擬似コード等）も書く。<br>
+          相談内容があいまいだと回答もあいまいになります。<b>制約（納期/予算/利用禁止技術/規模）</b>は特に重要です。
+        </div>
+      </div>
 
       <div class="template-card">
         <div class="template-header" onclick="toggleTemplate(this)">

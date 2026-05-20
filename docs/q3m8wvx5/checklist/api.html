@@ -19,6 +19,25 @@
 
     <div class="content">
 
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このチェックリストの使い方</b><br>
+          1) まず「1. 設計・インターフェース」だけ先に埋める → 2) 実装前に「3. セキュリティ」も確認 → 3) 実装後に「7. テスト」を実施。<br>
+          迷ったら、<b>URL/メソッド/ステータス/エラー形式</b>の統一を最優先にします（クライアントの実装と保守性に直結）。
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:1rem">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          <b>初心者がハマりやすい3点</b><br>
+          ① フロント側だけで入力チェックして満足（→ APIは必ずサーバー側で検証）<br>
+          ② 例外メッセージをそのまま返す（→ 情報漏えいの原因）<br>
+          ③ 一覧APIが無限に返る（→ ページネーション必須）
+        </div>
+      </div>
+
       <!-- 1. 設計・インターフェース -->
       <h2 class="section-title"><span class="title-icon">1</span> 設計・インターフェース</h2>
       <div class="card">
@@ -264,7 +283,7 @@
   "user_id": 456,
   "status": 201,
   "duration_ms": 143,
-  "timestamp": "2024-01-15T10:23:45Z"
+  "timestamp": "YYYY-MM-DDThh:mm:ssZ"
 }</pre>
                 リクエスト ID を全てのログに付与することで、1リクエストの処理を追跡しやすくなる</td>
               </tr>

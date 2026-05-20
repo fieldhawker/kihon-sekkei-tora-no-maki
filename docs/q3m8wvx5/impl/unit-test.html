@@ -22,6 +22,15 @@
 
     <div class="content">
 
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方</b><br>
+          1) まずブラックボックス（同値分割・境界値）で「仕様どおり」を固める → 2) 次にホワイトボックス（カバレッジ）で「抜け漏れ」を点検 → 3) 最後に状態遷移・エラー推測で事故りやすい所を潰す。<br>
+          テストは「数を増やす」より、<b>失敗したときに原因が1つに絞れる</b>粒度（Arrange-Act-Assert）を優先します。
+        </div>
+      </div>
+
       <h2 class="section-title"><span class="title-icon">📦</span> 1. 入力データに着目した技法（ブラックボックス）</h2>
       <p style="margin-bottom:1rem; color:var(--gray-600);">プログラムの内部構造を意識せず、仕様書（インプットとアウトプット）に基づいてテストケースを設計します。</p>
 

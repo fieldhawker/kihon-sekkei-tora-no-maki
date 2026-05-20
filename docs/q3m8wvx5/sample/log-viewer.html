@@ -176,7 +176,7 @@
       <h2 class="section-title" style="margin-top:2.5rem;"><span class="title-icon">2</span>ログエントリの理想的な構造（構造化ログ）</h2>
       <p style="color:var(--text-muted);margin-bottom:1rem;">テキスト形式ではなく <b>JSON形式</b> で出力することで、Elasticsearch・Datadog・CloudWatch Logs Insightsなどのツールで集計・検索が容易になります。</p>
       <pre>{
-  "timestamp": "2026-05-20T14:32:01.523Z",  <span style="color:#6e7681;">// ISO 8601形式。タイムゾーンはUTCで統一</span>
+  "timestamp": "YYYY-MM-DDThh:mm:ss.sssZ",  <span style="color:#6e7681;">// ISO 8601形式。タイムゾーンはUTCで統一</span>
   "level": "ERROR",                           <span style="color:#6e7681;">// DEBUG / INFO / WARN / ERROR / FATAL / SECURITY</span>
   "service": "order-service",                 <span style="color:#6e7681;">// マイクロサービス名またはアプリ名</span>
   "traceId": "abc123def456",                  <span style="color:#6e7681;">// 分散トレーシング用ID（リクエスト全体を追跡）</span>
@@ -185,7 +185,7 @@
   "sessionId": "sess_ab12cd34",               <span style="color:#6e7681;">// セッション識別子</span>
   "message": "在庫不足により注文処理に失敗しました",  <span style="color:#6e7681;">// 人間が読む主メッセージ</span>
   "context": {                                <span style="color:#6e7681;">// 問題を再現・調査するための付加情報</span>
-    "orderId": "ord_20260520_001",
+    "orderId": "ord_YYYYMMDD_001",
     "itemId": "item_456",
     "requiredStock": 5,
     "currentStock": 2
@@ -233,14 +233,14 @@
             <span class="log-time">14:32:01.301</span>
             <span class="log-level level-info">INFO</span>
             <span class="log-service">order-svc</span>
-            <span class="log-msg">注文処理完了 <span class="key">orderId=</span><span class="str">"ord_20260520_099"</span> <span class="key">userId=</span><span class="str">"user_1042"</span> <span class="key">amount=</span><span class="num">12800</span> <span class="key">items=</span><span class="num">3</span> <span class="key">duration_ms=</span><span class="num">241</span></span>
+            <span class="log-msg">注文処理完了 <span class="key">orderId=</span><span class="str">"ord_YYYYMMDD_099"</span> <span class="key">userId=</span><span class="str">"user_1042"</span> <span class="key">amount=</span><span class="num">12800</span> <span class="key">items=</span><span class="num">3</span> <span class="key">duration_ms=</span><span class="num">241</span></span>
           </div>
 
           <div class="log-entry" data-level="INFO">
             <span class="log-time">14:32:01.450</span>
             <span class="log-level level-info">INFO</span>
             <span class="log-service">batch-svc</span>
-            <span class="log-msg">バッチ処理開始 <span class="key">batchId=</span><span class="str">"batch_20260520_mail"</span> <span class="key">targetCount=</span><span class="num">1000</span> <span class="key">triggeredBy=</span><span class="str">"scheduler"</span></span>
+            <span class="log-msg">バッチ処理開始 <span class="key">batchId=</span><span class="str">"batch_YYYYMMDD_mail"</span> <span class="key">targetCount=</span><span class="num">1000</span> <span class="key">triggeredBy=</span><span class="str">"scheduler"</span></span>
           </div>
 
           <div class="log-entry" data-level="WARN">
@@ -268,7 +268,7 @@
             <span class="log-time">14:32:03.523</span>
             <span class="log-level level-error">ERROR</span>
             <span class="log-service">order-svc</span>
-            <span class="log-msg">在庫不足により注文失敗 <span class="key">orderId=</span><span class="str">"ord_20260520_100"</span> <span class="key">itemId=</span><span class="str">"item_456"</span> <span class="key">required=</span><span class="num">5</span> <span class="key">stock=</span><span class="num">2</span></span>
+            <span class="log-msg">在庫不足により注文失敗 <span class="key">orderId=</span><span class="str">"ord_YYYYMMDD_100"</span> <span class="key">itemId=</span><span class="str">"item_456"</span> <span class="key">required=</span><span class="num">5</span> <span class="key">stock=</span><span class="num">2</span></span>
           </div>
 
           <div class="log-entry" data-level="ERROR">
@@ -296,7 +296,7 @@
             <span class="log-time">14:32:10.330</span>
             <span class="log-level level-info">INFO</span>
             <span class="log-service">batch-svc</span>
-            <span class="log-msg">バッチ処理完了 <span class="key">batchId=</span><span class="str">"batch_20260520_mail"</span> <span class="key">processed=</span><span class="num">1000</span> <span class="key">failed=</span><span class="num">3</span> <span class="key">duration_ms=</span><span class="num">8880</span></span>
+            <span class="log-msg">バッチ処理完了 <span class="key">batchId=</span><span class="str">"batch_YYYYMMDD_mail"</span> <span class="key">processed=</span><span class="num">1000</span> <span class="key">failed=</span><span class="num">3</span> <span class="key">duration_ms=</span><span class="num">8880</span></span>
           </div>
 
         </div>

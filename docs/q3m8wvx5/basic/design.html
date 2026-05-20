@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>基本設計 手順書 — 設計手順書</title>
+  <title>基本設計 手順書 — 基本設計</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
@@ -38,6 +38,15 @@
         <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
       </div>
 
+      <div class="callout callout-info" style="margin-top:1rem">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方</b><br>
+          1) STEP 0 でインプットが揃っているか確認 → 2) STEP 1 から順に進める → 3) 各STEPの成果物を作りながらチェックを付ける。<br>
+          不明点が出たら「TBD（未決）」として放置せず、<b>誰が・いつまでに・何を決めるか</b>を決めて更新します。
+        </div>
+      </div>
+
       <!-- 作業フロー -->
       <h2 class="section-title"><span class="title-icon">🔄</span> 作業フロー（依存関係）</h2>
       <div class="mermaid-wrap">
@@ -67,6 +76,9 @@ flowchart LR
   classDef hard fill:#fee2e2,color:#991b1b,stroke:#dc2626
         </div>
       </div>
+      <p class="text-sm text-muted" style="margin-top:.5rem">
+        ★は難易度目安です（★☆☆: 軽い / ★★☆: 普通 / ★★★: 重い・影響大）。迷ったら先にSTEP 1（アーキテクチャ）を固めます。
+      </p>
 
       <!-- STEP 0 -->
       <h2 class="section-title" id="step0"><span class="title-icon">0</span> STEP 0 — インプット確認</h2>
@@ -129,7 +141,7 @@ flowchart LR
         <ul class="checklist">
           <li><input type="checkbox" id="s1-1"><label for="s1-1">システム構成図（論理構成）を作成した<br><small class="text-muted">論理構成＝システムの要素（FE・BE・DBなど）と関係を概念的に示した図</small></label></li>
           <li><input type="checkbox" id="s1-2"><label for="s1-2">システム構成図（物理構成・インフラ構成）を作成した<br><small class="text-muted">物理構成＝実際のサーバー・クラウドサービスの配置を示した図</small></label></li>
-          <li><input type="checkbox" id="s1-3"><label for="s1-3">採用する技術スタック（言語・FW・DB・ミドルウェア）を決定し、<b>選定理由を記録した</b><br><small class="text-muted">理由を記録しないと、後から「なぜこの技術を選んだのか」が分からなくなります → <a href="adr.html">ADRで記録</a></small></label></li>
+          <li><input type="checkbox" id="s1-3"><label for="s1-3">採用する技術スタック（言語・FW・DB・ミドルウェア）を決定し、<b>選定理由を記録した</b><br><small class="text-muted">理由を記録しないと、後から「なぜこの技術を選んだのか」が分からなくなります → <a href="../reference/adr.html">ADRで記録</a></small></label></li>
           <li><input type="checkbox" id="s1-4"><label for="s1-4">デプロイ方式（オンプレ・クラウド・ハイブリッド）を決定した</label></li>
           <li><input type="checkbox" id="s1-5"><label for="s1-5">クラウドを使用する場合、利用サービス一覧を列挙した</label></li>
           <li><input type="checkbox" id="s1-6"><label for="s1-6">冗長化・HA（高可用性）構成の方針を定義した</label></li>
@@ -153,11 +165,11 @@ flowchart LR
           <table>
             <thead><tr><th>成果物</th><th>推奨ツール</th><th>参照</th></tr></thead>
             <tbody>
-              <tr><td>機能一覧（設計版）</td><td>Excel</td><td><a href="basic-deliverables.html">B-03</a></td></tr>
-              <tr><td>画面一覧</td><td>Excel</td><td><a href="basic-deliverables.html">B-04</a></td></tr>
-              <tr><td>画面レイアウト定義書</td><td>Figma</td><td><a href="basic-deliverables.html">B-05</a></td></tr>
-              <tr><td>画面遷移図（設計版）</td><td>Figma / Draw.io</td><td><a href="basic-deliverables.html">B-06</a></td></tr>
-              <tr><td>API一覧（概要版）</td><td>OpenAPI (YAML) / Excel</td><td><a href="basic-deliverables.html">B-07</a></td></tr>
+              <tr><td>機能一覧（設計版）</td><td>Excel</td><td><a href="deliverables.html">B-03</a></td></tr>
+              <tr><td>画面一覧</td><td>Excel</td><td><a href="deliverables.html">B-04</a></td></tr>
+              <tr><td>画面レイアウト定義書</td><td>Figma</td><td><a href="deliverables.html">B-05</a></td></tr>
+              <tr><td>画面遷移図（設計版）</td><td>Figma / Draw.io</td><td><a href="deliverables.html">B-06</a></td></tr>
+              <tr><td>API一覧（概要版）</td><td>OpenAPI (YAML) / Excel</td><td><a href="deliverables.html#api">B-07</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -182,9 +194,9 @@ flowchart LR
           <table>
             <thead><tr><th>成果物</th><th>推奨ツール</th><th>参照</th></tr></thead>
             <tbody>
-              <tr><td>ER図（概念・論理）</td><td>dbdiagram.io / A5:SQL Mk-2</td><td><a href="basic-deliverables.html#data">B-09</a></td></tr>
-              <tr><td>テーブル定義書</td><td>A5:SQL Mk-2（Excel出力）/ Excel手動</td><td><a href="basic-deliverables.html#data">B-10</a></td></tr>
-              <tr><td>マスタデータ定義書</td><td>Excel</td><td><a href="basic-deliverables.html#data">B-11</a></td></tr>
+              <tr><td>ER図（概念・論理）</td><td>dbdiagram.io / A5:SQL Mk-2</td><td><a href="deliverables.html#data">B-09</a></td></tr>
+              <tr><td>テーブル定義書</td><td>A5:SQL Mk-2（Excel出力）/ Excel手動</td><td><a href="deliverables.html#data">B-10</a></td></tr>
+              <tr><td>マスタデータ定義書</td><td>Excel</td><td><a href="deliverables.html#data">B-11</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -311,7 +323,7 @@ flowchart LR
 
       <div class="callout callout-success">
         <span class="callout-icon">✅</span>
-        <div class="callout-body">基本設計書の正式承認が取れたら <a href="detailed-design.html">詳細設計フェーズ</a> へ進みます。</div>
+        <div class="callout-body">基本設計書の正式承認が取れたら <a href="../detailed/design.html">詳細設計フェーズ</a> へ進みます。</div>
       </div>
 
     </div>
