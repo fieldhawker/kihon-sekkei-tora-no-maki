@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>登録完了画面 — 設計手順書</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="sidebar.js" defer></script>
   <style>
     /* ========== 共通レイアウト ========== */
     .demo-wrap {
@@ -713,9 +714,6 @@
 
 <script>
   /* ========== サイドバー読み込み ========== */
-  fetch('sidebar.html').then(r => r.text()).then(html => {
-    document.getElementById('sidebar-placeholder').outerHTML = html;
-  });
 
   /* ========== トースト表示 ========== */
   function showToast(message, type = 'success') {
