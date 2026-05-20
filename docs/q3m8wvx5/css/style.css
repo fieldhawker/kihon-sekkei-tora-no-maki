@@ -588,7 +588,9 @@ tbody td { padding: .6rem 1rem; vertical-align: top; }
   align-items: center;
   gap: .6rem;
   transition: all var(--transition);
-  cursor: default;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
 }
 
 .deliverable-item:hover {
