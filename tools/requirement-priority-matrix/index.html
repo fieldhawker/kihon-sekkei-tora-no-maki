@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>要件優先度マトリクス（MoSCoW × 影響度）</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane-form { width: 340px; background: #fff; border-right: 1px solid #ddd; padding: 14px; overflow-y: auto; flex-shrink: 0; }
+.pane-main { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 16px; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+h2:first-child { margin-top: 0; }
+label { font-size: 12px; color: #666; display: block; margin-bottom: 3px; }
+input, select, textarea { border: 1px solid #ccc; border-radius: 4px; padding: 7px 10px; font-size: 13px; width: 100%; margin-bottom: 8px; font-family: sans-serif; }
+textarea { resize: vertical; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; width: 100%; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+/* MoSCoW */
+.must { background: #fde8e8; color: #c0392b; }
+.should { background: #fff3cd; color: #856404; }
+.could { background: #d4edda; color: #155724; }
+.wont { background: #e2e3e5; color: #383d41; }
+.moscow-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+/* Bubble chart */
+.chart-wrap { position: relative; }
+#bubble-chart { border: 1px solid #ddd; border-radius: 6px; background: #fff; display: block; }
+.axis-label { font-size: 12px; color: #888; }
+/* Table */
+table.req-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
+table.req-table th { background: #f5f5f5; padding: 8px 10px; border: 1px solid #ddd; font-weight: 600; color: #555; text-align: left; white-space: nowrap; }
+table.req-table td { padding: 8px 10px; border: 1px solid #eee; vertical-align: middle; }
+table.req-table tr:hover td { background: #f9fbff; }
+.score-bar { height: 6px; border-radius: 3px; background: #4a90e2; display: inline-block; }
+.star { color: #f39c12; }
+/* Score chip */
+.score-chip { display: inline-block; width: 28px; height: 28px; border-radius: 50%; color: #fff; font-size: 12px; font-weight: bold; text-align: center; line-height: 28px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>要件優先度マトリクス（MoSCoW × 影響度）</h1>
+  <button onclick="loadSample()">サンプル</button>
+  <button onclick="exportMarkdown()">Markdownエクスポート</button>
+  <button onclick="exportCSV()">CSVエクスポート</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane-form">
+    <h2 id="form-title">要件を追加</h2>
+    <input type="hidden" id="edit-id" value="">
+
+    <label>要件ID</label>
+    <input type="text" id="f-id" placeholder="REQ-001">
+
+    <label>要件名</label>
+    <input type="text" id="f-name" placeholder="ユーザーログイン機能">
+
+    <label>概要（任意）</label>
+    <textarea id="f-desc" rows="2" placeholder="メールアドレスとパスワードで認証する機能"></textarea>
+
+    <label>MoSCoW 優先度</label>
+    <select id="f-moscow">
+      <option value="must">Must（必須）</option>
+      <option value="should">Should（重要）</option>
+      <option value="could">Could（あると良い）</option>
+      <option value="wont">Won't（今回対象外）</option>
+    </select>
+
+    <label>実装コスト（工数見積もり）</label>
+    <select id="f-cost">
+      <option value="1">小（1〜2日）</option>
+      <option value="2" selected>中（3〜5日）</option>
+      <option value="3">大（1週間以上）</option>
+    </select>
+
+    <label>業務影響度（この機能がないと業務に支障をきたすか）</label>
+    <select id="f-impact">
+      <option value="1">低（なくても代替手段がある）</option>
+      <option value="2" selected>中（あった方が効率的）</option>
+      <option value="3">高（業務が止まる）</option>
+    </select>
+
+    <label>担当チーム（任意）</label>
+    <input type="text" id="f-owner" placeholder="フロントエンドチーム">
+
+    <button class="btn btn-primary" onclick="saveReq()">保存</button>
+    <button class="btn-sm" style="margin-top:8px;width:100%;text-align:center" onclick="cancelEdit()">キャンセル</button>
+  </div>
+
+  <div class="pane-main">
+    <div>
+      <h2 style="border:none;margin:0 0 8px">バブルチャート（横軸: 実装コスト / 縦軸: 業務影響度）</h2>
+      <p style="font-size:12px;color:#888;margin-bottom:8px">バブルの大きさ = 重要度スコア。左上が「低コスト・高影響度」で最優先エリアです。</p>
+      <canvas id="bubble-chart" width="600" height="360"></canvas>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 style="border:none;margin:0">優先度スコア順一覧</h2>
+        <span id="total-label" style="font-size:12px;color:#888"></span>
+      </div>
+      <table class="req-table">
+        <thead><tr><th>ID</th><th>要件名</th><th>MoSCoW</th><th>コスト</th><th>影響度</th><th>スコア</th><th>担当</th><th>操作</th></tr></thead>
+        <tbody id="req-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+const STORAGE_KEY = 'req-priority-v1';
+const MOSCOW_ORDER = { must: 4, should: 3, could: 2, wont: 1 };
+const MOSCOW_LABELS = { must: 'Must', should: 'Should', could: 'Could', wont: "Won't" };
+const COST_LABELS = { 1: '小', 2: '中', 3: '大' };
+const IMPACT_LABELS = { 1: '低', 2: '中', 3: '高' };
+const MOSCOW_COLORS = { must: '#e74c3c', should: '#f39c12', could: '#27ae60', wont: '#95a5a6' };
+
+function load() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function nextId() { const d = load(); return d.length ? Math.max(...d.map(r => r._id)) + 1 : 1; }
+function calcScore(r) { return MOSCOW_ORDER[r.moscow] * 3 + parseInt(r.impact) * 2 - parseInt(r.cost) + 5; }
+
+function saveReq() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('要件名は必須です'); return; }
+  const entry = {
+    reqId: document.getElementById('f-id').value.trim(),
+    name, desc: document.getElementById('f-desc').value.trim(),
+    moscow: document.getElementById('f-moscow').value,
+    cost: document.getElementById('f-cost').value,
+    impact: document.getElementById('f-impact').value,
+    owner: document.getElementById('f-owner').value.trim(),
+  };
+  const data = load();
+  const editId = parseInt(document.getElementById('edit-id').value);
+  if (editId) {
+    const idx = data.findIndex(r => r._id === editId);
+    if (idx >= 0) { entry._id = editId; data[idx] = entry; }
+  } else {
+    entry._id = nextId();
+    data.push(entry);
+  }
+  save(data);
+  cancelEdit();
+  render();
+}
+
+function editReq(id) {
+  const r = load().find(r => r._id === id);
+  if (!r) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('f-id').value = r.reqId || '';
+  document.getElementById('f-name').value = r.name;
+  document.getElementById('f-desc').value = r.desc || '';
+  document.getElementById('f-moscow').value = r.moscow;
+  document.getElementById('f-cost').value = r.cost;
+  document.getElementById('f-impact').value = r.impact;
+  document.getElementById('f-owner').value = r.owner || '';
+  document.getElementById('form-title').textContent = '要件を編集';
+}
+
+function deleteReq(id) {
+  if (!confirm('削除しますか？')) return;
+  save(load().filter(r => r._id !== id));
+  render();
+}
+
+function cancelEdit() {
+  ['edit-id','f-id','f-name','f-desc','f-owner'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-moscow').value = 'must';
+  document.getElementById('f-cost').value = '2';
+  document.getElementById('f-impact').value = '2';
+  document.getElementById('form-title').textContent = '要件を追加';
+}
+
+function render() {
+  const data = load();
+  const sorted = [...data].sort((a, b) => calcScore(b) - calcScore(a));
+  const maxScore = sorted.length ? calcScore(sorted[0]) : 1;
+
+  document.getElementById('total-label').textContent = `全 ${data.length} 件`;
+
+  // Table
+  const tbody = document.getElementById('req-tbody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#aaa;padding:20px">要件を追加してください</td></tr>'; }
+  else {
+    tbody.innerHTML = sorted.map(r => {
+      const score = calcScore(r);
+      const pct = Math.round(score / maxScore * 100);
+      const bg = score >= maxScore * 0.75 ? '#e74c3c' : score >= maxScore * 0.5 ? '#f39c12' : score >= maxScore * 0.25 ? '#27ae60' : '#95a5a6';
+      return `<tr>
+        <td style="font-size:11px;color:#888">${r.reqId||'-'}</td>
+        <td><strong>${escHtml(r.name)}</strong>${r.desc ? `<div style="font-size:11px;color:#888;margin-top:2px">${escHtml(r.desc)}</div>` : ''}</td>
+        <td><span class="moscow-badge ${r.moscow}">${MOSCOW_LABELS[r.moscow]}</span></td>
+        <td>${COST_LABELS[r.cost]}</td>
+        <td>${IMPACT_LABELS[r.impact]}</td>
+        <td><span class="score-chip" style="background:${bg}">${score}</span></td>
+        <td style="font-size:12px;color:#666">${r.owner||'-'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn-sm" onclick="editReq(${r._id})">✏️</button>
+          <button class="btn-sm" onclick="deleteReq(${r._id})" style="color:#e74c3c">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Bubble chart
+  drawChart(data);
+}
+
+function drawChart(data) {
+  const canvas = document.getElementById('bubble-chart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const PAD = 60;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background zones
+  ctx.fillStyle = '#f0fdf4'; ctx.fillRect(PAD, PAD, (W-PAD*2)/2, (H-PAD*2)/2); // low cost, high impact - best
+  ctx.fillStyle = '#fffbeb'; ctx.fillRect(PAD+(W-PAD*2)/2, PAD, (W-PAD*2)/2, (H-PAD*2)/2);
+  ctx.fillStyle = '#eff6ff'; ctx.fillRect(PAD, PAD+(H-PAD*2)/2, (W-PAD*2)/2, (H-PAD*2)/2);
+  ctx.fillStyle = '#fef2f2'; ctx.fillRect(PAD+(W-PAD*2)/2, PAD+(H-PAD*2)/2, (W-PAD*2)/2, (H-PAD*2)/2);
+
+  // Grid
+  ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 2; i++) {
+    const x = PAD + (W - PAD*2) * i / 2;
+    ctx.beginPath(); ctx.moveTo(x, PAD); ctx.lineTo(x, H-PAD); ctx.stroke();
+    const y = PAD + (H - PAD*2) * i / 2;
+    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W-PAD, y); ctx.stroke();
+  }
+
+  // Zone labels
+  ctx.font = '11px sans-serif'; ctx.fillStyle = '#aaa'; ctx.textAlign = 'center';
+  ctx.fillText('★ 優先実装エリア', PAD + (W-PAD*2)*0.25, PAD + 16);
+  ctx.fillText('要検討', PAD + (W-PAD*2)*0.75, PAD + 16);
+
+  // Axes
+  ctx.fillStyle = '#888'; ctx.textAlign = 'center';
+  ctx.fillText('小', PAD + (W-PAD*2)*0.17, H-PAD+18);
+  ctx.fillText('中', PAD + (W-PAD*2)*0.5, H-PAD+18);
+  ctx.fillText('大', PAD + (W-PAD*2)*0.83, H-PAD+18);
+  ctx.fillText('実装コスト →', W/2, H-10);
+  ctx.save(); ctx.translate(16, H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('← 業務影響度', 0, 0); ctx.restore();
+  ctx.textAlign = 'right';
+  ctx.fillText('高', PAD-8, PAD + (H-PAD*2)*0.17);
+  ctx.fillText('中', PAD-8, PAD + (H-PAD*2)*0.5);
+  ctx.fillText('低', PAD-8, PAD + (H-PAD*2)*0.83);
+
+  if (!data.length) return;
+
+  // Jitter to avoid overlap
+  const positions = {};
+  data.forEach(r => {
+    const cost = parseInt(r.cost);
+    const impact = parseInt(r.impact);
+    const score = calcScore(r);
+    const key = `${cost}-${impact}`;
+    if (!positions[key]) positions[key] = { count: 0 };
+    const jitter = positions[key].count;
+    positions[key].count++;
+
+    const cx = PAD + (W-PAD*2) * (cost - 0.5) / 3 + (jitter % 2 === 0 ? 1 : -1) * Math.floor(jitter/2) * 14;
+    const cy = PAD + (H-PAD*2) * (1 - (impact - 0.5) / 3) + Math.floor(jitter/2) * 10;
+    const radius = 10 + score * 1.5;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI*2);
+    ctx.fillStyle = MOSCOW_COLORS[r.moscow] + 'aa';
+    ctx.fill();
+    ctx.strokeStyle = MOSCOW_COLORS[r.moscow];
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#222'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+    const label = (r.reqId || r.name).slice(0, 8);
+    ctx.fillText(label, cx, cy + 4);
+  });
+
+  // Legend
+  let lx = PAD;
+  Object.entries(MOSCOW_COLORS).forEach(([m, c]) => {
+    ctx.beginPath(); ctx.arc(lx + 7, H - PAD + 38, 6, 0, Math.PI*2);
+    ctx.fillStyle = c + 'aa'; ctx.fill();
+    ctx.strokeStyle = c; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#555'; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText(MOSCOW_LABELS[m], lx + 16, H - PAD + 42);
+    lx += 80;
+  });
+}
+
+function exportMarkdown() {
+  const data = load();
+  if (!data.length) { alert('データがありません'); return; }
+  const sorted = [...data].sort((a, b) => calcScore(b) - calcScore(a));
+  let md = '# 要件優先度マトリクス\n\n';
+  md += `| # | ID | 要件名 | MoSCoW | コスト | 影響度 | スコア | 担当 |\n|---|----|----|------|----|-----|------|------|\n`;
+  sorted.forEach((r, i) => {
+    md += `| ${i+1} | ${r.reqId||'-'} | ${r.name} | ${MOSCOW_LABELS[r.moscow]} | ${COST_LABELS[r.cost]} | ${IMPACT_LABELS[r.impact]} | ${calcScore(r)} | ${r.owner||'-'} |\n`;
+  });
+  saveFile(md, 'requirement-priority.md', 'text/markdown');
+}
+
+function exportCSV() {
+  const data = load();
+  const sorted = [...data].sort((a, b) => calcScore(b) - calcScore(a));
+  let csv = 'ID,要件名,概要,MoSCoW,実装コスト,業務影響度,スコア,担当\n';
+  sorted.forEach(r => {
+    csv += `"${r.reqId||''}","${r.name}","${r.desc||''}","${MOSCOW_LABELS[r.moscow]}","${COST_LABELS[r.cost]}","${IMPACT_LABELS[r.impact]}","${calcScore(r)}","${r.owner||''}"\n`;
+  });
+  saveFile('﻿'+csv, 'requirement-priority.csv', 'text/csv');
+}
+
+function loadSample() {
+  const sample = [
+    { _id:1, reqId:'REQ-001', name:'ユーザーログイン機能', desc:'メール・パスワードで認証', moscow:'must', cost:'2', impact:'3', owner:'フロントエンド' },
+    { _id:2, reqId:'REQ-002', name:'パスワードリセット', desc:'メール経由でリセットリンク送付', moscow:'must', cost:'2', impact:'3', owner:'バックエンド' },
+    { _id:3, reqId:'REQ-003', name:'ユーザー一覧表示', desc:'管理者が全ユーザーを確認', moscow:'must', cost:'1', impact:'2', owner:'フロントエンド' },
+    { _id:4, reqId:'REQ-004', name:'CSVエクスポート', desc:'ユーザーデータをCSVで出力', moscow:'should', cost:'2', impact:'2', owner:'' },
+    { _id:5, reqId:'REQ-005', name:'メール通知機能', desc:'申請承認時にメール送信', moscow:'should', cost:'3', impact:'2', owner:'バックエンド' },
+    { _id:6, reqId:'REQ-006', name:'ダッシュボードグラフ', desc:'統計をグラフで表示', moscow:'could', cost:'3', impact:'1', owner:'' },
+    { _id:7, reqId:'REQ-007', name:'モバイルアプリ版', desc:'iOS/Android対応', moscow:'wont', cost:'3', impact:'1', owner:'' },
+    { _id:8, reqId:'REQ-008', name:'二段階認証', desc:'SMS/アプリでの2FA', moscow:'should', cost:'3', impact:'3', owner:'バックエンド' },
+  ];
+  save(sample);
+  render();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(load(), null, 2), 'requirement-priority.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) throw new Error('配列形式のJSONを指定してください');
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      save(data); render();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+render();
+</script>
+</body>
+</html>

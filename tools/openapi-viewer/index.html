@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>OpenAPI YAMLビューア & テスター</title>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane-input { width: 380px; background: #fff; border-right: 1px solid #ddd; padding: 14px; display: flex; flex-direction: column; flex-shrink: 0; }
+.pane-list { width: 320px; background: #f9f9f9; border-right: 1px solid #ddd; overflow-y: auto; flex-shrink: 0; }
+.pane-detail { flex: 1; overflow-y: auto; padding: 16px; background: #fff; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+textarea#yaml-input { flex: 1; font-family: monospace; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; padding: 8px; resize: none; min-height: 200px; }
+.btn { padding: 7px 16px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; margin-top: 8px; }
+.btn-send { background: #27ae60; color: #fff; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.method-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; min-width: 52px; text-align: center; }
+.m-get { background: #61affe; color: #fff; }
+.m-post { background: #49cc90; color: #fff; }
+.m-put { background: #fca130; color: #fff; }
+.m-patch { background: #50e3c2; color: #222; }
+.m-delete { background: #f93e3e; color: #fff; }
+.endpoint-item { padding: 10px 14px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.endpoint-item:hover { background: #e8f0fe; }
+.endpoint-item.active { background: #ddeeff; }
+.endpoint-path { font-family: monospace; color: #333; font-size: 12px; }
+.tag-header { padding: 8px 14px; background: #ecf0f1; font-size: 12px; font-weight: bold; color: #555; border-bottom: 1px solid #e0e0e0; }
+.section { margin-bottom: 18px; }
+.section-title { font-size: 13px; font-weight: bold; color: #555; margin-bottom: 8px; }
+table.params { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.params th { background: #f5f5f5; padding: 6px 8px; border: 1px solid #ddd; font-weight: 600; color: #555; text-align: left; }
+table.params td { padding: 6px 8px; border: 1px solid #eee; }
+.required-mark { color: #e74c3c; font-weight: bold; }
+.type-badge { background: #ecf0f1; color: #555; padding: 1px 6px; border-radius: 10px; font-size: 11px; }
+pre { background: #1e1e1e; color: #d4d4d4; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; }
+input, textarea.req-body { border: 1px solid #ccc; border-radius: 4px; padding: 5px 8px; font-size: 13px; width: 100%; font-family: monospace; }
+textarea.req-body { resize: vertical; min-height: 80px; }
+.resp-status { font-weight: bold; font-size: 13px; margin-bottom: 6px; }
+.s2xx { color: #155724; } .s4xx { color: #721c24; } .s5xx { color: #721c24; } .s0 { color: #383d41; }
+.kv-row { display: flex; gap: 6px; margin-bottom: 5px; align-items: center; }
+.kv-row input { flex: 1; }
+.btn-danger { background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 14px; }
+.api-info { padding: 12px 14px; border-bottom: 1px solid #eee; background: #fff; }
+.api-title { font-size: 15px; font-weight: bold; }
+.api-version { font-size: 12px; color: #888; }
+.api-desc { font-size: 12px; color: #555; margin-top: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>OpenAPI YAMLビューア & テスター</h1>
+  <button onclick="loadSample()">サンプルYAML</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane-input">
+    <h2>OpenAPI YAML / JSON 入力</h2>
+    <textarea id="yaml-input" placeholder="OpenAPI 3.0のYAMLまたはJSONを貼り付けてください"></textarea>
+    <button class="btn btn-primary" onclick="parseSpec()">パース & 表示</button>
+    <div id="parse-error" style="color:#e74c3c;font-size:12px;margin-top:6px"></div>
+  </div>
+
+  <div class="pane-list" id="endpoint-list">
+    <p style="padding:20px;color:#888;font-size:13px">YAMLを入力してパースしてください</p>
+  </div>
+
+  <div class="pane-detail" id="endpoint-detail">
+    <p style="color:#888;font-size:13px">左のエンドポイントを選択してください</p>
+  </div>
+</div>
+
+<script>
+let spec = null;
+let baseUrl = '';
+
+function parseSpec() {
+  const raw = document.getElementById('yaml-input').value.trim();
+  document.getElementById('parse-error').textContent = '';
+  try {
+    spec = raw.startsWith('{') ? JSON.parse(raw) : jsyaml.load(raw);
+    baseUrl = '';
+    if (spec.servers && spec.servers[0]) baseUrl = spec.servers[0].url || '';
+    renderList();
+  } catch(e) {
+    document.getElementById('parse-error').textContent = 'パースエラー: ' + e.message;
+  }
+}
+
+function renderList() {
+  if (!spec || !spec.paths) return;
+  const el = document.getElementById('endpoint-list');
+
+  const apiTitle = spec.info?.title || 'API';
+  const apiVer = spec.info?.version || '';
+  const apiDesc = spec.info?.description || '';
+
+  let html = `<div class="api-info"><div class="api-title">${apiTitle}</div><div class="api-version">v${apiVer}</div>${apiDesc ? `<div class="api-desc">${apiDesc}</div>` : ''}</div>`;
+
+  const grouped = {};
+  Object.entries(spec.paths).forEach(([path, methods]) => {
+    Object.entries(methods).forEach(([method, op]) => {
+      if (['get','post','put','patch','delete','options'].includes(method)) {
+        const tag = (op.tags && op.tags[0]) || 'default';
+        if (!grouped[tag]) grouped[tag] = [];
+        grouped[tag].push({ path, method, op });
+      }
+    });
+  });
+
+  Object.entries(grouped).forEach(([tag, items]) => {
+    html += `<div class="tag-header">${tag}</div>`;
+    items.forEach(({ path, method, op }, i) => {
+      const summary = op.summary || '';
+      html += `<div class="endpoint-item" id="ep-${method}-${i}" onclick="showDetail('${path}','${method}')">
+        <span class="method-badge m-${method}">${method.toUpperCase()}</span>
+        <div><div class="endpoint-path">${path}</div>${summary ? `<div style="font-size:11px;color:#888;margin-top:2px">${summary}</div>` : ''}</div>
+      </div>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+function showDetail(path, method) {
+  document.querySelectorAll('.endpoint-item').forEach(e => e.classList.remove('active'));
+  const op = spec.paths[path][method];
+  let html = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <span class="method-badge m-${method}" style="font-size:13px;padding:5px 12px">${method.toUpperCase()}</span>
+      <span style="font-family:monospace;font-size:15px;font-weight:bold">${path}</span>
+    </div>
+    ${op.summary ? `<p style="font-size:14px;color:#333;margin-bottom:6px">${op.summary}</p>` : ''}
+    ${op.description ? `<p style="font-size:13px;color:#666;margin-bottom:14px">${op.description}</p>` : ''}
+  `;
+
+  // Parameters
+  const params = op.parameters || [];
+  if (params.length) {
+    html += `<div class="section"><div class="section-title">パラメータ</div>
+      <table class="params"><thead><tr><th>名前</th><th>in</th><th>型</th><th>必須</th><th>説明</th></tr></thead><tbody>`;
+    params.forEach(p => {
+      const schema = p.schema || {};
+      html += `<tr>
+        <td><strong>${p.name}</strong></td>
+        <td><span class="type-badge">${p.in}</span></td>
+        <td><span class="type-badge">${schema.type || '-'}</span></td>
+        <td>${p.required ? '<span class="required-mark">必須</span>' : '任意'}</td>
+        <td style="color:#666">${p.description || '-'}</td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+  }
+
+  // Request body
+  const reqBody = op.requestBody;
+  if (reqBody) {
+    const content = reqBody.content || {};
+    const jsonSchema = content['application/json']?.schema;
+    html += `<div class="section"><div class="section-title">リクエストボディ ${reqBody.required ? '<span class="required-mark">必須</span>' : ''}</div>`;
+    if (jsonSchema) {
+      html += `<pre>${JSON.stringify(jsonSchema, null, 2)}</pre>`;
+    }
+    html += '</div>';
+  }
+
+  // Responses
+  const responses = op.responses || {};
+  html += `<div class="section"><div class="section-title">レスポンス</div>`;
+  Object.entries(responses).forEach(([code, resp]) => {
+    const cls = code.startsWith('2') ? 's2xx' : code.startsWith('4') ? 's4xx' : code.startsWith('5') ? 's5xx' : 's0';
+    html += `<div style="margin-bottom:8px"><span class="resp-status ${cls}">${code}</span> <span style="font-size:13px;color:#555">${resp.description || ''}</span>`;
+    const respContent = resp.content?.['application/json']?.schema;
+    if (respContent) html += `<pre style="margin-top:6px">${JSON.stringify(respContent, null, 2)}</pre>`;
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Try it out
+  html += `<div class="section" style="background:#f9f9f9;border:1px solid #eee;border-radius:6px;padding:14px">
+    <div class="section-title">Try it out</div>
+    <div style="font-size:12px;color:#888;margin-bottom:8px">ベースURL: <input type="text" id="try-base" value="${baseUrl}" style="width:300px;font-size:12px;padding:3px 6px"></div>
+    <div id="try-headers-list"></div>
+    <button class="btn-sm" onclick="addTryHeader()" style="margin-bottom:8px">＋ ヘッダー追加</button>
+    ${!['get','delete'].includes(method) ? `<div style="margin-bottom:8px"><label style="font-size:12px;color:#666;display:block;margin-bottom:4px">リクエストボディ (JSON)</label><textarea class="req-body" id="try-body" rows="5"></textarea></div>` : ''}
+    <button class="btn btn-send" onclick="tryRequest('${path}','${method}')">送信</button>
+    <div id="try-response" style="margin-top:12px"></div>
+  </div>`;
+
+  document.getElementById('endpoint-detail').innerHTML = html;
+  addTryHeader('Authorization', 'Bearer ');
+  addTryHeader('Content-Type', 'application/json');
+}
+
+function addTryHeader(k = '', v = '') {
+  const container = document.getElementById('try-headers-list');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'kv-row';
+  row.innerHTML = `<input type="text" value="${k}" placeholder="ヘッダー名"><input type="text" value="${v}" placeholder="値"><button class="btn-danger" onclick="this.parentElement.remove()">×</button>`;
+  container.appendChild(row);
+}
+
+async function tryRequest(path, method) {
+  const base = document.getElementById('try-base').value.trim();
+  const url = base + path;
+  const headers = {};
+  document.getElementById('try-headers-list').querySelectorAll('.kv-row').forEach(row => {
+    const [k, v] = row.querySelectorAll('input');
+    if (k.value.trim()) headers[k.value.trim()] = v.value.trim();
+  });
+  const bodyEl = document.getElementById('try-body');
+  const body = bodyEl ? bodyEl.value.trim() || undefined : undefined;
+
+  document.getElementById('try-response').innerHTML = '<p style="color:#888;font-size:13px">送信中...</p>';
+  try {
+    const res = await fetch(url, { method: method.toUpperCase(), headers, body });
+    const text = await res.text();
+    let fmt = text;
+    try { fmt = JSON.stringify(JSON.parse(text), null, 2); } catch(e) {}
+    const cls = res.status < 300 ? 's2xx' : res.status < 500 ? 's4xx' : 's5xx';
+    document.getElementById('try-response').innerHTML = `<span class="resp-status ${cls}">HTTP ${res.status}</span><pre style="margin-top:6px">${escHtml(fmt)}</pre>`;
+  } catch(e) {
+    document.getElementById('try-response').innerHTML = `<span class="resp-status s0">エラー</span><pre style="margin-top:6px">${escHtml(e.message)}</pre>`;
+  }
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function loadSample() {
+  document.getElementById('yaml-input').value = `openapi: "3.0.3"
+info:
+  title: サンプルAPI
+  version: "1.0.0"
+  description: 基本設計虎の巻 サンプルREST API
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /users:
+    get:
+      tags: [users]
+      summary: ユーザー一覧取得
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer }
+          description: ページ番号
+        - name: limit
+          in: query
+          schema: { type: integer }
+          description: 取得件数
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { type: array }
+                  total: { type: integer }
+        "401":
+          description: 認証エラー
+    post:
+      tags: [users]
+      summary: ユーザー作成
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                name: { type: string }
+                password: { type: string }
+      responses:
+        "201":
+          description: 作成成功
+        "400":
+          description: バリデーションエラー
+  /users/{id}:
+    get:
+      tags: [users]
+      summary: ユーザー詳細取得
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+          description: ユーザーID
+      responses:
+        "200":
+          description: 成功
+        "404":
+          description: 未存在
+    put:
+      tags: [users]
+      summary: ユーザー更新
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+      responses:
+        "200":
+          description: 更新成功
+    delete:
+      tags: [users]
+      summary: ユーザー削除
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: 削除成功
+`;
+  parseSpec();
+}
+
+const OA_STORAGE_KEY = 'openapi-viewer-v1';
+const yamlInput = document.getElementById('yaml-input');
+
+function autoSave() { localStorage.setItem(OA_STORAGE_KEY, yamlInput.value); }
+yamlInput.addEventListener('input', autoSave);
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify({ yaml: yamlInput.value }, null, 2), 'openapi-spec.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json,.yaml,.yml');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      let text = ev.target.result;
+      if (file.name.endsWith('.json') && !text.trim().startsWith('openapi') && !text.trim().startsWith('{')) {
+        const data = JSON.parse(text); text = data.yaml || text;
+      }
+      if (!confirm('現在の入力を読み込んだデータで上書きしますか？')) return;
+      yamlInput.value = text; autoSave(); parseSpec();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+// ページロード時に復元
+const _oaSaved = localStorage.getItem(OA_STORAGE_KEY);
+if (_oaSaved) { yamlInput.value = _oaSaved; parseSpec(); }
+</script>
+</body>
+</html>

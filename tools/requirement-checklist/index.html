@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ヒアリングチェックリスト</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane-left { width: 220px; background: #fff; border-right: 1px solid #ddd; padding: 14px; overflow-y: auto; flex-shrink: 0; }
+.pane-main { flex: 1; overflow-y: auto; padding: 16px; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+h2:first-child { margin-top: 0; }
+.nav-item { padding: 7px 10px; border-radius: 5px; cursor: pointer; font-size: 13px; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
+.nav-item:hover { background: #f0f4ff; }
+.nav-item.active { background: #e8f0fe; color: #1a56db; font-weight: bold; }
+.nav-item .pct { font-size: 11px; font-weight: normal; }
+.progress-bar-wrap { height: 4px; background: #e0e0e0; border-radius: 2px; margin-top: 4px; }
+.progress-bar { height: 4px; border-radius: 2px; background: #4a90e2; transition: width 0.3s; }
+.overall-progress { background: #fff; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; border: 1px solid #ddd; }
+.overall-label { font-size: 13px; color: #555; margin-bottom: 6px; display: flex; justify-content: space-between; }
+.overall-bar-wrap { height: 10px; background: #e0e0e0; border-radius: 5px; }
+.overall-bar { height: 10px; border-radius: 5px; background: linear-gradient(90deg, #4a90e2, #27ae60); transition: width 0.3s; }
+.category-section { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+.cat-header { padding: 10px 16px; background: #f8f9fa; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.cat-title { font-size: 14px; font-weight: bold; color: #2c3e50; display: flex; align-items: center; gap: 8px; }
+.cat-progress { font-size: 12px; color: #888; display: flex; align-items: center; gap: 8px; }
+.cat-body { padding: 0; }
+.check-item { padding: 10px 16px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 10px; align-items: flex-start; }
+.check-item:last-child { border-bottom: none; }
+.check-item:hover { background: #fafbff; }
+.check-status { flex-shrink: 0; margin-top: 1px; }
+.check-status select { border: 1px solid #ccc; border-radius: 4px; padding: 3px 6px; font-size: 12px; width: auto; margin-bottom: 0; cursor: pointer; }
+.s-ok { background: #d4edda; color: #155724; border-color: #a5d6a7; }
+.s-no { background: #fff; color: #333; }
+.s-na { background: #e2e3e5; color: #555; border-color: #ccc; }
+.check-content { flex: 1; }
+.check-question { font-size: 13px; color: #333; margin-bottom: 4px; line-height: 1.5; }
+.check-hint { font-size: 11px; color: #999; margin-bottom: 5px; }
+.check-memo { width: 100%; border: 1px solid #eee; border-radius: 3px; padding: 4px 8px; font-size: 12px; color: #444; resize: none; font-family: sans-serif; }
+.check-memo:focus { border-color: #4a90e2; outline: none; }
+.badge-ok { background: #d4edda; color: #155724; }
+.badge-na { background: #e2e3e5; color: #555; }
+.badge-no { background: #fff; color: #888; border: 1px solid #ddd; }
+.count-chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; background: #e2e3e5; color: #555; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ヒアリングチェックリスト（要件確認漏れ防止）</h1>
+  <button onclick="resetAll()">リセット</button>
+  <button onclick="exportMarkdown()">レポートエクスポート</button>
+  <button onclick="checkAllOK()">全項目「確認済」にする</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane-left">
+    <h2>カテゴリ</h2>
+    <div id="nav-list"></div>
+  </div>
+  <div class="pane-main">
+    <div class="overall-progress">
+      <div class="overall-label">
+        <span>全体進捗</span>
+        <span id="overall-pct-label">0%</span>
+      </div>
+      <div class="overall-bar-wrap"><div class="overall-bar" id="overall-bar" style="width:0%"></div></div>
+    </div>
+    <div id="checklist-body"></div>
+  </div>
+</div>
+<script>
+const STORAGE_KEY = 'req-checklist-v1';
+const CATEGORIES = [
+  {
+    id: 'business', icon: '💼', title: '業務フロー・目的',
+    items: [
+      { q: 'このシステムで解決したい業務課題は何か', hint: '現状の課題・ペインポイントを具体的に確認する' },
+      { q: 'システム導入後の理想の業務フローはどうなるか', hint: 'As-Is（現状）とTo-Be（目標）を整理する' },
+      { q: '主要な業務フロー・シナリオは何か（主要3〜5パターン）', hint: '申請→承認→完了 などの基本フローを確認' },
+      { q: '例外フロー・エラーケースはあるか（差し戻し・却下・キャンセル等）', hint: '正常系だけでなく例外系も漏れなく確認する' },
+      { q: '現在の業務はどのように行っているか（手動・Excel・別システム）', hint: '現行システムや業務の手順書があれば共有してもらう' },
+    ]
+  },
+  {
+    id: 'users', icon: '👥', title: 'ユーザー・権限',
+    items: [
+      { q: 'このシステムを使うユーザーの種類（ロール）は何か', hint: '一般ユーザー・承認者・管理者など、すべての役割を洗い出す' },
+      { q: '各ロールが実施できる操作・閲覧できる情報はどこまでか', hint: '権限マトリクスの素材になる。曖昧なまま進めないこと' },
+      { q: '想定ユーザー数（同時接続・月次アクティブ）はどれくらいか', hint: '非機能要件（性能設計）に直結する' },
+      { q: 'ユーザーの技術リテラシー・IT習熟度はどの程度か', hint: 'UX設計・ヘルプ機能の必要性に影響する' },
+      { q: '外部ユーザー（顧客・取引先）がアクセスする必要はあるか', hint: 'ネットワーク設計・認証方式に影響する' },
+    ]
+  },
+  {
+    id: 'functions', icon: '⚙️', title: '機能要件',
+    items: [
+      { q: '必ず実装が必要な機能（Must）はどれか', hint: 'MoSCoW法でMust要件を明確化する' },
+      { q: 'CRUD操作（作成・閲覧・更新・削除）の対象データは何か', hint: '主要なエンティティを洗い出す' },
+      { q: '一覧・検索・絞り込み機能は必要か。検索条件・表示項目は何か', hint: 'ページネーション・ソート仕様も同時に確認' },
+      { q: '帳票・レポート出力（PDF/Excel/CSV）は必要か', hint: '出力形式・レイアウト・項目をなるべく早期に確認' },
+      { q: 'バッチ処理・定期実行（夜間集計・メール送信等）は必要か', hint: '実行タイミング・失敗時の処理も確認' },
+      { q: 'ファイルアップロード・ダウンロードは必要か', hint: 'ファイル種別・サイズ上限・保存先を確認' },
+      { q: 'メール・SMS・プッシュ通知は必要か。送信タイミングと宛先は', hint: 'メールテンプレートの管理や送信ログが必要か確認' },
+      { q: '外部システムとのAPI連携・データ連携は必要か', hint: '連携先のAPI仕様や認証方式を事前に確認する' },
+    ]
+  },
+  {
+    id: 'data', icon: '🗄️', title: 'データ・マスタ',
+    items: [
+      { q: '扱う主要なデータエンティティ（テーブル）は何か', hint: 'ユーザー・申請・商品など、主要なデータの塊を洗い出す' },
+      { q: 'マスタデータ（コード・区分・組織・商品など）は何があるか', hint: '初期データの提供者と更新権限者を確認する' },
+      { q: '既存データの移行は必要か。現行データのフォーマットは何か', hint: 'データクレンジングの必要性と移行作業の工数を見積もる' },
+      { q: 'データの保持期間・アーカイブ・削除ポリシーはあるか', hint: '法令・社内ポリシーによる保存要件を確認する' },
+      { q: '個人情報・機密情報が含まれるか。取り扱い方針はあるか', hint: 'GDPR・個人情報保護法への対応が必要か確認' },
+    ]
+  },
+  {
+    id: 'nonfunc', icon: '📊', title: '非機能要件',
+    items: [
+      { q: '応答時間の要件はあるか（画面表示・API応答）', hint: '例：通常操作で3秒以内。ピーク時の基準も確認' },
+      { q: 'システムの稼働時間・可用性の要件はあるか（24/365か）', hint: 'メンテナンス時間帯の設定も合わせて確認' },
+      { q: 'スマートフォン・タブレット対応は必要か', hint: 'レスポンシブ対応か専用アプリかを確認' },
+      { q: '対応ブラウザ・OSの指定はあるか', hint: '社内標準ブラウザ（IE残存など）の確認は必須' },
+      { q: 'バックアップ・障害復旧（RTO/RPO）の要件はあるか', hint: 'RTO: 復旧時間の目標、RPO: 許容データ損失時間' },
+      { q: 'アクセスログ・操作ログの記録・保持が必要か', hint: '監査・セキュリティ要件として重要' },
+    ]
+  },
+  {
+    id: 'security', icon: '🔐', title: 'セキュリティ',
+    items: [
+      { q: '認証方式はどうするか（パスワード・SSO・OAuth等）', hint: '社内Active Directory連携の必要性も確認' },
+      { q: 'パスワードポリシー（文字数・複雑さ・有効期限）はあるか', hint: 'セキュリティ基準が社内規定で決まっている場合が多い' },
+      { q: '通信の暗号化（HTTPS）は必須か', hint: '現代では原則HTTPS必須。例外がないか確認' },
+      { q: '脆弱性診断・セキュリティテストの実施は必要か', hint: '外部ベンダーへの診断依頼かどうかを確認' },
+      { q: '準拠すべきセキュリティ基準・法令はあるか（ISMSなど）', hint: '金融・医療・官公庁など業界固有の規制がある場合も' },
+    ]
+  },
+  {
+    id: 'operation', icon: '🔧', title: '運用・移行',
+    items: [
+      { q: '本番リリース後の運用体制は誰が担当するか', hint: '社内IT部門か、保守契約が必要かを確認' },
+      { q: 'ユーザー管理（アカウント追加・削除）は誰がどう行うか', hint: '管理者機能の必要性と運用手順を確認' },
+      { q: 'システム障害時の連絡先・対応フローは決まっているか', hint: '障害対応の体制と責任範囲を合意しておく' },
+      { q: 'リリース方式（一斉・段階・並行稼働）の希望はあるか', hint: 'カットオーバー計画とデータ移行タイミングに影響する' },
+      { q: 'ユーザートレーニング・マニュアルの作成は必要か', hint: '教育コストと期間をスケジュールに組み込む' },
+    ]
+  },
+  {
+    id: 'constraint', icon: '📅', title: 'スケジュール・制約',
+    items: [
+      { q: '納期・本番稼働の目標日はいつか', hint: '法令対応や業務サイクルによって固定される場合がある' },
+      { q: '予算の上限・概算はあるか', hint: '初期費用・ランニング費用の上限を確認する' },
+      { q: 'フェーズ分割（MVP先行リリース）の可能性はあるか', hint: '段階的リリースにより早期価値提供と要件リスク低減が可能' },
+      { q: '利用するインフラ・クラウド環境に制約はあるか', hint: '社内ポリシーでクラウド利用可否・ベンダー指定がある場合も' },
+      { q: '既存システムとの統合・互換性の要件はあるか', hint: '既存DBのスキーマ変更可否・APIバージョン固定など' },
+    ]
+  },
+];
+
+function load() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+function getStatus(catId, itemIdx) {
+  return (load()[`${catId}_${itemIdx}_status`] || 'no');
+}
+function getMemo(catId, itemIdx) {
+  return (load()[`${catId}_${itemIdx}_memo`] || '');
+}
+function setStatus(catId, itemIdx, val) {
+  const d = load(); d[`${catId}_${itemIdx}_status`] = val; save(d);
+  updateProgress();
+}
+function setMemo(catId, itemIdx, val) {
+  const d = load(); d[`${catId}_${itemIdx}_memo`] = val; save(d);
+}
+
+function getCatProgress(cat) {
+  const ok = cat.items.filter((_, i) => getStatus(cat.id, i) === 'ok').length;
+  const na = cat.items.filter((_, i) => getStatus(cat.id, i) === 'na').length;
+  const denom = cat.items.length - na;
+  return { ok, na, total: cat.items.length, pct: denom > 0 ? Math.round(ok / denom * 100) : 100 };
+}
+
+function getOverallProgress() {
+  let totalOk = 0, totalNa = 0, totalAll = 0;
+  CATEGORIES.forEach(cat => {
+    const p = getCatProgress(cat);
+    totalOk += p.ok; totalNa += p.na; totalAll += p.total;
+  });
+  const denom = totalAll - totalNa;
+  return { ok: totalOk, na: totalNa, total: totalAll, pct: denom > 0 ? Math.round(totalOk / denom * 100) : 100 };
+}
+
+function render() {
+  // Nav
+  const navEl = document.getElementById('nav-list');
+  navEl.innerHTML = CATEGORIES.map(cat => {
+    const p = getCatProgress(cat);
+    return `<div class="nav-item" id="nav-${cat.id}" onclick="scrollTo('${cat.id}')">
+      <span>${cat.icon} ${cat.title}</span>
+      <span class="pct" style="color:${p.pct===100?'#27ae60':'#888'}">${p.pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Body
+  const bodyEl = document.getElementById('checklist-body');
+  bodyEl.innerHTML = CATEGORIES.map(cat => {
+    const p = getCatProgress(cat);
+    const items = cat.items.map((item, i) => {
+      const status = getStatus(cat.id, i);
+      const memo = getMemo(cat.id, i);
+      const selClass = status === 'ok' ? 's-ok' : status === 'na' ? 's-na' : 's-no';
+      return `<div class="check-item">
+        <div class="check-status">
+          <select class="${selClass}" onchange="setStatus('${cat.id}',${i},this.value);this.className=this.value==='ok'?'s-ok':this.value==='na'?'s-na':'s-no'">
+            <option value="no" ${status==='no'?'selected':''}>未確認</option>
+            <option value="ok" ${status==='ok'?'selected':''}>✅ 確認済</option>
+            <option value="na" ${status==='na'?'selected':''}>N/A</option>
+          </select>
+        </div>
+        <div class="check-content">
+          <div class="check-question">${item.q}</div>
+          ${item.hint ? `<div class="check-hint">💡 ${item.hint}</div>` : ''}
+          <textarea class="check-memo" rows="1" placeholder="メモ・確認結果を入力..." onchange="setMemo('${cat.id}',${i},this.value)" onfocus="this.rows=3" onblur="this.rows=this.value?2:1">${escHtml(memo)}</textarea>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="category-section" id="section-${cat.id}">
+      <div class="cat-header" onclick="toggleSection('${cat.id}')">
+        <div class="cat-title">${cat.icon} ${cat.title} <span class="count-chip">${cat.items.length}項目</span></div>
+        <div class="cat-progress">
+          <span style="color:${p.pct===100?'#27ae60':'#888'};font-weight:bold">${p.pct}%</span>
+          <span style="font-size:11px;color:#aaa">${p.ok}/${cat.items.length - p.na}件</span>
+          <span id="toggle-${cat.id}">▼</span>
+        </div>
+      </div>
+      <div class="cat-body" id="body-${cat.id}">${items}</div>
+    </div>`;
+  }).join('');
+
+  updateProgress();
+}
+
+function updateProgress() {
+  const p = getOverallProgress();
+  document.getElementById('overall-bar').style.width = p.pct + '%';
+  document.getElementById('overall-pct-label').textContent = `${p.pct}%（${p.ok}/${p.total - p.na}件確認済）`;
+  CATEGORIES.forEach(cat => {
+    const cp = getCatProgress(cat);
+    const navItem = document.getElementById(`nav-${cat.id}`);
+    if (navItem) navItem.querySelector('.pct').textContent = cp.pct + '%';
+    if (navItem) navItem.querySelector('.pct').style.color = cp.pct === 100 ? '#27ae60' : '#888';
+  });
+}
+
+function toggleSection(id) {
+  const body = document.getElementById('body-' + id);
+  const icon = document.getElementById('toggle-' + id);
+  body.style.display = body.style.display === 'none' ? '' : 'none';
+  icon.textContent = body.style.display === 'none' ? '▶' : '▼';
+}
+
+function scrollTo(id) {
+  const el = document.getElementById('section-' + id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAll() {
+  if (!confirm('すべての回答をリセットしますか？')) return;
+  save({});
+  render();
+}
+
+function checkAllOK() {
+  if (!confirm('全項目を「確認済」にしますか？')) return;
+  const d = load();
+  CATEGORIES.forEach(cat => {
+    cat.items.forEach((_, i) => { d[`${cat.id}_${i}_status`] = 'ok'; });
+  });
+  save(d);
+  render();
+}
+
+function exportMarkdown() {
+  let md = `# ヒアリングチェックリスト確認レポート\n\n出力日: ${new Date().toLocaleDateString('ja-JP')}\n\n`;
+  const overall = getOverallProgress();
+  md += `全体進捗: ${overall.pct}%（${overall.ok}/${overall.total - overall.na}件確認済）\n\n`;
+  CATEGORIES.forEach(cat => {
+    const p = getCatProgress(cat);
+    md += `## ${cat.icon} ${cat.title}（${p.pct}% / ${p.ok}/${cat.items.length - p.na}件）\n\n`;
+    cat.items.forEach((item, i) => {
+      const status = getStatus(cat.id, i);
+      const memo = getMemo(cat.id, i);
+      const mark = status === 'ok' ? '✅' : status === 'na' ? '➖' : '⬜';
+      md += `- ${mark} ${item.q}`;
+      if (memo) md += `\n  - メモ: ${memo}`;
+      md += '\n';
+    });
+    md += '\n';
+  });
+  saveFile(md, 'hearing-checklist.md', 'text/markdown');
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(load(), null, 2), 'hearing-checklist.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (typeof data !== 'object' || Array.isArray(data)) throw new Error('オブジェクト形式のJSONを指定してください');
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      save(data); render();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+render();
+</script>
+</body>
+</html>

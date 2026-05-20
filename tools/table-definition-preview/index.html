@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>テーブル定義書プレビュー</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane { flex: 1; padding: 16px; overflow-y: auto; }
+.pane-left { background: #fff; border-right: 1px solid #ddd; max-width: 420px; display: flex; flex-direction: column; }
+.pane-right { background: #fafafa; }
+textarea#input { flex: 1; font-family: monospace; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; padding: 10px; resize: none; min-height: 300px; }
+.btn { padding: 8px 20px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; margin-top: 10px; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+h2 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+.table-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+.table-card-header { background: #2c3e50; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+.table-card-header .table-name { font-size: 15px; font-weight: bold; }
+.table-card-header .table-logical { font-size: 12px; color: #aaa; }
+table.def { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.def th { background: #f5f6f7; padding: 7px 10px; border-bottom: 1px solid #ddd; font-weight: 600; color: #555; text-align: left; white-space: nowrap; }
+table.def td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+table.def tr:last-child td { border-bottom: none; }
+table.def tr:hover td { background: #f9fbff; }
+.badge { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; font-weight: bold; margin-right: 2px; white-space: nowrap; }
+.badge-pk { background: #fffbdd; color: #856404; border: 1px solid #f0d060; }
+.badge-fk { background: #e8f0fe; color: #1a73e8; border: 1px solid #c5d8f8; }
+.badge-nn { background: #fce8e8; color: #c62828; border: 1px solid #f5b5b5; }
+.badge-uq { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.badge-idx { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
+.badge-ai { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+.badge-def { background: #eceff1; color: #455a64; border: 1px solid #cfd8dc; }
+.hint { font-size: 12px; color: #888; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>テーブル定義書プレビュー</h1>
+  <button onclick="loadSample()">サンプル</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane pane-left">
+    <h2>Markdown入力</h2>
+    <p class="hint">テーブル定義をMarkdown形式で入力してください。<br>複数テーブルは <code>## テーブル名</code> で区切ります。</p>
+    <textarea id="input" placeholder="## users テーブル（ユーザー）
+
+| カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
+|---------|--------|----|----|-----------|------|
+| id | ユーザーID | BIGINT | PK, AI | - | |
+| email | メールアドレス | VARCHAR(255) | NN, UQ | - | |
+| name | 氏名 | VARCHAR(100) | NN | - | |
+| created_at | 作成日時 | DATETIME | NN | CURRENT_TIMESTAMP | |"></textarea>
+    <button class="btn btn-primary" onclick="parse()">プレビュー生成</button>
+  </div>
+  <div class="pane pane-right">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 style="margin:0">プレビュー</h2>
+      <button class="btn-sm" onclick="parse()">更新</button>
+    </div>
+    <div id="preview"></div>
+  </div>
+</div>
+<script>
+function parse() {
+  const raw = document.getElementById('input').value.trim();
+  if (!raw) { document.getElementById('preview').innerHTML = '<p style="color:#888;font-size:13px">入力してプレビュー生成ボタンを押してください</p>'; return; }
+
+  const sections = [];
+  const lines = raw.split('\n');
+  let current = null;
+
+  lines.forEach(line => {
+    const h2 = line.match(/^##\s+(.+)/);
+    if (h2) {
+      if (current) sections.push(current);
+      const titleMatch = h2[1].match(/^(\S+)\s+(?:テーブル)?[（(]?(.+?)[）)]?$/);
+      current = { physical: titleMatch ? titleMatch[1] : h2[1], logical: titleMatch ? titleMatch[2] : '', rows: [], headers: [] };
+    } else if (current) {
+      if (line.startsWith('|') && !line.match(/^\|\s*[-:]+/)) {
+        const cells = line.split('|').map(c => c.trim()).filter((c, i, a) => i !== 0 && i !== a.length - 1);
+        if (!current.headers.length) { current.headers = cells; }
+        else { current.rows.push(cells); }
+      }
+    }
+  });
+  if (current) sections.push(current);
+
+  if (!sections.length) {
+    document.getElementById('preview').innerHTML = '<p style="color:#888;font-size:13px">テーブルが見つかりませんでした。## テーブル名 で区切ってください。</p>';
+    return;
+  }
+
+  let html = '';
+  sections.forEach(s => {
+    html += `<div class="table-card">
+      <div class="table-card-header">
+        <span class="table-name">${s.physical}</span>
+        <span class="table-logical">${s.logical}</span>
+      </div>
+      <table class="def"><thead><tr>`;
+    s.headers.forEach(h => { html += `<th>${h}</th>`; });
+    html += '</tr></thead><tbody>';
+    s.rows.forEach(row => {
+      html += '<tr>';
+      row.forEach((cell, ci) => {
+        if (ci === 0) {
+          html += `<td><strong>${cell}</strong></td>`;
+        } else if (ci === 2 || s.headers[ci] === '制約' || s.headers[ci] === 'Constraints') {
+          html += `<td>${renderConstraints(cell)}</td>`;
+        } else {
+          html += `<td>${cell}</td>`;
+        }
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+  });
+  document.getElementById('preview').innerHTML = html;
+}
+
+function renderConstraints(text) {
+  if (!text || text === '-') return '<span style="color:#ccc">-</span>';
+  return text.split(/[,、]/).map(c => {
+    const t = c.trim().toUpperCase();
+    if (t === 'PK') return '<span class="badge badge-pk">PK</span>';
+    if (t === 'FK') return '<span class="badge badge-fk">FK</span>';
+    if (t === 'NN' || t === 'NOT NULL') return '<span class="badge badge-nn">NN</span>';
+    if (t === 'UQ' || t === 'UNIQUE') return '<span class="badge badge-uq">UQ</span>';
+    if (t === 'AI' || t === 'AUTO_INCREMENT') return '<span class="badge badge-ai">AI</span>';
+    if (t === 'IDX' || t === 'INDEX') return '<span class="badge badge-idx">IDX</span>';
+    return `<span class="badge badge-def">${c.trim()}</span>`;
+  }).join('');
+}
+
+function loadSample() {
+  document.getElementById('input').value = `## users テーブル（ユーザー）
+
+| カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
+|---------|--------|----|----|-----------|------|
+| id | ユーザーID | BIGINT | PK, AI | - | |
+| email | メールアドレス | VARCHAR(255) | NN, UQ | - | |
+| name | 氏名 | VARCHAR(100) | NN | - | |
+| password_hash | パスワードハッシュ | VARCHAR(255) | NN | - | bcrypt |
+| role | ロール | ENUM | NN | 'user' | user/admin |
+| created_at | 作成日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+| updated_at | 更新日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+| deleted_at | 削除日時 | DATETIME | - | NULL | 論理削除 |
+
+## posts テーブル（投稿）
+
+| カラム名 | 論理名 | 型 | 制約 | デフォルト | 備考 |
+|---------|--------|----|----|-----------|------|
+| id | 投稿ID | BIGINT | PK, AI | - | |
+| user_id | 投稿者ID | BIGINT | FK, NN | - | users.id |
+| title | タイトル | VARCHAR(200) | NN | - | |
+| body | 本文 | TEXT | NN | - | |
+| status | ステータス | ENUM | NN | 'draft' | draft/published |
+| published_at | 公開日時 | DATETIME | - | NULL | |
+| created_at | 作成日時 | DATETIME | NN | CURRENT_TIMESTAMP | |
+`;
+  parse();
+}
+
+const TD_STORAGE_KEY = 'table-definition-v1';
+const tdInput = document.getElementById('input');
+
+function autoSave() { localStorage.setItem(TD_STORAGE_KEY, tdInput.value); }
+tdInput.addEventListener('input', autoSave);
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify({ markdown: tdInput.value }, null, 2), 'table-definition.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json,.md,.txt');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      let text = ev.target.result;
+      if (file.name.endsWith('.json')) {
+        const data = JSON.parse(text);
+        text = data.markdown || data;
+      }
+      if (!confirm('現在の入力を読み込んだデータで上書きしますか？')) return;
+      tdInput.value = text; autoSave(); parse();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+// ページロード時に復元
+const _tdSaved = localStorage.getItem(TD_STORAGE_KEY);
+if (_tdSaved) { tdInput.value = _tdSaved; }
+
+parse();
+</script>
+</body>
+</html>
