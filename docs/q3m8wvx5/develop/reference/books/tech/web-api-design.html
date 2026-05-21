@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -33,7 +33,7 @@
         <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔌</span><h2>APIはシステム同士をつなぐ「契約」</h2></div>
         <p>API（Application Programming Interface）とは、<strong>異なるシステムやプログラムが互いにやりとりするための「決まりごと」</strong>です。レストランに例えると、お客さん（API利用者）とキッチン（システム内部）の間に立つ「メニューとウェイター」の役割です。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; background:#f8f9fa">
             <h3 style="margin:0 0 0.5rem; color:var(--primary)">📋 メニュー（API仕様）</h3>
             <p style="margin:0; font-size:0.9rem">「こういう注文ができますよ」という約束。利用者はメニューを見て何が頼めるかがわかります。</p>
@@ -128,7 +128,7 @@
         <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔗</span><h2>良いURLは「読むだけで意味がわかる」</h2></div>
         <p>URLはAPIの「住所」です。利用者はURLを見て何のリソースにアクセスしているかを理解します。<strong>一貫性があり・予測可能で・直感的なURL</strong>を目指しましょう。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.75rem; color:#dc3545">😰 悪いURL例</h3>
             <ul style="margin:0; padding-left:1.25rem; font-family:monospace; font-size:0.85rem; display:grid; gap:0.4rem">
@@ -179,7 +179,7 @@
         <p>現代のWeb APIでは<strong>JSON形式</strong>が標準です。フィールド名・データ型・構造を一貫させることで、利用者が迷わず使えるAPIになります。</p>
 
         <h3 style="margin:1rem 0 0.5rem">レスポンスの基本構造</h3>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem">
+        <div class="grid-2col">
           <div>
             <p style="margin:0 0 0.25rem; font-size:0.85rem; color:#666">✅ 単一リソースの取得</p>
             <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:8px; overflow-x:auto">{
@@ -252,7 +252,7 @@
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔍</span><h2>エラーは「なぜ失敗したか」を伝える</h2></div>
         <p>エラーが返ってきたとき、利用者が<strong>「何が問題で、どう直せばいいか」</strong>を理解できるように設計することが大切です。エラーメッセージは利用者への手紙です。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:0.75rem">
+        <div class="grid-2col" style="margin-top:0.75rem">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.75rem; color:#dc3545">😰 悪いエラーレスポンス</h3>
             <pre style="margin:0; font-size:0.8rem; background:#fff; padding:0.75rem; border-radius:4px">{
@@ -299,7 +299,7 @@
         <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🛡️</span><h2>「誰か」と「何ができるか」は別の問題</h2></div>
         <p>認証と認可は混同されがちですが、まったく別の概念です。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:0.75rem">
+        <div class="grid-2col" style="margin-top:0.75rem">
           <div style="border:2px solid #007bff; border-radius:8px; padding:1rem; background:#f0f7ff">
             <h3 style="margin:0 0 0.5rem; color:#007bff">🪪 認証（Authentication）</h3>
             <p style="margin:0; font-size:0.9rem">「あなたは誰ですか？」を確認すること。ログイン・トークン検証がこれにあたります。<br><br><b>例：</b>IDとパスワードを確認して「田中さんです」と証明する</p>

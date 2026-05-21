@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -33,7 +33,7 @@
         <div class="card-header"><span class="card-icon" style="background:#e8f4e8">⏳</span><h2>50年以上生き続けた設計思想</h2></div>
         <p>UNIXは1969年にAT&Tベル研究所で誕生しました。その後、Linux・macOS・AndroidなどあらゆるOSの土台となり、現代のクラウドサーバーの大半で動いています。これほど長く生き残った理由のひとつが、<strong>シンプルさを徹底した設計哲学</strong>にあります。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">❌ 複雑さを積み重ねるソフトウェア</h3>
             <ul style="margin:0; padding-left:1.25rem">
@@ -61,7 +61,7 @@
         <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🔬</span><h2>Small is Beautiful</h2></div>
         <p>ひとつのプログラム・関数・クラスは<strong>できるだけ小さく保つ</strong>べきです。小さいコードは読みやすく、テストしやすく、再利用しやすい。大きなコードはその反対です。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545; font-size:0.9rem">😰 やりがちな失敗</h3>
             <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// 1つの関数が何でもやる
@@ -165,7 +165,7 @@ function processOrder(order) {
         <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🌐</span><h2>Portability over Efficiency</h2></div>
         <p>特定の環境・OS・ハードウェアに依存したコードを書くと、環境が変わったときに動かなくなります。<strong>特定の環境に縛られないコードは、長く使い続けられます。</strong></p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:0.75rem">
+        <div class="grid-2col" style="margin-top:0.75rem">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">移植性が低い例</h3>
             <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
@@ -250,7 +250,7 @@ function processOrder(order) {
         <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
           <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
             <h3 style="margin:0 0 0.5rem; color:var(--primary)">自動化すべきよくある作業</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.9rem">
+            <div class="grid-2col" style="gap:0.5rem; font-size:0.9rem">
               <ul style="margin:0; padding-left:1.25rem">
                 <li>ビルド・デプロイ手順</li>
                 <li>テストの実行</li>
@@ -278,7 +278,7 @@ function processOrder(order) {
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔗</span><h2>Avoid Captive User Interfaces</h2></div>
         <p>ユーザーに次のステップを強制する「対話的なインターフェース」は、自動化の妨げになります。<strong>入力と出力を標準化し、他のプログラムと繋がりやすくする</strong>設計を目指しましょう。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:0.75rem">
+        <div class="grid-2col" style="margin-top:0.75rem">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">自動化しにくい設計</h3>
             <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">

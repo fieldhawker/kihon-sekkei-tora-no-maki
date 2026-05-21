@@ -36,6 +36,13 @@
   --shadow:     0 4px 12px rgba(0,0,0,.10);
   --shadow-lg:  0 8px 24px rgba(0,0,0,.14);
   --transition: 0.2s ease;
+
+  /* フォーム・コンポーネント用エイリアス変数 */
+  --border:    #e5e7eb;   /* = --gray-200 */
+  --bg:        #f9fafb;   /* = --gray-50  */
+  --bg-card:   #ffffff;
+  --bg-hover:  #f3f4f6;   /* = --gray-100 */
+  --text-muted: #6b7280;  /* gray-500相当 */
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -833,6 +840,24 @@ a:hover { text-decoration: underline; }
   .page-header { padding: 2rem 1.5rem; }
   .page-header h1 { font-size: 1.5rem; }
   .phase-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== RESPONSIVE GRID HELPERS ===== */
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.grid-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .grid-2col,
+  .grid-3col { grid-template-columns: 1fr; }
 }
 
 /* ===== UTILITY ===== */

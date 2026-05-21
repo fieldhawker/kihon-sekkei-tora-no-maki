@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -51,7 +51,7 @@
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🚶</span><h2>① ジェイウォーク（Jaywalking）— カンマ区切りリストを1カラムに詰め込む</h2></div>
         <p><strong>「複数の値を1つのカラムに入れれば楽」</strong>と思ってカンマ区切りなどで詰め込んでしまう設計です。横断歩道を無視して道を渡る（Jaywalk）ことになぞらえています。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターンの例</h3>
             <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- タグをカンマ区切りで1カラムに保存
@@ -95,7 +95,7 @@ CREATE TABLE article_tags (
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🌀</span><h2>② EAV（Entity-Attribute-Value）— 汎用テーブルで属性を縦持ちにする</h2></div>
         <p>「将来どんな属性が増えても対応できるように」とすべての属性を「名前・値」の形で縦に並べる設計です。柔軟に見えて、実際には非常に扱いにくくなります。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターンの例</h3>
             <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- すべての属性をkey-valueで管理
@@ -132,7 +132,7 @@ CREATE TABLE users (
         <div class="card-header"><span class="card-icon" style="background:#fff3cd">🆔</span><h2>③ IDリクワイアド（ID Required）— とにかく id カラムを追加する</h2></div>
         <p>「テーブルには必ず id という名前の連番主キーを付ける」というルールを盲目的に適用してしまうアンチパターンです。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 問題になるケース</h3>
             <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 中間テーブルに不要な id を付ける
@@ -190,7 +190,7 @@ CREATE TABLE article_tags (
         <div class="card-header"><span class="card-icon" style="background:#fff3cd">🔫</span><h2>⑤ インデックスショットガン — インデックスを闇雲に付ける（または全く付けない）</h2></div>
         <p>インデックスの理解が浅いまま「なんとなく全部に付ける」または「パフォーマンスを意識しないで全く付けない」というアンチパターンです。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 よくある失敗</h3>
             <ul style="margin:0; padding-left:1.25rem">
@@ -216,7 +216,7 @@ CREATE TABLE article_tags (
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">💸</span><h2>⑥ 丸め誤差（Rounding Errors）— 金額や精密な数値に FLOAT を使う</h2></div>
         <p>浮動小数点型（FLOAT / DOUBLE）は2進数で数値を表現するため、<strong>10進数の値を正確に表現できません</strong>。金額計算など精度が求められる場面で使うと誤差が発生します。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターン</h3>
             <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">CREATE TABLE orders (
@@ -245,7 +245,7 @@ CREATE TABLE article_tags (
         <div class="card-header"><span class="card-icon" style="background:#fff3cd">👻</span><h2>⑦ 暗黙の列（Implicit Columns）— SELECT * を使う</h2></div>
         <p><code>SELECT *</code> はすべてのカラムを取得するため「楽」に見えますが、長期的には多くの問題を引き起こします。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 SELECT * の問題</h3>
             <ul style="margin:0; padding-left:1.25rem">
@@ -273,7 +273,7 @@ WHERE id = 1;</pre>
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🌫️</span><h2>⑧ 曖昧なグループ（Ambiguous Groups）— GROUP BY の誤用</h2></div>
         <p><code>GROUP BY</code> の結果に、グループ化していないカラムをそのまま <code>SELECT</code> しようとするアンチパターンです。MySQLなど一部のDBは警告なく動いてしまうため、特に注意が必要です。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターン</h3>
             <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- department_id でグループ化しているのに
@@ -321,7 +321,7 @@ GROUP BY department_id;
         <div class="card-header"><span class="card-icon" style="background:#fff3cd">❓</span><h2>⑩ 未知への恐怖（Fear of the Unknown）— NULL の誤解</h2></div>
         <p><code>NULL</code> は「値がない・不明」を表す特別な値です。ところが <code>NULL = NULL</code> は <code>TRUE</code> ではなく <code>NULL</code>（不明）になるなど、直感に反する動作があります。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 よくあるミス</h3>
             <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- NULL と = で比較しても常に偽になる
@@ -352,7 +352,7 @@ WHERE deleted_at IS NOT NULL  -- OK
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">💉</span><h2>⑪ SQLインジェクション — ユーザー入力を直接クエリに埋め込む</h2></div>
         <p>ユーザーが入力した値を検証せずにSQLに埋め込むと、悪意のある入力によってデータが破壊・漏洩する最も危険なアンチパターンです。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 危険なコード例（PHP）</h3>
             <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">// ユーザー入力をそのまま埋め込む
@@ -382,7 +382,7 @@ $stmt->execute([$name]);
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔓</span><h2>⑫ 読めるパスワード（Readable Passwords）— パスワードを平文で保存する</h2></div>
         <p>パスワードをそのままDBに保存するアンチパターンです。DBが漏洩した瞬間に全ユーザーのパスワードが流出します。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 やってはいけない</h3>
             <ul style="margin:0; padding-left:1.25rem">

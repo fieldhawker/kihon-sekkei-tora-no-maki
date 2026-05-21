@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -33,7 +33,7 @@
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🏚️</span><h2>「古いコード」ではなく「テストのないコード」</h2></div>
         <p>本書での定義はシンプルです。<strong>レガシーコードとは、テストのないコードのことです。</strong>昨日書いたコードでも、テストがなければレガシーです。逆に10年前のコードでも、テストがあれば安心して変更できます。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 レガシーコードの特徴</h3>
             <ul style="margin:0; padding-left:1.25rem">
@@ -110,7 +110,7 @@
         <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🗣️</span><h2>コードは「意図」を語るべき</h2></div>
         <p>処理の手順（HOW）はコード自体が示しています。<strong>コードが語るべきは「なぜそうするのか（WHY）」</strong>です。良い名前・小さな関数・適切なコメントがWHYを伝える手段になります。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545; font-size:0.9rem">😰 HOWしか語らない例</h3>
             <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// ユーザーリストをループして
@@ -309,7 +309,7 @@ List&lt;User&gt; getActiveUsers(List&lt;User&gt; users) {
         <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔧</span><h2>依存するオブジェクトは外から渡す</h2></div>
         <p><strong>依存性注入（DI: Dependency Injection）</strong>とは、クラスが必要とするオブジェクトを内部で生成せず、<strong>コンストラクタや引数として外から受け取る</strong>設計パターンです。テストのしやすさが劇的に向上します。</p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+        <div class="grid-2col">
           <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
             <h3 style="margin:0 0 0.5rem; color:#dc3545; font-size:0.9rem">😰 DI なし（テスト困難）</h3>
             <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">class OrderService {
