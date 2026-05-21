@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>釣り 虎の巻</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .hero { background: linear-gradient(135deg, #0c1a2e 0%, #1e3a5f 60%, #0369a1 100%); color: #fff; padding: 3.5rem 3rem 3rem; position: relative; overflow: hidden; }
+    .hero::before { content:''; position:absolute; top:-60px; right:-60px; width:280px; height:280px; border-radius:50%; background:rgba(255,255,255,.04); }
+    .hero::after  { content:''; position:absolute; bottom:-80px; left:10%; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.03); }
+    .hero-label { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:#7dd3fc; margin-bottom:.6rem; }
+    .hero h1 { font-size:2.2rem; font-weight:700; line-height:1.3; margin-bottom:.8rem; }
+    .hero h1 span { color:#bae6fd; }
+    .hero-desc { font-size:.95rem; color:#bfdbfe; max-width:560px; line-height:1.8; }
+    .hero-tags { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1.25rem; }
+    .hero-tag { background:rgba(255,255,255,.1); color:#e0f2fe; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem; }
+
+    .fish-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.25rem; margin-top:1rem; }
+    .fish-card { display:flex; flex-direction:column; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb; text-decoration:none; color:inherit; transition:box-shadow .2s, transform .2s; }
+    .fish-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.1); transform:translateY(-2px); }
+    .fish-card.coming-soon { pointer-events:none; opacity:.55; }
+    .fish-card-banner { padding:2rem 1.5rem 1.5rem; color:#fff; position:relative; }
+    .fish-card-banner .fish-icon { font-size:2.5rem; display:block; margin-bottom:.75rem; }
+    .fish-card-banner h3 { font-size:1.15rem; font-weight:700; margin:0 0 .3rem; }
+    .fish-card-banner .fish-sub { font-size:.8rem; opacity:.85; }
+    .fish-card-body { padding:1rem 1.25rem 1.25rem; background:#fff; flex:1; }
+    .fish-card-body p { font-size:.85rem; color:#6b7280; line-height:1.7; margin:0 0 .75rem; }
+    .fish-card-tags { display:flex; gap:.4rem; flex-wrap:wrap; }
+    .fish-card-tag { font-size:.72rem; background:#f0f9ff; color:#0369a1; border:1px solid #bae6fd; border-radius:999px; padding:.15rem .6rem; }
+    .fish-card-tag.soon { background:#f9fafb; color:#9ca3af; border-color:#e5e7eb; }
+
+    .banner-aji  { background: linear-gradient(135deg, #0369a1, #0ea5e9); }
+    .banner-ika  { background: linear-gradient(135deg, #4b5563, #6b7280); }
+    .banner-kisu { background: linear-gradient(135deg, #b45309, #d97706); }
+    .banner-saba { background: linear-gradient(135deg, #059669, #10b981); }
+
+    .coming-badge { position:absolute; top:.75rem; right:.75rem; background:rgba(0,0,0,.35); color:#fff; font-size:.68rem; border-radius:999px; padding:.2rem .6rem; letter-spacing:.05em; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="hero">
+      <div class="hero-label">Fishing Handbook — Kanto</div>
+      <h1>釣り<span>虎の巻</span></h1>
+      <p class="hero-desc">関東エリアの陸釣りに関する魚種別ガイドです。釣り場情報・仕掛け選択・時期の目安をまとめています。</p>
+      <div class="hero-tags">
+        <span class="hero-tag">関東エリア</span>
+        <span class="hero-tag">陸釣り</span>
+        <span class="hero-tag">漁港・堤防・磯</span>
+        <span class="hero-tag">初心者〜中級者</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <h2 class="section-title"><span class="title-icon">🐟</span> 魚種別ガイド</h2>
+      <div class="fish-grid">
+
+        <a href="aji.html" class="fish-card">
+          <div class="fish-card-banner banner-aji">
+            <span class="fish-icon">🐟</span>
+            <h3>アジ釣り</h3>
+            <div class="fish-sub">Horse Mackerel</div>
+          </div>
+          <div class="fish-card-body">
+            <p>関東の漁港・堤防・磯からのアジ釣りガイド。月別カレンダー・釣り場情報・仕掛けまで網羅。</p>
+            <div class="fish-card-tags">
+              <span class="fish-card-tag">サビキ釣り</span>
+              <span class="fish-card-tag">アジング</span>
+              <span class="fish-card-tag">初心者向け</span>
+              <span class="fish-card-tag">通年</span>
+            </div>
+          </div>
+        </a>
+
+        <div class="fish-card coming-soon">
+          <div class="fish-card-banner banner-ika">
+            <span class="coming-badge">準備中</span>
+            <span class="fish-icon">🦑</span>
+            <h3>イカ釣り</h3>
+            <div class="fish-sub">Squid Fishing</div>
+          </div>
+          <div class="fish-card-body">
+            <p>エギング・浮きスッテなどイカ釣りの手法と関東エリアの釣り場情報。</p>
+            <div class="fish-card-tags">
+              <span class="fish-card-tag soon">エギング</span>
+              <span class="fish-card-tag soon">浮きスッテ</span>
+              <span class="fish-card-tag soon">秋〜冬</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fish-card coming-soon">
+          <div class="fish-card-banner banner-kisu">
+            <span class="coming-badge">準備中</span>
+            <span class="fish-icon">🐠</span>
+            <h3>キス釣り</h3>
+            <div class="fish-sub">Japanese Whiting</div>
+          </div>
+          <div class="fish-card-body">
+            <p>砂浜・砂地の堤防からの投げ釣りで狙うキス。夏の定番ターゲット。</p>
+            <div class="fish-card-tags">
+              <span class="fish-card-tag soon">投げ釣り</span>
+              <span class="fish-card-tag soon">夏</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fish-card coming-soon">
+          <div class="fish-card-banner banner-saba">
+            <span class="coming-badge">準備中</span>
+            <span class="fish-icon">🐡</span>
+            <h3>サバ釣り</h3>
+            <div class="fish-sub">Mackerel Fishing</div>
+          </div>
+          <div class="fish-card-body">
+            <p>回遊魚サバのサビキ・ジギングガイド。秋の青物シーズンに備えた情報集。</p>
+            <div class="fish-card-tags">
+              <span class="fish-card-tag soon">サビキ</span>
+              <span class="fish-card-tag soon">ジギング</span>
+              <span class="fish-card-tag soon">秋</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+<script src="sidebar.js"></script>
+</body>
+</html>

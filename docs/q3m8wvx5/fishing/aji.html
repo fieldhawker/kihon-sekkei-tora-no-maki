@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アジ釣り 虎の巻</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .hero { background: linear-gradient(135deg, #0c1a2e 0%, #1e3a5f 60%, #0369a1 100%); color: #fff; padding: 3.5rem 3rem 3rem; position: relative; overflow: hidden; }
+    .hero::before { content:''; position:absolute; top:-60px; right:-60px; width:280px; height:280px; border-radius:50%; background:rgba(255,255,255,.04); }
+    .hero::after  { content:''; position:absolute; bottom:-80px; left:10%; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.03); }
+    .hero-label { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:#7dd3fc; margin-bottom:.6rem; }
+    .hero h1 { font-size:2.2rem; font-weight:700; line-height:1.3; margin-bottom:.8rem; }
+    .hero h1 span { color:#bae6fd; }
+    .hero-desc { font-size:.95rem; color:#bfdbfe; max-width:560px; line-height:1.8; }
+    .hero-tags { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1.25rem; }
+    .hero-tag { background:rgba(255,255,255,.1); color:#e0f2fe; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="hero">
+      <div class="hero-label">Aji Fishing Handbook — Kanto</div>
+      <h1>アジ釣り<span>虎の巻</span></h1>
+      <p class="hero-desc">関東の漁港・磯・堤防からのアジ釣りに関する情報をまとめたガイドです。釣り場ガイド・天気/風/気温の釣行判断基準・仕掛けの選び方まで、週末の釣行計画をこのページだけで完結できるよう網羅しています。</p>
+      <div class="hero-tags">
+        <span class="hero-tag">関東エリア</span>
+        <span class="hero-tag">陸釣り</span>
+        <span class="hero-tag">漁港・堤防・磯</span>
+        <span class="hero-tag">アジング</span>
+        <span class="hero-tag">サビキ釣り</span>
+        <span class="hero-tag">初心者〜中級者</span>
+        <span class="hero-tag">釣行判断基準</span>
+        <span class="hero-tag">天気・潮・水温</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <div class="callout-title">このガイドについて</div>
+          関東（神奈川・東京・千葉・茨城）の陸地からのアジ釣りに特化した情報集です。釣行計画の参考としてご活用ください。釣果は潮・天候・時間帯により大きく変動します。
+        </div>
+      </div>
+
+      <!-- ========== 基本情報 ========== -->
+      <h2 class="section-title" id="basics"><span class="title-icon">📅</span> 月別アジ釣りカレンダー（関東）</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>月</th>
+                <th>釣果</th>
+                <th>主なポイント</th>
+                <th>おすすめ仕掛け</th>
+                <th>メモ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1〜2月</td>
+                <td><span class="badge badge-gray">△ 低調</span></td>
+                <td>東京湾奥（大井・若洲）</td>
+                <td>サビキ（小針）</td>
+                <td>水温低下で群れが湾奥に集まる。型は小さい</td>
+              </tr>
+              <tr>
+                <td>3〜4月</td>
+                <td><span class="badge badge-warning">○ 回復</span></td>
+                <td>東京湾・内房</td>
+                <td>サビキ・胴突き</td>
+                <td>水温上昇で徐々に活性が上がる。春アジは型が良い</td>
+              </tr>
+              <tr>
+                <td>5〜6月</td>
+                <td><span class="badge badge-success">◎ 好調</span></td>
+                <td>三浦半島・城ヶ島・外房</td>
+                <td>アジング・サビキ</td>
+                <td>産卵前で荒食い。夕〜夜マヅメが特に釣れる</td>
+              </tr>
+              <tr>
+                <td>7〜8月</td>
+                <td><span class="badge badge-success">◎ 最盛期</span></td>
+                <td>関東全域</td>
+                <td>サビキ・アジング・ウキサビキ</td>
+                <td>豆アジ〜中アジが大量。ファミリー釣りにも最適</td>
+              </tr>
+              <tr>
+                <td>9〜10月</td>
+                <td><span class="badge badge-success">◎ 好調</span></td>
+                <td>三浦半島・外房・茨城</td>
+                <td>アジング・ウキサビキ</td>
+                <td>秋アジは型が大きく引きが強い。夜釣りで大型狙い</td>
+              </tr>
+              <tr>
+                <td>11〜12月</td>
+                <td><span class="badge badge-warning">○ やや落ち着く</span></td>
+                <td>東京湾・神奈川</td>
+                <td>アジング・胴突き</td>
+                <td>群れが沖へ移動し始める。大型は残るが数は減少</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h2 class="section-title"><span class="title-icon">💡</span> 基本情報</h2>
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">⏰</span>
+            <h2>釣れやすい時間帯</h2>
+          </div>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2;">
+            <li><strong>朝マヅメ（日の出前後1〜2時間）</strong>：最もアジの活性が高い時間帯</li>
+            <li><strong>夕マヅメ（日没前後1〜2時間）</strong>：次いで釣れる時間帯。常夜灯付き釣り場で特に有効</li>
+            <li><strong>夜間（常夜灯周辺）</strong>：光に集まるプランクトンを追ってアジが集まる</li>
+            <li><strong>潮の動く時間</strong>：満潮・干潮前後1時間が特に活性が高い</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🌊</span>
+            <h2>釣れる潮の条件</h2>
+          </div>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2;">
+            <li><strong>中潮・大潮</strong>：潮の流れが速く、プランクトンが動いてアジが活性化</li>
+            <li><strong>潮目（潮の境界線）付近</strong>：プランクトンが溜まりやすくアジが集まる</li>
+            <li><strong>上げ潮（干潮→満潮）</strong>：一般的に釣りやすい。新鮮な海水が入る</li>
+            <li><strong>濁りのない澄んだ水</strong>：視認性が良く活性が上がりやすい</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ========== 釣り場ガイド ========== -->
+      <h2 class="section-title" id="spots"><span class="title-icon">📍</span> 関東の釣り場ガイド</h2>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">釣行前に必ず確認を</div>
+          釣り禁止区域・立入禁止の設定は変わることがあります。現地の案内板・漁業協同組合のルールに従ってください。ライフジャケットの着用を推奨します。
+        </div>
+      </div>
+
+      <!-- 神奈川 -->
+      <h3 class="section-title"><span class="title-icon">🗾</span> 神奈川県</h3>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">城ヶ島（三浦半島）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-intermediate">中級向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">磯・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">京急三崎口駅からバス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（有料）</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            三浦半島最南端の島。磯場からのアジングで大型アジが狙える人気ポイント。磯周辺は根が荒いためサビキよりアジングやウキ釣りが有効。秋の夕マヅメ〜夜にかけて30cm超の大型が出ることも。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">ウキ釣り</span>
+            <span class="badge badge-primary">夕〜夜</span>
+            <span class="badge badge-warning">大型狙い</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">剣崎漁港・間口港（三浦市）</div>
+          <span class="season-badge season-spring">春○</span>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">4月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">三崎口駅からバス・車</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">15〜28cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            三浦半島の先端部に位置する漁港。堤防からサビキ釣りで豆アジ〜中型アジが安定して狙える。常夜灯があり夜釣りも可能。夏は家族連れにも人気のファミリー向けポイント。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-primary">朝マヅメ</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">葉山・鐙摺港（葉山町）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋○</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">6月〜10月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">逗子駅からバス・車</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">特徴</div><div class="spot-info-value">アクセス良好</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            横浜・横須賀方面からアクセスしやすい人気漁港。堤防先端でサビキ釣りが有効。夏の早朝は豆アジが入れ食いになることも。混雑しやすいため平日早朝の釣行推奨。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-primary">早朝</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">大磯港（大磯町）</div>
+          <span class="season-badge season-summer">夏○</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">大磯駅から徒歩15分</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（有料）</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            相模湾に面した漁港。秋は型の良いアジが入りやすく、アジングで25〜30cmクラスが狙える。堤防外側がメインポイント。サバやイナダとの混じりも楽しめる。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">ウキサビキ</span>
+            <span class="badge badge-warning">大型狙い</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 東京 -->
+      <h3 class="section-title"><span class="title-icon">🗾</span> 東京都</h3>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">若洲海浜公園（江東区）</div>
+          <span class="season-badge season-all">年間通じて可</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">4月〜12月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">海釣り施設・護岸</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">新木場駅からバス・自転車</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（有料）</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            東京都内最大級の海釣り施設。サビキ釣りでアジ・イワシ・サバなど多彩な魚が狙える。護岸は足場が良く、初心者・ファミリーに最適。夏〜秋はかなり混雑するため、早朝（4〜5時台）の到着を推奨。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-primary">早朝〜朝</span>
+            <span class="badge badge-success">ファミリー向け</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">城南島海浜公園（大田区）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋○</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">公園護岸</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">大森駅・平和島駅からバス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（無料・有料）</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            東京湾の護岸から手軽に釣れる公園。アジは夏〜秋がメインで、サビキ釣りで小〜中型アジが数釣りできる。羽田空港が隣接しており飛行機を眺めながらの釣りが楽しめる。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-success">数釣り向き</span>
+            <span class="badge badge-success">ファミリー向け</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 千葉 -->
+      <h3 class="section-title"><span class="title-icon">🗾</span> 千葉県</h3>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">富津公園・富津漁港（富津市）</div>
+          <span class="season-badge season-spring">春○</span>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">4月〜10月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・砂浜護岸</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">君津駅からバス・車</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">特徴</div><div class="spot-info-value">東京湾最狭部に近い</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            東京湾内房エリアの人気ポイント。潮通しが良く春〜夏にかけてアジの群れが入りやすい。富津岬先端付近では中型以上も狙える。港内のサビキ釣りで初心者でも数釣りが楽しめる。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-ocean">ウキサビキ</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">勝山港・鋸南町周辺（内房）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">6月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">浜金谷駅・保田駅近く</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">15〜30cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            内房南部エリアの複数漁港群。それぞれ規模は小さいが穴場が多い。サビキで豆〜中型、アジングで型の良いアジが狙える。秋は夜の常夜灯周りでの尺アジも報告されている。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-primary">夜釣り</span>
+            <span class="badge badge-warning">大型狙い</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">大原漁港・太東漁港（外房）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-intermediate">中級向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">大原駅・長者町駅近く</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">特徴</div><div class="spot-info-value">黒潮の影響あり</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            外房は黒潮の影響を受け、大型アジが狙いやすいエリア。大原漁港は規模が大きく釣り場も広い。サビキよりもアジングやウキサビキが適している。夏〜秋の夜釣りで30cm超も期待できる。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">ウキサビキ</span>
+            <span class="badge badge-warning">大型狙い</span>
+            <span class="badge badge-primary">夜釣り</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 茨城 -->
+      <h3 class="section-title"><span class="title-icon">🗾</span> 茨城県</h3>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">那珂湊漁港（ひたちなか市）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">6月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">那珂湊駅から徒歩</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">特徴</div><div class="spot-info-value">大型港で釣り場広い</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            茨城最大級の漁港。堤防からのサビキ釣りで豆アジ〜中アジが安定して釣れる。那珂川の淡水と海水が混じるエリアで栄養豊富なため魚影が濃い。近くに「おさかな市場」があり釣り後の食事も楽しめる。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">大洗港・大洗海岸（大洗町）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋○</span>
+          <span class="badge badge-intermediate">中級向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">6月〜10月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">港湾・テトラ帯</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">大洗駅から徒歩・バス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">20〜30cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            茨城沿岸の代表的な釣り場。港内はサビキ、テトラ帯周辺はアジングが有効。サイズは那珂湊より大きめで良型が揃いやすい。磯竿でのウキ釣りも可能。一部エリアは立入禁止のため注意が必要。
+          </p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-warning">大型狙い</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 神奈川 追加スポット -->
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">平塚港・花水川河口（平塚市）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・河口</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">平塚駅から車10分・徒歩30分</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（無料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">トイレ</div><div class="spot-info-value">あり</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">15〜28cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            相模湾に注ぐ花水川河口と平塚港が隣接する釣り場。河口周辺は栄養豊富でアジの魚影が濃く、漁港堤防からのサビキ釣りで安定した釣果が期待できる。夕マヅメ〜夜の常夜灯周りでアジングも有効。大磯港より混雑が少なく穴場的存在。南西風の日が特に釣りやすい。
+          </p>
+          <div class="callout callout-info" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件</div>
+              南〜南西風・風速3m/s以下の穏やかな日が最適。北風時は波立ちやすく釣りにくい。大潮〜中潮の夕マヅメが狙い目。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-primary">夕〜夜</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">小田原漁港（小田原市）</div>
+          <span class="season-badge season-spring">春○</span>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">4月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">小田原駅から車5分・バス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（有料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">トイレ</div><div class="spot-info-value">あり</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">15〜30cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            相模湾西部の大型漁港。電車・バスでのアクセスが良好で、関東全域から釣り人が集まる人気スポット。堤防外側のウキサビキ・アジングで型の良いアジが狙える。港内に「早川漁港」「小田原漁港」と複数の釣りポイントがある。近くに鮮魚市場があり、釣り後のショッピングも楽しめる。
+          </p>
+          <div class="callout callout-info" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件</div>
+              南〜南西風が吹く穏やかな日が最適。伊豆半島に近く西風の影響を受けにくい地形。大潮の朝マヅメ・夕マヅメが狙い目。水温18℃以上で釣果が安定する。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-ocean">ウキサビキ</span>
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-warning">大型狙い</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">真鶴港・真鶴半島（真鶴町）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-intermediate">中級向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">磯・漁港</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">真鶴駅から徒歩・バス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（有料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">20〜35cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            伊豆半島の付け根に位置する磯・漁港の複合スポット。相模湾の潮通しが良く、尺アジ（30cm超）の実績が高い関東屈指の大型狙いポイント。漁港内はサビキも可能だが、磯場でのアジングが特に人気。夜の常夜灯周りではかなりの大型が狙える。磯場は滑りやすいためスパイクシューズ必須。
+          </p>
+          <div class="callout callout-warning" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件 / 注意</div>
+              南〜南西風・凪の日が最適。北風・北東風は磯に波がかかり危険。波高0.5m以下を確認してから釣行。台風後1週間は状態が悪いことが多い。水温20℃以上の秋が最も大型が狙える。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">ウキ釣り</span>
+            <span class="badge badge-warning">大型狙い</span>
+            <span class="badge badge-primary">夜釣り</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 東京 追加スポット -->
+      <h3 class="section-title"><span class="title-icon">🗾</span> 東京都（追加）</h3>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">大井ふ頭中央海浜公園（品川区）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋○</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">公園護岸</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">大井町駅・大森駅からバス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（有料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">トイレ</div><div class="spot-info-value">あり（公園内複数）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">特徴</div><div class="spot-info-value">釣り専用エリアあり</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            東京湾岸の公園内に整備された護岸釣り場。釣り専用護岸があり足場が良く安全。サビキ釣りでアジ・イワシ・サバが混じって釣れる。若洲と並ぶ都内の定番ポイント。トイレ・休憩施設が整っていてファミリー向け。夜間は閉門するため夕マヅメで終了が基本。
+          </p>
+          <div class="callout callout-info" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件</div>
+              東京湾内のため外洋の波の影響は少ない。風速5m/s以下であれば快適に釣行可能。曇りの日の方が直射日光がなく魚の活性も上がりやすい。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-success">ファミリー向け</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 千葉 追加スポット -->
+      <h3 class="section-title"><span class="title-icon">🗾</span> 千葉県（追加）</h3>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">木更津港・木更津人工島（木更津市）</div>
+          <span class="season-badge season-spring">春○</span>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="badge badge-beginner">初心者向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">4月〜10月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">港湾・護岸</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">木更津駅から車・徒歩</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（無料・有料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">10〜25cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            東京湾内房北部のポイント。アクアライン利用で東京・神奈川から約1時間とアクセスが良好。人工島付近の護岸からサビキ釣りで豆〜中型アジが釣れる。規模は小さいが湾内のため波が穏やかで初心者・ファミリーに向いている。コンビニ・釣具店が近く装備が整えやすい。
+          </p>
+          <div class="callout callout-info" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件</div>
+              湾内のため荒天でも比較的釣りやすい。風速7m/s以下なら概ね問題なし。濁りが入ると釣果が落ちることがあるため、大雨後1〜2日は避けた方が無難。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-success">ファミリー向け</span>
+            <span class="badge badge-success">数釣り向き</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">館山港・沖ノ島周辺（館山市）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-intermediate">中級向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">5月〜12月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防・磯</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">館山駅から徒歩・バス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（有料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">20〜35cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            千葉南房の中心的な漁港。黒潮の影響を受けやすい好漁場で、大型アジの実績が高い。沖ノ島周辺の磯からのアジングでは尺アジが狙える。港内のサビキ釣りも安定しており、初心者から上級者まで楽しめる。秋〜冬は40cm超の「尺超えアジ」も報告されるエリア。
+          </p>
+          <div class="callout callout-info" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件</div>
+              南〜南西風・波高0.5m以下の穏やかな日。北東風（外洋からのうねり）が入ると磯が危険になるため中止を検討。水温20〜25℃の秋が大型狙いのベストシーズン。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">サビキ釣り</span>
+            <span class="badge badge-warning">大型狙い</span>
+            <span class="badge badge-primary">夜釣り</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">銚子外港・銚子マリーナ（銚子市）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-intermediate">中級向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">6月〜12月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">漁港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">銚子駅から車・バス</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（無料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">20〜38cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            外房最北端の大型漁港。黒潮の影響を強く受けるため大型アジの魚影が非常に濃い。秋〜冬の夜釣りでは40cm近い「座布団アジ」が釣れることもある関東屈指のモンスターアジポイント。堤防からのウキサビキ・アジングが有効。那珂湊と並ぶ関東大型アジの二大聖地。
+          </p>
+          <div class="callout callout-warning" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件 / 注意</div>
+              外洋に面するため波の影響を受けやすい。波高1m以下・風速5m/s以下を目安に。北東風が入ると外堤防は危険。銚子は気象の変化が速いため、当日の天気予報を直前まで確認すること。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">ウキサビキ</span>
+            <span class="badge badge-warning">大型狙い</span>
+            <span class="badge badge-primary">夜釣り</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 茨城 追加スポット -->
+      <h3 class="section-title"><span class="title-icon">🗾</span> 茨城県（追加）</h3>
+
+      <div class="spot-card">
+        <div class="spot-header">
+          <span style="font-size:1.4rem;">🐟</span>
+          <div class="spot-name">鹿島港（鹿嶋市）</div>
+          <span class="season-badge season-summer">夏◎</span>
+          <span class="season-badge season-autumn">秋◎</span>
+          <span class="badge badge-intermediate">中級向け</span>
+        </div>
+        <div class="spot-body">
+          <div class="spot-info-grid">
+            <div class="spot-info-item"><div class="spot-info-label">好釣期</div><div class="spot-info-value">6月〜11月</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣り場タイプ</div><div class="spot-info-value">大型工業港・堤防</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">アクセス</div><div class="spot-info-value">鹿島神宮駅から車15分</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">駐車場</div><div class="spot-info-value">あり（無料）</div></div>
+            <div class="spot-info-item"><div class="spot-info-label">釣れるサイズ</div><div class="spot-info-value">20〜35cm</div></div>
+          </div>
+          <p style="font-size:.88rem; color:#374151; margin-bottom:.75rem;">
+            日本最大級の掘り込み式港湾。鹿島灘の豊かな海に面し、大型アジが集まりやすい。排水の温排水効果で冬場も水温が高く、那珂湊・大洗より釣り場期間が長い傾向がある。一部の堤防エリアは立入禁止のため、釣行前に開放エリアを確認すること。夜の常夜灯周りでのアジングで30cm超の実績多数。
+          </p>
+          <div class="callout callout-warning" style="margin-bottom:.75rem;">
+            <span class="callout-icon">🌤️</span>
+            <div class="callout-body">
+              <div class="callout-title">釣行おすすめ条件 / 注意</div>
+              北東風が強い日は鹿島灘が荒れるため中止推奨。風速5m/s以下・波高0.5m以下が目安。工業港のため立入禁止区域が多く、必ず釣行前に開放エリアを事前確認してから釣行すること。
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge badge-ocean">アジング</span>
+            <span class="badge badge-ocean">ウキサビキ</span>
+            <span class="badge badge-warning">大型狙い</span>
+            <span class="badge badge-primary">夜釣り</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- エリア比較表 -->
+      <h2 class="section-title"><span class="title-icon">📊</span> エリア別比較まとめ</h2>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>エリア</th>
+                <th>釣り場の種類</th>
+                <th>ベストシーズン</th>
+                <th>狙えるサイズ</th>
+                <th>おすすめ仕掛け</th>
+                <th>難易度</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>三浦半島（神奈川）</strong></td>
+                <td>磯・漁港・堤防</td>
+                <td>5〜11月</td>
+                <td>15〜30cm超</td>
+                <td>アジング・ウキ釣り</td>
+                <td><span class="badge badge-intermediate">中〜上</span></td>
+              </tr>
+              <tr>
+                <td><strong>湘南・相模湾（神奈川）</strong></td>
+                <td>漁港・堤防</td>
+                <td>5〜11月</td>
+                <td>15〜28cm</td>
+                <td>サビキ・アジング</td>
+                <td><span class="badge badge-beginner">初〜中</span></td>
+              </tr>
+              <tr>
+                <td><strong>東京湾（東京）</strong></td>
+                <td>公園護岸・海釣り施設</td>
+                <td>4〜12月</td>
+                <td>10〜25cm</td>
+                <td>サビキ釣り</td>
+                <td><span class="badge badge-beginner">初心者向け</span></td>
+              </tr>
+              <tr>
+                <td><strong>内房（千葉）</strong></td>
+                <td>漁港・堤防</td>
+                <td>4〜11月</td>
+                <td>15〜28cm</td>
+                <td>サビキ・アジング</td>
+                <td><span class="badge badge-beginner">初〜中</span></td>
+              </tr>
+              <tr>
+                <td><strong>外房（千葉）</strong></td>
+                <td>漁港・堤防</td>
+                <td>5〜11月</td>
+                <td>20〜35cm</td>
+                <td>アジング・ウキサビキ</td>
+                <td><span class="badge badge-intermediate">中〜上</span></td>
+              </tr>
+              <tr>
+                <td><strong>茨城（鹿島灘北部）</strong></td>
+                <td>漁港・テトラ</td>
+                <td>6〜11月</td>
+                <td>15〜30cm</td>
+                <td>サビキ・アジング</td>
+                <td><span class="badge badge-beginner">初〜中</span></td>
+              </tr>
+              <tr>
+                <td><strong>南房（千葉・館山）</strong></td>
+                <td>漁港・磯</td>
+                <td>5〜12月</td>
+                <td>20〜35cm超</td>
+                <td>アジング・ウキサビキ</td>
+                <td><span class="badge badge-intermediate">中〜上</span></td>
+              </tr>
+              <tr>
+                <td><strong>銚子（千葉・外房北部）</strong></td>
+                <td>漁港・大型港</td>
+                <td>6〜12月</td>
+                <td>20〜38cm</td>
+                <td>アジング・ウキサビキ</td>
+                <td><span class="badge badge-intermediate">中〜上</span></td>
+              </tr>
+              <tr>
+                <td><strong>相模湾西部（小田原・真鶴）</strong></td>
+                <td>漁港・磯</td>
+                <td>4〜11月</td>
+                <td>15〜35cm</td>
+                <td>アジング・サビキ</td>
+                <td><span class="badge badge-beginner">初〜上</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== 釣行判断ガイド ========== -->
+      <h2 class="section-title" id="conditions"><span class="title-icon">🌤️</span> 釣行判断ガイド — 天気・風・潮・気温</h2>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <div class="callout-title">週末の釣行を決断するための指標</div>
+          釣果は「場所」だけでなく「条件」で大きく変わります。以下の基準を参考に、釣行可否を判断してください。複数の条件が重なるほど釣果が期待できます。
+        </div>
+      </div>
+
+      <!-- 気象条件 総合判断表 -->
+      <h3 class="section-title"><span class="title-icon">🔍</span> 気象条件 総合判断表</h3>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>条件</th>
+                <th>◎ 最適（強く推奨）</th>
+                <th>○ 許容（概ね可）</th>
+                <th>△ 微妙（様子次第）</th>
+                <th>× 中止推奨</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>天気</strong></td>
+                <td>晴れ・薄曇り</td>
+                <td>曇り・小雨</td>
+                <td>雨上がり直後</td>
+                <td>強雨・雷・強風注意報</td>
+              </tr>
+              <tr>
+                <td><strong>風速</strong></td>
+                <td>〜3m/s（ほぼ無風）</td>
+                <td>3〜5m/s</td>
+                <td>5〜7m/s</td>
+                <td>7m/s超（ライン操作困難）</td>
+              </tr>
+              <tr>
+                <td><strong>風向き（関東・外洋）</strong></td>
+                <td>南〜南西風</td>
+                <td>東〜南東風・西風</td>
+                <td>北西風</td>
+                <td>北〜北東風（波立ちやすい）</td>
+              </tr>
+              <tr>
+                <td><strong>波高</strong></td>
+                <td>0.3m以下</td>
+                <td>0.5m以下</td>
+                <td>0.5〜1m</td>
+                <td>1m超（磯・堤防先端は危険）</td>
+              </tr>
+              <tr>
+                <td><strong>気温（釣り人の快適度）</strong></td>
+                <td>18〜28℃</td>
+                <td>12〜32℃</td>
+                <td>8〜12℃・32℃超</td>
+                <td>5℃以下・猛暑日（体力消耗）</td>
+              </tr>
+              <tr>
+                <td><strong>水温（アジの活性）</strong></td>
+                <td>18〜25℃</td>
+                <td>15〜28℃</td>
+                <td>12〜15℃</td>
+                <td>12℃以下（活性激減）</td>
+              </tr>
+              <tr>
+                <td><strong>気圧</strong></td>
+                <td>1015hPa以上・安定</td>
+                <td>1010〜1015hPa</td>
+                <td>1010hPa以下・下降中</td>
+                <td>急激な低下（嵐接近）</td>
+              </tr>
+              <tr>
+                <td><strong>潮回り</strong></td>
+                <td>大潮・中潮</td>
+                <td>若潮</td>
+                <td>長潮</td>
+                <td>小潮（潮止まりが長い）</td>
+              </tr>
+              <tr>
+                <td><strong>海の透明度</strong></td>
+                <td>澄んでいる</td>
+                <td>やや濁り</td>
+                <td>濁り（雨後）</td>
+                <td>強い濁り・赤潮発生</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 風向き詳細 -->
+      <h3 class="section-title"><span class="title-icon">💨</span> 風向きと釣り場への影響（関東）</h3>
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">✅</span><h2>釣りやすい風向き</h2></div>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2.2;">
+            <li><strong>南風・南西風</strong>：関東の外洋エリアで最も穏やか。相模湾・外房ともに波が立ちにくい</li>
+            <li><strong>東風・南東風</strong>：波はやや出るが概ね釣行可能。内房・東京湾では影響少ない</li>
+            <li><strong>西風</strong>：太平洋側では比較的影響が少ない。湾内（東京湾）は問題なし</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">⚠️</span><h2>注意が必要な風向き</h2></div>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2.2;">
+            <li><strong>北風・北北西風</strong>：関東全域で波が立ちやすい。磯・外堤防は注意</li>
+            <li><strong>北東風</strong>：最も危険。外房・茨城エリアは大きな波が来る。強い場合は中止</li>
+            <li><strong>北東風＋高波注意報</strong>：銚子・大洗・鹿島は特に影響大。必ず情報確認を</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 水温と釣果の関係 -->
+      <h3 class="section-title"><span class="title-icon">🌡️</span> 水温とアジの活性・行動</h3>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>水温</th><th>アジの状態</th><th>タナの目安</th><th>おすすめ仕掛け</th><th>狙い目エリア（関東）</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>10℃以下</strong></td>
+                <td><span class="badge badge-gray">活性極低</span></td>
+                <td>底付近（5m以深）</td>
+                <td>胴突き・ゆっくり誘い</td>
+                <td>東京湾奥・鹿島港（温排水）</td>
+              </tr>
+              <tr>
+                <td><strong>12〜15℃</strong></td>
+                <td><span class="badge badge-warning">低〜中活性</span></td>
+                <td>底〜中層（3〜5m）</td>
+                <td>胴突き・アジング底付近</td>
+                <td>東京湾・内房・神奈川漁港</td>
+              </tr>
+              <tr>
+                <td><strong>16〜19℃</strong></td>
+                <td><span class="badge badge-success">活性が上がる</span></td>
+                <td>中層（2〜4m）</td>
+                <td>サビキ・アジング</td>
+                <td>三浦半島・外房・茨城</td>
+              </tr>
+              <tr>
+                <td><strong>20〜25℃</strong></td>
+                <td><span class="badge badge-success">◎ 最高活性</span></td>
+                <td>表層〜中層（1〜3m）</td>
+                <td>全仕掛け有効</td>
+                <td>関東全域。秋の外房・銚子で大型</td>
+              </tr>
+              <tr>
+                <td><strong>26〜28℃</strong></td>
+                <td><span class="badge badge-warning">やや深場に移動</span></td>
+                <td>中〜底層（3〜5m）</td>
+                <td>サビキ底付近・アジング</td>
+                <td>深場のある漁港・堤防先端</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.82rem; color:#6b7280; margin-top:.75rem;">※ 水温は気象庁の海水温情報（海洋状況表示システム「海しる」）でエリアごとに確認できます。</p>
+      </div>
+
+      <!-- 潮と時間帯 -->
+      <h3 class="section-title"><span class="title-icon">🌊</span> 潮回り・時間帯の組み合わせ早見表</h3>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>潮回り</th><th>朝マヅメ</th><th>日中</th><th>夕マヅメ</th><th>夜（常夜灯）</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>大潮</strong></td>
+                <td><span class="badge badge-success">◎ 最高</span></td>
+                <td><span class="badge badge-warning">○ 可</span></td>
+                <td><span class="badge badge-success">◎ 最高</span></td>
+                <td><span class="badge badge-success">◎ 最高</span></td>
+              </tr>
+              <tr>
+                <td><strong>中潮</strong></td>
+                <td><span class="badge badge-success">◎ 良好</span></td>
+                <td><span class="badge badge-warning">○ 可</span></td>
+                <td><span class="badge badge-success">◎ 良好</span></td>
+                <td><span class="badge badge-success">○〜◎</span></td>
+              </tr>
+              <tr>
+                <td><strong>若潮・長潮</strong></td>
+                <td><span class="badge badge-warning">○ やや落ちる</span></td>
+                <td><span class="badge badge-gray">△ 難しい</span></td>
+                <td><span class="badge badge-warning">○ やや落ちる</span></td>
+                <td><span class="badge badge-warning">○ 可</span></td>
+              </tr>
+              <tr>
+                <td><strong>小潮</strong></td>
+                <td><span class="badge badge-warning">○ 時合い短い</span></td>
+                <td><span class="badge badge-gray">△ 厳しい</span></td>
+                <td><span class="badge badge-warning">○ 時合い短い</span></td>
+                <td><span class="badge badge-warning">△〜○</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.82rem; color:#6b7280; margin-top:.75rem;">※「潮が動く時間（満潮・干潮の前後1時間）」が最も活性が高い。潮見表で確認を。</p>
+      </div>
+
+      <!-- 釣行チェックリスト -->
+      <h3 class="section-title"><span class="title-icon">✅</span> 週末釣行 前日チェックリスト</h3>
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-header"><span class="card-icon">📱</span><h2>確認すべき情報源</h2></div>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2.2;">
+            <li><strong>天気予報</strong>：tenki.jp「海の天気」で波・風を確認</li>
+            <li><strong>潮見表</strong>：釣りアプリ（Fishers・釣りマップなど）で潮回りを確認</li>
+            <li><strong>水温情報</strong>：海しる（気象庁）でエリアの水温確認</li>
+            <li><strong>釣果情報</strong>：地元釣具店のSNS・ブログで最新釣果を確認</li>
+            <li><strong>立入禁止情報</strong>：漁港の漁協HP・現地案内板を事前確認</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">🎒</span><h2>持ち物チェック</h2></div>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2.2;">
+            <li>ライフジャケット（磯・堤防先端は必須）</li>
+            <li>エサ（冷凍アミエビ・アオイソメ）</li>
+            <li>バケツ・魚を入れるクーラーボックス＋氷</li>
+            <li>仕掛け予備（ロスト分を多めに）</li>
+            <li>ヘッドライト（夜釣り・早朝必須）</li>
+            <li>帽子・日焼け止め・飲料水</li>
+            <li>ゴミ袋（釣り場を汚さないために）</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 釣行スコアリング -->
+      <h3 class="section-title"><span class="title-icon">📊</span> 釣行可否 スコアリング例</h3>
+      <div class="card">
+        <p style="font-size:.88rem; color:#374151; margin-bottom:1rem;">以下の各項目を点数化して合計し、釣行可否の目安にしてください。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>確認項目</th><th>3点（最良）</th><th>2点（良好）</th><th>1点（可）</th><th>0点（不良）</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>天気</strong></td><td>晴れ・薄曇り</td><td>曇り</td><td>小雨</td><td>強雨・雷</td></tr>
+              <tr><td><strong>風速</strong></td><td>〜3m/s</td><td>3〜5m/s</td><td>5〜7m/s</td><td>7m/s超</td></tr>
+              <tr><td><strong>波高</strong></td><td>〜0.3m</td><td>0.3〜0.5m</td><td>0.5〜1m</td><td>1m超</td></tr>
+              <tr><td><strong>潮回り</strong></td><td>大潮</td><td>中潮</td><td>若潮・長潮</td><td>小潮</td></tr>
+              <tr><td><strong>時間帯</strong></td><td>朝マヅメ・夕マヅメ</td><td>夜（常夜灯）</td><td>日中</td><td>潮止まり日中</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-2col" style="margin-top:1rem;">
+          <div class="callout callout-success" style="margin:0;">
+            <span class="callout-icon">✅</span>
+            <div class="callout-body"><div class="callout-title">12〜15点：迷わず釣行！</div>絶好の釣り日和。積極的に釣行を計画しましょう。</div>
+          </div>
+          <div class="callout callout-info" style="margin:0;">
+            <span class="callout-icon">ℹ️</span>
+            <div class="callout-body"><div class="callout-title">8〜11点：概ね問題なし</div>釣行OK。風・波の変化に注意しながら楽しめます。</div>
+          </div>
+        </div>
+        <div class="grid-2col" style="margin-top:.75rem;">
+          <div class="callout callout-warning" style="margin:0;">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-body"><div class="callout-title">5〜7点：判断が必要</div>条件が厳しめ。湾内・漁港内など波の穏やかな場所を選ぶか、翌日に延期も検討。</div>
+          </div>
+          <div class="callout callout-warning" style="margin:0; border-left-color:#ef4444;">
+            <span class="callout-icon">🚫</span>
+            <div class="callout-body"><div class="callout-title">4点以下：釣行中止を推奨</div>安全が確保できない可能性があります。無理せず延期してください。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 施設・周辺情報 ========== -->
+      <h2 class="section-title" id="facilities"><span class="title-icon">🏪</span> 釣り場周辺の施設・便利情報</h2>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>釣り場</th>
+                <th>トイレ</th>
+                <th>近くの釣具店</th>
+                <th>コンビニ</th>
+                <th>エサ購入</th>
+                <th>その他</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>若洲海浜公園</strong></td>
+                <td>あり（公園内）</td>
+                <td>現地売店あり</td>
+                <td>徒歩圏内なし（車で5分）</td>
+                <td>現地売店・事前に購入推奨</td>
+                <td>レンタルタックルあり。年間パスポートも</td>
+              </tr>
+              <tr>
+                <td><strong>城南島海浜公園</strong></td>
+                <td>あり（公園内）</td>
+                <td>周辺に複数</td>
+                <td>車で5分圏内</td>
+                <td>事前購入推奨</td>
+                <td>羽田空港が近く飛行機鑑賞も可</td>
+              </tr>
+              <tr>
+                <td><strong>大井ふ頭中央海浜公園</strong></td>
+                <td>あり（複数箇所）</td>
+                <td>周辺に複数</td>
+                <td>車で5分</td>
+                <td>事前購入推奨</td>
+                <td>釣り専用護岸あり。無料開放エリアも</td>
+              </tr>
+              <tr>
+                <td><strong>城ヶ島</strong></td>
+                <td>あり（島内）</td>
+                <td>三崎口周辺</td>
+                <td>島内に売店あり</td>
+                <td>三崎口・三崎港周辺で購入可</td>
+                <td>マグロ料理の食事処が豊富</td>
+              </tr>
+              <tr>
+                <td><strong>剣崎漁港・間口港</strong></td>
+                <td>あり（港内）</td>
+                <td>三崎口・三浦市内</td>
+                <td>三浦市内（車で10分）</td>
+                <td>三浦市の釣具店・コンビニ</td>
+                <td>近くに三浦海岸の食堂多数</td>
+              </tr>
+              <tr>
+                <td><strong>大磯港・平塚港</strong></td>
+                <td>あり</td>
+                <td>平塚・大磯周辺</td>
+                <td>徒歩〜車5分圏内</td>
+                <td>国道沿いの釣具店で購入可</td>
+                <td>大磯ロングビーチ近く。食事処多数</td>
+              </tr>
+              <tr>
+                <td><strong>小田原漁港</strong></td>
+                <td>あり（港・公園内）</td>
+                <td>小田原市内</td>
+                <td>徒歩5分圏内</td>
+                <td>漁港内・小田原市内の釣具店</td>
+                <td>小田原漁港直営の海鮮食堂あり</td>
+              </tr>
+              <tr>
+                <td><strong>那珂湊漁港</strong></td>
+                <td>あり（港内・市場）</td>
+                <td>那珂湊・ひたちなか市内</td>
+                <td>車で5〜10分</td>
+                <td>那珂湊周辺の釣具店</td>
+                <td>「おさかな市場」で新鮮魚介を購入・食事可</td>
+              </tr>
+              <tr>
+                <td><strong>大洗港・鹿島港</strong></td>
+                <td>あり（港内）</td>
+                <td>大洗・鹿嶋市内</td>
+                <td>車で5〜10分</td>
+                <td>周辺の釣具店・コンビニ</td>
+                <td>大洗はアウトレット・水族館も近い</td>
+              </tr>
+              <tr>
+                <td><strong>銚子外港</strong></td>
+                <td>あり（港内）</td>
+                <td>銚子市内</td>
+                <td>車で5〜10分</td>
+                <td>銚子の釣具店で購入可</td>
+                <td>銚子電鉄・犬吠埼灯台など観光も可能</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== 仕掛けガイド ========== -->
+      <h2 class="section-title" id="rigs"><span class="title-icon">🪝</span> 仕掛け・タックルガイド</h2>
+      <p style="font-size:.9rem; color:#6b7280; margin-bottom:1.5rem;">堤防・漁港・磯からのアジ釣りで使う主要な仕掛けと、状況別の選び方をまとめました。ロッド・リール・ラインの基本選択基準も掲載しています。</p>
+
+      <h3 class="section-title"><span class="title-icon">🔀</span> 仕掛け選択ガイド</h3>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>釣り方</th>
+                <th>こんな場面に</th>
+                <th>難易度</th>
+                <th>コスト</th>
+                <th>特徴</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>サビキ釣り</strong></td>
+                <td>初心者・数釣り・ファミリー</td>
+                <td><span class="badge badge-beginner">初心者向け</span></td>
+                <td>低</td>
+                <td>数釣りに最適。豆〜中アジを手軽に狙える</td>
+              </tr>
+              <tr>
+                <td><strong>ウキサビキ</strong></td>
+                <td>群れが沖にいるとき・遠投したいとき</td>
+                <td><span class="badge badge-beginner">初心者向け</span></td>
+                <td>低〜中</td>
+                <td>サビキを遠くに飛ばせる。広い場所向き</td>
+              </tr>
+              <tr>
+                <td><strong>アジング</strong></td>
+                <td>大型狙い・夜釣り・磯・ゲーム性重視</td>
+                <td><span class="badge badge-intermediate">中級向け</span></td>
+                <td>中〜高</td>
+                <td>繊細な釣り。大型アジや夜釣りに強い</td>
+              </tr>
+              <tr>
+                <td><strong>胴突き仕掛け</strong></td>
+                <td>足元が深い漁港・冬場の底狙い</td>
+                <td><span class="badge badge-beginner">初心者向け</span></td>
+                <td>低</td>
+                <td>底付近を狙う。冬の深場のアジに有効</td>
+              </tr>
+              <tr>
+                <td><strong>ウキ釣り（電気ウキ）</strong></td>
+                <td>夜釣り・磯・ポイントを絞りたいとき</td>
+                <td><span class="badge badge-intermediate">中級向け</span></td>
+                <td>中</td>
+                <td>タナを細かく調整できる。夜の漁港で実績高い</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h3 class="section-title"><span class="title-icon">🎣</span> 各仕掛けの詳細</h3>
+
+      <div class="rig-card">
+        <div class="rig-header">
+          <div class="rig-icon-wrap">🎏</div>
+          <div>
+            <div class="rig-title">サビキ釣り</div>
+            <div class="rig-subtitle">堤防・漁港での基本仕掛け。初心者・ファミリー向け</div>
+          </div>
+          <span class="badge badge-beginner" style="margin-left:auto;">初心者向け</span>
+        </div>
+        <div class="rig-body">
+          <div class="callout callout-success">
+            <span class="callout-icon">✅</span>
+            <div class="callout-body">
+              <div class="callout-title">こんな状況で使う</div>
+              堤防・漁港でアジの群れが表層〜中層に回遊しているとき。夏〜秋の数釣りに最適。豆アジ〜25cm程度の中アジに有効。
+            </div>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">構成アイテム</h4>
+          <div class="rig-components">
+            <span class="rig-component">サビキ仕掛け（5〜7号針）</span>
+            <span class="rig-component">アミエビカゴ（上or下カゴ）</span>
+            <span class="rig-component">磯竿 or ルアーロッド 3〜5m</span>
+            <span class="rig-component">スピニングリール 2000〜3000番</span>
+            <span class="rig-component">ナイロンライン 3〜4号</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>針のサイズ</th><th>対象アジサイズ</th><th>備考</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>3〜4号</td><td>豆アジ（〜15cm）</td><td>夏の豆アジ用。針が小さく飲み込みやすい</td></tr>
+                <tr><td>5〜6号</td><td>中アジ（15〜23cm）</td><td>汎用サイズ。最初はこれを選べばOK</td></tr>
+                <tr><td>7〜8号</td><td>大アジ（25cm〜）</td><td>秋の良型用。小さいアジは掛かりにくい</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">釣り方のポイント</h4>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2; color:#374151;">
+            <li>アミエビをカゴに詰め、底まで沈めてからゆっくり巻き上げる</li>
+            <li>カゴを軽く上下に揺さぶってアミエビを少しずつ放出する</li>
+            <li>アタリは竿先がお辞儀するか、穂先がブルブルするので竿を立てて合わせる</li>
+            <li>群れが来たら手返しよく釣り続けることが数釣りのコツ</li>
+            <li>釣れ続けている間はカゴのアミエビが切れないよう注意</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rig-card">
+        <div class="rig-header">
+          <div class="rig-icon-wrap">🎯</div>
+          <div>
+            <div class="rig-title">ウキサビキ（遠投サビキ）</div>
+            <div class="rig-subtitle">群れが遠い・沖にいる場面で有効</div>
+          </div>
+          <span class="badge badge-beginner" style="margin-left:auto;">初心者向け</span>
+        </div>
+        <div class="rig-body">
+          <div class="callout callout-info">
+            <span class="callout-icon">ℹ️</span>
+            <div class="callout-body">
+              <div class="callout-title">こんな状況で使う</div>
+              堤防際ではなく沖5〜20m先に群れがいるとき。広い海岸・防波堤でアジが足元まで寄っていない場合や、ウキの電気化で夜釣りにも使える。
+            </div>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">構成アイテム</h4>
+          <div class="rig-components">
+            <span class="rig-component">遠投ウキ（5〜8号）</span>
+            <span class="rig-component">サビキ仕掛け（5〜6号針）</span>
+            <span class="rig-component">下カゴ（オモリ兼用）</span>
+            <span class="rig-component">磯竿 4〜5.4m</span>
+            <span class="rig-component">スピニングリール 3000〜4000番</span>
+            <span class="rig-component">ナイロンライン 3〜5号</span>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">釣り方のポイント</h4>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2; color:#374151;">
+            <li>ウキ下（ウキからカゴまでの長さ）をアジのタナに合わせる。目安は1〜2m</li>
+            <li>竿を大きく振り上げてオーバーハンドキャストで遠投する</li>
+            <li>着水後にウキが倒れたらアタリのサインなので即合わせ</li>
+            <li>夜釣りでは電気ウキを使うと視認性が大幅に上がる</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rig-card">
+        <div class="rig-header">
+          <div class="rig-icon-wrap">🎮</div>
+          <div>
+            <div class="rig-title">アジング</div>
+            <div class="rig-subtitle">ルアー（ワーム・ジグヘッド）でアジを狙うゲームフィッシング</div>
+          </div>
+          <span class="badge badge-intermediate" style="margin-left:auto;">中級向け</span>
+        </div>
+        <div class="rig-body">
+          <div class="callout callout-warning">
+            <span class="callout-icon">💡</span>
+            <div class="callout-body">
+              <div class="callout-title">こんな状況で使う</div>
+              夜釣り・常夜灯周り・磯・大型アジ狙いに最適。繊細なアタリを感じながら釣る楽しさがあり、サビキより型が大きいアジが狙いやすい。習得に少し練習が必要。
+            </div>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">タックル構成</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>アイテム</th><th>推奨スペック</th><th>備考</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>ロッド</strong></td><td>アジングロッド 6〜8ft / MAX3〜5g</td><td>柔らかめのUL〜Lアクション。感度重視</td></tr>
+                <tr><td><strong>リール</strong></td><td>スピニング 1000〜2000番</td><td>軽量なものを選ぶと疲れにくい</td></tr>
+                <tr><td><strong>ライン（メイン）</strong></td><td>PEライン 0.3〜0.6号</td><td>感度が高く遠投もしやすい</td></tr>
+                <tr><td><strong>リーダー</strong></td><td>フロロカーボン 1〜2号（50cm〜1m）</td><td>根ずれ対策・アジへの違和感低減</td></tr>
+                <tr><td><strong>ジグヘッド</strong></td><td>0.5〜2g / 針1〜2号</td><td>流れが速い場所や深場は重め</td></tr>
+                <tr><td><strong>ワーム</strong></td><td>1.5〜2.5インチ</td><td>シラスや甲殻類を模したもの。クリアや夜光色が定番</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">基本テクニック</h4>
+          <div class="grid-2col" style="margin-top:.5rem;">
+            <div class="card" style="margin-bottom:0;">
+              <div class="card-header"><h2>リトリーブ（巻き）</h2></div>
+              <p style="font-size:.85rem; color:#374151; line-height:1.8;">ジグヘッドを一定速度でゆっくり巻く基本テクニック。アジが表層〜中層を泳いでいるときに有効。ラインがフケたらすぐ合わせる。</p>
+            </div>
+            <div class="card" style="margin-bottom:0;">
+              <div class="card-header"><h2>フォール（沈め）</h2></div>
+              <p style="font-size:.85rem; color:#374151; line-height:1.8;">ジグヘッドをフリーフォールさせ、沈む最中のアタリを狙う。アジはフォール中に食いつくことが多い。ラインの動きでアタリを判断する。</p>
+            </div>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">ワーム・カラー選択の基準</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>状況</th><th>おすすめカラー</th><th>理由</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>常夜灯下・夜</td><td>クリア・グロー（夜光）・ピンク</td><td>光を吸収・反射してアジを引き寄せる</td></tr>
+                <tr><td>日中・澄み潮</td><td>クリア系・ナチュラル（シラスカラー）</td><td>自然な見た目でスレたアジに効果的</td></tr>
+                <tr><td>濁り潮</td><td>チャート・オレンジ・黄色</td><td>視認性が高くアジにアピールしやすい</td></tr>
+                <tr><td>プレッシャーが高い</td><td>クリア・スモーク</td><td>釣り人が多い場所でナチュラルに見せる</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="rig-card">
+        <div class="rig-header">
+          <div class="rig-icon-wrap">⚓</div>
+          <div>
+            <div class="rig-title">胴突き仕掛け</div>
+            <div class="rig-subtitle">底層のアジを狙う仕掛け。深い漁港・冬場に有効</div>
+          </div>
+          <span class="badge badge-beginner" style="margin-left:auto;">初心者向け</span>
+        </div>
+        <div class="rig-body">
+          <div class="callout callout-info">
+            <span class="callout-icon">ℹ️</span>
+            <div class="callout-body">
+              <div class="callout-title">こんな状況で使う</div>
+              水深がある漁港や冬〜春の水温が低い時期に底付近を狙うのに適した仕掛け。オモリを底に着けて幹糸から出た枝バリでアジを狙う。サビキが効かないときの選択肢。
+            </div>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">構成アイテム</h4>
+          <div class="rig-components">
+            <span class="rig-component">胴突き仕掛け（2〜3本針、5〜6号）</span>
+            <span class="rig-component">オモリ 8〜15号</span>
+            <span class="rig-component">磯竿 2〜3m</span>
+            <span class="rig-component">スピニングリール 2000〜3000番</span>
+            <span class="rig-component">イソメ・アオイソメ（エサ）</span>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">釣り方のポイント</h4>
+          <ul style="padding-left:1.2em; font-size:.88rem; line-height:2; color:#374151;">
+            <li>底まで沈めてから少し上に持ち上げ、底から30〜50cmのタナを狙う</li>
+            <li>たまに竿を上下に動かしてエサを躍らせる</li>
+            <li>アタリがなければ少しずつタナを変えてみる</li>
+            <li>エサはアオイソメを2〜3cmに切って針に刺す</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rig-card">
+        <div class="rig-header">
+          <div class="rig-icon-wrap">🌙</div>
+          <div>
+            <div class="rig-title">ウキ釣り（電気ウキ）</div>
+            <div class="rig-subtitle">夜釣りで特に有効。タナを精密に合わせられる</div>
+          </div>
+          <span class="badge badge-intermediate" style="margin-left:auto;">中級向け</span>
+        </div>
+        <div class="rig-body">
+          <div class="callout callout-success">
+            <span class="callout-icon">✅</span>
+            <div class="callout-body">
+              <div class="callout-title">こんな状況で使う</div>
+              常夜灯のある漁港・堤防での夜釣りに最適。タナを細かく調整できるため、アジが特定の水深に固まっているときに特に有効。大型アジ狙いにも適している。
+            </div>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">構成アイテム</h4>
+          <div class="rig-components">
+            <span class="rig-component">電気ウキ（3〜5号）</span>
+            <span class="rig-component">ウキゴム・ウキ止め糸</span>
+            <span class="rig-component">枝針仕掛け（6〜7号）</span>
+            <span class="rig-component">オモリ（ウキ負荷に合わせる）</span>
+            <span class="rig-component">磯竿 3〜4.5m</span>
+            <span class="rig-component">アオイソメ or アミエビ</span>
+          </div>
+          <h4 style="font-weight:700; margin: 1rem 0 .5rem; color:#1f2937;">タナ設定の目安</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>時間帯</th><th>目安のタナ</th><th>備考</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>夕マヅメ</td><td>1〜2m</td><td>表層〜中層を意識して浅めから探る</td></tr>
+                <tr><td>夜（常夜灯周辺）</td><td>1〜3m</td><td>光の射すタナに集まりやすい</td></tr>
+                <tr><td>深夜〜早朝</td><td>2〜4m</td><td>やや深めに落ちていることが多い</td></tr>
+                <tr><td>水温が低い時期</td><td>3〜5m</td><td>底近くにいることが多くなる</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-title"><span class="title-icon">📋</span> 状況別おすすめ仕掛けまとめ</h3>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>場所・状況</th>
+                <th>第1候補</th>
+                <th>第2候補</th>
+                <th>理由</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>堤防・漁港（昼・初心者）</td><td><strong>サビキ釣り</strong></td><td>ウキサビキ</td><td>手軽で数が釣れる。コスト低</td></tr>
+              <tr><td>堤防・漁港（夜・常夜灯）</td><td><strong>アジング</strong></td><td>ウキ釣り（電気ウキ）</td><td>大型が狙える。タナ調整しやすい</td></tr>
+              <tr><td>磯場</td><td><strong>アジング</strong></td><td>ウキ釣り</td><td>根がかりしにくい仕掛けが有利</td></tr>
+              <tr><td>群れが沖にいる場面</td><td><strong>ウキサビキ</strong></td><td>遠投アジング</td><td>遠くのアジを寄せてから釣れる</td></tr>
+              <tr><td>冬場・低水温期</td><td><strong>胴突き仕掛け</strong></td><td>アジング（底付近）</td><td>底に落ちた群れを狙う</td></tr>
+              <tr><td>大型アジ専門狙い</td><td><strong>アジング（重め1.5〜2g）</strong></td><td>ウキ釣り（6〜7号針）</td><td>大きめの針・仕掛けで小型を避ける</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <div class="callout-title">はじめて釣りに行く方へ</div>
+          最初の1本としては<strong>「サビキ釣りセット」</strong>（竿・リール・仕掛けがセットになった商品）が最もおすすめです。釣具店で2,000〜5,000円程度で販売されており、エサ（冷凍アミエビ）を追加するだけで始められます。夏の若洲海浜公園や内房の漁港でぜひ試してみてください。
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+<script src="sidebar.js"></script>
+</body>
+</html>
