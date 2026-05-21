@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エンジニアの持続的成長37のヒント — 虎の巻</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* カテゴリバッジ */
+    .cat-badge { display:inline-block; border-radius:6px; padding:.15rem .65rem; font-size:.72rem; font-weight:700; margin-left:.5rem; vertical-align:middle; }
+    .cat-mindset  { background:#fef3c7; color:#92400e; }
+    .cat-skill    { background:#dbeafe; color:#1e40af; }
+    .cat-team     { background:#d1fae5; color:#065f46; }
+    .cat-career   { background:#ede9fe; color:#4c1d95; }
+    .cat-habit    { background:#fce7f3; color:#9d174d; }
+    /* ヒントカード */
+    .hint-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-lg); padding:1rem 1.25rem; margin:.6rem 0; box-shadow:var(--shadow-sm); display:flex; gap:1rem; align-items:flex-start; }
+    .hint-num { display:flex; align-items:center; justify-content:center; min-width:2.2rem; height:2.2rem; border-radius:50%; background:var(--primary); color:#fff; font-size:.88rem; font-weight:700; flex-shrink:0; }
+    .hint-body { flex:1; }
+    .hint-title { font-size:.95rem; font-weight:700; color:var(--gray-800); margin-bottom:.3rem; }
+    .hint-desc  { font-size:.85rem; color:var(--gray-600); line-height:1.7; }
+    .hint-action { margin-top:.5rem; font-size:.82rem; color:var(--primary); font-weight:600; }
+    /* セクションヘッダー */
+    .growth-section { border-left:4px solid #059669; padding-left:1rem; margin:1.75rem 0 .75rem; }
+    .growth-section h3 { margin:0; font-size:1rem; color:#059669; }
+    .growth-section p { margin:.25rem 0 0; font-size:.87rem; color:var(--gray-600); }
+    /* TOC */
+    .toc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+    @media(max-width:700px){ .toc-grid{grid-template-columns:1fr 1fr;} }
+    .toc-link { display:block; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:var(--radius); padding:.5rem .75rem; font-size:.83rem; text-decoration:none; color:#14532d; }
+    .toc-link:hover { background:#dcfce7; }
+    /* 格言カード */
+    .quote-card { background:linear-gradient(135deg,#065f46,#059669); color:#fff; border-radius:var(--radius-lg); padding:1.25rem 1.5rem; margin:.75rem 0; }
+    .quote-text { font-size:1.05rem; font-weight:700; font-style:italic; color:#d1fae5; margin-bottom:.4rem; }
+    .quote-desc { font-size:.88rem; color:#a7f3d0; line-height:1.7; }
+    /* チップ */
+    .chip { display:inline-block; background:#d1fae5; color:#065f46; border-radius:999px; padding:.15rem .65rem; font-size:.75rem; font-weight:600; margin:.1rem; }
+    /* ポイントボックス */
+    .point-box { background:#f0fdf4; border:1.5px solid #86efac; border-radius:var(--radius); padding:.75rem 1rem; margin:.75rem 0; font-size:.87rem; }
+    .point-box strong { color:#15803d; }
+    /* セクションタイトル override */
+    h2.gr-section { border-left:4px solid #059669 !important; }
+    h2.gr-section .title-icon { background:#059669 !important; }
+    /* 3カラム */
+    .three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1rem 0; }
+    .two-col   { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin:1rem 0; }
+    @media(max-width:760px){ .three-col,.two-col{grid-template-columns:1fr;} }
+    .mini-card { background:#f8fafc; border:1px solid var(--gray-200); border-radius:var(--radius); padding:.85rem 1rem; }
+    .mini-card-title { font-size:.8rem; font-weight:700; color:var(--gray-700); margin-bottom:.4rem; }
+    /* NG/OK */
+    .compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1rem 0; }
+    @media(max-width:680px){ .compare-grid{grid-template-columns:1fr;} }
+    .compare-card { border-radius:var(--radius-lg); padding:1rem 1.25rem; }
+    .compare-card.ng { background:#fef2f2; border:1.5px solid #fca5a5; }
+    .compare-card.ok { background:#f0fdf4; border:1.5px solid #86efac; }
+    .compare-label { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.5rem; }
+    .compare-card.ng .compare-label { color:#dc2626; }
+    .compare-card.ok .compare-label { color:#16a34a; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-header" style="background:linear-gradient(135deg,#022c22 0%,#065f46 55%,#059669 100%); color:#fff; padding:3rem 3rem 2.5rem;">
+      <div class="subtitle" style="color:#6ee7b7; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:.5rem;">Reference — エンジニア成長哲学</div>
+      <h1 style="font-size:2rem; font-weight:700; margin-bottom:.75rem;">🌱 エンジニアの持続的成長<br><span style="font-size:1.1rem; font-weight:400; color:#a7f3d0;">37のヒント — 実務適用ガイド</span></h1>
+      <p style="color:#d1fae5; font-size:.93rem; max-width:640px; line-height:1.8;">
+        「<b style="color:#fff;">エンジニアの持続的成長37のヒント</b>」で提言されている
+        エンジニアとしての思考習慣・スキル向上・チームとの関わり方・キャリア形成を、
+        日々の開発現場で実践するための資料です。
+      </p>
+      <div style="margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
+        <span style="background:rgba(255,255,255,.12); color:#d1fae5; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">マインドセット</span>
+        <span style="background:rgba(255,255,255,.12); color:#d1fae5; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">学習習慣</span>
+        <span style="background:rgba(255,255,255,.12); color:#d1fae5; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">チームワーク</span>
+        <span style="background:rgba(255,255,255,.12); color:#d1fae5; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">キャリア設計</span>
+        <span style="background:rgba(255,255,255,.12); color:#d1fae5; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">アウトプット習慣</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- リード -->
+      <div class="callout" style="background:#f0fdf4; border:1.5px solid #86efac; margin-top:0;">
+        <span class="callout-icon">🌱</span>
+        <div class="callout-body">
+          <div class="callout-title" style="color:#14532d;">持続的成長とは</div>
+          一時的なスキルアップではなく、<b>何年経っても成長し続けられる仕組みと習慣を自分の中に作ること</b>。
+          技術の変化が激しい時代に、特定の技術への依存ではなく<b>学び続ける能力そのもの</b>を鍛えることが本質。
+        </div>
+      </div>
+
+      <!-- 目次 -->
+      <div class="card" style="margin-top:1.25rem">
+        <div style="font-weight:700; margin-bottom:.75rem;">目次（5カテゴリ・37ヒント）</div>
+        <div class="toc-grid">
+          <a class="toc-link" href="#mindset">① マインドセット（8つ）</a>
+          <a class="toc-link" href="#learning">② 学習習慣（8つ）</a>
+          <a class="toc-link" href="#skill">③ 技術スキル（8つ）</a>
+          <a class="toc-link" href="#team">④ チームと組織（7つ）</a>
+          <a class="toc-link" href="#career">⑤ キャリアと発信（6つ）</a>
+          <a class="toc-link" href="#checklist">✅ 実務チェックリスト</a>
+        </div>
+      </div>
+
+      <!-- ===== ① マインドセット ===== -->
+      <h2 class="section-title gr-section" id="mindset"><span class="title-icon">🧠</span> ① マインドセット — 成長の土台となる考え方</h2>
+
+      <div class="quote-card">
+        <div class="quote-text">「成長は才能ではなく、習慣と姿勢から生まれる」</div>
+        <div class="quote-desc">
+          エンジニアとしての成長に「向き・不向き」はあるが、才能だけが成長を決めるわけではない。
+          正しい姿勢と日々の習慣こそが、長期的な成長の根幹となる。
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">1</div>
+        <div class="hint-body">
+          <div class="hint-title">「わからない」を恐れない <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">わからないことは恥ではなく、成長の入口。「わからない」と素直に言えるエンジニアは、質問力・調査力が伸びる。「わかったふり」は技術負債と同じで、後になるほど利息が膨らむ。</div>
+          <div class="hint-action">→ 不明点は当日中に解消する習慣を持つ。「後で調べよう」は「永遠に調べない」と同義。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">2</div>
+        <div class="hint-body">
+          <div class="hint-title">失敗を「学習コスト」として捉える <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">バグを出した、見積もりを外した、設計が間違っていた——これらはすべて「授業料」。大切なのは失敗の原因を分析し、同じ失敗を繰り返さない仕組みを作ること。</div>
+          <div class="hint-action">→ 失敗後に5分間だけ振り返りメモを書く。責める時間は不要。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">3</div>
+        <div class="hint-body">
+          <div class="hint-title">「なぜ？」を3回掘り下げる習慣 <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">表面的な問題を解決するだけでは根本原因が残る。「なぜバグが発生したか」→「なぜテストがなかったか」→「なぜ仕様が曖昧だったか」と掘り下げることで、本質的な改善につながる。</div>
+          <div class="hint-action">→ バグ票に「根本原因」欄を作る。「修正内容」だけでなく「再発防止策」も記録する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">4</div>
+        <div class="hint-body">
+          <div class="hint-title">完璧主義よりも「完了主義」 <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">完璧なコードを書こうとするあまり、何もリリースできないのが一番の機会損失。まず動くものを作り、フィードバックを得て改善するサイクルが、最終的に良い品質につながる。</div>
+          <div class="hint-action">→ 「80点でリリースして20点分のフィードバックを得る」を意識する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">5</div>
+        <div class="hint-body">
+          <div class="hint-title">技術への好奇心を「業務外」でも保つ <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">業務で使う技術だけを学ぶエンジニアは、業務の範囲でしか成長できない。自分が楽しいと思える技術を自由に触ることで、思わぬ応用力・発想力が養われる。</div>
+          <div class="hint-action">→ 週に1〜2時間は「業務と無関係な技術」を触る時間を意図的に作る。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">6</div>
+        <div class="hint-body">
+          <div class="hint-title">「自分は成長できる」という成長マインドセットを持つ <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">「自分には才能がない」と思い込む固定マインドセットは、挑戦を阻む最大の障壁。能力は努力と戦略で伸びるという成長マインドセット（Carol Dweck理論）が持続的成長の前提条件。</div>
+          <div class="hint-action">→ 「まだできない」を口癖にする。「できない」ではなく「まだできない」。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">7</div>
+        <div class="hint-body">
+          <div class="hint-title">感情と技術の問題を切り分ける <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">レビューで厳しい指摘を受けたとき、「自分が否定された」と感じてしまうのは自然だが、技術的な議論を感情的に受け取ると成長が止まる。コードの批判は自分への批判ではない。</div>
+          <div class="hint-action">→ レビューコメントを「コードへの提案」として読む練習をする。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">8</div>
+        <div class="hint-body">
+          <div class="hint-title">「技術的負債」に対して鈍感にならない <span class="cat-badge cat-mindset">マインドセット</span></div>
+          <div class="hint-desc">「動いているからOK」という姿勢が積み重なると、コードベースは崩壊する。技術的負債を意識し、返済コストを見積もり、定期的に返済する習慣がプロフェッショナルの証。</div>
+          <div class="hint-action">→ スプリントに必ず「負債返済タスク」を1〜2件含める。</div>
+        </div>
+      </div>
+
+      <!-- ===== ② 学習習慣 ===== -->
+      <h2 class="section-title gr-section" id="learning"><span class="title-icon">📚</span> ② 学習習慣 — 継続して学び続けるための仕組み</h2>
+
+      <div class="point-box">
+        <strong>💡 学習の本質：</strong>
+        「何を学ぶか」より「<b>どう学ぶか</b>」が重要。インプットとアウトプットのバランス、
+        深さと広さのトレードオフを意識した学習設計が、長期的な成長を支える。
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">9</div>
+        <div class="hint-body">
+          <div class="hint-title">インプットよりアウトプットを増やす <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">本を読む・動画を観るだけでは知識は定着しない。ブログを書く・LT登壇する・社内勉強会で発表する——アウトプットすることで初めて知識が整理され、理解の浅さが明確になる。</div>
+          <div class="hint-action">→ 学んだことは24時間以内に誰かに説明するか、メモに書く。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">10</div>
+        <div class="hint-body">
+          <div class="hint-title">「T字型」から「π字型」スキルセットへ <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">1つの専門領域（T字の縦棒）を持ちながら、広い基礎知識（横棒）も持つT字型は基本。さらに2本の柱（π字）を持つことで、領域間の橋渡し役として希少価値が高まる。</div>
+          <div class="hint-action">→ 主専門領域の隣接技術（例：バックエンドエンジニアがインフラを学ぶ）に定期的に投資する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">11</div>
+        <div class="hint-body">
+          <div class="hint-title">「写経」から「改造」へのステップを踏む <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">チュートリアルをそのまま動かすだけでは応用力がつかない。まず写経してコードを理解し、次に自分なりに改造・拡張することで、「使える知識」として定着する。</div>
+          <div class="hint-action">→ チュートリアル完了後に「機能を1つ追加する」「エラーを意図的に起こして直す」を必ず行う。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">12</div>
+        <div class="hint-body">
+          <div class="hint-title">公式ドキュメントを「第一の情報源」にする <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">ブログや記事は古くなりやすく、バージョン依存の誤情報も多い。公式ドキュメントを読む習慣は、最新・正確な情報への最短経路。最初は難しくても、読む体力は必ず身につく。</div>
+          <div class="hint-action">→ 問題が発生したら検索よりも先に公式ドキュメントのトップページを開く習慣を持つ。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">13</div>
+        <div class="hint-body">
+          <div class="hint-title">「学習ログ」をつけて成長を可視化する <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">成長は日々わかりにくい。3ヶ月前の自分のコードを見て「あの頃より書けるようになった」と気づくことが、継続のモチベーションになる。学習ログは自分へのエビデンスになる。</div>
+          <div class="hint-action">→ Notionや日記アプリで「今日学んだこと」を1〜3行でもいいので毎日記録する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">14</div>
+        <div class="hint-body">
+          <div class="hint-title">「技術書」と「ビジネス書」を交互に読む <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">技術書だけ読むと視野が狭くなる。ビジネス書・思考法の本・プロジェクトマネジメント本を読むことで、「なぜこの技術が必要か」を事業観点から語れるエンジニアになれる。</div>
+          <div class="hint-action">→ 技術書1冊読んだら、ビジネス・思考系の本を1冊読む。交互のサイクルを作る。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">15</div>
+        <div class="hint-body">
+          <div class="hint-title">OSSのコードを読む習慣をつける <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">世界レベルのエンジニアが書いたコードはすべてGitHubで公開されている。使っているフレームワークのソースコードを読むことで、「どう動いているか」への理解が深まり、デバッグ力も上がる。</div>
+          <div class="hint-action">→ 普段使っているライブラリを1つ選び、主要なメソッドの実装を週1回読んでみる。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">16</div>
+        <div class="hint-body">
+          <div class="hint-title">「締め切り駆動学習」で先延ばしを防ぐ <span class="cat-badge cat-skill">学習習慣</span></div>
+          <div class="hint-desc">「いつか学ぼう」は「永遠に学ばない」と同義。勉強会の登壇申し込みをする、社内で発表の場を予約するなど、「アウトプットの締め切り」を先に作ることで強制的に学習が進む。</div>
+          <div class="hint-action">→ 学びたいテーマが決まったら、まず「1ヶ月後に社内LTで発表する」と宣言してから学び始める。</div>
+        </div>
+      </div>
+
+      <!-- ===== ③ 技術スキル ===== -->
+      <h2 class="section-title gr-section" id="skill"><span class="title-icon">⚙️</span> ③ 技術スキル — 現場で活きる技術力の磨き方</h2>
+
+      <div class="hint-card">
+        <div class="hint-num">17</div>
+        <div class="hint-body">
+          <div class="hint-title">「動くコード」より「読めるコード」を書く <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">コードは書く時間より読まれる時間の方が圧倒的に長い。将来の自分・チームメンバーが読んで意図を理解できるコードこそが、長期的な生産性を高める。「読みやすさ」は思いやりの実装。</div>
+          <div class="hint-action">→ コードを書いたら「3ヶ月後の自分が読んでも理解できるか？」と自問する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">18</div>
+        <div class="hint-body">
+          <div class="hint-title">デバッグ力を意図的に鍛える <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">「print文デバッグ」だけで満足していると成長が止まる。デバッガの使い方・ログ設計・障害調査の体系的な手順を学ぶことで、問題解決の速度と確実性が桁違いに向上する。</div>
+          <div class="hint-action">→ 次のバグ調査では、いつも使わないデバッガ機能（条件付きブレークポイント等）を1つ試す。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">19</div>
+        <div class="hint-body">
+          <div class="hint-title">テストを「後付け」でなく「設計の一部」として書く <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">テストがないコードは「動いているように見えるコード」に過ぎない。テストを設計段階から考えることで、コードの責務が明確になり、設計品質自体が向上する。</div>
+          <div class="hint-action">→ 機能を実装する前に「このメソッドのテストケースを3つ書くとしたら？」を先に考える。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">20</div>
+        <div class="hint-body">
+          <div class="hint-title">コマンドラインとシェルを使いこなす <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">GUIツールへの依存はポータビリティを下げる。CLIとシェルスクリプトを習得することで、環境を問わず作業できる「道具を選ばないエンジニア」になれる。自動化の第一歩でもある。</div>
+          <div class="hint-action">→ 毎日繰り返している手作業を1つ選び、シェルスクリプト化してみる。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">21</div>
+        <div class="hint-body">
+          <div class="hint-title">Gitを「バックアップツール」でなく「コミュニケーションツール」として使う <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">コミットメッセージはチームへのメッセージ。「修正」「対応」だけのメッセージは情報ゼロ。「なぜこの変更をするか」を伝えるコミットメッセージが、未来のチームメンバーへの贈り物になる。</div>
+          <div class="hint-action">→ コミットメッセージに「なぜ（Why）」を必ず一言添える習慣を持つ。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">22</div>
+        <div class="hint-body">
+          <div class="hint-title">パフォーマンスを「後で考える」にしない <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">「パフォーマンスは後で最適化する」は正しいが、「基本的な計算量の意識」は最初から持つべき。O(n²)のロジックを意識せず書き続けると、データ量が増えたときに取り返しがつかなくなる。</div>
+          <div class="hint-action">→ ループを書くたびに「ネストが深くないか」「DBアクセスがN+1になっていないか」を確認する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">23</div>
+        <div class="hint-body">
+          <div class="hint-title">セキュリティを「後付け」にしない <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">SQLインジェクション・XSS・認証バイパスは「初心者のミス」ではなく、考慮を忘れた全エンジニアに起こりうる問題。設計段階からセキュリティ観点を持つことが、プロの最低条件。</div>
+          <div class="hint-action">→ 実装後にOWASP Top10のチェックリストを確認する習慣を持つ。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">24</div>
+        <div class="hint-body">
+          <div class="hint-title">「再現環境を作る力」を磨く <span class="cat-badge cat-skill">技術スキル</span></div>
+          <div class="hint-desc">バグを「自分のマシンでは再現しない」で終わらせるのは非プロ。Dockerやコンテナ技術を使って環境を統一し、バグを確実に再現できる環境を作る力は、チーム全体の生産性を高める。</div>
+          <div class="hint-action">→ 「自分のマシンでしか動かない」コードは存在しないと思って環境設計する。</div>
+        </div>
+      </div>
+
+      <!-- ===== ④ チームと組織 ===== -->
+      <h2 class="section-title gr-section" id="team"><span class="title-icon">🤝</span> ④ チームと組織 — 成長を加速させる人間関係</h2>
+
+      <div class="hint-card">
+        <div class="hint-num">25</div>
+        <div class="hint-body">
+          <div class="hint-title">コードレビューを「批判の場」でなく「学びの場」にする <span class="cat-badge cat-team">チームワーク</span></div>
+          <div class="hint-desc">レビューする側は「教える」のでなく「一緒に考える」姿勢で。レビューされる側は「防衛」でなく「学ぶ」姿勢で。双方向の学習が起きるレビュー文化がチームの成長速度を最大化する。</div>
+          <div class="hint-action">→ レビューコメントには「なぜそうした方がよいか」の理由を必ず添える。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">26</div>
+        <div class="hint-body">
+          <div class="hint-title">「聞ける環境」を自分で作る <span class="cat-badge cat-team">チームワーク</span></div>
+          <div class="hint-desc">「聞きやすい雰囲気か」はチームの責任だが、「聞く力」は自分の責任。「調べたがわからなかった点」「試したこと」を整理してから質問することで、聞きやすさと自分の成長が同時に高まる。</div>
+          <div class="hint-action">→ 質問するときは「調べたこと・試したこと・わからなかった点」を3行でまとめてから聞く。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">27</div>
+        <div class="hint-body">
+          <div class="hint-title">ペアプログラミング・モブプログラミングを積極的に活用する <span class="cat-badge cat-team">チームワーク</span></div>
+          <div class="hint-desc">「一人で悩む時間」はコストが高い。ペアプロ・モブプロは「非効率に見えて実は効率的」な手法。チームの暗黙知が共有され、コードレビューコストも下がる。</div>
+          <div class="hint-action">→ 詰まった問題は30分以内に「一緒に見てもらう」ことを躊躇しない。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">28</div>
+        <div class="hint-body">
+          <div class="hint-title">「仕様の意図」を理解してから実装する <span class="cat-badge cat-team">チームワーク</span></div>
+          <div class="hint-desc">仕様書に書いてあることを「言われた通りに作る」だけのエンジニアは代替可能。「なぜこの機能が必要か」「誰がどう使うか」を理解して実装することで、仕様の穴を事前に発見できる。</div>
+          <div class="hint-action">→ 実装着手前に「この機能のユーザーストーリーを一言で言うと？」と自問してから開始する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">29</div>
+        <div class="hint-body">
+          <div class="hint-title">ドキュメントを「書く義務」でなく「未来の自分への投資」として書く <span class="cat-badge cat-team">チームワーク</span></div>
+          <div class="hint-desc">「時間がないからドキュメントは後で」を繰り返すと、チームの認知負荷が積み上がる。設計の意図・却下した選択肢・既知の制約を書き残すことが、6ヶ月後の自分と同僚を救う。</div>
+          <div class="hint-action">→ 設計の「なぜそうしたか」をADRに残す習慣を持つ（1件5分で書けるフォーマットを使う）。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">30</div>
+        <div class="hint-body">
+          <div class="hint-title">メンターを持ち、メンターにもなる <span class="cat-badge cat-team">チームワーク</span></div>
+          <div class="hint-desc">自分より経験豊富な人から学ぶことと、自分より経験の浅い人に教えることは、どちらも成長を加速させる。教えることで自分の理解の浅さが明確になり、学ぶことで視野が広がる。</div>
+          <div class="hint-action">→ 社内に「聞ける先輩」を意識的に3人作る。同時に「自分が答えられる後輩」に積極的に関わる。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">31</div>
+        <div class="hint-body">
+          <div class="hint-title">チームの「作業リズム」を大切にする <span class="cat-badge cat-team">チームワーク</span></div>
+          <div class="hint-desc">割り込みは生産性の最大の敵。チャットやメールへの即時返信を「よいこと」と思い込むと、自分もチームも集中時間が奪われる。深い思考が必要な仕事には「まとまった時間」が必要。</div>
+          <div class="hint-action">→ 「集中時間（フォーカスタイム）」をカレンダーでブロックし、通知をオフにする時間帯を作る。</div>
+        </div>
+      </div>
+
+      <!-- ===== ⑤ キャリアと発信 ===== -->
+      <h2 class="section-title gr-section" id="career"><span class="title-icon">🚀</span> ⑤ キャリアと発信 — 成長を加速させる外部とのつながり</h2>
+
+      <div class="hint-card">
+        <div class="hint-num">32</div>
+        <div class="hint-body">
+          <div class="hint-title">「得意なこと」と「好きなこと」と「市場価値」の重なりを見つける <span class="cat-badge cat-career">キャリア</span></div>
+          <div class="hint-desc">キャリアの方向性を考えるとき、「得意なこと（強み）」「好きなこと（情熱）」「市場が求めること（需要）」の3つが重なる領域を探すことが、持続可能なキャリアの設計につながる。</div>
+          <div class="hint-action">→ 年に1回、「得意なこと・好きなこと・市場価値」を紙に書き出して棚卸しする。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">33</div>
+        <div class="hint-body">
+          <div class="hint-title">技術ブログ・SNS発信で「学習を加速」させる <span class="cat-badge cat-career">キャリア</span></div>
+          <div class="hint-desc">発信することは学習の最強ツール。「人に説明できるレベルで理解する」ことを目標にすると、学びの深さが変わる。フォロワー数より「自分の理解が深まるか」を発信の目的にする。</div>
+          <div class="hint-action">→ 学んだことをZennやQiitaに月1本でも書く。最初は「自分用メモ」レベルでも公開する。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">34</div>
+        <div class="hint-body">
+          <div class="hint-title">コミュニティへの参加で「社外の視点」を得る <span class="cat-badge cat-career">キャリア</span></div>
+          <div class="hint-desc">自社の常識が業界の常識ではない。勉強会・カンファレンスへの参加、OSSコントリビューションなど、社外とのつながりを持つことで、自分のレベルの客観的な把握と新しい刺激が得られる。</div>
+          <div class="hint-action">→ 四半期に1回は社外の技術イベントや勉強会に参加する目標を立てる。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">35</div>
+        <div class="hint-body">
+          <div class="hint-title">「副業・個人開発」でリスクなく新技術を試す <span class="cat-badge cat-career">キャリア</span></div>
+          <div class="hint-desc">業務では失敗コストが高い技術でも、個人開発なら自由に試せる。新しいフレームワーク・クラウドサービス・アーキテクチャを試す場として、個人開発は最良の実験場になる。</div>
+          <div class="hint-action">→ 「作りたいもの」リストを常に持ち、次の技術実験テーマを決めておく。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">36</div>
+        <div class="hint-body">
+          <div class="hint-title">「健康」はエンジニアにとっての最重要インフラ <span class="cat-badge cat-career">キャリア</span></div>
+          <div class="hint-desc">睡眠不足・運動不足・長時間労働は、短期的な生産性を上げているように見えて、実は認知能力・創造性・判断力を下げている。エンジニアとして長く活躍するためには、健康管理がスキルの一つ。</div>
+          <div class="hint-action">→ 睡眠7時間・週3回の軽い運動・1時間に1回の立ち上がりを「業務の一部」として扱う。</div>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div class="hint-num">37</div>
+        <div class="hint-body">
+          <div class="hint-title">「10年後の自分」から逆算してキャリアを設計する <span class="cat-badge cat-career">キャリア</span></div>
+          <div class="hint-desc">「なんとなく今の仕事をこなす」だけでは、10年後に「どこでも通用するエンジニア」にはなれない。理想の姿を描き、そこから逆算して今年・今月・今週何を学ぶかを決める設計思考が必要。</div>
+          <div class="hint-action">→ 「10年後になっていたいエンジニア像」を具体的に書き出し、必要なスキルを洗い出す。</div>
+        </div>
+      </div>
+
+      <!-- ===== チェックリスト ===== -->
+      <h2 class="section-title gr-section" id="checklist"><span class="title-icon">✅</span> 実務チェックリスト — 今日から始める37のヒント実践</h2>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:30%;">カテゴリ</th><th>今日から始められること</th><th style="width:15%;">難易度</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><b>🧠 マインドセット</b></td><td>不明点を当日中に解消する習慣（ヒント1）</td><td>★☆☆</td></tr>
+              <tr><td><b>🧠 マインドセット</b></td><td>失敗後に5分間だけ振り返りメモを書く（ヒント2）</td><td>★☆☆</td></tr>
+              <tr><td><b>🧠 マインドセット</b></td><td>技術的負債をスプリントに毎回1件含める（ヒント8）</td><td>★★☆</td></tr>
+              <tr><td><b>📚 学習習慣</b></td><td>学んだことを24時間以内に誰かに説明する（ヒント9）</td><td>★☆☆</td></tr>
+              <tr><td><b>📚 学習習慣</b></td><td>学習ログを毎日1〜3行書く（ヒント13）</td><td>★☆☆</td></tr>
+              <tr><td><b>📚 学習習慣</b></td><td>LT発表の申し込みを先にしてから学ぶ（ヒント16）</td><td>★★☆</td></tr>
+              <tr><td><b>⚙️ 技術スキル</b></td><td>コード作成後「3ヶ月後の自分が読めるか」を確認（ヒント17）</td><td>★☆☆</td></tr>
+              <tr><td><b>⚙️ 技術スキル</b></td><td>コミットメッセージに「なぜ」を添える（ヒント21）</td><td>★☆☆</td></tr>
+              <tr><td><b>⚙️ 技術スキル</b></td><td>実装後にOWASP Top10を確認する（ヒント23）</td><td>★★☆</td></tr>
+              <tr><td><b>🤝 チームワーク</b></td><td>質問前に「調べたこと・試したこと・不明点」を整理（ヒント26）</td><td>★☆☆</td></tr>
+              <tr><td><b>🤝 チームワーク</b></td><td>設計意思決定をADRに残す（ヒント29）</td><td>★★☆</td></tr>
+              <tr><td><b>🤝 チームワーク</b></td><td>カレンダーに集中時間をブロック（ヒント31）</td><td>★☆☆</td></tr>
+              <tr><td><b>🚀 キャリア</b></td><td>月1本、学んだことをブログに書く（ヒント33）</td><td>★★☆</td></tr>
+              <tr><td><b>🚀 キャリア</b></td><td>四半期1回、社外の技術イベントに参加（ヒント34）</td><td>★★☆</td></tr>
+              <tr><td><b>🚀 キャリア</b></td><td>10年後のエンジニア像を文章で書き出す（ヒント37）</td><td>★★★</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- まとめ -->
+      <div class="quote-card" style="margin-top:2rem;">
+        <div class="quote-text">「成長に終わりはない。だからこそ、続けることに意味がある。」</div>
+        <div class="quote-desc">
+          37のヒントをすべて一度に実践しようとする必要はない。
+          1つ選んで今日から始めること、それが持続的成長の第一歩。
+          大切なのは<b style="color:#d1fae5;">継続できる小さな習慣を積み重ねること</b>。
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<script src="../sidebar.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -61,6 +61,7 @@
   <a href="${base}reference/readable-naming.html"><span class="nav-icon">📖</span>命名規則ガイド</a>
   <a href="${base}reference/legacy-code.html"><span class="nav-icon">🏚️</span>レガシーコードからの脱却</a>
   <a href="${base}reference/pragmatic-programmer.html"><span class="nav-icon">🧙</span>達人プログラマー</a>
+  <a href="${base}reference/engineer-growth.html"><span class="nav-icon">🌱</span>エンジニアの持続的成長</a>
 </nav>
 
 <div class="sidebar-section">チェックリスト</div>

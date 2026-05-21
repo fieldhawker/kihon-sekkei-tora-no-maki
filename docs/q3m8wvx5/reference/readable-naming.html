@@ -94,6 +94,7 @@
           <a class="toc-link" href="#api">7. API エンドポイント</a>
           <a class="toc-link" href="#docs">8. 設計書・ファイル名</a>
           <a class="toc-link" href="#comments">9. コメントの書き方</a>
+          <a class="toc-link" href="#it-english">10. IT英語 推奨単語集</a>
         </div>
       </div>
 
@@ -701,6 +702,240 @@ if (user == null) {
         </div>
       </div>
 
+      <!-- ===== 10. IT英語 推奨単語集 ===== -->
+      <h2 class="section-title" id="it-english"><span class="title-icon">🌐</span> 10. IT英語 推奨単語集</h2>
+
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">📖</span>
+        <div class="callout-body">
+          <div class="callout-title">「チームを動かすIT英語実践マニュアル」が提言する命名観</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            日本人エンジニアが書くコードには「和製英語」「曖昧すぎる汎用語」「本来の英語と意味がズレた単語」が混入しやすい。
+            同書では「<b>チーム全員が同じ意味でイメージできる英単語</b>」を選ぶことを最優先とし、
+            以下のカテゴリ別推奨語を提示している。
+          </p>
+        </div>
+      </div>
+
+      <!-- 10-1. 動詞リスト（拡張版） -->
+      <div class="rule-section">
+        <h3>① 操作・処理を表す動詞の選び方 <span class="principle-badge">動詞</span></h3>
+        <p>「何をするか」が一意に伝わる動詞を選ぶ。意味が近い語でも文脈によって正解が異なる。</p>
+      </div>
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:18%;">動詞</th><th>コード上の推奨用途</th><th style="width:28%;">使用例</th><th style="width:20%;">注意・NG語</th></tr></thead>
+            <tbody>
+              <tr><td><code>fetch</code></td><td>非同期でリモートからデータを取得する</td><td><code>fetchOrderHistory()</code></td><td><code>get</code> との混用に注意</td></tr>
+              <tr><td><code>retrieve</code></td><td>条件を指定して検索・取得（一般的な取得）</td><td><code>retrieveActiveUsers()</code></td><td>日常会話では冗長に聞こえる場合あり</td></tr>
+              <tr><td><code>load</code></td><td>ファイル・設定・リソースを読み込む</td><td><code>loadConfiguration()</code></td><td>データ取得に使うと「fetch」と競合する</td></tr>
+              <tr><td><code>parse</code></td><td>文字列・バイト列を構造化データに変換</td><td><code>parseJsonResponse(raw)</code></td><td><code>convert</code> と混用しない</td></tr>
+              <tr><td><code>convert</code></td><td>型・形式を変換（Entity↔DTO等）</td><td><code>convertToDto(entity)</code></td><td><code>parse</code> は文字列解析専用に限定</td></tr>
+              <tr><td><code>transform</code></td><td>データを別の構造・形式に変形（パイプライン）</td><td><code>transformToSummary(list)</code></td><td>軽微な変換に使うと大げさ</td></tr>
+              <tr><td><code>build</code></td><td>オブジェクト・クエリ・リクエストを組み立てる</td><td><code>buildSearchQuery(params)</code></td><td>生成が主目的なら <code>create</code> を優先</td></tr>
+              <tr><td><code>generate</code></td><td>動的にコード・ID・レポートを生成する</td><td><code>generateInvoicePdf(order)</code></td><td><code>create</code> との違い：生成物が計算・自動生成される場合</td></tr>
+              <tr><td><code>register</code></td><td>システムへの登録（アカウント・設定等）</td><td><code>registerNewUser(dto)</code></td><td>DB INSERT とは限らないので <code>create</code> と使い分ける</td></tr>
+              <tr><td><code>submit</code></td><td>フォーム・申請をユーザーが提出する</td><td><code>submitOrderRequest()</code></td><td>内部処理には使わない（UIアクション専用）</td></tr>
+              <tr><td><code>dispatch</code></td><td>イベント・メッセージをキューやバスに送る</td><td><code>dispatchNotificationEvent(e)</code></td><td><code>send</code> はネットワーク送信、<code>dispatch</code> は内部イベント</td></tr>
+              <tr><td><code>publish</code></td><td>メッセージブローカーへのパブリッシュ</td><td><code>publishOrderCreatedEvent()</code></td><td>MQ/イベント駆動文脈に限定する</td></tr>
+              <tr><td><code>consume</code></td><td>キュー・ストリームからのメッセージ消費</td><td><code>consumePaymentEvents()</code></td><td>読み込み（<code>read</code>）と混用しない</td></tr>
+              <tr><td><code>process</code></td><td>受け取ったデータに複数の処理を施す（汎用）</td><td><code>processPaymentCallback(payload)</code></td><td>単独では汎用すぎる。目的語を必ずつける</td></tr>
+              <tr><td><code>handle</code></td><td>イベント・エラーの受け付け・処理</td><td><code>handleAuthError(err)</code></td><td>ビジネスロジックに使うと責務が曖昧になる</td></tr>
+              <tr><td><code>execute</code></td><td>クエリ・バッチ・コマンドを実行する</td><td><code>executeBatchImport()</code></td><td>一般的な関数呼び出しには使いすぎない</td></tr>
+              <tr><td><code>apply</code></td><td>ルール・パッチ・割引を適用する</td><td><code>applyDiscountRule(order, rule)</code></td><td><code>set</code> との違い：副作用を伴う変換に使う</td></tr>
+              <tr><td><code>merge</code></td><td>複数のオブジェクト・コレクションを統合</td><td><code>mergeUserSettings(base, override)</code></td><td>DB の UPSERT 的文脈にも使われる</td></tr>
+              <tr><td><code>sync</code> / <code>synchronize</code></td><td>2つのデータソース間を同期させる</td><td><code>syncInventoryFromErp()</code></td><td><code>update</code> との違い：双方向同期を示す</td></tr>
+              <tr><td><code>expire</code></td><td>有効期限が切れる（自動・受動的）</td><td><code>expireSessionToken(token)</code></td><td>能動的に削除するなら <code>invalidate</code> を使う</td></tr>
+              <tr><td><code>invalidate</code></td><td>キャッシュ・トークンを明示的に無効化</td><td><code>invalidateCachedUser(userId)</code></td><td><code>delete</code> と違い「無効化」であり削除ではない</td></tr>
+              <tr><td><code>revoke</code></td><td>権限・トークン・許可を取り消す</td><td><code>revokeAccessToken(tokenId)</code></td><td>セキュリティ文脈での取り消しに限定</td></tr>
+              <tr><td><code>notify</code></td><td>ユーザー・外部システムへ通知する</td><td><code>notifyShippingDelay(order)</code></td><td><code>send</code> はデータ送信、<code>notify</code> は通知・知らせる</td></tr>
+              <tr><td><code>schedule</code></td><td>将来の実行を予約・スケジュールする</td><td><code>scheduleReminderEmail(user, at)</code></td><td>即時実行は <code>execute</code>、予約は <code>schedule</code></td></tr>
+              <tr><td><code>rollback</code></td><td>処理を元の状態に戻す</td><td><code>rollbackOrderTransaction()</code></td><td>DB トランザクション外でも使える</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 10-2. 状態・属性を表す形容詞・名詞 -->
+      <div class="rule-section">
+        <h3>② 状態・属性を表す形容詞・名詞 <span class="principle-badge">状態語</span></h3>
+        <p>ステータス・フラグ・プロパティ名に使う語。「意味が1つに決まる」語を選ぶことで、ENUMの値名や変数名の迷いがなくなる。</p>
+      </div>
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:20%;">単語</th><th>意味・使いどころ</th><th style="width:28%;">使用例</th><th style="width:20%;">対義語</th></tr></thead>
+            <tbody>
+              <tr><td><code>active</code></td><td>現在有効・稼働中（最も汎用的）</td><td><code>isActive</code>, <code>ACTIVE</code></td><td><code>inactive</code></td></tr>
+              <tr><td><code>enabled</code></td><td>機能・設定がオン状態</td><td><code>isEnabled</code>, <code>featureEnabled</code></td><td><code>disabled</code></td></tr>
+              <tr><td><code>visible</code></td><td>UI上で表示状態</td><td><code>isVisible</code>, <code>VISIBLE</code></td><td><code>hidden</code></td></tr>
+              <tr><td><code>available</code></td><td>利用可能・在庫あり・接続可能</td><td><code>isAvailable</code>, <code>available_stock</code></td><td><code>unavailable</code></td></tr>
+              <tr><td><code>pending</code></td><td>処理待ち・承認待ち・保留中</td><td><code>PENDING</code>, <code>pendingOrders</code></td><td><code>completed</code> / <code>resolved</code></td></tr>
+              <tr><td><code>approved</code></td><td>承認済み</td><td><code>isApproved</code>, <code>APPROVED</code></td><td><code>rejected</code></td></tr>
+              <tr><td><code>rejected</code></td><td>却下・拒否済み</td><td><code>isRejected</code>, <code>REJECTED</code></td><td><code>approved</code></td></tr>
+              <tr><td><code>completed</code></td><td>処理が完了した（最終状態）</td><td><code>COMPLETED</code>, <code>isCompleted</code></td><td><code>pending</code> / <code>in_progress</code></td></tr>
+              <tr><td><code>cancelled</code></td><td>ユーザーまたはシステムによるキャンセル</td><td><code>CANCELLED</code>, <code>isCancelled</code></td><td><code>confirmed</code></td></tr>
+              <tr><td><code>expired</code></td><td>有効期限切れ</td><td><code>isExpired</code>, <code>EXPIRED</code></td><td><code>valid</code></td></tr>
+              <tr><td><code>archived</code></td><td>論理削除・アーカイブ済み（データは残る）</td><td><code>isArchived</code>, <code>ARCHIVED</code></td><td><code>active</code></td></tr>
+              <tr><td><code>deleted</code></td><td>論理削除フラグ（物理削除ではない文脈）</td><td><code>is_deleted</code></td><td><code>is_archived</code> と役割を統一して使い分ける</td></tr>
+              <tr><td><code>verified</code></td><td>本人確認・検証済み</td><td><code>isEmailVerified</code>, <code>VERIFIED</code></td><td><code>unverified</code></td></tr>
+              <tr><td><code>confirmed</code></td><td>ユーザーが確認・同意した</td><td><code>isConfirmed</code>, <code>CONFIRMED</code></td><td><code>unconfirmed</code></td></tr>
+              <tr><td><code>published</code></td><td>公開済み（CMS・記事・ドキュメント）</td><td><code>isPublished</code>, <code>PUBLISHED</code></td><td><code>draft</code></td></tr>
+              <tr><td><code>draft</code></td><td>下書き・未公開状態</td><td><code>DRAFT</code>, <code>isDraft</code></td><td><code>published</code></td></tr>
+              <tr><td><code>locked</code></td><td>編集不可・ロック状態</td><td><code>isLocked</code>, <code>LOCKED</code></td><td><code>unlocked</code></td></tr>
+              <tr><td><code>required</code></td><td>入力必須・必須項目</td><td><code>isRequired</code>, <code>required_fields</code></td><td><code>optional</code></td></tr>
+              <tr><td><code>optional</code></td><td>任意・省略可能</td><td><code>isOptional</code>, <code>optionalParams</code></td><td><code>required</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 10-3. 時間・タイミングを表す語 -->
+      <div class="rule-section">
+        <h3>③ 時間・タイミングを表す語 <span class="principle-badge">時間語</span></h3>
+        <p>日時カラムや変数名のサフィックスを統一することで、「いつの日時か」が名前だけで判別できる。</p>
+      </div>
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:22%;">パターン</th><th>意味</th><th style="width:30%;">使用例</th><th>型の目安</th></tr></thead>
+            <tbody>
+              <tr><td><code>xxx_at</code> / <code>xxxAt</code></td><td>特定の時刻（timestamp）</td><td><code>created_at</code>, <code>sentAt</code></td><td>DATETIME / Instant</td></tr>
+              <tr><td><code>xxx_date</code> / <code>xxxDate</code></td><td>日付のみ（time は含まない）</td><td><code>due_date</code>, <code>birthDate</code></td><td>DATE / LocalDate</td></tr>
+              <tr><td><code>xxx_on</code> / <code>xxxOn</code></td><td>特定の日（on a day）</td><td><code>scheduled_on</code>, <code>expiredOn</code></td><td>DATE</td></tr>
+              <tr><td><code>xxx_from</code> / <code>xxx_to</code></td><td>期間の開始・終了</td><td><code>valid_from</code>, <code>valid_to</code></td><td>DATE or DATETIME</td></tr>
+              <tr><td><code>xxx_since</code></td><td>「〜以降」を表す開始点</td><td><code>activeSince</code>, <code>member_since</code></td><td>DATE or DATETIME</td></tr>
+              <tr><td><code>xxx_until</code></td><td>「〜まで」を表す終了点</td><td><code>validUntil</code>, <code>locked_until</code></td><td>DATE or DATETIME</td></tr>
+              <tr><td><code>xxx_ms</code></td><td>ミリ秒単位の数値</td><td><code>timeoutMs</code>, <code>elapsed_ms</code></td><td>long / number</td></tr>
+              <tr><td><code>xxx_sec</code> / <code>xxx_seconds</code></td><td>秒単位の数値</td><td><code>ttlSec</code>, <code>retry_interval_sec</code></td><td>int / number</td></tr>
+              <tr><td><code>scheduled_at</code></td><td>実行予定日時</td><td><code>scheduled_at</code></td><td>DATETIME</td></tr>
+              <tr><td><code>processed_at</code></td><td>処理完了日時</td><td><code>processed_at</code></td><td>DATETIME (nullable)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 10-4. よく使うIT名詞 -->
+      <div class="rule-section">
+        <h3>④ システム設計でよく使う名詞 <span class="principle-badge">名詞</span></h3>
+        <p>クラス名・テーブル名・変数名のコアとなる名詞。同書では「日本語をそのまま訳した和製英語」を避け、業界標準語を使うことを推奨している。</p>
+      </div>
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1.5rem;">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:22%;">推奨語</th><th>意味・使いどころ</th><th style="width:28%;">NG（和製英語など）</th></tr></thead>
+            <tbody>
+              <tr><td><code>user</code> / <code>account</code></td><td>ユーザー。<code>account</code> は認証に紐づく概念</td><td><code>member</code>（会員と混同）, <code>customer</code>（顧客と混同）</td></tr>
+              <tr><td><code>customer</code></td><td>購買・契約関係にある外部ユーザー</td><td><code>user</code> と混用しない（役割を明確に分ける）</td></tr>
+              <tr><td><code>profile</code></td><td>ユーザーの表示情報・属性情報</td><td><code>userInfo</code>（<code>info</code> は汎用すぎる）</td></tr>
+              <tr><td><code>credential</code></td><td>認証情報（パスワード・APIキー等）</td><td><code>auth</code>（名詞として使うには不正確）</td></tr>
+              <tr><td><code>permission</code></td><td>特定操作への許可（細粒度）</td><td><code>authority</code>（Springの用語と混同注意）</td></tr>
+              <tr><td><code>role</code></td><td>権限ロール（粗粒度、複数permissionを束ねる）</td><td><code>authority</code> と <code>role</code> を混用しない</td></tr>
+              <tr><td><code>token</code></td><td>JWT・APIトークン・一時的な認証キー</td><td><code>key</code>（APIキーと混同）, <code>ticket</code>（和製英語的）</td></tr>
+              <tr><td><code>session</code></td><td>ログイン状態を維持するサーバー側状態</td><td><code>loginInfo</code>, <code>loginData</code></td></tr>
+              <tr><td><code>request</code></td><td>HTTPリクエスト or DTO（入力データ）</td><td><code>input</code>（汎用すぎる）</td></tr>
+              <tr><td><code>response</code></td><td>HTTPレスポンス or DTO（出力データ）</td><td><code>result</code>, <code>output</code>（汎用すぎる）</td></tr>
+              <tr><td><code>payload</code></td><td>リクエスト・イベントの本体データ</td><td><code>data</code>, <code>body</code>（HTTPボディ以外には曖昧）</td></tr>
+              <tr><td><code>entity</code></td><td>DBテーブルに対応するドメインオブジェクト</td><td><code>model</code>（役割が曖昧）, <code>object</code></td></tr>
+              <tr><td><code>repository</code></td><td>DB操作を抽象化する層（DAOパターン）</td><td><code>dao</code>, <code>manager</code>（層の意図が不明確）</td></tr>
+              <tr><td><code>service</code></td><td>ビジネスロジック層</td><td><code>manager</code>, <code>handler</code>（役割が混同しやすい）</td></tr>
+              <tr><td><code>gateway</code></td><td>外部システムとの接続インタフェース</td><td><code>connector</code>, <code>bridge</code>（プロジェクトごとにブレやすい）</td></tr>
+              <tr><td><code>event</code></td><td>システム内で発生した出来事（ドメインイベント）</td><td><code>action</code>, <code>trigger</code>（命名が揺れやすい）</td></tr>
+              <tr><td><code>command</code></td><td>状態変更を意図した操作指示（CQRS文脈）</td><td><code>action</code>, <code>operation</code></td></tr>
+              <tr><td><code>query</code></td><td>データ読み取り専用の操作（CQRS文脈）</td><td><code>search</code>, <code>request</code>（変更操作と区別するため）</td></tr>
+              <tr><td><code>handler</code></td><td>イベント・リクエストを受け取り処理する部品</td><td><code>processor</code>（変換処理との混同を避ける）</td></tr>
+              <tr><td><code>listener</code></td><td>イベントを待ち受けて反応する部品</td><td><code>observer</code>（Observerパターンと区別する場合）</td></tr>
+              <tr><td><code>scheduler</code></td><td>定期実行・スケジュール実行を制御する部品</td><td><code>batch</code>（バッチ処理全体を指す場合と混同）</td></tr>
+              <tr><td><code>batch</code></td><td>一括処理・大量データの非同期処理</td><td><code>bulk</code>（一括という意味は近いが用途が異なる）</td></tr>
+              <tr><td><code>cache</code></td><td>高速化のための一時データ保存</td><td><code>buffer</code>（バッファは一時的なキューに近い）</td></tr>
+              <tr><td><code>config</code> / <code>configuration</code></td><td>設定・設定クラス</td><td><code>setting</code>（UIの設定画面等に限定），<code>property</code></td></tr>
+              <tr><td><code>constant</code></td><td>変更不可の定数値</td><td><code>define</code>（Cの #define の和製英語転用）</td></tr>
+              <tr><td><code>error</code></td><td>プログラムの異常状態（例外・エラー）</td><td><code>exception</code> との使い分け：<code>exception</code> はJava等の例外クラス, <code>error</code> はより広い概念</td></tr>
+              <tr><td><code>log</code></td><td>ログデータ・ログ出力</td><td><code>history</code>（履歴テーブルと混同）</td></tr>
+              <tr><td><code>audit</code></td><td>操作履歴・監査ログ</td><td><code>log</code>（セキュリティ要件のある履歴は <code>audit</code> で明示）</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 10-5. 注意点 -->
+      <div class="rule-section">
+        <h3>⑤ 注意点：日本人エンジニアが陥りやすい落とし穴 <span class="principle-badge">注意</span></h3>
+      </div>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">注意①：和製英語・カタカナ英語をそのまま使わない</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            日本語の業務用語を英語に変換するとき、カタカナ語をそのまま転写すると意味がずれる場合がある。
+            例：「マスタ」→ <code>master</code>（Gitのブランチ名と混同）→ <code>category</code> / <code>reference</code> に言い換える。
+            「管理」→ <code>management</code>（Manager は責務が広すぎる）→ <code>service</code> / <code>administration</code> を使い分ける。
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:.75rem;">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">注意②：<code>manage</code> / <code>handle</code> / <code>process</code> は「なんでも動詞」になりやすい</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            <code>manageUser()</code> / <code>handleOrder()</code> / <code>processData()</code> は何をするのか一切わからない。
+            これらの動詞を使いたくなったときは「具体的に何をするのか」を再考し、より精確な動詞（<code>register</code> / <code>validate</code> / <code>calculate</code> 等）に置き換える。
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:.75rem;">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">注意③：<code>flag</code> / <code>flg</code> は絶対に使わない</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            <code>deleteFlg</code> / <code>adminFlag</code> のような命名は、英語圏のエンジニアには通じにくい略語であり、
+            かつ真偽値であることが名前から読み取れない。必ず <code>is_deleted</code> / <code>is_admin</code> の形（<code>is_</code> / <code>has_</code> プレフィックス）に統一する。
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:.75rem;">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">注意④：略語は「チーム全員が即座に読める」もの以外は使わない</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            同書では「略語の節約より、読者のデコード時間の節約を優先せよ」と述べている。
+            プロジェクト固有の略語（例: <code>ord</code>＝order, <code>usr</code>＝user）はチームの新参者を迷わせる。
+            略語を使う場合は必ず CLAUDE.md や命名規則ドキュメントに列挙する。
+            <br>許容される略語の例：<code>id</code>, <code>url</code>, <code>dto</code>, <code>api</code>, <code>db</code>, <code>jwt</code>, <code>http</code>, <code>sql</code>（業界標準として確立しているもの）
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:.75rem;">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">注意⑤：<code>status</code> と <code>state</code> を混用しない</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            <code>status</code> はビジネスレベルの状態（注文ステータス・支払いステータス等）に使う。
+            <code>state</code> は内部的・技術的な状態（UIコンポーネントの状態・ステートマシン等）に使う。
+            同書では「ビジネスドメインのENUM値には <code>status</code>、アプリケーション内部の動作状態には <code>state</code>」と使い分けることを推奨している。
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:.75rem;">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">注意⑥：<code>check</code> / <code>verify</code> / <code>validate</code> の違いを意識する</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            <code>check</code> は最も汎用的で意味が薄い。可能であれば以下に置き換える。<br>
+            <code>validate</code>：入力値・ビジネスルールの整合性確認（戻り値：bool or 例外）<br>
+            <code>verify</code>：外部的な事実・本人確認・署名の確認（セキュリティ文脈）<br>
+            <code>assert</code>：テスト・デバッグ時の前提条件の確認（失敗すると即時エラー）
+          </p>
+        </div>
+      </div>
+
       <!-- まとめチェックリスト -->
       <h2 class="section-title" style="margin-top:2rem;"><span class="title-icon">✅</span> 命名レビュー チェックリスト</h2>
       <div class="card">
@@ -733,6 +968,7 @@ if (user == null) {
           <div class="callout-title">参考文献・関連ページ</div>
           <ul style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
             <li>Dustin Boswell, Trevor Foucher 著「<b>リーダブルコード ―より良いコードを書くためのシンプルで実践的なテクニック</b>」（O'Reilly Japan）</li>
+            <li>「<b>チームを動かすIT英語実践マニュアル</b>」― 第10節「IT英語 推奨単語集」の動詞・状態語・名詞カテゴリ分類・注意点はこの書籍の提言に基づく</li>
             <li><a href="../detailed/techniques.html">詳細設計技法まとめ</a> — フローチャート・シーケンス図・デシジョンテーブル</li>
             <li><a href="../detailed/common-libs.html">共通ライブラリ設計</a> — 認証・エラーハンドリング等の実装例</li>
             <li><a href="../reference/adr.html">ADR サンプル集</a> — 設計上の意思決定記録の書き方</li>

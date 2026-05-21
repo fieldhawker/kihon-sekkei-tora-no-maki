@@ -23,19 +23,22 @@
     .learning-path {
       display: flex;
       flex-direction: column;
-      gap: 0;
       margin: 1rem 0;
     }
     .lp-item {
-      display: grid;
-      grid-template-columns: 2rem 1fr;
-      gap: 0 .75rem;
-      align-items: start;
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      position: relative;
     }
-    .lp-item:not(:last-child)::before {
+    .lp-item:not(:last-child)::after {
       content: '';
-      grid-column: 1;
-      height: 100%;
+      position: absolute;
+      left: .9375rem;
+      top: 2rem;
+      bottom: 0;
+      width: 2px;
+      background: var(--gray-200, #e5e7eb);
     }
     .lp-num {
       width: 2rem; height: 2rem;
@@ -47,13 +50,16 @@
       font-size: .8rem;
       font-weight: 700;
       flex-shrink: 0;
+      position: relative;
+      z-index: 1;
     }
     .lp-body {
+      flex: 1;
       background: #fff;
-      border: 1px solid var(--gray-200);
+      border: 1px solid var(--gray-200, #e5e7eb);
       border-radius: var(--radius);
       padding: .75rem 1rem;
-      margin-bottom: .5rem;
+      margin-bottom: .75rem;
       box-shadow: var(--shadow-sm);
     }
     .lp-body strong { font-size: .9rem; color: var(--gray-800); }
