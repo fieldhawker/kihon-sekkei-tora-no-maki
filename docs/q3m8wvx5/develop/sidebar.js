@@ -94,6 +94,9 @@
   <a href="${base}checklist/batch.html"><span class="nav-icon">⚙️</span>バッチ作成チェックリスト</a>
   <a href="${base}checklist/screen.html"><span class="nav-icon">🖥️</span>画面作成チェックリスト</a>
   <a href="${base}checklist/api.html"><span class="nav-icon">🔌</span>API作成チェックリスト</a>
+  <a href="${base}checklist/method.html"><span class="nav-icon">⚙️</span>メソッド作成チェックリスト</a>
+  <a href="${base}checklist/class.html"><span class="nav-icon">🏛️</span>クラス作成チェックリスト</a>
+  <a href="${base}checklist/testcase.html"><span class="nav-icon">🧪</span>テストケース作成チェックリスト</a>
 </nav>
 
 <div class="sidebar-section">サンプル画面集</div>
