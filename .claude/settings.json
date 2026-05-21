@@ -8,7 +8,11 @@
       "Bash(Get-ChildItem \"d:\\\\avtigravity\\\\基本設計虎の巻\")",
       "Read(//d/avtigravity/**)",
       "Read(//d/avtigravity/��{�݌v�Ղ̊�/docs/**)",
-      "PowerShell(Head-Object -n 5)"
+      "PowerShell(Head-Object -n 5)",
+      "PowerShell(git -C \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\" show HEAD:docs/q3m8wvx5/reference/engineer-growth.html)",
+      "PowerShell(git -C \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\" status --short docs/q3m8wvx5/reference/)",
+      "PowerShell(git -C \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\" status --short)",
+      "PowerShell(git -C \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\" ls-files docs/q3m8wvx5/reference/)"
     ],
     "additionalDirectories": [
       "d:\\avtigravity\\��{�݌v�Ղ̊�\\html",

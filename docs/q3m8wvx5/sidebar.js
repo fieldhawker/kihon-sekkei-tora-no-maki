@@ -82,7 +82,7 @@
 <details class="sidebar-group">
   <summary><span class="nav-icon">🏢</span>技術書（マネジメント）</summary>
   <nav>
-    <a href="${base}reference/books/management/pmbok8.html"><span class="nav-icon">📘</span>PMBOK 第8版</a>
+    <a href="${base}reference/books/management/pmbok.html"><span class="nav-icon">📘</span>PMBOK</a>
     <a href="${base}reference/books/management/issue-driven.html"><span class="nav-icon">🎯</span>イシューからはじめよ</a>
     <a href="${base}reference/books/management/engineering-org-theory.html"><span class="nav-icon">🏗️</span>エンジニアリング組織論への招待</a>
     <a href="${base}reference/books/management/engineer-growth.html"><span class="nav-icon">🌱</span>エンジニアの持続的成長</a>

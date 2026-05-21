@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(git -C \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\" show HEAD:docs/q3m8wvx5/reference/books/management/engineer-growth.html)",
+      "PowerShell(git -C \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\" log --oneline -10)",
+      "PowerShell(git -C \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\" log --oneline --all)",
+      "Bash(New-Item -ItemType Directory -Force \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8wvx5\\\\reference\\\\books\\\\management\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\\\\docs\\\\q3m8wvx5\\\\reference\\\\books\\\\management\")"
+    ]
+  }
+}
