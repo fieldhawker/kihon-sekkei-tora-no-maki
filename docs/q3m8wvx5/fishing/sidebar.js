@@ -21,13 +21,23 @@
 <div class="sidebar-section">アジ釣り</div>
 <nav>
   <a href="aji.html"><span class="nav-icon">🐟</span>アジ釣り 虎の巻</a>
+  <a href="aji.html#weekend-plan"><span class="nav-icon">🗓️</span>今週末の釣行プラン</a>
   <a href="aji.html#spots"><span class="nav-icon">📍</span>釣り場ガイド</a>
+  <a href="aji.html#conditions"><span class="nav-icon">🌤️</span>釣行判断ガイド</a>
   <a href="aji.html#rigs"><span class="nav-icon">🪝</span>仕掛け・タックルガイド</a>
+</nav>
+
+<div class="sidebar-section">イカ釣り</div>
+<nav>
+  <a href="ika.html"><span class="nav-icon">🦑</span>イカ釣り 虎の巻</a>
+  <a href="ika.html#weekend-plan"><span class="nav-icon">🗓️</span>今週末の釣行プラン</a>
+  <a href="ika.html#spots"><span class="nav-icon">📍</span>釣り場ガイド</a>
+  <a href="ika.html#conditions"><span class="nav-icon">🌤️</span>釣行判断ガイド</a>
+  <a href="ika.html#rigs"><span class="nav-icon">🪝</span>仕掛け・タックルガイド</a>
 </nav>
 
 <div class="sidebar-section">近日追加予定</div>
 <nav>
-  <a style="opacity:.45; pointer-events:none;"><span class="nav-icon">🦑</span>イカ釣り</a>
   <a style="opacity:.45; pointer-events:none;"><span class="nav-icon">🐠</span>キス釣り</a>
   <a style="opacity:.45; pointer-events:none;"><span class="nav-icon">🐡</span>サバ釣り</a>
 </nav>`;

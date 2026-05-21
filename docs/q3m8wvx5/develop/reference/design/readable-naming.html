@@ -95,6 +95,7 @@
           <a class="toc-link" href="#docs">8. 設計書・ファイル名</a>
           <a class="toc-link" href="#comments">9. コメントの書き方</a>
           <a class="toc-link" href="#it-english">10. IT英語 推奨単語集</a>
+          <a class="toc-link" href="#domain-naming">11. ドメイン・業務用語との一致</a>
         </div>
       </div>
 
@@ -936,6 +937,180 @@ if (user == null) {
         </div>
       </div>
 
+      <!-- ===== 11. ドメイン・業務用語との一致 ===== -->
+      <h2 class="section-title" id="domain-naming"><span class="title-icon">🏢</span> 11. ドメイン・業務用語との一致</h2>
+
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <div class="callout-title">命名は「コーディング規約」ではなく「設計の問題」</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            技術的な命名規則（snake_case・camelCase 等）はコーディング規約の話だが、
+            「何という名前をつけるか」は<b>要件定義・基本設計フェーズでの意思決定</b>である。
+            コードの名前が業務の言葉と一致していなければ、実装者・レビュワー・ビジネス担当者の間に
+            「認識のズレ」が生まれ、仕様バグの温床になる。
+          </p>
+        </div>
+      </div>
+
+      <div class="rule-section" style="margin-top:1.25rem;">
+        <h3>原則①：登場人物・事柄の役割を明確にし、別名で区別する <span class="principle-badge">役割分離</span></h3>
+        <p>同じ「人」でも業務上の役割が異なれば、別の名前で表現する。曖昧に <code>user</code> でまとめると、責務の境界が壊れる。</p>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-card ng">
+          <div class="compare-label">✗ NG — 役割が混在している</div>
+          <pre><code>// ECサイトで「サイトを使う人」を全部 user と呼ぶ
+class User { ... }
+// 購買者も管理者も会員も全部 user — 責務が混乱
+</code></pre>
+        </div>
+        <div class="compare-card ok">
+          <div class="compare-label">✓ OK — 役割ごとに名前を分離</div>
+          <pre><code>class Customer { ... }   // 購買・契約関係にある顧客
+class Member { ... }     // 会員登録して特典を持つ会員
+class AdminUser { ... }  // 管理画面操作者
+// 役割が明確 → 責務・権限設計も明確になる
+</code></pre>
+        </div>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin:1rem 0;">
+        <div style="font-weight:700; margin-bottom:.5rem; font-size:.9rem;">役割分離の典型パターン</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:20%;">業務上の役割</th><th>推奨語</th><th>使い分けの基準</th></tr></thead>
+            <tbody>
+              <tr><td>システムを利用する人（汎用）</td><td><code>user</code></td><td>役割が特定できない場合の最終手段</td></tr>
+              <tr><td>購買・契約している顧客</td><td><code>customer</code></td><td>お金を払う・契約関係がある</td></tr>
+              <tr><td>会員登録して特典を持つ人</td><td><code>member</code></td><td>ポイント・グレード等の属性を持つ</td></tr>
+              <tr><td>管理者・運用担当者</td><td><code>admin</code> / <code>operator</code></td><td>管理画面へのアクセス権を持つ</td></tr>
+              <tr><td>サービス提供者（BtoBの出店者等）</td><td><code>vendor</code> / <code>merchant</code></td><td>プラットフォーム上で商品・サービスを提供する側</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="rule-section" style="margin-top:1.25rem;">
+        <h3>原則②：コードの名前とチームの会話の言葉を一致させる <span class="principle-badge">用語統一</span></h3>
+        <p>設計書・会議・Slackでは「受注」と呼んでいるのに、コードでは <code>order</code>・<code>purchase</code>・<code>reservation</code> が混在している状態は危険。</p>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-card ng">
+          <div class="compare-label">✗ NG — 会話と実装の用語が乖離</div>
+          <pre><code>// 設計書では「受注」「注文」「購買」が混在
+class PurchaseService { ... }       // 購買?
+class OrderRepository { ... }       // 注文?
+class ReservationController { ... } // 予約?
+</code></pre>
+        </div>
+        <div class="compare-card ok">
+          <div class="compare-label">✓ OK — 会話・設計書・コードで統一</div>
+          <pre><code>// チームで「受注 = order」と決定し全員が統一
+class OrderService { ... }
+class OrderRepository { ... }
+class OrderController { ... }
+// 設計書・会話・DBテーブルすべて「order」
+</code></pre>
+        </div>
+      </div>
+
+      <div class="point-box">
+        <strong>💡 実践的アプローチ：</strong>
+        プロジェクト開始時に「用語集（グロッサリー）」をチームで作成する。
+        業務用語 ↔ 英語名の対応表を一度作ると、全員が同じ名前を使い始める。
+        ADR や CLAUDE.md に記載してコードレビューの基準にする。
+      </div>
+
+      <div class="rule-section" style="margin-top:1.25rem;">
+        <h3>原則③：名前を声に出して読み、違和感を検出する <span class="principle-badge">音声確認</span></h3>
+        <p>コードレビューや設計書レビューで「名前を声に出して説明できるか」を確認する。説明に詰まった名前は、設計が曖昧なサインである。</p>
+      </div>
+      <div class="three-col">
+        <div class="mini-card">
+          <div class="mini-card-title">確認フレーズ①</div>
+          「この <code>XxxService</code> は<b>何をするクラスか</b>、一文で説明できるか？」<br>
+          <small style="color:var(--gray-600);">説明が長くなるなら責務が多すぎる</small>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">確認フレーズ②</div>
+          「この変数に入っているものを同僚に口頭で説明するとき、なんと言うか？」<br>
+          <small style="color:var(--gray-600);">口頭で言う言葉がそのまま変数名になるべき</small>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">確認フレーズ③</div>
+          「この関数名を読んだとき、戻り値・副作用を誰もが同じようにイメージできるか？」<br>
+          <small style="color:var(--gray-600);">解釈が割れるなら名前を変える</small>
+        </div>
+      </div>
+
+      <div class="rule-section" style="margin-top:1.5rem;">
+        <h3>原則④：仕様変更時は命名も見直す。アンカリング効果に注意 <span class="principle-badge">命名更新</span></h3>
+        <p>
+          要件が変わったのに名前だけ古いまま残ると「名前が嘘をつく」状態になる。
+          これを<b>アンカリング効果（既存命名への過度な依存）</b>と呼び、意識的に命名を見直す機会を設ける必要がある。
+        </p>
+      </div>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">アンカリング効果：既存の命名に引っ張られて見直しを怠る</div>
+          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+            「最初に <code>notification</code> と名付けたから、SMS対応になっても <code>notification</code> のままでいいや」という思考がアンカリング。
+            仕様変更や機能拡張の際は「<b>この名前は今の実態を正確に表しているか？</b>」を問い直す習慣を持つ。
+            リネームのコストより、名前が嘘をつき続けるコストのほうが高い。
+          </p>
+          <div class="compare-grid" style="margin-top:.75rem;">
+            <div class="compare-card ng">
+              <div class="compare-label">✗ 仕様変更後に名前を放置</div>
+              <pre><code>// 当初: メール通知のみ
+class EmailNotificationService { ... }
+
+// 仕様変更でSMS・Push通知も追加されたが
+// クラス名は EmailNotification のまま放置
+// → 名前が実態と乖離
+</code></pre>
+            </div>
+            <div class="compare-card ok">
+              <div class="compare-label">✓ 仕様変更に合わせて命名を更新</div>
+              <pre><code>// 変更後: チャネル横断の通知に責務が変わった
+class NotificationDispatchService { ... }
+// または
+class MultiChannelNotificationService { ... }
+// → 名前が現在の実態を正確に表す
+</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-section" style="margin-top:1.5rem;">
+        <h3>原則⑤：形容詞・修飾語の濫用に注意する <span class="principle-badge">修飾語</span></h3>
+        <p>「新しい〇〇」「改善後の〇〇」のような修飾語は、時間が経つと意味を失う。状態・版数は名前ではなくバージョン管理や ENUM で表現する。</p>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-card ng">
+          <div class="compare-label">✗ NG — 修飾語が腐る</div>
+          <pre><code>class NewUserRegistrationService { ... }
+// → いつ「古い」ものになるか不明
+// → NewNew... と増殖するリスク
+
+const updatedCalculationLogic = () => { ... }
+// → 何に対して updated なのか不明
+</code></pre>
+        </div>
+        <div class="compare-card ok">
+          <div class="compare-label">✓ OK — 実態・責務で名前をつける</div>
+          <pre><code>class OAuthUserRegistrationService { ... }
+// → 何が違うのかが名前から分かる
+
+const calculateTaxIncludedPrice = () => { ... }
+// → 何を計算するかが一意に読める
+</code></pre>
+        </div>
+      </div>
+
       <!-- まとめチェックリスト -->
       <h2 class="section-title" style="margin-top:2rem;"><span class="title-icon">✅</span> 命名レビュー チェックリスト</h2>
       <div class="card">
@@ -956,6 +1131,10 @@ if (user == null) {
               <tr><td>☐</td><td>APIエンドポイントに動詞が入っていない</td><td><code>/getUser</code>/<code>/createOrder</code>/<code>/doLogin</code></td></tr>
               <tr><td>☐</td><td>設計書ファイル名が「プレフィックス＋連番＋概要＋日付」になっている</td><td><code>設計書_最終版(2).xlsx</code></td></tr>
               <tr><td>☐</td><td>コメントが「何（What）」ではなく「なぜ（Why）」を説明している</td><td>コードをそのまま日本語に訳したコメント</td></tr>
+              <tr><td>☐</td><td>コードの名前がチームの会話・設計書の用語と一致している</td><td>会議では「受注」・コードでは <code>purchase</code> / <code>reservation</code> が混在</td></tr>
+              <tr><td>☐</td><td>同じ「人・物」でも役割が違う場合は別名で区別している</td><td><code>user</code> 1つで顧客・会員・管理者を表している</td></tr>
+              <tr><td>☐</td><td>仕様変更後に古い命名が実態と乖離していないか確認した</td><td>機能拡張後も <code>Email</code>Notification のまま、<code>New</code>XxxService のまま残っている</td></tr>
+              <tr><td>☐</td><td>「新しい」「更新後」「改善版」などの腐る修飾語を使っていない</td><td><code>NewUserService</code>, <code>updatedLogic</code>, <code>revised</code> プレフィックス</td></tr>
             </tbody>
           </table>
         </div>
@@ -969,6 +1148,7 @@ if (user == null) {
           <ul style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
             <li>Dustin Boswell, Trevor Foucher 著「<b>リーダブルコード ―より良いコードを書くためのシンプルで実践的なテクニック</b>」（O'Reilly Japan）</li>
             <li>「<b>チームを動かすIT英語実践マニュアル</b>」― 第10節「IT英語 推奨単語集」の動詞・状態語・名詞カテゴリ分類・注意点はこの書籍の提言に基づく</li>
+            <li>Qiita「<b>目的から命名を考える — 存在駆動ではなく目的駆動の命名</b>」（@Nao52）― 第11節「ドメイン・業務用語との一致」の役割分離・用語統一・アンカリング効果の観点はこの記事の提言に基づく</li>
             <li><a href="../detailed/techniques.html">詳細設計技法まとめ</a> — フローチャート・シーケンス図・デシジョンテーブル</li>
             <li><a href="../detailed/common-libs.html">共通ライブラリ設計</a> — 認証・エラーハンドリング等の実装例</li>
             <li><a href="../reference/adr.html">ADR サンプル集</a> — 設計上の意思決定記録の書き方</li>
