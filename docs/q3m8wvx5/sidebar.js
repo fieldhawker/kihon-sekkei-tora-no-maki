@@ -9,6 +9,9 @@
    || p.includes('/sample/data/')
    || p.includes('/sample/system/')) {
     base = '../../';
+  } else if (p.includes('/reference/design/')
+   || p.includes('/reference/books/')) {
+    base = p.includes('/reference/books/') ? '../../../' : '../../';
   } else if (p.includes('/basic/')
    || p.includes('/detailed/')
    || p.includes('/impl/')
@@ -54,16 +57,37 @@
 </nav>
 
 <div class="sidebar-section">資料・テンプレート</div>
-<nav>
-  <a href="${base}reference/templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
-  <a href="${base}reference/adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
-  <a href="${base}reference/ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
-  <a href="${base}reference/readable-naming.html"><span class="nav-icon">📖</span>命名規則ガイド</a>
-  <a href="${base}reference/legacy-code.html"><span class="nav-icon">🏚️</span>レガシーコードからの脱却</a>
-  <a href="${base}reference/pragmatic-programmer.html"><span class="nav-icon">🧙</span>達人プログラマー</a>
-  <a href="${base}reference/engineer-growth.html"><span class="nav-icon">🌱</span>エンジニアの持続的成長</a>
-  <a href="${base}reference/pmbok8.html"><span class="nav-icon">📘</span>PMBOK 第8版</a>
-</nav>
+<details class="sidebar-group" open>
+  <summary><span class="nav-icon">📐</span>設計支援</summary>
+  <nav>
+    <a href="${base}reference/design/templates.html"><span class="nav-icon">📝</span>設計書テンプレート</a>
+    <a href="${base}reference/design/adr.html"><span class="nav-icon">🏛️</span>ADRサンプル</a>
+    <a href="${base}reference/design/ai-consult.html"><span class="nav-icon">🤖</span>AI相談テンプレート</a>
+    <a href="${base}reference/design/readable-naming.html"><span class="nav-icon">📖</span>命名規則ガイド</a>
+  </nav>
+</details>
+<details class="sidebar-group">
+  <summary><span class="nav-icon">📚</span>技術書（技術）</summary>
+  <nav>
+    <a href="${base}reference/books/tech/legacy-code.html"><span class="nav-icon">🏚️</span>レガシーコードからの脱却</a>
+    <a href="${base}reference/books/tech/pragmatic-programmer.html"><span class="nav-icon">🧙</span>達人プログラマー</a>
+    <a href="${base}reference/books/tech/git-github-team.html"><span class="nav-icon">🐙</span>Git・GitHubチーム実践</a>
+    <a href="${base}reference/books/tech/sql-antipatterns.html"><span class="nav-icon">🗄️</span>SQLアンチパターン</a>
+    <a href="${base}reference/books/tech/software-testing-intro.html"><span class="nav-icon">🧪</span>初めて学ぶテスト技法</a>
+    <a href="${base}reference/books/tech/web-technology-foundations.html"><span class="nav-icon">🌐</span>Webを支える技術</a>
+    <a href="${base}reference/books/tech/unix-philosophy.html"><span class="nav-icon">🐧</span>UNIXという考え方</a>
+    <a href="${base}reference/books/tech/web-api-design.html"><span class="nav-icon">🔌</span>Web APIの設計</a>
+  </nav>
+</details>
+<details class="sidebar-group">
+  <summary><span class="nav-icon">🏢</span>技術書（マネジメント）</summary>
+  <nav>
+    <a href="${base}reference/books/management/pmbok8.html"><span class="nav-icon">📘</span>PMBOK 第8版</a>
+    <a href="${base}reference/books/management/issue-driven.html"><span class="nav-icon">🎯</span>イシューからはじめよ</a>
+    <a href="${base}reference/books/management/engineering-org-theory.html"><span class="nav-icon">🏗️</span>エンジニアリング組織論への招待</a>
+    <a href="${base}reference/books/management/engineer-growth.html"><span class="nav-icon">🌱</span>エンジニアの持続的成長</a>
+  </nav>
+</details>
 
 <div class="sidebar-section">チェックリスト</div>
 <nav>
