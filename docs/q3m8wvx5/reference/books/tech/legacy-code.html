@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>レガシーコードからの脱却 — 参考資料</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header phase-adr">
+      <div class="subtitle">書籍まとめ / 技術</div>
+      <h1>🏚️ レガシーコードからの脱却</h1>
+      <p class="description">David Scott Bernstein著。「なぜコードはすぐに負債になるのか」を問い直し、テスト・設計・習慣の9つのプラクティスを通じてレガシーコードを生み出さない開発スタイルを提唱しています。初心者から中堅エンジニアへの成長に直結する一冊です。</p>
+    </div>
+
+    <div class="content">
+
+      <div class="callout callout-info" style="margin-top:0">
+        <span class="callout-icon">🧭</span>
+        <div class="callout-body">
+          <b>このページの使い方（初心者向け）</b><br>
+          「動けばいいや」でコードを書いていると、気づかないうちに誰も触れない"レガシーコード"が生まれます。このページでは<b>「レガシーコードとは何か」→「なぜ生まれるのか」→「9つのプラクティス」</b>の順に読むと、明日からの開発習慣が変わります。
+        </div>
+      </div>
+
+      <!-- レガシーコードとは -->
+      <h2 class="section-title"><span class="title-icon">❓</span> そもそも「レガシーコード」とは何か</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🏚️</span><h2>「古いコード」ではなく「テストのないコード」</h2></div>
+        <p>本書での定義はシンプルです。<strong>レガシーコードとは、テストのないコードのことです。</strong>昨日書いたコードでも、テストがなければレガシーです。逆に10年前のコードでも、テストがあれば安心して変更できます。</p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 レガシーコードの特徴</h3>
+            <ul style="margin:0; padding-left:1.25rem">
+              <li>テストがない（または少ない）</li>
+              <li>変更すると別の場所が壊れる</li>
+              <li>コードを読んでも意図がわからない</li>
+              <li>「なぜこう書いたか」が不明</li>
+              <li>修正が怖くて誰も触れない</li>
+            </ul>
+          </div>
+          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 健全なコードの特徴</h3>
+            <ul style="margin:0; padding-left:1.25rem">
+              <li>テストが意図を説明している</li>
+              <li>変更の影響範囲が明確</li>
+              <li>名前を読めば何をするかわかる</li>
+              <li>小さく・シンプルに保たれている</li>
+              <li>安心して改修・機能追加できる</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout callout-warn" style="margin-top:1rem">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <b>「後でリファクタリングする」は幻想：</b>締め切りや仕様変更に追われる現場で「後で整理する」と思ったコードは、ほぼ100%そのまま残ります。最初からきれいに書く習慣こそが、将来の自分と仲間を守る唯一の方法です。
+          </div>
+        </div>
+      </div>
+
+      <!-- なぜ生まれるのか -->
+      <h2 class="section-title"><span class="title-icon">🌱</span> レガシーコードはなぜ生まれるのか</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fef3cd">🤔</span><h2>3つの根本原因</h2></div>
+        <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">原因① 「動けばOK」という基準</h3>
+            <p style="margin:0">機能が動くかどうかだけを基準にすると、「読みやすさ」「変更しやすさ」が置き去りになります。開発速度を上げるには、品質への意識が不可欠です。</p>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">原因② テストを後回しにする習慣</h3>
+            <p style="margin:0">「テストは実装が終わってから書く」という順序だと、テストを書きやすい設計になりません。結果として、テストがないか、あっても壊れやすいコードが生まれます。</p>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">原因③ 巨大な関数・クラスを許容する文化</h3>
+            <p style="margin:0">「とりあえずここに追加しよう」の積み重ねが、数百行の関数を生みます。巨大なコードはテストも読解も困難で、修正のたびに副作用が生じます。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9つのプラクティス -->
+      <h2 class="section-title"><span class="title-icon">📋</span> 本の構成：9つのプラクティス</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🗂️</span><h2>レガシーコードを生み出さないための9の習慣</h2></div>
+        <table class="comparison-table" style="margin-top:0.75rem">
+          <thead><tr><th>#</th><th>プラクティス</th><th>一言で言うと</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><strong>WHYを伝え、HOWを隠す</strong></td><td>コードは「何をするか」より「なぜするか」を語るべき</td></tr>
+            <tr><td>2</td><td><strong>DRYを適用する</strong></td><td>同じことを2度書かない</td></tr>
+            <tr><td>3</td><td><strong>テストを先に書く</strong></td><td>実装前にテストを書くと設計が良くなる</td></tr>
+            <tr><td>4</td><td><strong>小さなコードを書く</strong></td><td>関数・クラスは小さく保つ</td></tr>
+            <tr><td>5</td><td><strong>コードをシンプルに保つ</strong></td><td>余計な複雑さを排除する</td></tr>
+            <tr><td>6</td><td><strong>振る舞いを明確に示す</strong></td><td>コードが何をするかを名前と構造で伝える</td></tr>
+            <tr><td>7</td><td><strong>安定した依存関係の原則を適用する</strong></td><td>変わりやすいものに依存しない</td></tr>
+            <tr><td>8</td><td><strong>依存性を注入する</strong></td><td>依存するオブジェクトは外から渡す</td></tr>
+            <tr><td>9</td><td><strong>協力し、レビューし合う</strong></td><td>チームでコードの品質を守る</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- プラクティス1 -->
+      <h2 class="section-title"><span class="title-icon">💬</span> プラクティス1：WHYを伝え、HOWを隠す</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🗣️</span><h2>コードは「意図」を語るべき</h2></div>
+        <p>処理の手順（HOW）はコード自体が示しています。<strong>コードが語るべきは「なぜそうするのか（WHY）」</strong>です。良い名前・小さな関数・適切なコメントがWHYを伝える手段になります。</p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+            <h3 style="margin:0 0 0.5rem; color:#dc3545; font-size:0.9rem">😰 HOWしか語らない例</h3>
+            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// ユーザーリストをループして
+// statusが1のものを抽出してnewListに追加
+List newList = new List();
+for (User u : users) {
+  if (u.status == 1) {
+    newList.add(u);
+  }
+}</pre>
+          </div>
+          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+            <h3 style="margin:0 0 0.5rem; color:#28a745; font-size:0.9rem">😊 WHYが伝わる例</h3>
+            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// アクティブユーザーのみメール送信対象にする
+List&lt;User&gt; targets = getActiveUsers(users);
+
+// 別の場所で定義
+List&lt;User&gt; getActiveUsers(List&lt;User&gt; users) {
+  return users.stream()
+    .filter(u -> u.isActive())
+    .collect(toList());
+}</pre>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:1rem">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <b>良い名前のチェック：</b>関数名や変数名を読んだとき「何のためにあるのか」がすぐ分かれば合格です。<code>data</code>、<code>list</code>、<code>flag</code>、<code>tmp</code>のような名前は「HOW」も「WHY」も伝えていません。
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス2 -->
+      <h2 class="section-title"><span class="title-icon">♻️</span> プラクティス2：DRYを適用する</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fef3cd">🔁</span><h2>Don't Repeat Yourself — 繰り返しはバグの温床</h2></div>
+        <p><strong>DRY（Don't Repeat Yourself）</strong>とは「同じ知識をコードの2箇所以上に書かない」原則です。コピペしたコードは、片方を直してもう片方を直し忘れるバグの温床になります。</p>
+
+        <div style="display:grid; gap:0.75rem; margin-top:1rem">
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">DRYが大切な理由</h3>
+            <p style="margin:0">仕様が変わったとき、同じロジックが3箇所に書かれていたら3箇所すべて直す必要があります。1箇所だけ直して2箇所を直し忘れると、バグが生まれます。<b>変更は1箇所だけで済む</b>ように設計しましょう。</p>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">「コードの重複」だけがDRY違反ではない</h3>
+            <p style="margin:0">コードだけでなく、<b>知識・ロジック・データ定義の重複</b>もDRY違反です。例えば、DBのカラム名と変数名が別々に管理されていて同期が必要な状態も、DRY違反の一形態です。</p>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">「偶発的な重複」には注意</h3>
+            <p style="margin:0">コードが似ていても、<b>別の概念・別の理由で変化するなら無理にまとめない</b>ことも重要です。異なる画面の「ユーザー名表示」が同じコードでも、それぞれ別の仕様で変わるなら共通化するとかえって複雑になります。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス3 -->
+      <h2 class="section-title"><span class="title-icon">🧪</span> プラクティス3：テストを先に書く（TDD）</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#e8eaf6">🔬</span><h2>テストは「仕様書」であり「安全網」</h2></div>
+        <p>TDD（テスト駆動開発）では<strong>「テストを書く → 失敗を確認する → 実装する → テストを通す → リファクタリング」</strong>のサイクルを回します。テストを先に書くと、設計が自然と整理されます。</p>
+
+        <div style="display:grid; gap:0.75rem; margin-top:1rem">
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">TDDのサイクル（Red → Green → Refactor）</h3>
+            <div style="display:flex; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap">
+              <div style="flex:1; min-width:120px; background:#fff5f5; border:2px solid #dc3545; border-radius:6px; padding:0.75rem; text-align:center">
+                <div style="font-size:1.2rem">🔴</div>
+                <strong style="color:#dc3545">Red</strong>
+                <p style="font-size:0.85rem; margin:0.25rem 0 0">まず失敗するテストを書く。仕様を先に定義する</p>
+              </div>
+              <div style="display:flex; align-items:center; font-size:1.5rem; color:#999">→</div>
+              <div style="flex:1; min-width:120px; background:#f5fff5; border:2px solid #28a745; border-radius:6px; padding:0.75rem; text-align:center">
+                <div style="font-size:1.2rem">🟢</div>
+                <strong style="color:#28a745">Green</strong>
+                <p style="font-size:0.85rem; margin:0.25rem 0 0">テストが通る最小限の実装を書く</p>
+              </div>
+              <div style="display:flex; align-items:center; font-size:1.5rem; color:#999">→</div>
+              <div style="flex:1; min-width:120px; background:#f0f0ff; border:2px solid #6c63ff; border-radius:6px; padding:0.75rem; text-align:center">
+                <div style="font-size:1.2rem">🔵</div>
+                <strong style="color:#6c63ff">Refactor</strong>
+                <p style="font-size:0.85rem; margin:0.25rem 0 0">テストを維持しながらコードを整理する</p>
+              </div>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">テストを先に書くメリット</h3>
+            <ul style="margin:0; padding-left:1.25rem">
+              <li>「何を作るか」を先に明確にできる（仕様の確認）</li>
+              <li>テストしやすい設計（= 変更しやすい設計）になる</li>
+              <li>実装後に「テストを書く時間がない」問題が起きない</li>
+              <li>リファクタリング時の安全網になる</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:1rem">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <b>「テストを書く時間がない」は本当か：</b>テストなしで実装してバグが出た場合、デバッグ・修正・再確認のコストは、最初からテストを書くコストより大きいことがほとんどです。テストはコストではなく<b>投資</b>です。
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス4 -->
+      <h2 class="section-title"><span class="title-icon">✂️</span> プラクティス4：小さなコードを書く</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fde8e8">📏</span><h2>関数もクラスも「1つのことだけ」</h2></div>
+        <p><strong>単一責任の原則（SRP）</strong>：関数・クラスは1つのことだけを担当すべきです。複数のことをやっている関数は、テストが難しく・読みにくく・変更するとバグが出やすくなります。</p>
+
+        <div style="display:grid; gap:0.75rem; margin-top:1rem">
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">関数の長さの目安</h3>
+            <p style="margin:0">本書では<b>「関数は5〜10行程度」</b>を理想としています。「長い関数は複数の責務を持っているサイン」です。関数が長くなったら、意味のある部分を別の関数に切り出しましょう。</p>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">「関数を分割すべき」シグナル</h3>
+            <ul style="margin:0; padding-left:1.25rem">
+              <li>関数名に「and」「or」が入っている（例: <code>saveAndSendEmail()</code>）</li>
+              <li>20行を超えている</li>
+              <li>コメントで処理ブロックを区切っている</li>
+              <li>ネストが3段以上になっている</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス5 -->
+      <h2 class="section-title"><span class="title-icon">🧹</span> プラクティス5：コードをシンプルに保つ</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🎯</span><h2>YAGNI — 今必要でないものは書かない</h2></div>
+        <p><strong>YAGNI（You Ain't Gonna Need It）</strong>：「将来使うかもしれない」と思って追加した機能やコードは、ほぼ使われないまま複雑さだけを増やします。<b>今の要件だけを満たす最もシンプルな実装</b>を心がけましょう。</p>
+
+        <div style="display:grid; gap:0.75rem; margin-top:1rem">
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">複雑さが生まれる典型パターン</h3>
+            <ul style="margin:0; padding-left:1.25rem">
+              <li>「将来のため」の汎用化・抽象化</li>
+              <li>「念のため」のフラグやif文の追加</li>
+              <li>「使うかもしれない」設定値・オプションの乱用</li>
+              <li>未使用のコードやコメントアウトの放置</li>
+            </ul>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">リファクタリングとシンプル化</h3>
+            <p style="margin:0">機能追加・バグ修正のたびに、周辺のコードを少しずつ整理する<b>「ボーイスカウトルール（来たときより綺麗にして帰る）」</b>を実践しましょう。一度に全部リファクタリングする必要はありません。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス6 -->
+      <h2 class="section-title"><span class="title-icon">🏷️</span> プラクティス6：振る舞いを明確に示す</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#e8eaf6">📣</span><h2>コードが「自分を語る」設計にする</h2></div>
+        <p>良いコードは、読めばその振る舞いと意図が分かります。<strong>テスト・名前・構造の3つがセットで「このコードは何をするのか」を語る</strong>べきです。</p>
+
+        <div style="display:grid; gap:0.75rem; margin-top:1rem">
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">テストが仕様書になる</h3>
+            <p style="margin:0">テスト名を読むと「このクラスはこういう振る舞いをする」とわかる状態が理想です。例：<code>空のリストを渡すと空のリストを返す</code>、<code>未ログイン時は401を返す</code>。テストはコードの利用例であり、生きた仕様書です。</p>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">型・構造で意図を伝える</h3>
+            <p style="margin:0"><code>boolean isActive</code>より<code>UserStatus status</code>（列挙型）のように、型と構造で取りうる状態を明示すると、コードを読む人が間違いを犯しにくくなります。コンパイラが仕様を守ってくれます。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス7 -->
+      <h2 class="section-title"><span class="title-icon">🔗</span> プラクティス7：安定した依存関係の原則</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fef3cd">⚖️</span><h2>変わりやすいものに依存しない</h2></div>
+        <p><strong>安定した依存関係の原則（SDP）</strong>：変わりやすいモジュール（詳細・実装）が、変わりにくいモジュール（抽象・インターフェース）に依存する方向にすべきです。これにより、詳細が変わっても上位の概念に影響が出なくなります。</p>
+
+        <div style="display:grid; gap:0.75rem; margin-top:1rem">
+          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 悪い例：抽象が詳細に依存</h3>
+            <p style="margin:0; font-size:0.9rem">ビジネスロジック（注文処理）が特定のDBライブラリ（MySQL直接呼び出し）に直接依存している。DBを変えたら注文処理も変更が必要になる。</p>
+          </div>
+          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 良い例：詳細が抽象に依存</h3>
+            <p style="margin:0; font-size:0.9rem">ビジネスロジックは「注文リポジトリ（インターフェース）」に依存し、MySQL実装はそのインターフェースを実装する。DBを変えても注文処理は変更不要。</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:1rem">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <b>初心者向けのイメージ：</b>コンセントの形（インターフェース）が統一されていれば、家電（実装）はどのメーカーでも差し替えられます。コードも同じで、「使い方の約束（インターフェース）」に依存すると、「実装」を自由に替えられます。
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス8 -->
+      <h2 class="section-title"><span class="title-icon">💉</span> プラクティス8：依存性を注入する（DI）</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔧</span><h2>依存するオブジェクトは外から渡す</h2></div>
+        <p><strong>依存性注入（DI: Dependency Injection）</strong>とは、クラスが必要とするオブジェクトを内部で生成せず、<strong>コンストラクタや引数として外から受け取る</strong>設計パターンです。テストのしやすさが劇的に向上します。</p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem">
+          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+            <h3 style="margin:0 0 0.5rem; color:#dc3545; font-size:0.9rem">😰 DI なし（テスト困難）</h3>
+            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">class OrderService {
+  // 内部でDBに直接依存
+  private db = new MySQLDatabase();
+
+  void createOrder(Order order) {
+    db.save(order); // テスト時もDBが必要
+  }
+}</pre>
+          </div>
+          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+            <h3 style="margin:0 0 0.5rem; color:#28a745; font-size:0.9rem">😊 DI あり（テスト容易）</h3>
+            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">class OrderService {
+  // 外から渡してもらう
+  constructor(private repo: OrderRepository) {}
+
+  void createOrder(Order order) {
+    repo.save(order);
+    // テスト時はモックを渡せる
+  }
+}</pre>
+          </div>
+        </div>
+
+        <div class="callout callout-success" style="margin-top:1rem">
+          <span class="callout-icon">✅</span>
+          <div class="callout-body">
+            <b>DIのメリット：</b>テスト時に本物のDBやAPIの代わりに「偽物（モック）」を渡せます。本番と同じ構造を保ちながら、依存するサービスなしでロジックを検証できます。
+          </div>
+        </div>
+      </div>
+
+      <!-- プラクティス9 -->
+      <h2 class="section-title"><span class="title-icon">👥</span> プラクティス9：協力し、レビューし合う</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🤝</span><h2>コード品質はチームで守るもの</h2></div>
+        <p>レガシーコードとの戦いは個人ではなくチームで行います。<strong>コードレビュー・ペアプログラミング・モブプログラミング</strong>を通じて、チーム全体でコードの品質意識を高め合うことが重要です。</p>
+
+        <div style="display:grid; gap:0.75rem; margin-top:1rem">
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">コードレビューの目的</h3>
+            <ul style="margin:0; padding-left:1.25rem">
+              <li>バグや設計の問題を早期発見する</li>
+              <li>知識・設計の意図をチームで共有する</li>
+              <li>チームのコーディング規約・品質基準を揃える</li>
+              <li>書いた本人が見逃しがちなミスをチェックする</li>
+            </ul>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">ペアプログラミングの効果</h3>
+            <p style="margin:0">2人で1つのコードを書く手法。「一人が書き、もう一人がレビューしながら指摘する」のリアルタイム版です。<b>バグの埋め込みを防ぎ、知識移転もリアルタイムで行われる</b>ため、長期的に見てコスト効率が高い手法です。</p>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+            <h3 style="margin:0 0 0.5rem; color:var(--primary)">心理的安全性の大切さ</h3>
+            <p style="margin:0">「このコードはまずい」と言える・言ってもらえる関係がないと、誰もレガシーコードを指摘できなくなります。<b>コードを批判するのであって人を批判するのではない</b>という文化が、チームをレガシーから救います。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- まとめ -->
+      <h2 class="section-title"><span class="title-icon">📌</span> まとめ：9つのプラクティス早見表</h2>
+      <div class="card">
+        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🎓</span><h2>明日から実践できること</h2></div>
+        <table class="comparison-table" style="margin-top:0.75rem">
+          <thead><tr><th>#</th><th>プラクティス</th><th>明日から試せること</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><strong>WHYを伝える</strong></td><td>変数名・関数名を「目的」を表す名前にしてみる</td></tr>
+            <tr><td>2</td><td><strong>DRY</strong></td><td>同じ処理が2箇所にあったら関数に切り出す</td></tr>
+            <tr><td>3</td><td><strong>テストを先に書く</strong></td><td>次の実装の前に、期待する動作を1つテストに書いてみる</td></tr>
+            <tr><td>4</td><td><strong>小さく書く</strong></td><td>20行を超えたら「分割できないか」考えてみる</td></tr>
+            <tr><td>5</td><td><strong>シンプルに保つ</strong></td><td>「今は不要だが将来使うかも」のコードを書かない</td></tr>
+            <tr><td>6</td><td><strong>振る舞いを示す</strong></td><td>テスト名を「〇〇したとき〇〇を返す」という形にする</td></tr>
+            <tr><td>7</td><td><strong>安定した依存</strong></td><td>具体クラスではなくインターフェースに依存させる</td></tr>
+            <tr><td>8</td><td><strong>依存性を注入する</strong></td><td>クラス内でnewしている箇所をコンストラクタ引数に変える</td></tr>
+            <tr><td>9</td><td><strong>協力する</strong></td><td>PRレビューで「なぜそうしたか」を質問・説明し合う</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-success" style="margin-top:1rem">
+          <span class="callout-icon">📖</span>
+          <div class="callout-body">
+            <b>本書の核心メッセージ：</b>レガシーコードは悪意から生まれるのではなく、<b>小さな妥協の積み重ね</b>から生まれます。9つのプラクティスはすべて「今この瞬間の選択」を変えることから始まります。完璧を目指す必要はありません。次のコミットから、少しだけ良い選択をすることが、レガシーコードからの脱却への第一歩です。
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.content -->
+  </main>
+</div>
+
+<script src="../../../sidebar.js"></script>
+</body>
+</html>
