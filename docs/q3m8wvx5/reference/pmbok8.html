@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMBOK 第8版 — 虎の巻</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* カラーテーマ（緑系） */
+    .principle-badge { display:inline-block; background:#047857; color:#ecfdf5; border-radius:6px; padding:.15rem .6rem; font-size:.72rem; font-weight:700; margin-left:.5rem; vertical-align:middle; }
+    .rule-section { border-left:4px solid #059669; padding-left:1rem; margin:1.5rem 0 .75rem; }
+    .rule-section h3 { margin:0; font-size:1rem; color:#047857; }
+    .rule-section p { margin:.25rem 0 0; font-size:.87rem; color:var(--gray-600); }
+    /* 格言カード */
+    .pmbok-card { background:linear-gradient(135deg,#064e3b,#065f46); color:#fff; border-radius:var(--radius-lg); padding:1.25rem 1.5rem; margin:.75rem 0; }
+    .pmbok-ja  { font-size:.95rem; font-weight:700; color:#a7f3d0; margin-bottom:.5rem; }
+    .pmbok-desc { font-size:.85rem; color:#d1fae5; line-height:1.7; }
+    /* TOC */
+    .toc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+    @media(max-width:700px){ .toc-grid{grid-template-columns:1fr 1fr;} }
+    .toc-link { display:block; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:var(--radius); padding:.5rem .75rem; font-size:.83rem; text-decoration:none; color:#065f46; }
+    .toc-link:hover { background:#d1fae5; }
+    /* ポイント吹き出し */
+    .point-box { background:#f0fdf4; border:1.5px solid #86efac; border-radius:var(--radius); padding:.75rem 1rem; margin:.75rem 0; font-size:.87rem; }
+    .point-box strong { color:#047857; }
+    /* つまり吹き出し */
+    .tsumari-box { background:#fefce8; border:1.5px solid #fde047; border-radius:var(--radius); padding:.75rem 1rem; margin:.75rem 0; font-size:.87rem; }
+    .tsumari-box strong { color:#92400e; }
+    /* グリッド */
+    .three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1rem 0; }
+    .two-col   { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin:1rem 0; }
+    @media(max-width:760px){ .three-col,.two-col{grid-template-columns:1fr;} }
+    .mini-card { background:#f8fafc; border:1px solid var(--gray-200); border-radius:var(--radius); padding:.85rem 1rem; }
+    .mini-card-title { font-size:.8rem; font-weight:700; color:var(--gray-700); margin-bottom:.4rem; }
+    /* 会話カード */
+    .dialog-box { border-radius:var(--radius-lg); padding:1rem 1.25rem; margin:.6rem 0; font-size:.87rem; line-height:1.8; }
+    .dialog-box.bad  { background:#fef2f2; border:1.5px solid #fca5a5; }
+    .dialog-box.good { background:#f0fdf4; border:1.5px solid #86efac; }
+    .dialog-label { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.5rem; }
+    .dialog-box.bad  .dialog-label { color:#dc2626; }
+    .dialog-box.good .dialog-label { color:#16a34a; }
+    /* ドメインカード */
+    .domain-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:1rem 0; }
+    @media(max-width:900px){ .domain-grid{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:500px){ .domain-grid{grid-template-columns:1fr;} }
+    .domain-card { border-radius:var(--radius-lg); padding:1rem 1.1rem; border:1.5px solid; }
+    .domain-card .domain-num  { font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.35rem; }
+    .domain-card .domain-name { font-size:.93rem; font-weight:700; margin-bottom:.4rem; }
+    .domain-card .domain-desc { font-size:.81rem; line-height:1.7; }
+    /* 原則番号バッジ */
+    .pnum { display:inline-flex; align-items:center; justify-content:center; min-width:1.5rem; height:1.5rem; border-radius:50%; background:#059669; color:#fff; font-size:.72rem; font-weight:700; margin-right:.45rem; flex-shrink:0; }
+    .prow { display:flex; align-items:flex-start; margin:.55rem 0; font-size:.87rem; line-height:1.6; }
+    /* チップ */
+    .chip { display:inline-block; background:#d1fae5; color:#065f46; border-radius:999px; padding:.15rem .65rem; font-size:.75rem; font-weight:600; margin:.1rem; }
+    /* 番号付きステップ */
+    .step-box { display:flex; gap:.75rem; margin:.6rem 0; font-size:.87rem; line-height:1.7; }
+    .step-num { display:inline-flex; align-items:center; justify-content:center; min-width:1.6rem; height:1.6rem; border-radius:50%; background:#059669; color:#fff; font-size:.75rem; font-weight:700; flex-shrink:0; margin-top:.1rem; }
+    /* 強調ラベル */
+    .label-green { display:inline-block; background:#059669; color:#fff; border-radius:4px; padding:.1rem .5rem; font-size:.75rem; font-weight:700; margin-right:.35rem; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar-placeholder"></aside>
+
+  <main class="main">
+    <div class="page-header" style="background:linear-gradient(135deg,#022c22 0%,#064e3b 60%,#059669 100%); color:#fff; padding:3rem 3rem 2.5rem;">
+      <div class="subtitle" style="color:#6ee7b7; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:.5rem;">Reference — プロジェクトマネジメント標準</div>
+      <h1 style="font-size:2rem; font-weight:700; margin-bottom:.75rem;">📘 PMBOK 第8版<br><span style="font-size:1.1rem; font-weight:400; color:#a7f3d0;">プロジェクトを「うまく進める」ための考え方ガイド</span></h1>
+      <p style="color:#d1fae5; font-size:.93rem; max-width:640px; line-height:1.8;">
+        PMI（Project Management Institute）が発行する世界標準の教科書「<b style="color:#fff;">PMBOK® Guide 第8版（2021年）</b>」。
+        難しく聞こえますが、核心は「<b style="color:#fff;">プロジェクトを価値ある結果に導くための考え方と習慣</b>」です。
+        PMだけでなく、エンジニアとして開発現場で活かせるポイントに絞って解説します。
+      </p>
+      <div style="margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
+        <span style="background:rgba(255,255,255,.12); color:#a7f3d0; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">12の原則</span>
+        <span style="background:rgba(255,255,255,.12); color:#a7f3d0; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">8つのドメイン</span>
+        <span style="background:rgba(255,255,255,.12); color:#a7f3d0; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">テーラリング</span>
+        <span style="background:rgba(255,255,255,.12); color:#a7f3d0; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.2rem .75rem; font-size:.78rem;">不確実性への対応</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- まず知りたい人へ -->
+      <div class="callout callout-info" style="margin-top:0;">
+        <span class="callout-icon">👆</span>
+        <div class="callout-body">
+          <div class="callout-title">PMBOKって何のために読むの？</div>
+          「どうしてプロジェクトは炎上するの？」「なぜ設計書を書くの？」「リスクって何をすればいい？」
+          — そういった疑問に答えてくれる<b>「プロジェクト仕事の教科書」</b>です。
+          全部を暗記する必要はありません。<b>「考え方の引き出し」を増やすために活用する</b>資料です。
+        </div>
+      </div>
+
+      <!-- 第8版のポイント（1行） -->
+      <div class="callout" style="background:#f0fdf4; border:1.5px solid #86efac; margin-top:1rem;">
+        <span class="callout-icon">🔄</span>
+        <div class="callout-body">
+          <div class="callout-title" style="color:#065f46;">第8版の大きな変化 — 「手順書」から「考え方の指針」へ</div>
+          以前のPMBOK（第6版まで）は「5つのフェーズ・10の知識エリア・49のプロセス」という
+          細かい手順書でした。第8版では大きく方針転換し、<b>「12の原則（考え方）」＋「8つのドメイン（活動の束）」</b>という
+          シンプルな構成に変わりました。「どんな手順でやるか」よりも「何のためにやるか・何を大切にするか」を重視しています。
+        </div>
+      </div>
+
+      <!-- 目次 -->
+      <div class="card" style="margin-top:1.25rem">
+        <div style="font-weight:700; margin-bottom:.75rem;">目次</div>
+        <div class="toc-grid">
+          <a class="toc-link" href="#bigpicture">1. まず全体像を知る</a>
+          <a class="toc-link" href="#principles">2. 12の原則（考え方）</a>
+          <a class="toc-link" href="#domains">3. 8つのドメイン（活動）</a>
+          <a class="toc-link" href="#tailoring">4. テーラリング</a>
+          <a class="toc-link" href="#uncertainty">5. リスクへの対応</a>
+          <a class="toc-link" href="#apply">6. 日々の仕事への活かし方</a>
+          <a class="toc-link" href="#checklist">7. 実務チェックリスト</a>
+        </div>
+      </div>
+
+      <!-- ===== 1. まず全体像 ===== -->
+      <h2 class="section-title" id="bigpicture"><span class="title-icon">🗺️</span> 1. まず全体像を知る</h2>
+
+      <div class="pmbok-card">
+        <div class="pmbok-ja">「プロジェクトの成功」とは、機能を作ることではなく、価値を届けることである</div>
+        <div class="pmbok-desc">
+          PMBOKが繰り返し強調するのは「<b>アウトカム（成果）</b>」という言葉です。
+          画面を作った・APIを繋いだ、は「アウトプット（産出物）」。
+          それによってユーザーが便利になった・業務効率が20%上がった、が「アウトカム（成果）」。
+          プロジェクトはアウトカムを届けるために存在します。
+        </div>
+      </div>
+
+      <div class="tsumari-box">
+        <strong>💡 つまりどういうこと？</strong><br>
+        「要件通りに作ったのに使われない」「リリースしたけど誰も喜んでいない」は、
+        アウトプットは出したがアウトカムを届けられていない状態です。
+        開発の途中でも「<b>この機能、本当にユーザーの役に立つ？</b>」と自問する習慣がPMBOK的な姿勢です。
+      </div>
+
+      <div class="rule-section">
+        <h3>プロジェクトはどこにある？ — 大きな絵の中の自分の仕事 <span class="principle-badge">システム思考</span></h3>
+        <p>自分が担当している機能は、より大きな目的の一部として存在しています。</p>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:25%;">レベル</th><th>内容</th><th>具体例</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>会社の戦略</b></td>
+                <td>会社が目指すゴール（長期目標）</td>
+                <td>「2026年までにデジタル手続きを50%に増やす」</td>
+              </tr>
+              <tr>
+                <td><b>プログラム</b><br><small>（プロジェクトの集まり）</small></td>
+                <td>戦略を実現するための複数プロジェクトをまとめた単位</td>
+                <td>「市民向けオンライン手続き整備」プログラム</td>
+              </tr>
+              <tr>
+                <td><b>プロジェクト</b></td>
+                <td>一定期間・特定の目標を持つ取り組み</td>
+                <td>「転入届オンライン申請システム開発」</td>
+              </tr>
+              <tr>
+                <td><b>自分の担当機能</b></td>
+                <td>プロジェクトの中の自分が作るもの</td>
+                <td>「本人確認APIの実装」「申請フォーム画面の開発」</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="point-box">
+        <strong>💡 実務ポイント：</strong>
+        「この機能は何のためにあるのか」がわからないまま実装すると、仕様の解釈を誤ったり、
+        不要な機能を一生懸命作ったりすることがあります。
+        設計レビューや仕様確認の場で「<b>これはどのビジネス課題を解決しますか？</b>」と
+        聞くのは、PMBOKの考え方に沿った良い質問です。
+      </div>
+
+      <!-- ===== 2. 12の原則 ===== -->
+      <h2 class="section-title" id="principles"><span class="title-icon">📜</span> 2. 12の原則 — プロジェクトに関わるすべての人の「考え方」</h2>
+
+      <div class="callout" style="background:#f0fdf4; border:1.5px solid #86efac; margin-top:0;">
+        <span class="callout-icon">💬</span>
+        <div class="callout-body">
+          <div class="callout-title" style="color:#065f46;">12の原則はPMだけのものではありません</div>
+          「原則ってPMが守るものでは？」と思いがちですが、
+          PMBOKは<b>プロジェクトに関わるすべての人</b>（エンジニア・デザイナー・テスター）に適用される
+          考え方として位置づけています。「どう振る舞うか」「何を大切にするか」の指針です。
+        </div>
+      </div>
+
+      <div class="rule-section">
+        <h3>エンジニアが特に意識したい原則 <span class="principle-badge">日常実践</span></h3>
+        <p>12原則すべてを今すぐ実践するのは難しいので、エンジニアとして日常業務で特に関係するものを厳選して解説します。</p>
+      </div>
+
+      <!-- 原則4：価値 -->
+      <div class="card" style="padding:1.25rem 1.5rem; margin-bottom:1rem; border-left:4px solid #059669;">
+        <div style="display:flex; align-items:center; margin-bottom:.6rem;">
+          <span class="pnum">4</span>
+          <span style="font-weight:700; font-size:.97rem; color:#047857;">価値を継続的に評価する</span>
+        </div>
+        <p style="font-size:.87rem; color:var(--gray-700); margin:0 0 .6rem; line-height:1.7;">
+          作っているものが本当にビジネス価値を生むか、常に問い直す。<br>
+          優先度の高い機能を先にリリースし、フィードバックをもとに次を決める。
+        </p>
+        <div class="dialog-box good">
+          <div class="dialog-label">✓ 価値を意識した問いかけ</div>
+          「このバリデーション、本番でどれくらいの頻度で発生するエラーですか？<br>
+          もし稀なら、対応の優先度を下げてコア機能を先に仕上げませんか？」
+        </div>
+      </div>
+
+      <!-- 原則8：品質 -->
+      <div class="card" style="padding:1.25rem 1.5rem; margin-bottom:1rem; border-left:4px solid #059669;">
+        <div style="display:flex; align-items:center; margin-bottom:.6rem;">
+          <span class="pnum">8</span>
+          <span style="font-weight:700; font-size:.97rem; color:#047857;">品質に責任を持つ</span>
+        </div>
+        <p style="font-size:.87rem; color:var(--gray-700); margin:0 0 .6rem; line-height:1.7;">
+          品質はテストチームだけの仕事ではなく、コードを書いた人が最初の責任者。<br>
+          「動けばいい」ではなく「正しく動き・壊れにくく・読みやすい」を目指す。
+        </p>
+        <div class="two-col">
+          <div class="dialog-box bad">
+            <div class="dialog-label">✗ 品質を後回しにした例</div>
+            「とりあえず動いてるから PR 出します。<br>
+            細かいエラーハンドリングは後でやります」
+          </div>
+          <div class="dialog-box good">
+            <div class="dialog-label">✓ 品質を意識した例</div>
+            「エラーハンドリングと境界値テストを追加してから<br>
+            PR 出します。明日の午前中に出します」
+          </div>
+        </div>
+      </div>
+
+      <!-- 原則10：リスク -->
+      <div class="card" style="padding:1.25rem 1.5rem; margin-bottom:1rem; border-left:4px solid #059669;">
+        <div style="display:flex; align-items:center; margin-bottom:.6rem;">
+          <span class="pnum">10</span>
+          <span style="font-weight:700; font-size:.97rem; color:#047857;">リスクとチャンスの両方を見る</span>
+        </div>
+        <p style="font-size:.87rem; color:var(--gray-700); margin:0 0 .6rem; line-height:1.7;">
+          「問題が起きたら報告する」だけでなく、「起きそうな問題を事前に伝える」のが成熟した姿勢。<br>
+          リスクは「悪いこと」だけでなく「活かせるチャンス」も含む。
+        </p>
+        <div class="dialog-box good">
+          <div class="dialog-label">✓ リスクを早めに伝える例</div>
+          「外部APIのドキュメントが古くて仕様が不明瞭です。<br>
+          今週中に確認できなければ、この機能の完了が来週にずれ込みます。<br>
+          ベンダーへの問い合わせを今日中にしてもよいですか？」
+        </div>
+      </div>
+
+      <!-- 原則11：適応性 -->
+      <div class="card" style="padding:1.25rem 1.5rem; margin-bottom:1rem; border-left:4px solid #059669;">
+        <div style="display:flex; align-items:center; margin-bottom:.6rem;">
+          <span class="pnum">11</span>
+          <span style="font-weight:700; font-size:.97rem; color:#047857;">変化に適応し、失敗から回復する</span>
+        </div>
+        <p style="font-size:.87rem; color:var(--gray-700); margin:0 0 .6rem; line-height:1.7;">
+          仕様変更・バグ・想定外の問題は必ず起きる。それに「素早く・小さなダメージで」対応できる設計・開発習慣が重要。<br>
+          本番障害が起きたとき、素早く切り戻せる仕組みを持つこと自体がこの原則の実践。
+        </p>
+        <div class="tsumari-box">
+          <strong>💡 コードへの適用例：</strong>
+          変更が予想される箇所にインターフェースを挟む、フィーチャーフラグを使う、
+          デプロイをブルーグリーンにする — これらはすべて「変化への適応力」を高める設計です。
+        </div>
+      </div>
+
+      <!-- 全12原則の一覧 -->
+      <div class="rule-section" style="margin-top:1.5rem;">
+        <h3>12原則 全一覧（参考） <span class="principle-badge">全原則</span></h3>
+        <p>上記4つが特に日常業務と直結しますが、全体感として覚えておきましょう。</p>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:5%;">#</th><th style="width:28%;">原則名</th><th>一言で言うと</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><b>スチュワードシップ</b></td><td>組織・社会に誠実で責任ある行動をとる（守り人であれ）</td></tr>
+              <tr><td>2</td><td><b>チーム</b></td><td>多様なスキルを持つ協力的なチームを作り支える</td></tr>
+              <tr><td>3</td><td><b>ステークホルダー</b></td><td>関係者を早めに・積極的に巻き込む</td></tr>
+              <tr><td style="background:#f0fdf4; font-weight:700;">4</td><td style="background:#f0fdf4;"><b>価値</b></td><td style="background:#f0fdf4;">何が本当の価値かを常に問い直す ★</td></tr>
+              <tr><td>5</td><td><b>システム思考</b></td><td>自分の仕事が全体にどう影響するか考える</td></tr>
+              <tr><td>6</td><td><b>リーダーシップ</b></td><td>役職に関係なく状況に応じてリードする</td></tr>
+              <tr><td>7</td><td><b>テーラリング</b></td><td>状況に合わせてやり方を選ぶ（杓子定規にならない）</td></tr>
+              <tr><td style="background:#f0fdf4; font-weight:700;">8</td><td style="background:#f0fdf4;"><b>品質</b></td><td style="background:#f0fdf4;">プロセスと成果物の品質に責任を持ち続ける ★</td></tr>
+              <tr><td>9</td><td><b>複雑性</b></td><td>絡み合う問題（技術・人・組織）を認識して対処する</td></tr>
+              <tr><td style="background:#f0fdf4; font-weight:700;">10</td><td style="background:#f0fdf4;"><b>リスク</b></td><td style="background:#f0fdf4;">問題が起きる前に見つけて手を打つ ★</td></tr>
+              <tr><td style="background:#f0fdf4; font-weight:700;">11</td><td style="background:#f0fdf4;"><b>適応性と回復力</b></td><td style="background:#f0fdf4;">変化に柔軟に対応し、失敗から素早く回復する ★</td></tr>
+              <tr><td>12</td><td><b>変革の推進</b></td><td>新システム導入後も定着するまで責任を持つ</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.78rem; color:var(--gray-500); margin:.5rem 0 0;">★ = エンジニアが特に日常業務で意識したい原則</p>
+      </div>
+
+      <!-- ===== 3. 8つのドメイン ===== -->
+      <h2 class="section-title" id="domains"><span class="title-icon">🎯</span> 3. 8つのパフォーマンスドメイン — プロジェクト中ずっと並行して動く活動</h2>
+
+      <div class="callout" style="background:#f0fdf4; border:1.5px solid #86efac; margin-top:0;">
+        <span class="callout-icon">🤔</span>
+        <div class="callout-body">
+          <div class="callout-title" style="color:#065f46;">「ドメイン」って何のこと？</div>
+          プロジェクト全体を通じて<b>ずっと気を配り続ける「活動の領域」</b>のことです。
+          以前は「フェーズが終わったら次のフェーズへ」という順番の手順書でしたが、
+          第8版では「計画もリスク管理もステークホルダー対応も、全期間を通じて同時に行うもの」という
+          現実に即した整理に変わりました。
+        </div>
+      </div>
+
+      <div class="domain-grid">
+        <div class="domain-card" style="background:#f0fdf4; border-color:#6ee7b7;">
+          <div class="domain-num" style="color:#065f46;">Domain 1</div>
+          <div class="domain-name" style="color:#047857;">ステークホルダー</div>
+          <div class="domain-desc" style="color:#065f46;">
+            関係者（顧客・ユーザー・上司・他チーム）を把握し、関与し続ける
+            <br><span class="chip">関係者の期待管理</span>
+          </div>
+        </div>
+        <div class="domain-card" style="background:#eff6ff; border-color:#93c5fd;">
+          <div class="domain-num" style="color:#1e3a8a;">Domain 2</div>
+          <div class="domain-name" style="color:#1d4ed8;">チーム</div>
+          <div class="domain-desc" style="color:#1e40af;">
+            チームが安心して働ける環境を作り、スキルを伸ばし合う
+            <br><span class="chip" style="background:#dbeafe;color:#1e3a8a;">心理的安全性</span>
+          </div>
+        </div>
+        <div class="domain-card" style="background:#fdf4ff; border-color:#d8b4fe;">
+          <div class="domain-num" style="color:#581c87;">Domain 3</div>
+          <div class="domain-name" style="color:#7e22ce;">開発アプローチ</div>
+          <div class="domain-desc" style="color:#6b21a8;">
+            ウォーターフォール・アジャイル・ハイブリッドから最適な進め方を選ぶ
+            <br><span class="chip" style="background:#f3e8ff;color:#581c87;">テーラリング</span>
+          </div>
+        </div>
+        <div class="domain-card" style="background:#fff7ed; border-color:#fdba74;">
+          <div class="domain-num" style="color:#7c2d12;">Domain 4</div>
+          <div class="domain-name" style="color:#c2410c;">計画</div>
+          <div class="domain-desc" style="color:#9a3412;">
+            スコープ・スケジュール・コストを計画し、変化に合わせて更新し続ける
+            <br><span class="chip" style="background:#ffedd5;color:#7c2d12;">WBS・見積り</span>
+          </div>
+        </div>
+        <div class="domain-card" style="background:#fef9c3; border-color:#fde047;">
+          <div class="domain-num" style="color:#713f12;">Domain 5</div>
+          <div class="domain-name" style="color:#92400e;">プロジェクト作業</div>
+          <div class="domain-desc" style="color:#78350f;">
+            計画を実行し、日々の作業を調整・管理し、障害を取り除く
+            <br><span class="chip" style="background:#fef9c3;color:#713f12;">進捗管理</span>
+          </div>
+        </div>
+        <div class="domain-card" style="background:#fef2f2; border-color:#fca5a5;">
+          <div class="domain-num" style="color:#7f1d1d;">Domain 6</div>
+          <div class="domain-name" style="color:#dc2626;">デリバリー</div>
+          <div class="domain-desc" style="color:#b91c1c;">
+            品質を満たした成果物をステークホルダーに届ける
+            <br><span class="chip" style="background:#fef2f2;color:#7f1d1d;">品質・成果物確認</span>
+          </div>
+        </div>
+        <div class="domain-card" style="background:#f0f9ff; border-color:#7dd3fc;">
+          <div class="domain-num" style="color:#0c4a6e;">Domain 7</div>
+          <div class="domain-name" style="color:#0284c7;">測定</div>
+          <div class="domain-desc" style="color:#0369a1;">
+            進捗・品質・コストを数値で把握し、意思決定の根拠にする
+            <br><span class="chip" style="background:#e0f2fe;color:#0c4a6e;">KPI・EVM</span>
+          </div>
+        </div>
+        <div class="domain-card" style="background:#f8fafc; border-color:#94a3b8;">
+          <div class="domain-num" style="color:#1e293b;">Domain 8</div>
+          <div class="domain-name" style="color:#334155;">不確実性</div>
+          <div class="domain-desc" style="color:#475569;">
+            リスク・曖昧な仕様・想定外の変化に対応し、立て直す力を持つ
+            <br><span class="chip" style="background:#f1f5f9;color:#1e293b;">リスク管理</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tsumari-box" style="margin-top:1rem;">
+        <strong>💡 8ドメインを覚えるコツ：</strong><br>
+        「<b>誰と（ステークホルダー・チーム）</b>、<b>どうやって（開発アプローチ）</b>、
+        <b>何を計画し（計画）</b>、<b>どう動き（プロジェクト作業）</b>、
+        <b>何を届け（デリバリー）</b>、<b>どう測り（測定）</b>、<b>何に備えるか（不確実性）</b>」
+        — この流れで覚えると整理しやすいです。
+      </div>
+
+      <div class="rule-section" style="margin-top:1.5rem;">
+        <h3>各ドメインの「うまくいった状態」とは <span class="principle-badge">アウトカム</span></h3>
+        <p>ドメインの目的は「活動を実施すること」ではなく「良い状態を作り出すこと」です。</p>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:25%;">ドメイン</th><th>うまくいっている状態（アウトカム）</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><b>ステークホルダー</b></td><td>関係者が情報を持っていて、プロジェクトに協力的で、驚くことがない</td></tr>
+              <tr><td><b>チーム</b></td><td>メンバーが自発的に動き、助け合い、成長し続けている</td></tr>
+              <tr><td><b>開発アプローチ</b></td><td>プロジェクトの特性に合った進め方が選ばれ、無駄な手順がない</td></tr>
+              <tr><td><b>計画</b></td><td>チーム全員が計画を理解し、変化があれば計画も更新されている</td></tr>
+              <tr><td><b>プロジェクト作業</b></td><td>作業が止まらずに流れ、困ったことがあれば素早く解決されている</td></tr>
+              <tr><td><b>デリバリー</b></td><td>成果物が品質基準を満たし、ユーザーに価値が届いている</td></tr>
+              <tr><td><b>測定</b></td><td>「今どうなっているか」が数値で見えていて、判断の根拠になっている</td></tr>
+              <tr><td><b>不確実性</b></td><td>リスクが可視化され、想定外の問題に素早く対処できている</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== 4. テーラリング ===== -->
+      <h2 class="section-title" id="tailoring"><span class="title-icon">✂️</span> 4. テーラリング — 「正解」は1つじゃない</h2>
+
+      <div class="pmbok-card">
+        <div class="pmbok-ja">「PMBOKに書いてある通りにやる」のではなく「PMBOKを参考に、自分たちに合ったやり方を選ぶ」のが正しい使い方</div>
+        <div class="pmbok-desc">
+          テーラリング（Tailoring）とは「<b>プロジェクトの状況に合わせてやり方を調整すること</b>」です。
+          洋服の仕立てと同じで、既製品をそのまま着るのではなく、体に合わせて直して着る、というイメージです。
+          「ルールを守らなくていい」ではなく「<b>なぜそのルールが必要かを理解した上で、必要に応じて変える</b>」ことがテーラリングです。
+        </div>
+      </div>
+
+      <div class="tsumari-box">
+        <strong>💡 つまりどういうこと？</strong><br>
+        5人・3ヶ月の社内ツール開発に50ページの管理資料は不要です。
+        一方で、100人・2年の基幹システム刷新には厳格な変更管理が必要です。
+        「<b>このプロジェクトに何が必要か・何は不要か</b>」を考えて選ぶのがテーラリングです。
+      </div>
+
+      <div class="rule-section">
+        <h3>アジャイルとウォーターフォール、どちらを選ぶ？ <span class="principle-badge">アプローチ選択</span></h3>
+        <p>どちらが優れているという話ではなく、プロジェクトの特性で使い分けます。</p>
+      </div>
+
+      <div class="two-col">
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.75rem; color:#047857;">アジャイル寄りが向いているとき</div>
+          <ul style="font-size:.85rem; margin:.4rem 0 0; padding-left:1.2rem; line-height:2.2; color:var(--gray-700);">
+            <li>要件が変わりやすい・まだ決まっていない</li>
+            <li>ユーザーと頻繁に確認しながら作れる</li>
+            <li>早くリリースしてフィードバックを得たい</li>
+            <li>失敗しても取り返せるコストが低い</li>
+            <li>チームが自律的に判断できる</li>
+          </ul>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.75rem; color:#1d4ed8;">ウォーターフォール寄りが向いているとき</div>
+          <ul style="font-size:.85rem; margin:.4rem 0 0; padding-left:1.2rem; line-height:2.2; color:var(--gray-700);">
+            <li>要件が最初からほぼ確定している</li>
+            <li>法律・監査・セキュリティ基準が厳格</li>
+            <li>関係者が多く変更コストが高い</li>
+            <li>過去に同じようなプロジェクトの実績がある</li>
+            <li>ハードウェアや他システムとの同時稼働が必要</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="point-box">
+        <strong>💡 実務ポイント：</strong>
+        多くの実プロジェクトは「ハイブリッド」です。
+        要件定義・設計はウォーターフォール的に固め、実装・テストはスプリントで回す、という組み合わせも正解。
+        「完全にアジャイルにしなければ」と思わず、<b>自分たちのプロジェクトに合った割合を考える</b>のがテーラリングです。
+      </div>
+
+      <!-- ===== 5. リスクへの対応 ===== -->
+      <h2 class="section-title" id="uncertainty"><span class="title-icon">🌊</span> 5. リスクへの対応 — 「起きてから」ではなく「起きる前に」</h2>
+
+      <div class="pmbok-card">
+        <div class="pmbok-ja">リスク管理とは「問題が起きてから対処する」ではなく「起きそうなことを事前に把握して準備する」こと</div>
+        <div class="pmbok-desc">
+          リスクとは「まだ起きていないが、起きると影響がある出来事」のことです。
+          プロジェクトに関わる全員がリスクを意識し、早めに報告・対処することで、
+          炎上・遅延・手戻りを大幅に減らせます。
+        </div>
+      </div>
+
+      <div class="tsumari-box">
+        <strong>💡 リスクとは「嫌なこと」だけじゃない</strong><br>
+        PMBOKでは「プラスのリスク（チャンス）」も管理対象に含みます。
+        「新しいライブラリを使えば開発が2週間短縮できるかもしれない」もリスク（チャンス）として管理します。
+      </div>
+
+      <div class="rule-section">
+        <h3>リスク管理の5ステップ（エンジニア版） <span class="principle-badge">リスク対応</span></h3>
+        <p>特別な資格は不要です。日々の開発でこの流れを意識するだけで十分です。</p>
+      </div>
+
+      <div class="card" style="padding:1.25rem 1.5rem; margin-bottom:1rem;">
+        <div class="step-box">
+          <span class="step-num">1</span>
+          <div><b>見つける（特定）</b><br><span style="font-size:.85rem; color:var(--gray-700);">「これ、うまくいかないかもな」と感じたことは全部書き出す。タスクを始める前に「何が障害になりそうか」を1分考えるだけでも違う。</span></div>
+        </div>
+        <div class="step-box">
+          <span class="step-num">2</span>
+          <div><b>評価する（分析）</b><br><span style="font-size:.85rem; color:var(--gray-700);">「起きる可能性が高いか？」「起きたらどれくらい影響があるか？」を高・中・低の3段階で判断する。両方高ければ優先して対処する。</span></div>
+        </div>
+        <div class="step-box">
+          <span class="step-num">3</span>
+          <div><b>対策を決める（対応計画）</b><br><span style="font-size:.85rem; color:var(--gray-700);">
+            <span class="label-green">回避</span> そもそも起きないようにする（仕様を変える・方式を変える）<br>
+            <span class="label-green">軽減</span> 起きたときのダメージを小さくする（バッファーを確保する）<br>
+            <span class="label-green">転嫁</span> 保険・契約などで影響を他者に移す<br>
+            <span class="label-green">受容</span> 許容範囲なので現時点では対処しない（記録だけする）
+          </span></div>
+        </div>
+        <div class="step-box">
+          <span class="step-num">4</span>
+          <div><b>実行する（対応実施）</b><br><span style="font-size:.85rem; color:var(--gray-700);">対策をタスクに落とし込んで実際にやる。担当者と期限を決める。</span></div>
+        </div>
+        <div class="step-box">
+          <span class="step-num">5</span>
+          <div><b>追いかける（監視）</b><br><span style="font-size:.85rem; color:var(--gray-700);">定期的に「あのリスク、まだ有効か？」「新しいリスクが出てきていないか？」を確認する。週次スタンドアップや設計レビューの際に一言確認するだけでよい。</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div style="font-weight:700; margin-bottom:.75rem;">よくあるリスクの例（システム開発）</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:35%;">リスクの内容</th><th style="width:15%;">確率</th><th style="width:15%;">影響</th><th>対応策の例</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>外部APIの仕様が変更される可能性がある</td>
+                <td>中</td>
+                <td>高</td>
+                <td>APIをラップしたアダプター層を作り、変更影響を局所化する</td>
+              </tr>
+              <tr>
+                <td>要件のキーパーソンが途中で離任する</td>
+                <td>低</td>
+                <td>高</td>
+                <td>決定事項をADR・議事録に残し、属人化を防ぐ</td>
+              </tr>
+              <tr>
+                <td>特定のエンジニアしか知らない機能がある</td>
+                <td>中</td>
+                <td>高</td>
+                <td>ペアプロ・コードレビューで知識共有。バス係数を2以上に</td>
+              </tr>
+              <tr>
+                <td>新技術の学習コストが見積もりより大きい</td>
+                <td>高</td>
+                <td>中</td>
+                <td>スパイク（技術調査）タスクをスプリント初期に設ける</td>
+              </tr>
+              <tr>
+                <td>テスト環境が本番と異なり障害が起きる</td>
+                <td>中</td>
+                <td>高</td>
+                <td>IaCで環境を統一。差分をドキュメント化し定期的にチェック</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== 6. 日々の仕事への活かし方 ===== -->
+      <h2 class="section-title" id="apply"><span class="title-icon">🏗️</span> 6. 日々の仕事への活かし方</h2>
+
+      <div class="rule-section">
+        <h3>PMBOKの考え方を開発の現場に落とし込む <span class="principle-badge">実践ガイド</span></h3>
+        <p>PMBOKはPMの仕事だと思われがちですが、エンジニアの日常業務に直接活かせる考え方がたくさんあります。</p>
+      </div>
+
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th style="width:25%;">開発の場面</th><th style="width:25%;">PMBOKの対応概念</th><th>具体的な行動</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>タスクを始める前</b></td>
+                <td>計画・不確実性（リスク）</td>
+                <td>「何がわからないか・何が詰まりそうか」を先に洗い出し、不明点を質問してから着手する</td>
+              </tr>
+              <tr>
+                <td><b>見積もりを出すとき</b></td>
+                <td>計画・測定</td>
+                <td>「うまくいった場合・通常・問題があった場合」の3パターンで伝え、不確実な要素も添える</td>
+              </tr>
+              <tr>
+                <td><b>コードを書くとき</b></td>
+                <td>品質・適応性</td>
+                <td>仕様変更に備えた設計にする。テストを書いて品質を自分で保証する</td>
+              </tr>
+              <tr>
+                <td><b>PRレビューのとき</b></td>
+                <td>品質・ステークホルダー</td>
+                <td>「なぜこう変えたか」をPR説明に書く。レビュアーへの情報提供がステークホルダー管理の実践</td>
+              </tr>
+              <tr>
+                <td><b>問題が起きたとき</b></td>
+                <td>適応性・ステークホルダー</td>
+                <td>問題の事実・影響・対応策をセットで報告する。「問題だけ投げて終わり」にしない</td>
+              </tr>
+              <tr>
+                <td><b>スプリント振り返り</b></td>
+                <td>測定・チーム・不確実性</td>
+                <td>「うまくいったこと・改善点・次に試すこと」を教訓として記録する</td>
+              </tr>
+              <tr>
+                <td><b>フェーズ完了時</b></td>
+                <td>デリバリー・測定</td>
+                <td>成果物が品質基準を満たしているかチェックリストで確認し、ステークホルダーに承認をもらう</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="rule-section" style="margin-top:1.5rem;">
+        <h3>問題報告の「PMBOK式」— 解決案をセットで伝える <span class="principle-badge">コミュニケーション</span></h3>
+        <p>ステークホルダーとのコミュニケーション（ドメイン1・5）を効果的にする報告の型です。</p>
+      </div>
+
+      <div class="two-col">
+        <div class="dialog-box bad">
+          <div class="dialog-label">✗ 情報が不足している報告</div>
+          「外部APIがエラーを返すことがあって、<br>
+          設計通りに動かないんですが、どうしましょう…」<br><br>
+          <span style="font-size:.8rem; color:#dc2626;">→ 聞いた人が全部考えないといけない。<br>受け手の負担が大きく、対応が遅れる。</span>
+        </div>
+        <div class="dialog-box good">
+          <div class="dialog-label">✓ 事実・影響・対応案をセットで報告</div>
+          「外部APIが稀にタイムアウトを返しています（事実）。<br>
+          このままだと注文確定画面でエラーが出ます（影響）。<br>
+          リトライ処理を追加する案と、<br>
+          別のAPIに切り替える案があります（対応案）。<br>
+          どちらを採用するか判断いただけますか？（依頼）」
+        </div>
+      </div>
+
+      <!-- ===== 7. チェックリスト ===== -->
+      <h2 class="section-title" id="checklist"><span class="title-icon">✅</span> 7. 実務チェックリスト</h2>
+
+      <div class="two-col">
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.75rem; color:#047857;">プロジェクト開始時・タスク着手前</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:8%;"></th><th>確認項目</th></tr></thead>
+              <tbody>
+                <tr><td>☐</td><td>このタスクがどのビジネス成果に貢献するか理解したか</td></tr>
+                <tr><td>☐</td><td>不明点・曖昧な仕様を着手前に確認したか</td></tr>
+                <tr><td>☐</td><td>詰まりそうなリスクを先に報告・相談したか</td></tr>
+                <tr><td>☐</td><td>見積もりに根拠と不確実性の幅を含めたか</td></tr>
+                <tr><td>☐</td><td>依存するチームや外部との調整が必要か確認したか</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <div style="font-weight:700; margin-bottom:.75rem; color:#047857;">実装中・コードレビュー時</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width:8%;"></th><th>確認項目</th></tr></thead>
+              <tbody>
+                <tr><td>☐</td><td>品質基準（テスト・エラーハンドリング）を満たしているか</td></tr>
+                <tr><td>☐</td><td>仕様変更があったときに変更しやすい設計か</td></tr>
+                <tr><td>☐</td><td>PRの説明に「なぜこう変えたか」を書いたか</td></tr>
+                <tr><td>☐</td><td>問題が起きたとき、事実・影響・対応案をセットで報告したか</td></tr>
+                <tr><td>☐</td><td>進捗が遅れそうなら早めに相談したか</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem; padding:1.25rem 1.5rem;">
+        <div style="font-weight:700; margin-bottom:.75rem; color:#047857;">フェーズ終了・スプリント振り返り時</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:5%;"></th><th>確認項目</th></tr></thead>
+            <tbody>
+              <tr><td>☐</td><td>成果物が品質基準を満たしており、ステークホルダーの確認・承認を得たか</td></tr>
+              <tr><td>☐</td><td>今回の反省点・良かった点を記録し、次に活かせる形にしたか（教訓登録）</td></tr>
+              <tr><td>☐</td><td>リスク登録簿を更新したか（解消したリスク・新たに出てきたリスク）</td></tr>
+              <tr><td>☐</td><td>ドキュメント・設計書が実装と整合しているか確認したか</td></tr>
+              <tr><td>☐</td><td>チームメンバーへの感謝・フィードバックを伝えたか</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 参考 -->
+      <div class="callout" style="background:#f0fdf4; border:1.5px solid #86efac; margin-top:1.5rem;">
+        <span class="callout-icon">📚</span>
+        <div class="callout-body">
+          <div class="callout-title" style="color:#065f46;">参考文献・関連ページ</div>
+          <ul style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
+            <li>PMI 著「<b>PMBOK® Guide — Eighth Edition</b>」（Project Management Institute, 2021）</li>
+            <li>PMI 著「<b>Process Groups: A Practice Guide</b>」— 旧来のプロセスグループを参照したい場合に</li>
+            <li><a href="../howto.html">全体フロー・HowTo</a> — リスク管理・変更管理の具体的なフォーマット</li>
+            <li><a href="../reference/adr.html">ADR サンプル集</a> — 設計の意思決定を記録する（教訓・テーラリング根拠を残す）</li>
+            <li><a href="../reference/pragmatic-programmer.html">達人プログラマー</a> — 個人レベルの実践原則。PMBOKと組み合わせると視野が広がる</li>
+            <li><a href="../impl/testing.html">テスト実施手順</a> — デリバリードメインの品質確保を具体的に学ぶ</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<script src="../js/main.js"></script>
+<script src="../sidebar.js"></script>
+</body>
+</html>
