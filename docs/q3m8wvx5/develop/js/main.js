@@ -17,14 +17,7 @@
   btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 })();
 
-// ===== Sidebar active link =====
-(function () {
-  const links = document.querySelectorAll('.sidebar nav a');
-  const page = location.pathname.split('/').pop() || 'index.html';
-  links.forEach(a => {
-    if (a.getAttribute('href') === page) a.classList.add('active');
-  });
-})();
+// sidebar active links and search are handled by sidebar.js
 
 // ===== Tab navigation =====
 document.querySelectorAll('.tab-nav').forEach(nav => {
@@ -66,13 +59,3 @@ function updateProgress() {
 }
 updateProgress();
 
-// ===== Sidebar search =====
-const searchInput = document.querySelector('.search-input');
-if (searchInput) {
-  searchInput.addEventListener('input', () => {
-    const q = searchInput.value.toLowerCase();
-    document.querySelectorAll('.sidebar nav a').forEach(a => {
-      a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
-    });
-  });
-}

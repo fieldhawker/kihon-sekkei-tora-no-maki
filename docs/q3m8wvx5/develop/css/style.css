@@ -157,9 +157,10 @@ body {
   display: flex;
   align-items: center;
   gap: .5rem;
-  padding: .45rem 1rem;
+  padding: .5rem 1rem;
   font-size: .82rem;
-  color: #9ca3af;
+  font-weight: 600;
+  color: #cbd5e1;
   cursor: pointer;
   list-style: none;
   user-select: none;
@@ -170,12 +171,51 @@ body {
   margin-left: auto;
   font-size: 1rem;
   transition: transform .15s;
+  color: var(--gray-400);
 }
 .sidebar details.sidebar-group[open] summary::after { transform: rotate(90deg); }
 .sidebar details.sidebar-group summary:hover { color: #fff; }
 .sidebar details.sidebar-group nav a {
   padding-left: 2.2rem;
   font-size: .8rem;
+}
+
+/* phase color dots on sidebar */
+.sidebar-phase-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+.sidebar-phase-dot.phase1 { background: var(--phase1); }
+.sidebar-phase-dot.phase2 { background: var(--phase2); }
+.sidebar-phase-dot.phase3 { background: var(--phase3); }
+.sidebar-phase-dot.phase4 { background: var(--phase4); }
+
+/* sub-heading inside a sidebar group (e.g. inside checklist) */
+.sidebar-subheading {
+  padding: .4rem 1.25rem .15rem 2.2rem;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+/* nested sidebar-group (for books / samples sub-categories) */
+.sidebar details.sidebar-group-nested {
+  border-top: none;
+  border-bottom: none;
+}
+.sidebar details.sidebar-group-nested summary {
+  padding-left: 2.2rem;
+  font-size: .78rem;
+  font-weight: 500;
+  color: #9ca3af;
+}
+.sidebar details.sidebar-group-nested nav a {
+  padding-left: 3.2rem;
+  font-size: .78rem;
 }
 
 /* ===== MAIN CONTENT ===== */
