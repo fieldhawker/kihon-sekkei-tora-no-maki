@@ -1,0 +1,198 @@
+---
+title: 単体テスト設計技法まとめ
+subtitle: Phase 4 — テスト設計技法
+phase: test
+description: 単体テスト（Unit Test）は、プログラムを構成する最小単位（関数やメソッドなど）が、設計通りに正しく動作するかを検証するテストです。テストケースを場当たり的に作成すると、考慮漏れによるバグの見逃しや、無駄なテストケースの増大を招きます。以下に、効率的かつ網羅的にテストを行うための代表的な設計技法をまとめます。
+mermaid: true
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方</b><br>
+    1) まずブラックボックス（同値分割・境界値）で「仕様どおり」を固める → 2) 次にホワイトボックス（カバレッジ）で「抜け漏れ」を点検 → 3) 最後に状態遷移・エラー推測で事故りやすい所を潰す。<br>
+    テストは「数を増やす」より、<b>失敗したときに原因が1つに絞れる</b>粒度（Arrange-Act-Assert）を優先します。
+  </div>
+</div>
+
+## 📦 1. 入力データに着目した技法（ブラックボックス）
+
+<p style="margin-bottom:1rem; color:var(--gray-600);">プログラムの内部構造を意識せず、仕様書（インプットとアウトプット）に基づいてテストケースを設計します。</p>
+
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#0284c7; color:#fff; border:none; padding:2px 6px;">1.1</span> 同値分割法 (Equivalence Partitioning)
+  </h3>
+  <p>入力値を「同じように処理されるグループ（同値クラス）」に分け、各グループから代表値を1つ選んでテストする手法です。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#f0f9ff; border-color:#bae6fd;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#0369a1;"><span class="callout-icon">📌</span> 使用事例: 「パスワードの文字数チェック（8文字以上、16文字以下）」</div>
+    <div class="table-wrap" style="background:#fff; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:33%; text-align:center;">無効同値（短すぎる）</th>
+            <th style="width:34%; text-align:center; background:#dcfce7; color:#166534; border-bottom:2px solid #22c55e;">有効同値（正常）</th>
+            <th style="width:33%; text-align:center;">無効同値（長すぎる）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:center; padding:1rem 0.5rem;">〜7文字</td>
+            <td style="text-align:center; padding:1rem 0.5rem; background:#f0fdf4; font-weight:bold;">8〜16文字</td>
+            <td style="text-align:center; padding:1rem 0.5rem;">17文字〜</td>
+          </tr>
+          <tr style="background:#f8fafc;">
+            <td style="text-align:center; color:#64748b;">代表値: <strong>5文字</strong></td>
+            <td style="text-align:center; color:#15803d;">代表値: <strong style="font-size:1.1rem;">10文字</strong></td>
+            <td style="text-align:center; color:#64748b;">代表値: <strong>20文字</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm" style="margin-top:0.75rem;">無数にある入力パターンのうち重複するテストを省き、最小限のケースで効率よく全体をカバーできます。</p>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#0284c7; color:#fff; border:none; padding:2px 6px;">1.2</span> 境界値分析 (Boundary Value Analysis)
+  </h3>
+  <p>バグが発生しやすい「同値クラスの境界（しきい値とその前後の値）」を狙ってテストする手法です。同値分割法とセットで使われます。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#f0f9ff; border-color:#bae6fd;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#0369a1;"><span class="callout-icon">📌</span> 使用事例: 「年齢による入場制限（18歳以上のみ入場可）」</div>
+    <div style="background:#fff; padding:1.5rem 1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
+      <div style="font-weight:bold; color:#475569; margin-bottom:0.5rem;">境界となる値：<span style="color:#0f172a; font-size:1.2rem;">18</span></div>
+      <div style="display:flex; justify-content:center; align-items:center; gap:1rem;">
+        <div style="padding:0.75rem; border-radius:8px; background:#fee2e2; border:1px solid #fca5a5; width:120px;">
+          <div style="font-size:1.2rem; font-weight:bold; color:#b91c1c;">17歳</div>
+          <div style="font-size:0.8rem; color:#7f1d1d; margin-top:0.25rem;">境界のすぐ下<br>(入場不可)</div>
+        </div>
+        <div style="padding:0.75rem; border-radius:8px; background:#dcfce7; border:2px solid #22c55e; width:120px; transform:scale(1.05); box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+          <div style="font-size:1.2rem; font-weight:bold; color:#15803d;">18歳</div>
+          <div style="font-size:0.8rem; color:#14532d; margin-top:0.25rem;">境界値<br>(入場可)</div>
+        </div>
+        <div style="padding:0.75rem; border-radius:8px; background:#dcfce7; border:1px solid #86efac; width:120px;">
+          <div style="font-size:1.2rem; font-weight:bold; color:#15803d;">19歳</div>
+          <div style="font-size:0.8rem; color:#14532d; margin-top:0.25rem;">境界のすぐ上<br>(入場可)</div>
+        </div>
+      </div>
+    </div>
+    <p class="text-sm" style="margin-top:0.75rem; color:#0c4a6e;">プログラムの <code>&gt;=</code> と <code>&gt;</code> の書き間違い（オフバイワンエラー）などのバグを効果的に検出できます。</p>
+  </div>
+</div>
+
+## 🔀 2. 条件と結果の組み合わせに着目した技法
+
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#8b5cf6; color:#fff; border:none; padding:2px 6px;">2.1</span> デシジョンテーブルテスト
+  </h3>
+  <p>複数の入力条件の組み合わせによって出力（結果）が変化するロジックに対して、考えられる全ての組み合わせを表にしてテストする手法です。（※詳細設計のデシジョンテーブルと同様です）</p>
+</div>
+
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#8b5cf6; color:#fff; border:none; padding:2px 6px;">2.2</span> ペアワイズテスト / 直交表 (Pairwise Testing)
+  </h3>
+  <p>多数のパラメータがある場合、「任意の2つのパラメータの組み合わせが必ず1回以上登場する」ようにケースを絞り込む手法です。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#f5f3ff; border-color:#c4b5fd;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#5b21b6;"><span class="callout-icon">📌</span> 使用事例: 「OS、ブラウザ、言語の設定による画面表示」</div>
+    <div style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+      <ul style="margin:0; padding-left:1.2rem; color:#475569;">
+        <li><strong>OS</strong>: Windows, Mac</li>
+        <li><strong>ブラウザ</strong>: Chrome, Edge, Safari</li>
+        <li><strong>言語</strong>: 日本語, 英語</li>
+      </ul>
+      <div style="margin-top:1rem; padding-top:1rem; border-top:1px dashed #cbd5e1; display:flex; align-items:center; justify-content:space-between;">
+        <div style="text-align:center; padding:0.5rem;">
+          <div style="font-size:1.5rem; font-weight:bold; color:#94a3b8;">12<span style="font-size:0.9rem; font-weight:normal;">通り</span></div>
+          <div style="font-size:0.75rem; color:#64748b;">全組み合わせ(2×3×2)</div>
+        </div>
+        <div style="font-size:1.5rem; color:#cbd5e1;">➔</div>
+        <div style="text-align:center; padding:0.5rem; background:#ede9fe; border-radius:8px; border:1px solid #ddd6fe;">
+          <div style="font-size:1.5rem; font-weight:bold; color:#7c3aed;">6<span style="font-size:0.9rem; font-weight:normal;">通り</span></div>
+          <div style="font-size:0.75rem; color:#5b21b6;">ペアワイズで圧縮</div>
+        </div>
+      </div>
+    </div>
+    <p class="text-sm" style="margin-top:0.75rem; color:#4c1d95;">ソフトウェアのバグの大半は「1〜2つのパラメータの組み合わせ」で発生するという経験則に基づき、テスト回数を大幅に削減しつつ高い欠陥検出率を維持します。</p>
+  </div>
+</div>
+
+## 🔍 3. 内部構造に着目した技法（ホワイトボックス）
+
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#ea580c; color:#fff; border:none; padding:2px 6px;">3.1</span> 制御フローテスト / パステスト
+  </h3>
+  <p>コード内の命令や分岐をどれだけ通過したか（カバレッジ：網羅率）を基準にテストを設計します。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#fff7ed; border-color:#fed7aa;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#9a3412;"><span class="callout-icon">📌</span> カバレッジの基準 (例: <code>if (A &gt; 0 || B &gt; 0)</code>)</div>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-start;">
+      <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); flex:1; min-width:250px;">
+        <div class="mermaid">
+flowchart TD
+    A((開始)) --> B{A &gt; 0\n||\nB &gt; 0}
+    B -- True --> C[処理X]
+    B -- False --> D[処理Y]
+    C --> E((終了))
+    D --> E
+        </div>
+      </div>
+      <div style="flex:2; min-width:300px;">
+        <ul style="margin:0; padding-left:1rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <li style="background:#fff; padding:0.75rem; border-radius:6px; border:1px solid #fdba74;">
+            <strong style="color:#c2410c;">C0 (命令網羅 / ステートメントカバレッジ)</strong><br>
+            <span style="font-size:0.85rem; color:#475569;">すべての「行」を少なくとも1回実行。デッドコードが無いかを検証。</span>
+          </li>
+          <li style="background:#fff; padding:0.75rem; border-radius:6px; border:1px solid #fb923c; box-shadow:0 2px 4px rgba(251,146,60,0.15);">
+            <strong style="color:#c2410c;">C1 (分岐網羅 / ブランチカバレッジ)</strong> 🎯 単体テストの基本目標<br>
+            <span style="font-size:0.85rem; color:#475569;">すべての「分岐(True/False)」を両方とも1回実行。</span><br>
+            <code style="font-size:0.8rem; background:#f1f5f9; padding:2px 4px;">例: Trueルート(A=1, B=0), Falseルート(A=0, B=0)</code>
+          </li>
+          <li style="background:#fff; padding:0.75rem; border-radius:6px; border:1px solid #fdba74;">
+            <strong style="color:#c2410c;">C2 (条件網羅 / コンディションカバレッジ)</strong><br>
+            <span style="font-size:0.85rem; color:#475569;">分岐の中の「複数条件」のTrue/False組み合わせをすべて網羅。</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+## 🧠 4. 状態の変化や経験則に着目した技法
+
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#059669; color:#fff; border:none; padding:2px 6px;">4.1</span> 状態遷移テスト
+  </h3>
+  <p>システムが特定の「状態」を持っており、イベントによって状態が変わる場合に、その遷移が正しく行われるかをテストします。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#ecfdf5; border-color:#6ee7b7;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#065f46;"><span class="callout-icon">📌</span> 使用事例: 「動画プレイヤー（停止・再生・一時停止）」</div>
+    <ul style="background:#fff; padding:1rem 1rem 1rem 2rem; border-radius:8px; margin:0; color:#064e3b; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+      <li style="margin-bottom:0.5rem;">「停止中」に「再生ボタン」 ➔ 「再生中」になるか</li>
+      <li style="margin-bottom:0.5rem;">「一時停止中」に「再生ボタン」 ➔ 「再生中」になるか</li>
+      <li>「停止中」に「一時停止ボタン」 ➔ 無視されるか（エラー処理されるか）</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#dc2626; color:#fff; border:none; padding:2px 6px;">4.2</span> エラー推測 (Error Guessing)
+  </h3>
+  <p>エンジニアの経験や直感に基づき、「ミスしやすそうな箇所」「過去のバグパターン」を狙い撃ちにする手法です。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#fef2f2; border-color:#fca5a5;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#991b1b;"><span class="callout-icon">📌</span> 使用事例: 「入力フォームのテスト」</div>
+    <div style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+      <p style="font-size:0.9rem; color:#7f1d1d; margin-bottom:0.5rem; font-weight:bold;">よくある狙い撃ちデータの例：</p>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <span style="background:#fee2e2; color:#b91c1c; padding:4px 8px; border-radius:999px; font-size:0.8rem; border:1px solid #fecaca;">空文字列（未入力）</span>
+        <span style="background:#fee2e2; color:#b91c1c; padding:4px 8px; border-radius:999px; font-size:0.8rem; border:1px solid #fecaca;">半角スペースのみ</span>
+        <span style="background:#fee2e2; color:#b91c1c; padding:4px 8px; border-radius:999px; font-size:0.8rem; border:1px solid #fecaca;">全角・半角混在</span>
+        <span style="background:#fee2e2; color:#b91c1c; padding:4px 8px; border-radius:999px; font-size:0.8rem; border:1px solid #fecaca;">超長文（1万文字など）</span>
+        <span style="background:#fee2e2; color:#b91c1c; padding:4px 8px; border-radius:999px; font-size:0.8rem; border:1px solid #fecaca;">特殊文字 ( ' ; &lt; &gt; )</span>
+      </div>
+    </div>
+  </div>
+</div>

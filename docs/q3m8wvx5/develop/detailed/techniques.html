@@ -1,317 +1,221 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>詳細設計技法まとめ — 虎の巻</title>
+  <title>詳細設計技法まとめ</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  
 </head>
 <body>
 <div class="layout">
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
-  <!-- MAIN -->
   <main class="main">
+    
     <div class="page-header phase-detail">
       <div class="subtitle">Phase 2 — 設計技法</div>
-      <h1>💡 詳細設計技法まとめ</h1>
-      <p class="description">詳細設計は、基本設計で定義した「システムが何をするか（What）」を元に、「それをプログラムでどう実現するか（How）」を具体化し、プログラマーが迷いなくバグの少ないコードを実装できる状態にするためのフェーズです。<br>以下に、詳細設計で特に有用な設計技法と、それぞれの具体的な使用事例をまとめます。</p>
+      <h1>詳細設計技法まとめ</h1>
+      <p class="description">詳細設計は、基本設計で定義した「システムが何をするか（What）」を元に、「それをプログラムでどう実現するか（How）」を具体化し、プログラマーが迷いなくバグの少ないコードを実装できる状態にするためのフェーズです。以下に、詳細設計で特に有用な設計技法と、それぞれの具体的な使用事例をまとめます。</p>
     </div>
-
     <div class="content">
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">🧭</span>
-        <div class="callout-body">
-          <b>どれを使うか迷ったら（早見表）</b><br>
-          処理手順を文章で誤解なく伝えたい → <b>IPO</b> / <b>フロー（アクティビティ/状態）</b><br>
-          画面・API・DBのやり取りを誤解なく伝えたい → <b>シーケンス図</b><br>
-          分岐が多くてテスト漏れが怖い → <b>デシジョンテーブル</b>
-        </div>
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>どれを使うか迷ったら（早見表）</b><br>
+    処理手順を文章で誤解なく伝えたい → <b>IPO</b> / <b>フロー（アクティビティ/状態）</b><br>
+    画面・API・DBのやり取りを誤解なく伝えたい → <b>シーケンス図</b><br>
+    分岐が多くてテスト漏れが怖い → <b>デシジョンテーブル</b>
+  </div>
+</div><div class="card" style="margin-top:1rem">
+  <div class="font-bold" style="margin-bottom:.5rem">目次</div>
+  <div class="text-sm">
+    <a href="#logic">1. ロジックと処理</a> / <a href="#state">2. データと状態</a> / <a href="#structure">3. 構造と連携</a> / <a href="#interface">4. 外部IF</a> / <a href="#decision">5. 条件分岐</a>
+  </div>
+</div><h2>⚙️ 1. ロジックと処理の流れを整理する技法 {#logic}</h2>
+<p>複雑な計算やデータの加工処理を正確に伝えるための手法です。</p>
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#1a56db; color:#fff; border:none; padding:2px 6px;">1.1</span> IPO記述（Input - Process - Output）
+  </h3>
+  <p>モジュールや関数に対して、「何を入力し」「どのような処理を行い」「何を出力するか」を明確に定義する手法です。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#eff6ff;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#1e40af;"><span class="callout-icon">📌</span> 使用事例: 「割引料金計算関数」の設計</div>
+    <div class="table-wrap" style="background:#fff; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30%;">Input (入力)</th>
+            <th style="width:40%;">Process (処理)</th>
+            <th style="width:30%;">Output (出力)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="vertical-align:top;"><ul style="padding-left:1rem; margin:0;"><li>ユーザーの年齢（数値）</li><li>購入金額（数値）</li><li>クーポンコード（文字列）</li></ul></td>
+            <td style="vertical-align:top;"><ol style="padding-left:1rem; margin:0;"><li style="margin-bottom:0.5rem;">クーポンコードが有効かDBで検証する。</li><li style="margin-bottom:0.5rem;">年齢が65歳以上ならシニア割引（10%オフ）を適用する。</li><li>購入金額が5000円以上なら送料無料フラグを立てる。</li></ol></td>
+            <td style="vertical-align:top;"><ul style="padding-left:1rem; margin:0;"><li>最終請求金額（数値）</li><li>送料無料フラグ（真偽値）</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#1a56db; color:#fff; border:none; padding:2px 6px;">1.2</span> アクティビティ図（UML）
+  </h3>
+  <p>処理の分岐やループに加え、並行処理（マルチスレッド）などの複雑な処理の流れを視覚的に表現するフローチャートの発展形です。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#eff6ff;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#1e40af;"><span class="callout-icon">📌</span> 使用事例: 「ECサイトの注文確定バッチ処理」の設計</div>
+    <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
+      <div class="mermaid">
+      stateDiagram-v2
+          [*] --> 注文データ受信
+          注文データ受信 --> Fork_1
+          state Fork_1 &lt;&lt;fork&gt;&gt;
+          Fork_1 --> 在庫引当API
+          Fork_1 --> 与信確保API
+          在庫引当API --> Join_1
+          与信確保API --> Join_1
+          state Join_1 &lt;&lt;join&gt;&gt;
+          Join_1 --> 判定
+          判定 --> 成功: 両方成功
+          判定 --> 失敗: いずれか失敗
+          成功 --> 注文確定・メール送信
+          失敗 --> エラー処理
+          注文確定・メール送信 --> [*]
+          エラー処理 --> [*]
       </div>
-
-      <div class="card" style="margin-top:1rem">
-        <div class="font-bold" style="margin-bottom:.5rem">目次</div>
-        <div class="text-sm">
-          <a href="#logic">1. ロジックと処理</a> / <a href="#state">2. データと状態</a> / <a href="#structure">3. 構造と連携</a> / <a href="#interface">4. 外部IF</a> / <a href="#decision">5. 条件分岐</a>
-        </div>
+    </div>
+  </div>
+</div><h2>💾 2. データと状態を整理する技法 {#state}</h2>
+<p>データがどう保存され、どう変化していくかを定義します。</p>
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#0e9f6e; color:#fff; border:none; padding:2px 6px;">2.1</span> 物理ER図 / テーブル定義書
+  </h3>
+  <p>システムで扱うデータを、実際のデータベースのテーブル構造、カラムのデータ型、制約（NOT NULL、外部キーなど）まで具体化した設計です。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#f0fdf4; border-color:#86efac;">
+    <div style="font-weight:bold; margin-bottom:0.5rem; color:#166534;"><span class="callout-icon">📌</span> 使用事例: 「ユーザー」と「注文」テーブルの設計</div>
+    <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; margin-top:0.75rem; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
+      <div class="mermaid">
+      erDiagram
+          users ||--o{ orders : "1人のユーザーは複数の注文を持つ"
+          users { int id PK; string name }
+          orders { int id PK; int user_id FK; date order_date }
       </div>
-      
-      <h2 class="section-title" id="logic"><span class="title-icon">⚙️</span> 1. ロジックと処理の流れを整理する技法</h2>
-      <p style="margin-bottom:1rem; color:var(--gray-600);">複雑な計算やデータの加工処理を正確に伝えるための手法です。</p>
-      
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#1a56db; color:#fff; border:none; padding:2px 6px;">1.1</span> IPO記述（Input - Process - Output）
-        </h3>
-        <p>モジュールや関数に対して、「何を入力し」「どのような処理を行い」「何を出力するか」を明確に定義する手法です。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#eff6ff;">
-          <div style="font-weight:bold; margin-bottom:0.75rem; color:#1e40af;"><span class="callout-icon">📌</span> 使用事例: 「割引料金計算関数」の設計</div>
-          <div class="table-wrap" style="background:#fff; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-            <table>
-              <thead>
-                <tr>
-                  <th style="width:30%;">Input (入力)</th>
-                  <th style="width:40%;">Process (処理)</th>
-                  <th style="width:30%;">Output (出力)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style="vertical-align:top;">
-                    <ul style="padding-left:1rem; margin:0;">
-                      <li>ユーザーの年齢（数値）</li>
-                      <li>購入金額（数値）</li>
-                      <li>クーポンコード（文字列）</li>
-                    </ul>
-                  </td>
-                  <td style="vertical-align:top;">
-                    <ol style="padding-left:1rem; margin:0;">
-                      <li style="margin-bottom:0.5rem;">クーポンコードが有効かDBで検証する。</li>
-                      <li style="margin-bottom:0.5rem;">年齢が65歳以上ならシニア割引（10%オフ）を適用する。</li>
-                      <li>購入金額が5000円以上なら送料無料フラグを立てる。</li>
-                    </ol>
-                  </td>
-                  <td style="vertical-align:top;">
-                    <ul style="padding-left:1rem; margin:0;">
-                      <li>最終請求金額（数値）</li>
-                      <li>送料無料フラグ（真偽値）</li>
-                    </ul>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+    </div>
+  </div>
+</div><div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#0e9f6e; color:#fff; border:none; padding:2px 6px;">2.2</span> 状態遷移表（モジュールレベル）
+  </h3>
+  <p>特定のオブジェクトやデータが持つ状態（ステータス）が、どのようなイベントによってどう変化するかを網羅的に定義します。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#f0fdf4; border-color:#86efac;">
+    <div style="font-weight:bold; margin-bottom:0.5rem; color:#166534;"><span class="callout-icon">📌</span> 使用事例: 「釣行記録アプリの投稿ステータス」の設計</div>
+    <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
+      <div class="mermaid">
+      stateDiagram-v2
+          [*] --> 下書き : 新規作成
+          下書き --> 公開中 : 「公開する」イベント
+          下書き --> 削除済 : 「削除する」イベント
+          公開中 --> 下書き : 「非公開にする」イベント
+          公開中 --> 削除済 : 「削除する」イベント
+          削除済 --> [*] : 完全削除
       </div>
-
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#1a56db; color:#fff; border:none; padding:2px 6px;">1.2</span> アクティビティ図（UML）
-        </h3>
-        <p>処理の分岐やループに加え、並行処理（マルチスレッド）などの複雑な処理の流れを視覚的に表現するフローチャートの発展形です。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#eff6ff;">
-          <div style="font-weight:bold; margin-bottom:0.75rem; color:#1e40af;"><span class="callout-icon">📌</span> 使用事例: 「ECサイトの注文確定バッチ処理」の設計</div>
-          <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
-            <div class="mermaid">
-            stateDiagram-v2
-                [*] --> 注文データ受信
-                注文データ受信 --> Fork_1
-                state Fork_1 &lt;&lt;fork&gt;&gt;
-                Fork_1 --> 在庫引当API
-                Fork_1 --> 与信確保API
-                在庫引当API --> Join_1
-                与信確保API --> Join_1
-                state Join_1 &lt;&lt;join&gt;&gt;
-                Join_1 --> 判定
-                判定 --> 成功: 両方成功
-                判定 --> 失敗: いずれか失敗
-                成功 --> 注文確定・メール送信
-                失敗 --> エラー処理
-                注文確定・メール送信 --> [*]
-                エラー処理 --> [*]
-            </div>
-          </div>
-        </div>
+    </div>
+  </div>
+</div><h2>🧩 3. プログラムの構造と連携を整理する技法 {#structure}</h2>
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#f59e0b; color:#fff; border:none; padding:2px 6px;">3.1</span> シーケンス図（UML）
+  </h3>
+  <p>オブジェクトやコンポーネント間で「いつ」「誰が」「どのAPIやメソッドを呼び出し」「どう返ってくるか」を時系列で図解する手法です。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#fffbeb; border-color:#fde047;">
+    <div style="font-weight:bold; margin-bottom:0.5rem; color:#854d0e;"><span class="callout-icon">📌</span> 使用事例: 「スマホアプリからのログイン処理」の設計</div>
+    <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
+      <div class="mermaid">
+      sequenceDiagram
+          participant UI as アプリ(UI)
+          participant API as APIサーバー
+          participant DB as データベース
+          UI->>API: POST /login (ID, Pass)
+          API->>DB: SELECT (パスワード照会)
+          DB-->>API: 照会結果
+          API->>API: トークン発行
+          API-->>UI: 200 OK (トークン付与)
+          UI->>UI: ホーム画面へ遷移
       </div>
-
-      <h2 class="section-title" id="state"><span class="title-icon">💾</span> 2. データと状態を整理する技法</h2>
-      <p style="margin-bottom:1rem; color:var(--gray-600);">データがどう保存され、どう変化していくかを定義します。</p>
-
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#0e9f6e; color:#fff; border:none; padding:2px 6px;">2.1</span> 物理ER図 / テーブル定義書
-        </h3>
-        <p>システムで扱うデータを、実際のデータベースのテーブル構造、カラムのデータ型、制約（NOT NULL、外部キーなど）まで具体化した設計です。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#f0fdf4; border-color:#86efac;">
-          <div style="font-weight:bold; margin-bottom:0.5rem; color:#166534;"><span class="callout-icon">📌</span> 使用事例: 「ユーザー」と「注文」テーブルの設計</div>
-          <p class="text-sm" style="color:#15803d;"><code>orders</code>テーブルの<code>user_id</code>カラムは、<code>users</code>テーブルの<code>id</code>カラムに対する外部キー（Foreign Key）制約を設定します。これによりデータの不整合を強固に防ぎます。</p>
-          <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; margin-top:0.75rem; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
-            <div class="mermaid">
-            erDiagram
-                users ||--o{ orders : "1人のユーザーは複数の注文を持つ"
-                users {
-                    int id PK
-                    string name
-                }
-                orders {
-                    int id PK
-                    int user_id FK
-                    date order_date
-                }
-            </div>
-          </div>
-        </div>
+    </div>
+  </div>
+</div><div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#f59e0b; color:#fff; border:none; padding:2px 6px;">3.2</span> クラス図（UML）
+  </h3>
+  <p>システムを構成するクラス（データと振る舞いのまとまり）の構造と、クラス間の関係性を定義します。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#fffbeb; border-color:#fde047;">
+    <div style="font-weight:bold; margin-bottom:0.5rem; color:#854d0e;"><span class="callout-icon">📌</span> 使用事例: 「釣り具の管理機能」の設計</div>
+    <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
+      <div class="mermaid">
+      classDiagram
+          class Tackle { +String name; +String maker }
+          class Rod { +Float length }
+          class Reel { +Float gear_ratio }
+          Tackle <|-- Rod : 継承
+          Tackle <|-- Reel : 継承
       </div>
-
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#0e9f6e; color:#fff; border:none; padding:2px 6px;">2.2</span> 状態遷移表（モジュールレベル）
-        </h3>
-        <p>特定のオブジェクトやデータが持つ状態（ステータス）が、どのようなイベントによってどう変化するかを網羅的に定義します。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#f0fdf4; border-color:#86efac;">
-          <div style="font-weight:bold; margin-bottom:0.5rem; color:#166534;"><span class="callout-icon">📌</span> 使用事例: 「釣行記録アプリの投稿ステータス」の設計</div>
-          <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
-            <div class="mermaid">
-            stateDiagram-v2
-                [*] --> 下書き : 新規作成
-                下書き --> 公開中 : 「公開する」イベント
-                下書き --> 削除済 : 「削除する」イベント
-                公開中 --> 下書き : 「非公開にする」イベント
-                公開中 --> 削除済 : 「削除する」イベント
-                削除済 --> [*] : 完全削除
-            </div>
-          </div>
-          <div style="margin-top:0.75rem; background:#fef2f2; border:1px solid #fca5a5; padding:0.75rem; border-radius:6px;">
-            <span style="color:#dc2626; font-weight:bold;">※ エラーハンドリングの抽出：</span>
-            <p class="text-sm" style="margin-top:0.25rem;"><code>[削除済]</code> の時に「公開する」イベント発生 ➔ 無効な遷移として例外処理（エラー表示）を実装することが明確になります。</p>
-          </div>
-        </div>
-      </div>
-
-      <h2 class="section-title" id="structure"><span class="title-icon">🧩</span> 3. プログラムの構造と連携を整理する技法</h2>
-
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#f59e0b; color:#fff; border:none; padding:2px 6px;">3.1</span> シーケンス図（UML）
-        </h3>
-        <p>オブジェクトやコンポーネント間で「いつ」「誰が」「どのAPIやメソッドを呼び出し」「どう返ってくるか」を時系列で図解する手法です。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#fffbeb; border-color:#fde047;">
-          <div style="font-weight:bold; margin-bottom:0.5rem; color:#854d0e;"><span class="callout-icon">📌</span> 使用事例: 「スマホアプリからのログイン処理」の設計</div>
-          <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
-            <div class="mermaid">
-            sequenceDiagram
-                participant UI as アプリ(UI)
-                participant API as APIサーバー
-                participant DB as データベース
-                
-                UI->>API: POST /login (ID, Pass)
-                API->>DB: SELECT (パスワード照会)
-                DB-->>API: 照会結果
-                API->>API: トークン発行
-                API-->>UI: 200 OK (トークン付与)
-                UI->>UI: ホーム画面へ遷移
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#f59e0b; color:#fff; border:none; padding:2px 6px;">3.2</span> クラス図（UML）
-        </h3>
-        <p>システムを構成するクラス（データと振る舞いのまとまり）の構造と、クラス間の関係性を定義します。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#fffbeb; border-color:#fde047;">
-          <div style="font-weight:bold; margin-bottom:0.5rem; color:#854d0e;"><span class="callout-icon">📌</span> 使用事例: 「釣り具の管理機能」の設計</div>
-          <div class="mermaid-wrap" style="background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05); text-align:center;">
-            <div class="mermaid">
-            classDiagram
-                class Tackle {
-                    +String name
-                    +String maker
-                }
-                class Rod {
-                    +Float length
-                }
-                class Reel {
-                    +Float gear_ratio
-                }
-                Tackle &lt;|-- Rod : 継承
-                Tackle &lt;|-- Reel : 継承
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h2 class="section-title" id="interface"><span class="title-icon">🌐</span> 4. 外部とのインターフェースを取り決める技法</h2>
-
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#8b5cf6; color:#fff; border:none; padding:2px 6px;">4.1</span> API仕様書（OpenAPI / Swagger 等）
-        </h3>
-        <p>システム間で通信するためのルール（エンドポイントURL、パラメータ、データ構造）を厳密に定義します。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#f5f3ff; border-color:#c4b5fd;">
-          <div style="font-weight:bold; margin-bottom:0.75rem; color:#5b21b6;"><span class="callout-icon">📌</span> 使用事例: 「お天気情報取得API」の設計</div>
-          <div style="background:#1e293b; color:#f8fafc; padding:1rem; border-radius:8px; font-family:monospace; line-height:1.6; font-size:0.9rem; overflow-x:auto;">
-<span style="color:#60a5fa; font-weight:bold;">GET</span> /api/v1/weather/{location_id}
-
-<span style="color:#94a3b8;"># Request</span>
-path param: 
-  <span style="color:#34d399;">location_id</span> (integer, <span style="color:#f87171;">required</span>)
-
-<span style="color:#94a3b8;"># Response (200 OK)</span>
+    </div>
+  </div>
+</div><h2>🌐 4. 外部とのインターフェースを取り決める技法 {#interface}</h2>
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#8b5cf6; color:#fff; border:none; padding:2px 6px;">4.1</span> API仕様書（OpenAPI / Swagger 等）
+  </h3>
+  <p>システム間で通信するためのルール（エンドポイントURL、パラメータ、データ構造）を厳密に定義します。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#f5f3ff; border-color:#c4b5fd;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#5b21b6;"><span class="callout-icon">📌</span> 使用事例: 「お天気情報取得API」の設計</div>
+    <div style="background:#1e293b; color:#f8fafc; padding:1rem; border-radius:8px; font-family:monospace; line-height:1.6; font-size:0.9rem; overflow-x:auto;">
+<span style="color:#60a5fa; font-weight:bold;">GET</span> /api/v1/weather/{location_id}<p><span style="color:#94a3b8;"># Request</span>
+path param:
+  <span style="color:#34d399;">location_id</span> (integer, <span style="color:#f87171;">required</span>)</p>
+<p><span style="color:#94a3b8;"># Response (200 OK)</span>
 {
-  <span style="color:#93c5fd;">"temp"</span>: 25.5,
-  <span style="color:#93c5fd;">"weather"</span>: <span style="color:#fcd34d;">"sunny"</span>
+  <span style="color:#93c5fd;">&quot;temp&quot;</span>: 25.5,
+  <span style="color:#93c5fd;">&quot;weather&quot;</span>: <span style="color:#fcd34d;">&quot;sunny&quot;</span>
 }
-          </div>
-        </div>
-      </div>
-
-      <h2 class="section-title" id="decision"><span class="title-icon">🎯</span> 5. 複雑な条件分岐の整理（テスト兼用）</h2>
-
-      <div class="card">
-        <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <span class="deliverable-code" style="background:#ec4899; color:#fff; border:none; padding:2px 6px;">5.1</span> デシジョンテーブル（決定表）
-        </h3>
-        <p>複数の条件が複雑に絡み合うビジネスロジックにおいて、全組み合わせに対する動作をマトリクス状に整理します。</p>
-        <div class="callout callout-info" style="margin-top:1rem; background:#fdf2f8; border-color:#f9a8d4;">
-          <div style="font-weight:bold; margin-bottom:0.75rem; color:#9d174d;"><span class="callout-icon">📌</span> 使用事例: 「送料無料の判定ロジック」の設計</div>
-          <div class="table-wrap" style="background:#fff; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-            <table>
-              <thead>
-                <tr>
-                  <th>条件 / ルール</th>
-                  <th style="text-align:center; width:12%;">1</th>
-                  <th style="text-align:center; width:12%;">2</th>
-                  <th style="text-align:center; width:12%;">3</th>
-                  <th style="text-align:center; width:12%;">4</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>プレミアム会員か？</td>
-                  <td style="text-align:center;">Y</td>
-                  <td style="text-align:center;">N</td>
-                  <td style="text-align:center;">N</td>
-                  <td style="text-align:center;">N</td>
-                </tr>
-                <tr>
-                  <td>購入額5000円以上か？</td>
-                  <td style="text-align:center; color:#94a3b8;">-</td>
-                  <td style="text-align:center;">Y</td>
-                  <td style="text-align:center;">N</td>
-                  <td style="text-align:center;">N</td>
-                </tr>
-                <tr>
-                  <td>キャンペーン中か？</td>
-                  <td style="text-align:center; color:#94a3b8;">-</td>
-                  <td style="text-align:center; color:#94a3b8;">-</td>
-                  <td style="text-align:center;">Y</td>
-                  <td style="text-align:center;">N</td>
-                </tr>
-                <tr style="background:#f8fafc; font-weight:bold; border-top:2px solid #cbd5e1;">
-                  <td>【結果】送料無料か？</td>
-                  <td style="text-align:center; color:#16a34a;">適用</td>
-                  <td style="text-align:center; color:#16a34a;">適用</td>
-                  <td style="text-align:center; color:#16a34a;">適用</td>
-                  <td style="text-align:center; color:#64748b;">対象外</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="text-sm" style="margin-top:0.75rem; color:#831843;">全ての組み合わせを可視化することで仕様の抜け漏れを防ぎ、そのままテストケースとしても活用できます。</p>
-        </div>
-      </div>
+    </div>
+  </div></p>
+</div><h2>🎯 5. 複雑な条件分岐の整理（テスト兼用） {#decision}</h2>
+<div class="card">
+  <h3 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+    <span class="deliverable-code" style="background:#ec4899; color:#fff; border:none; padding:2px 6px;">5.1</span> デシジョンテーブル（決定表）
+  </h3>
+  <p>複数の条件が複雑に絡み合うビジネスロジックにおいて、全組み合わせに対する動作をマトリクス状に整理します。</p>
+  <div class="callout callout-info" style="margin-top:1rem; background:#fdf2f8; border-color:#f9a8d4;">
+    <div style="font-weight:bold; margin-bottom:0.75rem; color:#9d174d;"><span class="callout-icon">📌</span> 使用事例: 「送料無料の判定ロジック」の設計</div>
+    <div class="table-wrap" style="background:#fff; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+      <table>
+        <thead>
+          <tr><th>条件 / ルール</th><th style="text-align:center; width:12%;">1</th><th style="text-align:center; width:12%;">2</th><th style="text-align:center; width:12%;">3</th><th style="text-align:center; width:12%;">4</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>プレミアム会員か？</td><td style="text-align:center;">Y</td><td style="text-align:center;">N</td><td style="text-align:center;">N</td><td style="text-align:center;">N</td></tr>
+          <tr><td>購入額5000円以上か？</td><td style="text-align:center; color:#94a3b8;">-</td><td style="text-align:center;">Y</td><td style="text-align:center;">N</td><td style="text-align:center;">N</td></tr>
+          <tr><td>キャンペーン中か？</td><td style="text-align:center; color:#94a3b8;">-</td><td style="text-align:center; color:#94a3b8;">-</td><td style="text-align:center;">Y</td><td style="text-align:center;">N</td></tr>
+          <tr style="background:#f8fafc; font-weight:bold; border-top:2px solid #cbd5e1;"><td>【結果】送料無料か？</td><td style="text-align:center; color:#16a34a;">適用</td><td style="text-align:center; color:#16a34a;">適用</td><td style="text-align:center; color:#16a34a;">適用</td><td style="text-align:center; color:#64748b;">対象外</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm" style="margin-top:0.75rem; color:#831843;">全ての組み合わせを可視化することで仕様の抜け漏れを防ぎ、そのままテストケースとしても活用できます。</p>
+  </div>
+</div>
 
     </div>
   </main>
 </div>
-<script>
-  mermaid.initialize({ startOnLoad: true, theme: 'default' });
-</script>
+
+<script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>
 <script src="../js/main.js"></script>
 <script src="../sidebar.js"></script>
 </body>

@@ -1,0 +1,208 @@
+---
+title: システム開発 設計手順書 — 虎の巻
+mermaid: true
+style: |
+  .hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1a56db 100%); color: #fff; padding: 3.5rem 3rem 3rem; position: relative; overflow: hidden; border-radius: var(--radius-lg); margin-bottom: 1.5rem; }
+  .hero::before { content:''; position:absolute; top:-60px; right:-60px; width:280px; height:280px; border-radius:50%; background:rgba(255,255,255,.04); }
+  .hero::after  { content:''; position:absolute; bottom:-80px; left:10%; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.03); }
+  .hero-label { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:#93c5fd; margin-bottom:.6rem; }
+  .hero h1 { font-size:2.2rem; font-weight:700; line-height:1.3; margin-bottom:.8rem; }
+  .hero h1 span { color:#60a5fa; }
+  .hero-desc { font-size:.95rem; color:#cbd5e1; max-width:560px; line-height:1.8; }
+  .hero-tags { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1.25rem; }
+  .hero-tag { background:rgba(255,255,255,.1); color:#e2e8f0; border:1px solid rgba(255,255,255,.15); border-radius:999px; padding:.2rem .75rem; font-size:.78rem; }
+  .stat-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:2rem; }
+  @media(max-width:700px){ .stat-grid{grid-template-columns:2fr 2fr;} }
+  .stat-card { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-lg); padding:1.25rem; text-align:center; box-shadow:var(--shadow-sm); }
+  .stat-num { font-size:2rem; font-weight:700; color:var(--primary); line-height:1; }
+  .stat-label { font-size:.78rem; color:var(--gray-600); margin-top:.3rem; }
+  .flow-overview { background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-lg); padding:1.5rem; box-shadow:var(--shadow-sm); margin-bottom:2rem; }
+---
+
+<div class="hero">
+  <div class="hero-label">System Design Handbook</div>
+  <h1>システム開発<span>設計手順書</span><br>— 虎の巻 —</h1>
+  <p class="hero-desc">要件定義完了から詳細設計完了まで、経験の浅いSEが迷わず進めるための設計手順・成果物ガイド・AIテンプレートをまとめた資料集です。</p>
+  <div class="hero-tags">
+    <span class="hero-tag">基本設計</span>
+    <span class="hero-tag">詳細設計</span>
+    <span class="hero-tag">実装手順</span>
+    <span class="hero-tag">テスト実施</span>
+    <span class="hero-tag">チェックリスト</span>
+    <span class="hero-tag">成果物テンプレート</span>
+    <span class="hero-tag">ADR</span>
+    <span class="hero-tag">AI相談テンプレート</span>
+  </div>
+</div>
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">👆</span>
+  <div class="callout-body">
+    <div class="callout-title">はじめて使う方へ</div>
+    まず <a href="howto.html">全体フロー・HowTo</a> を通読して全体像を把握してから、各フェーズのページに進んでください。各ページにはチェックリスト・フロー図・成果物ガイドが揃っています。
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-num">4</div>
+    <div class="stat-label">フェーズ<br>(要件〜テスト)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">19+</div>
+    <div class="stat-label">基本設計<br>成果物</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">18+</div>
+    <div class="stat-label">詳細設計<br>成果物</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">17</div>
+    <div class="stat-label">共通<br>ライブラリ</div>
+  </div>
+</div>
+
+## 🗺️ 開発フェーズ全体像
+
+<div class="flow-overview">
+  <div class="mermaid">
+flowchart LR
+  P0["📋 PHASE 0\n要件定義\n(前提)"]:::phase0
+  P1["📐 PHASE 1\n基本設計\n(約19〜34日)"]:::phase1
+  P2["🔬 PHASE 2\n詳細設計\n(約25〜47日)"]:::phase2
+  P3["💻 PHASE 3\n実装"]:::phase3
+  P4["🧪 PHASE 4\nテスト"]:::phase4
+  P5["🚀 PHASE 5\nリリース"]:::phase5
+
+  P0 -->|"要件定義書\n(承認済み)"| P1
+  P1 -->|"基本設計書\n(承認済み)"| P2
+  P2 -->|"詳細設計書\n(承認済み)"| P3
+  P3 -->|"実装完了"| P4
+  P4 -->|"テスト完了\n判定"| P5
+
+  classDef phase0 fill:#6d28d9,color:#fff,stroke:none
+  classDef phase1 fill:#1a56db,color:#fff,stroke:none
+  classDef phase2 fill:#0e9f6e,color:#fff,stroke:none
+  classDef phase3 fill:#d97706,color:#fff,stroke:none
+  classDef phase4 fill:#dc2626,color:#fff,stroke:none
+  classDef phase5 fill:#0284c7,color:#fff,stroke:none
+  </div>
+</div>
+
+## 📑 フェーズ別ページ
+
+<div class="phase-grid">
+  <a href="howto.html" class="phase-card bg-phase0">
+    <span class="phase-icon">🗺️</span>
+    <div class="phase-number">全体ガイド</div>
+    <h3>全体フロー・HowTo</h3>
+    <div class="phase-meta">参照資料マップ・作業時間目安・PHASE 0 前提確認</div>
+  </a>
+  <a href="basic/design.html" class="phase-card bg-phase1">
+    <span class="phase-icon">📐</span>
+    <div class="phase-number">Phase 1</div>
+    <h3>基本設計 手順書</h3>
+    <div class="phase-meta">STEP 0〜8 チェックリスト / 目安 19〜34日</div>
+  </a>
+  <a href="basic/deliverables.html" class="phase-card bg-phase1" style="opacity:.85">
+    <span class="phase-icon">📋</span>
+    <div class="phase-number">Phase 1 — 成果物</div>
+    <h3>基本設計 成果物ガイド</h3>
+    <div class="phase-meta">B-01〜B-19 / ツール選定・ADR管理</div>
+  </a>
+  <a href="detailed/design.html" class="phase-card bg-phase2">
+    <span class="phase-icon">🔬</span>
+    <div class="phase-number">Phase 2</div>
+    <h3>詳細設計 手順書</h3>
+    <div class="phase-meta">STEP 0〜9 チェックリスト / 目安 25〜47日</div>
+  </a>
+  <a href="detailed/deliverables.html" class="phase-card bg-phase2" style="opacity:.85">
+    <span class="phase-icon">📋</span>
+    <div class="phase-number">Phase 2 — 成果物</div>
+    <h3>詳細設計 成果物ガイド</h3>
+    <div class="phase-meta">D-01〜D-18 / OpenAPI・Mermaid・Flyway</div>
+  </a>
+  <a href="detailed/common-libs.html" class="phase-card bg-phase5">
+    <span class="phase-icon">📦</span>
+    <div class="phase-number">Phase 2 — 先行</div>
+    <h3>共通ライブラリ設計</h3>
+    <div class="phase-meta">C-01〜C-17 / 認証・エラー・ログ・DB共通処理</div>
+  </a>
+  <a href="impl/implementation.html" class="phase-card bg-phase3">
+    <span class="phase-icon">💻</span>
+    <div class="phase-number">Phase 3</div>
+    <h3>実装手順</h3>
+    <div class="phase-meta">タスク分割・ブランチ戦略・PR・進捗管理</div>
+  </a>
+  <a href="impl/testing.html" class="phase-card bg-phase4">
+    <span class="phase-icon">🧪</span>
+    <div class="phase-number">Phase 4</div>
+    <h3>テスト実施手順</h3>
+    <div class="phase-meta">単体〜UAT〜カットオーバー / V字モデル</div>
+  </a>
+  <a href="reference/templates.html" class="phase-card bg-phase6">
+    <span class="phase-icon">📝</span>
+    <div class="phase-number">テンプレート集</div>
+    <h3>設計書テンプレート</h3>
+    <div class="phase-meta">T-01〜T-11 / コピーしてすぐ使える</div>
+  </a>
+  <a href="reference/adr.html" class="phase-card bg-phase7">
+    <span class="phase-icon">🏛️</span>
+    <div class="phase-number">ADR</div>
+    <h3>ADR サンプル集</h3>
+    <div class="phase-meta">ADR-001〜007 / 7つの意思決定サンプル</div>
+  </a>
+  <a href="reference/ai-consult.html" class="phase-card bg-phase0" style="opacity:.85">
+    <span class="phase-icon">🤖</span>
+    <div class="phase-number">AI活用</div>
+    <h3>AI相談テンプレート</h3>
+    <div class="phase-meta">フェーズ別AIへの相談テンプレート集</div>
+  </a>
+  <a href="reference/readable-naming.html" class="phase-card bg-phase7">
+    <span class="phase-icon">📖</span>
+    <div class="phase-number">命名規則</div>
+    <h3>命名規則ガイド</h3>
+    <div class="phase-meta">リーダブルコードの原則 / 変数・DB・API・設計書</div>
+  </a>
+  <a href="reference/pmbok8.html" class="phase-card bg-phase2">
+    <span class="phase-icon">📘</span>
+    <div class="phase-number">PM標準</div>
+    <h3>PMBOK 第8版</h3>
+    <div class="phase-meta">12の原則・8ドメイン・テーラリング・価値提供</div>
+  </a>
+</div>
+
+## 🔍 よく使う逆引き
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>調べたいこと</th><th>参照ページ</th></tr></thead>
+      <tbody>
+        <tr><td>基本設計の全体の流れ</td><td><a href="basic/design.html">基本設計 手順書</a></td></tr>
+        <tr><td>詳細設計の全体の流れ</td><td><a href="detailed/design.html">詳細設計 手順書</a></td></tr>
+        <tr><td>ADRの書き方・管理方法</td><td><a href="reference/adr.html">ADR サンプル集</a></td></tr>
+        <tr><td>ALTER文・Flyway の使い方</td><td><a href="basic/deliverables.html#data">基本設計 成果物ガイド（データ設計）</a></td></tr>
+        <tr><td>OpenAPI を Excel/PDF に変換</td><td><a href="basic/deliverables.html#api">基本設計 成果物ガイド（API設計）</a></td></tr>
+        <tr><td>権限マトリクスの書き方</td><td><a href="basic/deliverables.html#security">基本設計 成果物ガイド（セキュリティ）</a></td></tr>
+        <tr><td>Mermaid シーケンス図の書き方</td><td><a href="detailed/deliverables.html#external">詳細設計 成果物ガイド（外部IF）</a></td></tr>
+        <tr><td>共通ライブラリを作るタイミング</td><td><a href="detailed/common-libs.html">共通ライブラリ設計</a></td></tr>
+        <tr><td>コードレビューの観点チェックリスト</td><td><a href="impl/implementation.html#review">実装手順（PR・レビュー）</a></td></tr>
+        <tr><td>テストの進め方（単体〜システム）</td><td><a href="impl/testing.html">テスト実施手順</a></td></tr>
+        <tr><td>詳細設計技法の種類・具体例</td><td><a href="detailed/techniques.html">詳細設計技法まとめ</a></td></tr>
+        <tr><td>単体テスト設計技法の種類・具体例</td><td><a href="impl/unit-test.html">単体テスト設計技法まとめ</a></td></tr>
+        <tr><td>リリース判定基準</td><td><a href="impl/testing.html#release">テスト実施手順（完了判定）</a></td></tr>
+        <tr><td>AIへの相談テンプレート</td><td><a href="reference/ai-consult.html">AI相談テンプレート</a></td></tr>
+        <tr><td>変数・関数・DB・APIの命名ルール</td><td><a href="reference/readable-naming.html">命名規則ガイド</a></td></tr>
+        <tr><td>設計書ファイル名・バージョン管理の命名</td><td><a href="reference/readable-naming.html#docs">命名規則ガイド（設計書）</a></td></tr>
+        <tr><td>リスク登録簿の書き方・管理方法</td><td><a href="howto.html">全体フロー・HowTo（リスク管理）</a></td></tr>
+        <tr><td>変更要求票（CR）の書き方・CCBフロー</td><td><a href="howto.html">全体フロー・HowTo（変更管理）</a></td></tr>
+        <tr><td>エスカレーションルート・RACI</td><td><a href="howto.html">全体フロー・HowTo（コミュニケーション計画）</a></td></tr>
+        <tr><td>教訓（Lessons Learned）の書き方</td><td><a href="impl/testing.html">テスト実施手順（プロジェクトクローズ）</a></td></tr>
+        <tr><td>PMBOKの12原則・8ドメインの概要</td><td><a href="reference/pmbok8.html">PMBOK 第8版</a></td></tr>
+        <tr><td>テーラリング（開発アプローチの選択）</td><td><a href="reference/pmbok8.html#tailoring">PMBOK 第8版（テーラリング）</a></td></tr>
+        <tr><td>不確実性・リスク管理の考え方</td><td><a href="reference/pmbok8.html#uncertainty">PMBOK 第8版（不確実性への対応）</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

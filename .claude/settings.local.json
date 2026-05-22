@@ -8,7 +8,23 @@
       "PowerShell(New-Item -ItemType Directory -Force \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\\\\docs\\\\q3m8wvx5\\\\reference\\\\books\\\\management\")",
       "Bash(Remove-Item \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8wvx5\\\\fishing\\\\healthy-habits.html\")",
       "PowerShell(Remove-Item \"d:\\\\avtigravity\\\\��{�݌v�Ղ̊�\\\\docs\\\\q3m8wvx5\\\\fishing\\\\healthy-habits.html\" -Confirm:$false)",
-      "Bash(Remove-Item \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8wvx5\\\\fishing\\\\spots.html\", \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8wvx5\\\\fishing\\\\rigs.html\")"
+      "Bash(Remove-Item \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8wvx5\\\\fishing\\\\spots.html\", \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8wvx5\\\\fishing\\\\rigs.html\")",
+      "Bash(npm --version)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(mkdir -p \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/basic\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/detailed\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/checklist\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/impl\" \"d:/avtigravity/基本設計虎御の巻/src/q3m8wvx5/develop/reference/books/tech\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/reference/books/management\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/reference/design\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/sample/data\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/sample/form\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/sample/system\" \"d:/avtigravity/基本設計虎の巻/src/q3m8wvx5/develop/sample/ui\" && echo \"OK\")",
+      "Bash(npm run *)",
+      "Bash(Remove-Item -Recurse -Force \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\src\\\\q3m8vx5\" -ErrorAction SilentlyContinue)",
+      "Bash(Remove-Item -Force \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8vx5\\\\develop\\\\impl\\\\testing.html\" -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-ChildItem -Recurse \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\docs\\\\q3m8wvx5\\\\develop\\\\reference\\\\\" | Where-Object { !$_.PSIsContainer } | Select-Object FullName)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "PowerShell(Get-ChildItem \"d:\\\\avtigravity\\\\基本設計虎の巻\" | ForEach-Object { \"$\\($_.PSIsContainer\\) $\\($_.Name\\)\" })",
+      "PowerShell(Get-ChildItem \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\output\" | ForEach-Object { $_.Name })",
+      "PowerShell(Get-ChildItem \"d:\\\\avtigravity\\\\基本設計虎の巻\\\\.claude\" | ForEach-Object { $_.Name })"
+    ],
+    "additionalDirectories": [
+      "d:\\avtigravity\\基本設計虎御の巻\\src\\q3m8wvx5\\develop\\reference\\books",
+      "d:\\avtigravity\\��{�݌v�Ղ̊�\\src"
     ]
   }
 }

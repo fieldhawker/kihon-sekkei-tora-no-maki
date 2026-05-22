@@ -1,256 +1,133 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>実装手順</title>
   <link rel="stylesheet" href="../css/style.css">
+  
+  
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
   <main class="main">
+    
     <div class="page-header phase-impl">
       <div class="subtitle">Phase 3</div>
-      <h1>💻 実装手順</h1>
+      <h1>実装手順</h1>
       <p class="description">詳細設計書（承認済み）を基に、実際のコードを書くフェーズです。タスク分割・ブランチ戦略・PRレビュー・進捗管理の手順を説明します。</p>
     </div>
-
     <div class="content">
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">🧭</span>
-        <div class="callout-body">
-          <b>このページの使い方</b><br>
-          1) STEP 0 で「詳細設計が承認済みで、基盤（共通ライブラリ/CI/規約）が揃っているか」を確認 → 2) STEP 1 でタスクを小さく切る → 3) STEP 2 のルールに従ってPRを回す。<br>
-          迷ったら「小さく・早く・レビューしやすく」を優先します（1PR=1目的、差分は小さめ）。
-        </div>
-      </div>
-
-      <!-- STEP 0 -->
-      <h2 class="section-title"><span class="title-icon">0</span> STEP 0 — 実装開始前の確認</h2>
-      <div class="card">
-        <ul class="checklist">
-          <li><input type="checkbox" id="i0-1"><label for="i0-1">詳細設計書（承認済み）が入手できている</label></li>
-          <li><input type="checkbox" id="i0-2"><label for="i0-2">開発環境（ローカル・CI・ステージング）が構築済みで全員が使える</label></li>
-          <li><input type="checkbox" id="i0-3"><label for="i0-3">共通ライブラリ（C-01〜C-05）の実装が完了・マージ済みである</label></li>
-          <li><input type="checkbox" id="i0-4"><label for="i0-4">コーディング規約・フォーマッタ設定をリポジトリに追加済みである</label></li>
-          <li><input type="checkbox" id="i0-5"><label for="i0-5">CI（自動テスト・Lint）パイプラインが動作している</label></li>
-          <li><input type="checkbox" id="i0-6"><label for="i0-6">ブランチ戦略・PRルールをチームで合意済みである</label></li>
-        </ul>
-      </div>
-
-      <!-- STEP 1 タスク分割 -->
-      <h2 class="section-title"><span class="title-icon">1</span> STEP 1 — タスク分割・バックログ構築</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fef9c3">📋</span><h2>Issue作成テンプレート</h2></div>
-        <pre><code>## 概要
-[機能名] [作業内容を1文で]
-
-## 対応するドキュメント
-- 設計書: D-01 詳細機能設計書 p.XX
-- APIエンドポイント: POST /api/v1/xxxxxxxx
-
-## 完了条件（Definition of Done）
-- [ ] 実装完了
-- [ ] 単体テスト作成・全PASS
-- [ ] コードレビュー承認済み
-- [ ] ステージング環境で動作確認済み
-
-## 見積もり
-Story Point: 3  ← 規模感の相対見積もり（1=小・3=中・5=大・8=大きすぎ→分割検討）
-
-## 優先度
-High / Medium / Low</code></pre>
-        <div class="table-wrap" style="margin-top:1rem">
-          <table>
-            <thead><tr><th>タスク種別</th><th>例</th><th>依存関係</th></tr></thead>
-            <tbody>
-              <tr><td>🏗️ 基盤系</td><td>DB マイグレーション適用、共通処理テスト</td><td>最初に完了させる</td></tr>
-              <tr><td>⚙️ バックエンド</td><td>API実装・単体テスト</td><td>基盤系完了後</td></tr>
-              <tr><td>🖥️ フロントエンド</td><td>画面実装・コンポーネントテスト</td><td>APIモック使って並行可</td></tr>
-              <tr><td>🔗 結合</td><td>API〜画面の結合確認</td><td>BE・FE両方完了後</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- STEP 2 ブランチ -->
-      <h2 class="section-title" id="review"><span class="title-icon">2</span> STEP 2 — ブランチ・PR・コードレビュー</h2>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🌿</span><h2>ブランチ命名規則</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>種別</th><th>命名パターン</th><th>例</th></tr></thead>
-            <tbody>
-              <tr><td>機能追加</td><td><code>feature/[issue番号]-[機能名]</code></td><td><code>feature/42-user-login</code></td></tr>
-              <tr><td>バグ修正</td><td><code>fix/[issue番号]-[内容]</code></td><td><code>fix/58-login-redirect</code></td></tr>
-              <tr><td>リファクタリング</td><td><code>refactor/[内容]</code></td><td><code>refactor/auth-service</code></td></tr>
-              <tr><td>ホットフィックス</td><td><code>hotfix/[内容]</code></td><td><code>hotfix/null-pointer-api</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:var(--secondary-lt)">🔍</span><h2>コードレビュー 観点チェックリスト（レビュア用）</h2></div>
-        <div class="tab-container">
-          <div class="tab-nav">
-            <button class="tab-btn active" data-tab="review-func">機能・ロジック</button>
-            <button class="tab-btn" data-tab="review-security">セキュリティ</button>
-            <button class="tab-btn" data-tab="review-quality">品質・保守性</button>
-          </div>
-          <div class="tab-pane active" data-pane="review-func">
-            <ul class="checklist">
-              <li><input type="checkbox" id="rv1-1"><label for="rv1-1">詳細設計書の仕様どおりに実装されているか</label></li>
-              <li><input type="checkbox" id="rv1-2"><label for="rv1-2">正常系・異常系・境界値のすべてが考慮されているか</label></li>
-              <li><input type="checkbox" id="rv1-3"><label for="rv1-3">トランザクション管理が適切か（コミット・ロールバックのタイミング）</label></li>
-              <li><input type="checkbox" id="rv1-4"><label for="rv1-4">N+1問題が発生していないか（ループ内でのDB呼び出し）</label></li>
-              <li><input type="checkbox" id="rv1-5"><label for="rv1-5">単体テストが正常系・異常系を網羅しているか</label></li>
-            </ul>
-          </div>
-          <div class="tab-pane" data-pane="review-security">
-            <ul class="checklist">
-              <li><input type="checkbox" id="rv2-1"><label for="rv2-1">SQLクエリにプリペアドステートメントを使用しているか（SQLインジェクション対策）</label></li>
-              <li><input type="checkbox" id="rv2-2"><label for="rv2-2">ユーザー入力を適切にエスケープ・サニタイズしているか（XSS対策）</label></li>
-              <li><input type="checkbox" id="rv2-3"><label for="rv2-3">認証・認可チェックが漏れていないエンドポイントはないか</label></li>
-              <li><input type="checkbox" id="rv2-4"><label for="rv2-4">パスワード・機密情報がログに出力されていないか</label></li>
-              <li><input type="checkbox" id="rv2-5"><label for="rv2-5">シークレット情報（APIキー等）がハードコードされていないか</label></li>
-            </ul>
-          </div>
-          <div class="tab-pane" data-pane="review-quality">
-            <ul class="checklist">
-              <li><input type="checkbox" id="rv3-1"><label for="rv3-1">コーディング規約に従っているか</label></li>
-              <li><input type="checkbox" id="rv3-2"><label for="rv3-2">変数名・関数名が意図を適切に表しているか</label></li>
-              <li><input type="checkbox" id="rv3-3"><label for="rv3-3">重複コードがなく、共通処理は共通ライブラリを使用しているか</label></li>
-              <li><input type="checkbox" id="rv3-4"><label for="rv3-4">エラーログが適切に出力されているか（スタックトレース含む）</label></li>
-              <li><input type="checkbox" id="rv3-5"><label for="rv3-5">設計変更が発生した場合、設計書への反映を依頼したか</label></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 3 -->
-      <h2 class="section-title"><span class="title-icon">3</span> STEP 3 — 実装進捗管理</h2>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>確認項目</th><th>頻度</th><th>方法</th></tr></thead>
-            <tbody>
-              <tr><td>Issue消化率の確認</td><td>毎日</td><td>GitHub/Jira のバーンダウンチャート</td></tr>
-              <tr><td>遅延タスクの洗い出し</td><td>週次</td><td>週次ミーティング</td></tr>
-              <tr><td>ブロッカーの解消</td><td>随時</td><td>Slack・MTG</td></tr>
-              <tr><td>リスク登録簿の更新</td><td>週次</td><td>週次ミーティングでリスク状況を報告</td></tr>
-              <tr><td>設計変更の記録</td><td>変更の都度</td><td>変更要求票（CR）を起票 → CCBで承認 → 設計書更新</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- STEP 4（PMBOKリスク管理・変更管理） -->
-      <h2 class="section-title"><span class="title-icon">4</span> STEP 4 — 変更管理・リスク管理（PMBOK）</h2>
-
-      <div class="callout callout-danger">
-        <span class="callout-icon">🚫</span>
-        <div class="callout-body">
-          <b>設計変更が発生したとき、勝手に実装を変えてはいけません。</b><br>
-          「仕様書に書いてないけど、こうすれば動くのでは？」という自己判断による実装は、後から「それは想定外の動作です」と言われてすべて作り直しになります。<b>変更はすべて変更要求票（CR）を起票し、PLの承認を得てから進めます。</b>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#dbeafe">🔄</span><h2>変更管理プロセス（CCBフロー）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>ステップ</th><th>実施内容</th><th>担当</th><th>ポイント</th></tr></thead>
-            <tbody>
-              <tr><td>① 変更要求票の起票</td><td>変更内容・理由・対象成果物を記載</td><td>発見者（誰でも可）</td><td>「気づいた当日中」に起票する</td></tr>
-              <tr><td>② 影響分析</td><td>スコープ・スケジュール・コスト・品質への影響を見積もる</td><td>SE</td><td>影響範囲（設計書/API/DB/テスト）をリストアップする</td></tr>
-              <tr><td>③ CCB判定</td><td>PL（必要に応じて顧客）が承認・否決・保留を決定</td><td>PL・顧客</td><td>承認なしに実装を進めてはならない</td></tr>
-              <tr><td>④ 設計書更新</td><td>承認された変更内容を設計書に反映。バージョンを上げる</td><td>SE</td><td>変更IDを設計書の変更履歴欄に記録する</td></tr>
-              <tr><td>⑤ 関係者周知</td><td>変更内容と承認結果を関係者全員に通知</td><td>PL</td><td>Slackや議事録で記録を残す</td></tr>
-              <tr><td>⑥ 実装・テスト反映</td><td>変更後の設計書に基づいて実装・テストケースを更新する</td><td>実装担当</td><td>変更前のコードをそのまま残すと混乱するため不要部分を削除する</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">📋</span>
-          <div class="callout-body">
-            変更要求票のテンプレートと詳細なCCBプロセスは <a href="../howto.html">全体フロー・HowTo（変更管理）</a> を参照してください。
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fee2e2">⚠️</span><h2>実装フェーズのリスク管理チェック</h2></div>
-        <div class="callout callout-info" style="margin-bottom:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            実装フェーズは「リスクが顕在化する」フェーズです。設計フェーズで識別したリスクが実際に発生し始める可能性があります。週次ミーティングでリスク登録簿を更新し、発生済みリスクは「課題（Issue）」として別途管理します。
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>リスク種別</th><th>早期警戒サイン</th><th>対処法</th></tr></thead>
-            <tbody>
-              <tr><td>スコープクリープ</td><td>設計書に記載のないIssueが増えている</td><td>変更管理プロセスを通じていない追加を全てストップ。PLに報告する</td></tr>
-              <tr><td>スケジュール遅延</td><td>バーンダウンチャートの消化率が計画を下回っている</td><td>遅延を当日中にPLへ報告。タスクを再分割するか担当を見直す</td></tr>
-              <tr><td>技術的負債の急増</td><td>「一旦動けばいい」コードが増え始めた</td><td>コードレビューで指摘。リファクタリングIssueを起票しスプリント計画に組み込む</td></tr>
-              <tr><td>コミュニケーション断絶</td><td>メンバーからの発信が減り、進捗が把握できない</td><td>デイリースタンドアップ（日次15分ミーティング）を導入する</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="table-wrap" style="margin-top:1rem">
-          <table>
-            <thead><tr><th colspan="2">課題管理票（Issue Log）テンプレート</th></tr></thead>
-            <tbody>
-              <tr><td style="width:30%"><b>課題ID</b></td><td>ISS-001（連番管理）</td></tr>
-              <tr><td><b>発生日 / 発見者</b></td><td>YYYY-MM-DD / 氏名</td></tr>
-              <tr><td><b>課題の内容</b></td><td>具体的に何が問題か（事実ベースで記載）</td></tr>
-              <tr><td><b>影響・緊急度</b></td><td>高 / 中 / 低（放置するとどうなるか）</td></tr>
-              <tr><td><b>対応方針</b></td><td>誰が・何を・いつまでに行うか</td></tr>
-              <tr><td><b>担当者 / 期限</b></td><td>氏名 / YYYY-MM-DD</td></tr>
-              <tr><td><b>ステータス</b></td><td>未対応 / 対応中 / 解決済み / 継続監視</td></tr>
-              <tr><td><b>解決日 / 解決内容</b></td><td>YYYY-MM-DD / 行った対処内容</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- よくある実装トラブル -->
-      <h2 class="section-title"><span class="title-icon">⚠️</span> よくある実装トラブルと対処法</h2>
-      <div class="card">
-        <div class="callout callout-warning" style="margin-bottom:1rem">
-          <span class="callout-icon">📌</span>
-          <div class="callout-body">
-            <b>初心者がハマりやすい3点</b><br>
-            ① 先に機能実装を進めて共通仕様（エラー/レスポンス/認可）が後から変わる（→ まず基盤を固める）<br>
-            ② PRが巨大化してレビューできない（→ 小さく分割して早めに出す）<br>
-            ③ 仕様が曖昧なまま実装して手戻り（→ 設計書/TBDを先に潰す）
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>トラブル</th><th>原因</th><th>対処法</th></tr></thead>
-            <tbody>
-              <tr><td>N+1問題<br><small class="text-muted">一覧10件を取得するSELECTの後、各件の詳細を取るSELECTが10回走り合計11回DBが呼ばれる問題</small></td><td>ループ内でDB呼び出し</td><td>JOINまたはバッチ取得（IN句で一括取得）に変更。コードレビューで「ループの中にDB呼び出しがないか」を必ず確認する</td></tr>
-              <tr><td>デッドロック<br><small class="text-muted">AがテーブルXを、BがテーブルYをロックしたまま互いに相手のロックを待ち、永久に処理が進まなくなる状態</small></td><td>トランザクション内での複数テーブル更新順序がトランザクションごとに異なる</td><td>更新順序をシステム全体で統一（常にX→Yの順）・タイムアウト設定で検知</td></tr>
-              <tr><td>セッションタイムアウト</td><td>長時間処理中のセッション切れ</td><td>バックグラウンド処理化・タイムアウト延長</td></tr>
-              <tr><td>文字コード不整合</td><td>DB・アプリ・接続文字列のUTF-8設定ミス</td><td>全レイヤでUTF-8を統一</td></tr>
-              <tr><td>テスト環境のみでエラー</td><td>環境依存の設定・モックの挙動差異</td><td>環境変数の確認・Dockerで環境統一</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方</b><br>
+    1) STEP 0 で「詳細設計が承認済みで、基盤（共通ライブラリ/CI/規約）が揃っているか」を確認 → 2) STEP 1 でタスクを小さく切る → 3) STEP 2 のルールに従ってPRを回す。<br>
+    迷ったら「小さく・早く・レビューしやすく」を優先します（1PR=1目的、差分は小さめ）。
+  </div>
+</div><h2>STEP 0 — 実装開始前の確認</h2>
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="i0-1"><label for="i0-1">詳細設計書（承認済み）が入手できている</label></li>
+    <li><input type="checkbox" id="i0-2"><label for="i0-2">開発環境（ローカル・CI・ステージング）が構築済みで全員が使える</label></li>
+    <li><input type="checkbox" id="i0-3"><label for="i0-3">共通ライブラリ（C-01〜C-05）の実装が完了・マージ済みである</label></li>
+    <li><input type="checkbox" id="i0-4"><label for="i0-4">コーディング規約・フォーマッタ設定をリポジトリに追加済みである</label></li>
+    <li><input type="checkbox" id="i0-5"><label for="i0-5">CI（自動テスト・Lint）パイプラインが動作している</label></li>
+    <li><input type="checkbox" id="i0-6"><label for="i0-6">ブランチ戦略・PRルールをチームで合意済みである</label></li>
+  </ul>
+</div><h2>STEP 1 — タスク分割・バックログ構築</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef9c3">📋</span><h2>Issue作成テンプレート</h2></div>
+  <pre><code>## 概要
+[機能名] [作業内容を1文で]<h2>対象設計書</h2>
+<ul>
+<li>D-01: [詳細機能設計書のURL]</li>
+<li>D-03: [OpenAPI仕様書のURL]</li>
+</ul>
+<h2>完了条件</h2>
+<ul>
+<li><input disabled="" type="checkbox"> 単体テストが通る（カバレッジ目標: XX%）</li>
+<li><input disabled="" type="checkbox"> レビュー承認 1名</li>
+<li><input disabled="" type="checkbox"> CIが全パス</li>
+</ul>
+<h2>見積もり</h2>
+<p>[Hまたはポイント]</code></pre></p>
+</div><div class="card" style="margin-top:1rem">
+  <div class="card-header"><span class="card-icon" style="background:#dcfce7">✂️</span><h2>タスク分割のコツ</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>粒度の目安</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>1タスク = 0.5〜2日</td><td>進捗の「詰まり」が早期に発見できる</td></tr>
+        <tr><td>1PR = 1つの目的</td><td>レビュアーが文脈を理解しやすい</td></tr>
+        <tr><td>APIエンドポイント単位</td><td>フロント/バックの並行開発が可能になる</td></tr>
+        <tr><td>DB変更は単独PR</td><td>マイグレーション適用順序を明確にする</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>STEP 2 — 実装フロー（1機能の流れ）</h2>
+<div class="card">
+  <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2.2">
+    <li><b>Issueを取る</b>: バックログからIssueをアサイン。設計書URLをIssueに貼る。</li>
+    <li><b>ブランチを切る</b>: <code>feature/機能ID-概要</code>（例: <code>feature/F-001-create-request</code>）</li>
+    <li><b>テストを先に書く（TDD推奨）</b>: 設計書の入力値・期待値からテストを先に書く。</li>
+    <li><b>実装する</b>: テストが通る最小コードを書く。コーディング規約に従う。</li>
+    <li><b>自己レビュー</b>: チェックリストを確認してからPR作成。</li>
+    <li><b>PR作成・レビュー依頼</b>: テンプレートに沿って記載。CIが全パスであること。</li>
+    <li><b>マージ</b>: 承認後、mainまたはdevelopにマージ。ブランチ削除。</li>
+  </ol>
+</div><h2>STEP 3 — PR作成チェックリスト</h2>
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="pr-1"><label for="pr-1">PRのタイトルがConventional Commitsに従っている（例: <code>feat: 申請作成APIを追加</code>）</label></li>
+    <li><input type="checkbox" id="pr-2"><label for="pr-2">PR説明に「何をした・なぜした・どうテストした」が書かれている</label></li>
+    <li><input type="checkbox" id="pr-3"><label for="pr-3">差分が300行以内（超える場合は分割を検討）</label></li>
+    <li><input type="checkbox" id="pr-4"><label for="pr-4">CI（テスト・Lint・フォーマット）が全パスしている</label></li>
+    <li><input type="checkbox" id="pr-5"><label for="pr-5">設計書の仕様と実装が一致していることを自己確認した</label></li>
+    <li><input type="checkbox" id="pr-6"><label for="pr-6">テストが追加・更新されている</label></li>
+    <li><input type="checkbox" id="pr-7"><label for="pr-7">スクリーンショット（UI変更の場合）を添付した</label></li>
+  </ul>
+</div><h2>STEP 4 — レビュー観点</h2>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>観点</th><th>確認内容</th></tr></thead>
+      <tbody>
+        <tr><td>設計との整合</td><td>OpenAPI仕様・D-01の処理フローと実装が一致するか</td></tr>
+        <tr><td>セキュリティ</td><td>SQL injection・XSS・認証・権限チェックの漏れ</td></tr>
+        <tr><td>エラー処理</td><td>例外が握りつぶされていない・ログに残る・適切なHTTPステータスを返す</td></tr>
+        <tr><td>パフォーマンス</td><td>N+1・全件取得・不要なDB呼び出しがない</td></tr>
+        <tr><td>テスト品質</td><td>境界値・異常系・権限パターンが網羅されているか</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>STEP 5 — 進捗管理・リスク対応</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fee2e2">⚠️</span><h2>詰まりのサインと対処</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>サイン</th><th>対処</th></tr></thead>
+      <tbody>
+        <tr><td>同じIssueが2日以上動かない</td><td>チームに共有・設計の再確認・スコープ縮小</td></tr>
+        <tr><td>PRが1週間レビューされない</td><td>レビュアーに直接確認・優先度の再調整</td></tr>
+        <tr><td>テストが増えない</td><td>コードフリーズ前に単体テスト実施率を確認</td></tr>
+        <tr><td>設計と実装が乖離し始めた</td><td>設計書の更新（実装で発見した仕様変更を反映）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="callout callout-success">
+  <span class="callout-icon">✅</span>
+  <div class="callout-body">全機能の実装・単体テストが完了したら <a href="testing.html">テスト実施フェーズ</a> へ進みます。</div>
+</div>
 
     </div>
   </main>
 </div>
 
+
 <script src="../js/main.js"></script>
 <script src="../sidebar.js"></script>
 </body>
 </html>
-

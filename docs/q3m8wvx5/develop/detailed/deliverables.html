@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -6,126 +6,109 @@
   <title>詳細設計 成果物ガイド</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
   <main class="main">
+    
     <div class="page-header phase-detail">
       <div class="subtitle">Phase 2 — 成果物ガイド</div>
-      <h1>📋 詳細設計 成果物ガイド</h1>
+      <h1>詳細設計 成果物ガイド</h1>
       <p class="description">詳細設計フェーズで作成する D-01〜D-18 の成果物について、使うツール・作り方・注意点をまとめています。</p>
     </div>
-
     <div class="content">
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">🧭</span>
-        <div class="callout-body">
-          <b>初心者向け：まず押さえる「必須」成果物</b><br>
-          迷ったら最初はここを優先すると手戻りが減ります：<b>D-03（OpenAPI）</b>、<b>D-06〜D-09（物理ER/インデックス/主要クエリ/マイグレーション）</b>、<b>D-12（セキュリティ）</b>、<b>D-13〜D-14（テスト設計）</b>、<b>D-15〜D-16（規約・環境）</b>。
-        </div>
-      </div>
-
-      <h2 class="section-title"><span class="title-icon">🗺️</span> 作成のおすすめ順（迷ったときの道順）</h2>
-      <div class="card">
-        <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
-          <li><b>共通ライブラリ（C-01〜C-05）</b> を先に固める（認証・エラー・レスポンス）</li>
-          <li><b>D-03</b> OpenAPI を先に書く（モックでフロントが先行できる）</li>
-          <li><b>D-01〜D-02</b> 主要機能/画面の処理フロー・入力ルールを固める</li>
-          <li><b>D-06〜D-09</b> DBを確定（型/桁/制約・インデックス・クエリ・マイグレーション）</li>
-          <li><b>D-12〜D-16</b> セキュリティ・テスト・規約・環境（実装の品質を揃える）</li>
-          <li><b>D-17〜D-18</b> 取りまとめ（総括・トレーサビリティ）</li>
-        </ol>
-      </div>
-
-      <!-- 成果物一覧 -->
-      <h2 class="section-title"><span class="title-icon">📑</span> 成果物一覧（D-01〜D-18）</h2>
-      <div class="deliverable-grid">
-        <a class="deliverable-item" href="#d01"><span class="deliverable-code" style="background:#0e9f6e">D-01</span>詳細機能設計書</a>
-        <a class="deliverable-item" href="#d02"><span class="deliverable-code" style="background:#0e9f6e">D-02</span>詳細画面設計書</a>
-        <a class="deliverable-item" href="#d03"><span class="deliverable-code" style="background:#0e9f6e">D-03</span>詳細API仕様書（OpenAPI）</a>
-        <a class="deliverable-item" href="#d04"><span class="deliverable-code" style="background:#0e9f6e">D-04</span>バッチ詳細設計書</a>
-        <a class="deliverable-item" href="#d05"><span class="deliverable-code" style="background:#0e9f6e">D-05</span>帳票詳細設計書</a>
-        <a class="deliverable-item" href="#d06"><span class="deliverable-code" style="background:#0e9f6e">D-06</span>物理ER図</a>
-        <a class="deliverable-item" href="#d07"><span class="deliverable-code" style="background:#0e9f6e">D-07</span>インデックス設計書</a>
-        <a class="deliverable-item" href="#d08"><span class="deliverable-code" style="background:#0e9f6e">D-08</span>主要クエリ設計書</a>
-        <a class="deliverable-item" href="#d09"><span class="deliverable-code" style="background:#0e9f6e">D-09</span>マイグレーションスクリプト</a>
-        <a class="deliverable-item" href="#d10"><span class="deliverable-code" style="background:#0e9f6e">D-10</span>詳細外部IF設計書</a>
-        <a class="deliverable-item" href="#d11"><span class="deliverable-code" style="background:#0e9f6e">D-11</span>連携シーケンス図</a>
-        <a class="deliverable-item" href="#d12"><span class="deliverable-code" style="background:#0e9f6e">D-12</span>詳細セキュリティ設計書</a>
-        <a class="deliverable-item" href="#d13"><span class="deliverable-code" style="background:#0e9f6e">D-13</span>単体テスト設計書</a>
-        <a class="deliverable-item" href="#d14"><span class="deliverable-code" style="background:#0e9f6e">D-14</span>結合テスト設計方針書</a>
-        <a class="deliverable-item" href="#d15"><span class="deliverable-code" style="background:#0e9f6e">D-15</span>コーディング規約書</a>
-        <a class="deliverable-item" href="#d16"><span class="deliverable-code" style="background:#0e9f6e">D-16</span>開発環境構築手順書</a>
-        <a class="deliverable-item" href="#d17"><span class="deliverable-code" style="background:#0e9f6e">D-17</span>詳細設計書（総括）</a>
-        <a class="deliverable-item" href="#d18"><span class="deliverable-code" style="background:#0e9f6e">D-18</span>トレーサビリティマトリクス</a>
-      </div>
-
-      <h2 class="section-title"><span class="title-icon">🧭</span> 成果物別の作成ガイド（詳細）</h2>
-      <div class="callout callout-info" style="margin-top:.5rem">
-        <span class="callout-icon">💡</span>
-        <div class="callout-body">
-          ここでは各成果物について、<b>書くべき内容（テンプレ）</b>と<b>具体例</b>を用意しています。迷ったら「例の粒度」まで埋めれば、実装とテストが止まりにくくなります。
-        </div>
-      </div>
-
-      <!-- D-01 -->
-      <h2 class="section-title" id="d01"><span class="title-icon">🧩</span> D-01 詳細機能設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#dcfce7">🧩</span><h2>章立て（テンプレ）</h2></div>
-        <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
-          <li>対象機能（機能ID/名称/目的）とスコープ</li>
-          <li>前提（権限・状態・入力条件）</li>
-          <li>処理フロー（正常系/例外系）</li>
-          <li>入出力（リクエスト/レスポンス/DB更新/イベント）</li>
-          <li>エラー（エラーコード、メッセージ、HTTP、復旧方針）</li>
-          <li>監査ログ（誰が/いつ/何を）</li>
-        </ol>
-        <div class="table-wrap" style="margin-top:1rem">
-          <table>
-            <thead><tr><th>観点</th><th>最低限の書き方</th><th>よくある抜け</th></tr></thead>
-            <tbody>
-              <tr><td>正常系</td><td>入力→検証→永続化→レスポンス</td><td>トランザクション境界</td></tr>
-              <tr><td>例外系</td><td>認証/認可/入力NG/整合性/外部失敗</td><td>リトライ可否・通知</td></tr>
-              <tr><td>状態遷移</td><td>ステータスと遷移条件</td><td>並行更新（楽観/悲観ロック）<br><small class="text-muted">楽観ロック＝「更新時にバージョン番号が変わっていたらエラー」方式（衝突を後から検知）。悲観ロック＝SELECT FOR UPDATEで先にDBをロックする方式（衝突を事前に防止）。更新頻度が低いなら楽観ロックが一般的</small></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- D-02 -->
-      <h2 class="section-title" id="d02"><span class="title-icon">🖥️</span> D-02 詳細画面設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e0e7ff">🖥️</span><h2>項目定義テンプレ（例）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>項目ID</th><th>ラベル</th><th>型</th><th>必須</th><th>バリデーション</th><th>表示/活性条件</th><th>API</th></tr></thead>
-            <tbody>
-              <tr><td>UI-001</td><td>申請タイトル</td><td>text</td><td>必須</td><td>1〜100文字</td><td>常時表示</td><td>API-020</td></tr>
-              <tr><td>UI-002</td><td>申請種別</td><td>select</td><td>必須</td><td>マスタ参照</td><td>常時表示</td><td>API-021</td></tr>
-              <tr><td>UI-003</td><td>添付ファイル</td><td>file</td><td>任意</td><td>最大10MB/拡張子</td><td>種別=領収書あり</td><td>API-025</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-info" style="margin-top:.75rem">
-          <span class="callout-icon">✅</span>
-          <div class="callout-body">画面設計で詰まりやすいのは <b>「入力エラー時の挙動」</b> と <b>「権限に応じた表示/操作差」</b> です（D-12/D-13と整合）。</div>
-        </div>
-      </div>
-
-      <!-- D-03 OpenAPI -->
-      <h2 class="section-title" id="d03"><span class="title-icon">📄</span> D-03 詳細API仕様書（OpenAPI）— 作成ガイド</h2>
-      <div class="card">
-        <div class="callout callout-info" style="margin-bottom:1rem">
-          <span class="callout-icon">🔧</span>
-          <div class="callout-body">
-            <b>推奨ワークフロー</b><br>
-            ① <code>openapi.yaml</code> を作成 → ② Swagger UI でブラウザ確認 → ③ Prism でモックサーバー起動 → ④ フロントエンドがモックに対してUI開発 → ⑤ バックエンド実装完了後に本物に切り替え
-          </div>
-        </div>
-        <pre><code>openapi: 3.0.3
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>初心者向け：まず押さえる「必須」成果物</b><br>
+    迷ったら最初はここを優先すると手戻りが減ります：<b>D-03（OpenAPI）</b>、<b>D-06〜D-09（物理ER/インデックス/主要クエリ/マイグレーション）</b>、<b>D-12（セキュリティ）</b>、<b>D-13〜D-14（テスト設計）</b>、<b>D-15〜D-16（規約・環境）</b>。
+  </div>
+</div><h2>🗺️ 作成のおすすめ順（迷ったときの道順）</h2>
+<div class="card">
+  <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
+    <li><b>共通ライブラリ（C-01〜C-05）</b> を先に固める（認証・エラー・レスポンス）</li>
+    <li><b>D-03</b> OpenAPI を先に書く（モックでフロントが先行できる）</li>
+    <li><b>D-01〜D-02</b> 主要機能/画面の処理フロー・入力ルールを固める</li>
+    <li><b>D-06〜D-09</b> DBを確定（型/桁/制約・インデックス・クエリ・マイグレーション）</li>
+    <li><b>D-12〜D-16</b> セキュリティ・テスト・規約・環境（実装の品質を揃える）</li>
+    <li><b>D-17〜D-18</b> 取りまとめ（総括・トレーサビリティ）</li>
+  </ol>
+</div><h2>📑 成果物一覧（D-01〜D-18）</h2>
+<div class="deliverable-grid">
+  <a class="deliverable-item" href="#d01"><span class="deliverable-code" style="background:#0e9f6e">D-01</span>詳細機能設計書</a>
+  <a class="deliverable-item" href="#d02"><span class="deliverable-code" style="background:#0e9f6e">D-02</span>詳細画面設計書</a>
+  <a class="deliverable-item" href="#d03"><span class="deliverable-code" style="background:#0e9f6e">D-03</span>詳細API仕様書（OpenAPI）</a>
+  <a class="deliverable-item" href="#d04"><span class="deliverable-code" style="background:#0e9f6e">D-04</span>バッチ詳細設計書</a>
+  <a class="deliverable-item" href="#d05"><span class="deliverable-code" style="background:#0e9f6e">D-05</span>帳票詳細設計書</a>
+  <a class="deliverable-item" href="#d06"><span class="deliverable-code" style="background:#0e9f6e">D-06</span>物理ER図</a>
+  <a class="deliverable-item" href="#d07"><span class="deliverable-code" style="background:#0e9f6e">D-07</span>インデックス設計書</a>
+  <a class="deliverable-item" href="#d08"><span class="deliverable-code" style="background:#0e9f6e">D-08</span>主要クエリ設計書</a>
+  <a class="deliverable-item" href="#d09"><span class="deliverable-code" style="background:#0e9f6e">D-09</span>マイグレーションスクリプト</a>
+  <a class="deliverable-item" href="#d10"><span class="deliverable-code" style="background:#0e9f6e">D-10</span>詳細外部IF設計書</a>
+  <a class="deliverable-item" href="#d11"><span class="deliverable-code" style="background:#0e9f6e">D-11</span>連携シーケンス図</a>
+  <a class="deliverable-item" href="#d12"><span class="deliverable-code" style="background:#0e9f6e">D-12</span>詳細セキュリティ設計書</a>
+  <a class="deliverable-item" href="#d13"><span class="deliverable-code" style="background:#0e9f6e">D-13</span>単体テスト設計書</a>
+  <a class="deliverable-item" href="#d14"><span class="deliverable-code" style="background:#0e9f6e">D-14</span>結合テスト設計方針書</a>
+  <a class="deliverable-item" href="#d15"><span class="deliverable-code" style="background:#0e9f6e">D-15</span>コーディング規約書</a>
+  <a class="deliverable-item" href="#d16"><span class="deliverable-code" style="background:#0e9f6e">D-16</span>開発環境構築手順書</a>
+  <a class="deliverable-item" href="#d17"><span class="deliverable-code" style="background:#0e9f6e">D-17</span>詳細設計書（総括）</a>
+  <a class="deliverable-item" href="#d18"><span class="deliverable-code" style="background:#0e9f6e">D-18</span>トレーサビリティマトリクス</a>
+</div><h2>🧭 成果物別の作成ガイド（詳細）</h2>
+<div class="callout callout-info" style="margin-top:.5rem">
+  <span class="callout-icon">💡</span>
+  <div class="callout-body">
+    ここでは各成果物について、<b>書くべき内容（テンプレ）</b>と<b>具体例</b>を用意しています。迷ったら「例の粒度」まで埋めれば、実装とテストが止まりにくくなります。
+  </div>
+</div><h2>🧩 D-01 詳細機能設計書 — 作成ガイド {#d01}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#dcfce7">🧩</span><h2>章立て（テンプレ）</h2></div>
+  <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
+    <li>対象機能（機能ID/名称/目的）とスコープ</li>
+    <li>前提（権限・状態・入力条件）</li>
+    <li>処理フロー（正常系/例外系）</li>
+    <li>入出力（リクエスト/レスポンス/DB更新/イベント）</li>
+    <li>エラー（エラーコード、メッセージ、HTTP、復旧方針）</li>
+    <li>監査ログ（誰が/いつ/何を）</li>
+  </ol>
+  <div class="table-wrap" style="margin-top:1rem">
+    <table>
+      <thead><tr><th>観点</th><th>最低限の書き方</th><th>よくある抜け</th></tr></thead>
+      <tbody>
+        <tr><td>正常系</td><td>入力→検証→永続化→レスポンス</td><td>トランザクション境界</td></tr>
+        <tr><td>例外系</td><td>認証/認可/入力NG/整合性/外部失敗</td><td>リトライ可否・通知</td></tr>
+        <tr><td>状態遷移</td><td>ステータスと遷移条件</td><td>並行更新（楽観/悲観ロック）<br><small class="text-muted">楽観ロック＝「更新時にバージョン番号が変わっていたらエラー」方式（衝突を後から検知）。悲観ロック＝SELECT FOR UPDATEで先にDBをロックする方式（衝突を事前に防止）。更新頻度が低いなら楽観ロックが一般的</small></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🖥️ D-02 詳細画面設計書 — 作成ガイド {#d02}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e0e7ff">🖥️</span><h2>項目定義テンプレ（例）</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>項目ID</th><th>ラベル</th><th>型</th><th>必須</th><th>バリデーション</th><th>表示/活性条件</th><th>API</th></tr></thead>
+      <tbody>
+        <tr><td>UI-001</td><td>申請タイトル</td><td>text</td><td>必須</td><td>1〜100文字</td><td>常時表示</td><td>API-020</td></tr>
+        <tr><td>UI-002</td><td>申請種別</td><td>select</td><td>必須</td><td>マスタ参照</td><td>常時表示</td><td>API-021</td></tr>
+        <tr><td>UI-003</td><td>添付ファイル</td><td>file</td><td>任意</td><td>最大10MB/拡張子</td><td>種別=領収書あり</td><td>API-025</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-info" style="margin-top:.75rem">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">画面設計で詰まりやすいのは <b>「入力エラー時の挙動」</b> と <b>「権限に応じた表示/操作差」</b> です（D-12/D-13と整合）。</div>
+  </div>
+</div><h2>📄 D-03 詳細API仕様書（OpenAPI）— 作成ガイド {#d03}</h2>
+<div class="card">
+  <div class="callout callout-info" style="margin-bottom:1rem">
+    <span class="callout-icon">🔧</span>
+    <div class="callout-body">
+      <b>推奨ワークフロー</b><br>
+      ① <code>openapi.yaml</code> を作成 → ② Swagger UI でブラウザ確認 → ③ Prism でモックサーバー起動 → ④ フロントエンドがモックに対してUI開発 → ⑤ バックエンド実装完了後に本物に切り替え
+    </div>
+  </div><pre><code class="language-yaml">openapi: 3.0.3
 info:
   title: 経費精算システム API
   version: 1.0.0
@@ -141,17 +124,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExpenseCreateRequest'
+              $ref: &#39;#/components/schemas/ExpenseCreateRequest&#39;
       responses:
-        '201':
+        &#39;201&#39;:
           description: 作成成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '400':
+        &#39;400&#39;:
           description: バリデーションエラー
-        '401':
+        &#39;401&#39;:
           description: 認証エラー
 
 components:
@@ -163,340 +142,286 @@ components:
         title:
           type: string
           maxLength: 100
-          description: 申請タイトル
         amount:
           type: integer
           minimum: 1
-          description: 金額（円）
         date:
           type: string
           format: date
-          description: 使用日（YYYY-MM-DD）</code></pre>
-
-        <div class="table-wrap" style="margin-top:1rem">
-          <table>
-            <thead><tr><th>ツール</th><th>用途</th><th>コマンド例</th></tr></thead>
-            <tbody>
-              <tr><td>Swagger UI</td><td>OpenAPIの可視化・確認</td><td><code>docker run -p 8080:8080 -e SWAGGER_JSON=/openapi.yaml swaggerapi/swagger-ui</code></td></tr>
-              <tr><td>Prism</td><td>モックサーバー起動</td><td><code>npx @stoplight/prism-cli mock openapi.yaml</code></td></tr>
-              <tr><td>openapi-generator</td><td>クライアントコード自動生成</td><td><code>openapi-generator-cli generate -i openapi.yaml -g typescript-axios</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- D-04 -->
-      <h2 class="section-title" id="d04"><span class="title-icon">⏱️</span> D-04 バッチ詳細設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#f1f5f9">⏱️</span><h2>バッチ設計テンプレ（例）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>項目</th><th>書く内容</th><th>例</th></tr></thead>
-            <tbody>
-              <tr><td>起動方式</td><td>スケジュール/手動/API</td><td>毎日02:00（ジョブ管理）</td></tr>
-              <tr><td>入力/出力</td><td>データソース/成果</td><td>DB→集計テーブル</td></tr>
-              <tr><td>冪等性</td><td>再実行時の安全性</td><td>対象日でUpsert、二重登録防止</td></tr>
-              <tr><td>失敗時</td><td>リトライ/通知/復旧</td><td>最大3回→Slack通知→手動再実行</td></tr>
-              <tr><td>ログ</td><td>何を残すか</td><td>開始/終了/件数/エラー詳細</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- D-05 -->
-      <h2 class="section-title" id="d05"><span class="title-icon">🧾</span> D-05 帳票詳細設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff7ed">🧾</span><h2>帳票設計で必ず決めること</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>観点</th><th>例</th><th>注意点</th></tr></thead>
-            <tbody>
-              <tr><td>出力形式</td><td>PDF / Excel / CSV</td><td>印刷要件（用紙/余白）</td></tr>
-              <tr><td>出力タイミング</td><td>画面から即時 / バッチ</td><td>非同期化の要否</td></tr>
-              <tr><td>データソース</td><td>どのテーブル/ビュー</td><td>集計定義の一意性</td></tr>
-              <tr><td>レイアウト</td><td>ヘッダ/明細/フッタ</td><td>改ページ、0件時の表示</td></tr>
-              <tr><td>権限</td><td>閲覧/出力可能ロール</td><td>D-12と整合</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- D-06 -->
-      <h2 class="section-title" id="d06"><span class="title-icon">🗄️</span> D-06 物理ER図 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fef9c3">🗄️</span><h2>物理ERで“詳細設計”として必要な差分</h2></div>
-        <ul style="padding-left:1.2rem;font-size:.875rem;line-height:1.9">
-          <li><b>型/桁/NULL</b>: 物理型（varchar(100)等）とNULL許容を確定。</li>
-          <li><b>制約</b>: PK/FK/UNIQUE/CHECK の方針を明記。</li>
-          <li><b>監査項目</b>: created_at/updated_at、作成者などの持ち方。</li>
-          <li><b>削除方針</b>: 論理削除・履歴テーブルの有無。</li>
-        </ul>
-        <div class="callout callout-info" style="margin-top:.75rem">
-          <span class="callout-icon">📌</span>
-          <div class="callout-body">物理ER単体では完結しません。<b>D-07（インデックス）</b>、<b>D-08（主要クエリ）</b>、<b>D-09（マイグレーション）</b>とセットで確定します。</div>
-        </div>
-      </div>
-
-      <!-- D-07 -->
-      <h2 class="section-title" id="d07"><span class="title-icon">📈</span> D-07 インデックス設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e5e7eb">📈</span><h2>インデックス一覧テンプレ（例）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>テーブル</th><th>インデックス名</th><th>列</th><th>種別</th><th>目的</th><th>備考</th></tr></thead>
-            <tbody>
-              <tr><td>expenses</td><td>idx_expenses_user_date</td><td>user_id, date</td><td>BTREE</td><td>一覧検索（ユーザー×日付）</td><td>WHERE句と整合</td></tr>
-              <tr><td>users</td><td>ux_users_email</td><td>email</td><td>UNIQUE</td><td>重複防止</td><td>大小文字の扱い注意</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-warning" style="margin-top:.75rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">インデックスは増やしすぎると更新が遅くなります。<b>“検索要件（WHERE/ORDER BY）に根拠があるものだけ”</b>追加します。</div>
-        </div>
-      </div>
-
-      <!-- D-08 -->
-      <h2 class="section-title" id="d08"><span class="title-icon">🧮</span> D-08 主要クエリ設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#f1f5f9">🧮</span><h2>クエリ設計テンプレ（例）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>クエリID</th><th>用途</th><th>SQL（概略）</th><th>想定件数</th><th>インデックス</th></tr></thead>
-            <tbody>
-              <tr><td>Q-001</td><td>申請一覧</td><td><code>SELECT ... FROM expenses WHERE user_id=? ORDER BY date DESC</code></td><td>1ユーザー1万件</td><td>D-07 idx_expenses_user_date</td></tr>
-              <tr><td>Q-010</td><td>承認待ち一覧</td><td><code>SELECT ... WHERE status='SUBMITTED'</code></td><td>全体100万件</td><td>statusのインデックス検討</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- D-11 Mermaidシーケンス図 -->
-      <span id="external"></span>
-      <h2 class="section-title" id="d11"><span class="title-icon">🔀</span> D-11 連携シーケンス図（Mermaid）— 作成ガイド</h2>
-      <div class="card">
-        <div class="callout callout-info" style="margin-bottom:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">Mermaid記法を使うと、テキストで書いたフローが自動的に図に変換されます。GitリポジトリのMarkdownに埋め込んでコードと一緒にバージョン管理できます。</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-          <div>
-            <div class="text-xs text-muted font-bold" style="margin-bottom:.5rem">Mermaid記法（入力）</div>
-            <pre><code>sequenceDiagram
-  actor User as ユーザー
-  participant FE as フロントエンド
-  participant API as APIサーバー
-  participant DB as データベース
-  participant Mail as メールサーバー
-
-  User->>FE: 申請書提出ボタン押下
-  FE->>API: POST /api/v1/expenses
-  API->>API: バリデーション
-  API->>DB: INSERT expenses
-  DB-->>API: 挿入成功
-  API->>Mail: 承認依頼メール送信
-  Mail-->>API: 送信完了
-  API-->>FE: 201 Created
-  FE-->>User: 提出完了メッセージ表示</code></pre>
-          </div>
-          <div>
-            <div class="text-xs text-muted font-bold" style="margin-bottom:.5rem">レンダリング結果</div>
-            <div class="mermaid" style="font-size:.75rem">
-sequenceDiagram
-  actor User as ユーザー
-  participant FE as フロント
-  participant API as APIサーバー
-  participant DB as DB
-
-  User->>FE: 申請書提出
-  FE->>API: POST /expenses
-  API->>DB: INSERT
-  DB-->>API: 成功
-  API-->>FE: 201 Created
-  FE-->>User: 完了表示
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- D-09 Flyway -->
-      <h2 class="section-title" id="d09"><span class="title-icon">🗄️</span> D-09 マイグレーションスクリプト（Flyway）— 管理方針</h2>
-      <div class="card">
-        <div class="table-wrap" style="margin-bottom:1rem">
-          <table>
-            <thead><tr><th>ファイル命名規則</th><th>説明</th></tr></thead>
-            <tbody>
-              <tr><td><code>V1__create_users.sql</code></td><td>V{バージョン}__{説明}.sql（バージョンは昇順）</td></tr>
-              <tr><td><code>V2__create_expenses.sql</code></td><td>テーブル作成 DDL</td></tr>
-              <tr><td><code>V3__add_index_expenses.sql</code></td><td>インデックス追加</td></tr>
-              <tr><td><code>V4__alter_users_add_column.sql</code></td><td>ALTER TABLE でカラム追加</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-danger">
-          <span class="callout-icon">🚫</span>
-          <div class="callout-body">
-            <b>Flywayの鉄則</b>: 一度適用したマイグレーションファイルは絶対に編集しないこと。変更が必要な場合は必ず新しいバージョンのファイルを追加してください。
-          </div>
-        </div>
-        <pre style="margin-top:.75rem"><code>-- V4__alter_users_add_column.sql
+</code></pre>
+  <div class="table-wrap" style="margin-top:1rem">
+    <table>
+      <thead><tr><th>ツール</th><th>用途</th><th>コマンド例</th></tr></thead>
+      <tbody>
+        <tr><td>Swagger UI</td><td>OpenAPIの可視化・確認</td><td><code>docker run -p 8080:8080 -e SWAGGER_JSON=/openapi.yaml swaggerapi/swagger-ui</code></td></tr>
+        <tr><td>Prism</td><td>モックサーバー起動</td><td><code>npx @stoplight/prism-cli mock openapi.yaml</code></td></tr>
+        <tr><td>openapi-generator</td><td>クライアントコード自動生成</td><td><code>openapi-generator-cli generate -i openapi.yaml -g typescript-axios</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>⏱️ D-04 バッチ詳細設計書 — 作成ガイド {#d04}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#f1f5f9">⏱️</span><h2>バッチ設計テンプレ（例）</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>項目</th><th>書く内容</th><th>例</th></tr></thead>
+      <tbody>
+        <tr><td>起動方式</td><td>スケジュール/手動/API</td><td>毎日02:00（ジョブ管理）</td></tr>
+        <tr><td>入力/出力</td><td>データソース/成果</td><td>DB→集計テーブル</td></tr>
+        <tr><td>冪等性</td><td>再実行時の安全性</td><td>対象日でUpsert、二重登録防止</td></tr>
+        <tr><td>失敗時</td><td>リトライ/通知/復旧</td><td>最大3回→Slack通知→手動再実行</td></tr>
+        <tr><td>ログ</td><td>何を残すか</td><td>開始/終了/件数/エラー詳細</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🧾 D-05 帳票詳細設計書 — 作成ガイド {#d05}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff7ed">🧾</span><h2>帳票設計で必ず決めること</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>観点</th><th>例</th><th>注意点</th></tr></thead>
+      <tbody>
+        <tr><td>出力形式</td><td>PDF / Excel / CSV</td><td>印刷要件（用紙/余白）</td></tr>
+        <tr><td>出力タイミング</td><td>画面から即時 / バッチ</td><td>非同期化の要否</td></tr>
+        <tr><td>データソース</td><td>どのテーブル/ビュー</td><td>集計定義の一意性</td></tr>
+        <tr><td>レイアウト</td><td>ヘッダ/明細/フッタ</td><td>改ページ、0件時の表示</td></tr>
+        <tr><td>権限</td><td>閲覧/出力可能ロール</td><td>D-12と整合</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🗄️ D-06 物理ER図 — 作成ガイド {#d06}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef9c3">🗄️</span><h2>物理ERで"詳細設計"として必要な差分</h2></div>
+  <ul style="padding-left:1.2rem;font-size:.875rem;line-height:1.9">
+    <li><b>型/桁/NULL</b>: 物理型（varchar(100)等）とNULL許容を確定。</li>
+    <li><b>制約</b>: PK/FK/UNIQUE/CHECK の方針を明記。</li>
+    <li><b>監査項目</b>: created_at/updated_at、作成者などの持ち方。</li>
+    <li><b>削除方針</b>: 論理削除・履歴テーブルの有無。</li>
+  </ul>
+  <div class="callout callout-info" style="margin-top:.75rem">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body">物理ER単体では完結しません。<b>D-07（インデックス）</b>、<b>D-08（主要クエリ）</b>、<b>D-09（マイグレーション）</b>とセットで確定します。</div>
+  </div>
+</div><h2>📈 D-07 インデックス設計書 — 作成ガイド {#d07}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e5e7eb">📈</span><h2>インデックス一覧テンプレ（例）</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>テーブル</th><th>インデックス名</th><th>列</th><th>種別</th><th>目的</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>expenses</td><td>idx_expenses_user_date</td><td>user_id, date</td><td>BTREE</td><td>一覧検索（ユーザー×日付）</td><td>WHERE句と整合</td></tr>
+        <tr><td>users</td><td>ux_users_email</td><td>email</td><td>UNIQUE</td><td>重複防止</td><td>大小文字の扱い注意</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-warning" style="margin-top:.75rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">インデックスは増やしすぎると更新が遅くなります。<b>"検索要件（WHERE/ORDER BY）に根拠があるものだけ"</b>追加します。</div>
+  </div>
+</div><h2>🧮 D-08 主要クエリ設計書 — 作成ガイド {#d08}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#f1f5f9">🧮</span><h2>クエリ設計テンプレ（例）</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>クエリID</th><th>用途</th><th>SQL（概略）</th><th>想定件数</th><th>インデックス</th></tr></thead>
+      <tbody>
+        <tr><td>Q-001</td><td>申請一覧</td><td><code>SELECT ... FROM expenses WHERE user_id=? ORDER BY date DESC</code></td><td>1ユーザー1万件</td><td>D-07 idx_expenses_user_date</td></tr>
+        <tr><td>Q-010</td><td>承認待ち一覧</td><td><code>SELECT ... WHERE status='SUBMITTED'</code></td><td>全体100万件</td><td>statusのインデックス検討</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🗄️ D-09 マイグレーションスクリプト（Flyway）— 管理方針 {#d09}</h2>
+<div class="card">
+  <div class="table-wrap" style="margin-bottom:1rem">
+    <table>
+      <thead><tr><th>ファイル命名規則</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td><code>V1__create_users.sql</code></td><td>V{バージョン}__{説明}.sql（バージョンは昇順）</td></tr>
+        <tr><td><code>V2__create_expenses.sql</code></td><td>テーブル作成 DDL</td></tr>
+        <tr><td><code>V3__add_index_expenses.sql</code></td><td>インデックス追加</td></tr>
+        <tr><td><code>V4__alter_users_add_column.sql</code></td><td>ALTER TABLE でカラム追加</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-danger">
+    <span class="callout-icon">🚫</span>
+    <div class="callout-body">
+      <b>Flywayの鉄則</b>: 一度適用したマイグレーションファイルは絶対に編集しないこと。変更が必要な場合は必ず新しいバージョンのファイルを追加してください。
+    </div>
+  </div><pre><code class="language-sql">-- V4__alter_users_add_column.sql
 -- ユーザーテーブルに部署IDカラムを追加
 ALTER TABLE users
   ADD COLUMN department_id BIGINT,
   ADD CONSTRAINT fk_users_department
     FOREIGN KEY (department_id) REFERENCES departments(id);
 
-COMMENT ON COLUMN users.department_id IS '所属部署ID';</code></pre>
+COMMENT ON COLUMN users.department_id IS &#39;所属部署ID&#39;;
+</code></pre>
+</div><h2>🔁 D-10 詳細外部IF設計書 — 作成ガイド {#d10}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e5e7eb">🔁</span><h2>詳細IFとして追加する情報</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>観点</th><th>書くこと（例）</th></tr></thead>
+      <tbody>
+        <tr><td>項目定義</td><td>JSON/CSV項目の型、必須、桁、コード体系、サンプル</td></tr>
+        <tr><td>エラー</td><td>エラーコード、再送条件、冪等キー、重複時の扱い</td></tr>
+        <tr><td>セキュリティ</td><td>認証方式、IP制限、鍵/証明書の管理、マスキング</td></tr>
+        <tr><td>SLA</td><td>タイムアウト、リトライ、許容停止時間、連絡フロー</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🔀 D-11 連携シーケンス図（Mermaid）— 作成ガイド {#d11}</h2>
+<p><span id="external"></span></p>
+<div class="card">
+  <div class="callout callout-info" style="margin-bottom:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">Mermaid記法を使うと、テキストで書いたフローが自動的に図に変換されます。GitリポジトリのMarkdownに埋め込んでコードと一緒にバージョン管理できます。</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div>
+      <div class="text-xs text-muted font-bold" style="margin-bottom:.5rem">Mermaid記法（入力）</div>
+      <pre><code>sequenceDiagram
+  actor User as ユーザー
+  participant FE as フロントエンド
+  participant API as APIサーバー
+  participant DB as データベース
+  participant Mail as メールサーバー<p>  User-&gt;&gt;FE: 申請書提出ボタン押下
+  FE-&gt;&gt;API: POST /api/v1/expenses
+  API-&gt;&gt;API: バリデーション
+  API-&gt;&gt;DB: INSERT expenses
+  DB--&gt;&gt;API: 挿入成功
+  API-&gt;&gt;Mail: 承認依頼メール送信
+  Mail--&gt;&gt;API: 送信完了
+  API--&gt;&gt;FE: 201 Created
+  FE--&gt;&gt;User: 提出完了メッセージ表示</code></pre>
+    </div>
+    <div>
+      <div class="text-xs text-muted font-bold" style="margin-bottom:.5rem">レンダリング結果</div>
+      <div class="mermaid" style="font-size:.75rem">
+sequenceDiagram
+  actor User as ユーザー
+  participant FE as フロント
+  participant API as APIサーバー
+  participant DB as DB</p>
+<p>  User-&gt;&gt;FE: 申請書提出
+  FE-&gt;&gt;API: POST /expenses
+  API-&gt;&gt;DB: INSERT
+  DB--&gt;&gt;API: 成功
+  API--&gt;&gt;FE: 201 Created
+  FE--&gt;&gt;User: 完了表示
       </div>
-
-      <!-- D-10 -->
-      <h2 class="section-title" id="d10"><span class="title-icon">🔁</span> D-10 詳細外部IF設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e5e7eb">🔁</span><h2>詳細IFとして追加する情報</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>観点</th><th>書くこと（例）</th></tr></thead>
-            <tbody>
-              <tr><td>項目定義</td><td>JSON/CSV項目の型、必須、桁、コード体系、サンプル</td></tr>
-              <tr><td>エラー</td><td>エラーコード、再送条件、冪等キー、重複時の扱い</td></tr>
-              <tr><td>セキュリティ</td><td>認証方式、IP制限、鍵/証明書の管理、マスキング</td></tr>
-              <tr><td>SLA</td><td>タイムアウト、リトライ、許容停止時間、連絡フロー</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- D-12 -->
-      <h2 class="section-title" id="d12"><span class="title-icon">🛡️</span> D-12 詳細セキュリティ設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#dbeafe">🛡️</span><h2>実装に落ちる“具体”まで書く</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>領域</th><th>具体に書く例</th></tr></thead>
-            <tbody>
-              <tr><td>認証</td><td>トークン形式、失効、セッション期限、MFA適用範囲</td></tr>
-              <tr><td>認可</td><td>ロール/権限一覧、APIごとの権限、管理者操作の制限</td></tr>
-              <tr><td>入力検証</td><td>サーバー側検証ルール、ファイル制限、WAF方針</td></tr>
-              <tr><td>秘密情報</td><td>保管場所、ローテーション、参照権限、監査</td></tr>
-              <tr><td>監査ログ</td><td>対象操作、ログ項目、保管期間、改ざん耐性</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- D-13 -->
-      <h2 class="section-title" id="d13"><span class="title-icon">🧪</span> D-13 単体テスト設計書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#dcfce7">🧪</span><h2>テストケース表テンプレ（例）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>TC-ID</th><th>対象</th><th>条件</th><th>入力</th><th>期待結果</th><th>備考</th></tr></thead>
-            <tbody>
-              <tr><td>UT-001</td><td>ExpenseCreate</td><td>正常</td><td>title=100文字以内</td><td>201 + id返却</td><td>D-03 API-020</td></tr>
-              <tr><td>UT-010</td><td>ExpenseCreate</td><td>入力NG</td><td>amount=0</td><td>400 + エラーコード</td><td>境界値</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-info" style="margin-top:.75rem">
-          <span class="callout-icon">📌</span>
-          <div class="callout-body"><b>観点の抜け</b>は「権限/状態/外部失敗/並行更新」で起きやすいです。D-01/D-12とトレースして埋めます。</div>
-        </div>
-      </div>
-
-      <!-- D-14 -->
-      <h2 class="section-title" id="d14"><span class="title-icon">🔗</span> D-14 結合テスト設計方針書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e0e7ff">🔗</span><h2>方針として決める項目</h2></div>
-        <ul style="padding-left:1.2rem;font-size:.875rem;line-height:1.9">
-          <li><b>範囲</b>: API単体〜外部IF連携まで、どこまでを結合で見るか。</li>
-          <li><b>環境</b>: テスト環境の構成、外部はモック/本番相当のどちらか。</li>
-          <li><b>データ</b>: テストデータ作成方針、後始末、個人情報の扱い。</li>
-          <li><b>観点</b>: 主要業務シナリオ、性能・耐障害の扱い、ログ/監査確認。</li>
-          <li><b>完了条件</b>: 実施率/合格率、未解決不具合の許容範囲。</li>
-        </ul>
-      </div>
-
-      <!-- D-15 -->
-      <h2 class="section-title" id="d15"><span class="title-icon">📏</span> D-15 コーディング規約書 — 管理方針</h2>
-      <div class="card">
-        <div class="table-wrap" style="margin-bottom:1rem">
-          <table>
-            <thead><tr><th>項目</th><th>方針</th><th>例</th></tr></thead>
-            <tbody>
-              <tr><td>配置場所</td><td>リポジトリ直下に固定</td><td><code>docs/standards/coding.md</code></td></tr>
-              <tr><td>強制</td><td>自動フォーマットを優先</td><td>Prettier/ESLint、ruff/black等</td></tr>
-              <tr><td>PRルール</td><td>レビューで守る</td><td>命名/例外/ログ/コメント方針</td></tr>
-              <tr><td>更新</td><td>変更理由を残す</td><td>ADRにリンク or 変更履歴欄</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-warning">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">規約は“読ませる”より“自動で守らせる”が基本です。フォーマッタ/リンタで担保できるものは規約から削って自動化します。</div>
-        </div>
-      </div>
-
-      <!-- D-16 -->
-      <h2 class="section-title" id="d16"><span class="title-icon">🧰</span> D-16 開発環境構築手順書 — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#f1f5f9">🧰</span><h2>READMEに最低限書くこと</h2></div>
-        <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
-          <li>前提（OS、ランタイム、Docker有無）</li>
-          <li>初回セットアップ（env、依存、DB起動、マイグレーション）</li>
-          <li>起動方法（API/FE/バッチ）</li>
-          <li>テストと静的解析（コマンド）</li>
-          <li>トラブルシュート（よくある失敗と対処）</li>
-        </ol>
-      </div>
-
-      <!-- D-17 -->
-      <h2 class="section-title" id="d17"><span class="title-icon">📘</span> D-17 詳細設計書（総括） — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#dcfce7">📘</span><h2>総括で“必ずリンクする”もの</h2></div>
-        <ul style="padding-left:1.2rem;font-size:.875rem;line-height:1.9">
-          <li><b>API</b>: D-03（OpenAPI）</li>
-          <li><b>DB</b>: D-06〜D-09（物理ER/インデックス/主要クエリ/マイグレーション）</li>
-          <li><b>外部IF</b>: D-10 / D-11（IF仕様/シーケンス）</li>
-          <li><b>セキュリティ</b>: D-12（認証/認可/監査）</li>
-          <li><b>テスト</b>: D-13 / D-14（単体/結合）</li>
-        </ul>
-      </div>
-
-      <!-- D-18 -->
-      <h2 class="section-title" id="d18"><span class="title-icon">🔎</span> D-18 トレーサビリティマトリクス — 作成ガイド</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e0e7ff">🔎</span><h2>トレース表テンプレ（例）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>要件ID</th><th>機能/画面</th><th>API</th><th>DB</th><th>テスト</th><th>備考</th></tr></thead>
-            <tbody>
-              <tr><td>R-010</td><td>F-001 / SCR-010</td><td>API-020</td><td>expenses</td><td>UT-001 / IT-010</td><td>-</td></tr>
-              <tr><td>NFR-020</td><td>性能（p95 1秒）</td><td>API-040</td><td>idx_expenses_user_date</td><td>負荷試験</td><td>測定条件を明記</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ツール選定まとめ -->
-      <h2 class="section-title"><span class="title-icon">🛠️</span> ツール選定まとめ（D-01〜D-18）</h2>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>成果物</th><th>推奨ツール</th><th>代替</th></tr></thead>
-            <tbody>
-              <tr><td>D-01 詳細機能設計書</td><td>Markdown / Word</td><td>Confluence</td></tr>
-              <tr><td>D-02 詳細画面設計書</td><td>Figma（コメント機能活用）</td><td>Adobe XD</td></tr>
-              <tr><td>D-03 詳細API仕様書</td><td>OpenAPI 3.0 (YAML) + Swagger UI</td><td>Postman Collections</td></tr>
-              <tr><td>D-06 物理ER図</td><td>A5:SQL Mk-2 / DBeaver ERD</td><td>dbdiagram.io</td></tr>
-              <tr><td>D-07 インデックス設計書</td><td>Excel / Markdown</td><td>—</td></tr>
-              <tr><td>D-09 マイグレーション</td><td>Flyway / Liquibase</td><td>手動SQLスクリプト</td></tr>
-              <tr><td>D-11 シーケンス図</td><td>Mermaid（Markdownに埋め込み）</td><td>PlantUML、draw.io</td></tr>
-              <tr><td>D-15 コーディング規約書</td><td>Markdown（リポジトリに配置）</td><td>Confluence</td></tr>
-              <tr><td>D-16 開発環境手順書</td><td>README.md + Docker Compose</td><td>Confluence</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    </div>
+  </div></p>
+</div><h2>🛡️ D-12 詳細セキュリティ設計書 — 作成ガイド {#d12}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#dbeafe">🛡️</span><h2>実装に落ちる"具体"まで書く</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>領域</th><th>具体に書く例</th></tr></thead>
+      <tbody>
+        <tr><td>認証</td><td>トークン形式、失効、セッション期限、MFA適用範囲</td></tr>
+        <tr><td>認可</td><td>ロール/権限一覧、APIごとの権限、管理者操作の制限</td></tr>
+        <tr><td>入力検証</td><td>サーバー側検証ルール、ファイル制限、WAF方針</td></tr>
+        <tr><td>秘密情報</td><td>保管場所、ローテーション、参照権限、監査</td></tr>
+        <tr><td>監査ログ</td><td>対象操作、ログ項目、保管期間、改ざん耐性</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🧪 D-13 単体テスト設計書 — 作成ガイド {#d13}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#dcfce7">🧪</span><h2>テストケース表テンプレ（例）</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>TC-ID</th><th>対象</th><th>条件</th><th>入力</th><th>期待結果</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>UT-001</td><td>ExpenseCreate</td><td>正常</td><td>title=100文字以内</td><td>201 + id返却</td><td>D-03 API-020</td></tr>
+        <tr><td>UT-010</td><td>ExpenseCreate</td><td>入力NG</td><td>amount=0</td><td>400 + エラーコード</td><td>境界値</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-info" style="margin-top:.75rem">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body"><b>観点の抜け</b>は「権限/状態/外部失敗/並行更新」で起きやすいです。D-01/D-12とトレースして埋めます。</div>
+  </div>
+</div><h2>🔗 D-14 結合テスト設計方針書 — 作成ガイド {#d14}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e0e7ff">🔗</span><h2>方針として決める項目</h2></div>
+  <ul style="padding-left:1.2rem;font-size:.875rem;line-height:1.9">
+    <li><b>範囲</b>: API単体〜外部IF連携まで、どこまでを結合で見るか。</li>
+    <li><b>環境</b>: テスト環境の構成、外部はモック/本番相当のどちらか。</li>
+    <li><b>データ</b>: テストデータ作成方針、後始末、個人情報の扱い。</li>
+    <li><b>観点</b>: 主要業務シナリオ、性能・耐障害の扱い、ログ/監査確認。</li>
+    <li><b>完了条件</b>: 実施率/合格率、未解決不具合の許容範囲。</li>
+  </ul>
+</div><h2>📏 D-15 コーディング規約書 — 管理方針 {#d15}</h2>
+<div class="card">
+  <div class="table-wrap" style="margin-bottom:1rem">
+    <table>
+      <thead><tr><th>項目</th><th>方針</th><th>例</th></tr></thead>
+      <tbody>
+        <tr><td>配置場所</td><td>リポジトリ直下に固定</td><td><code>docs/standards/coding.md</code></td></tr>
+        <tr><td>強制</td><td>自動フォーマットを優先</td><td>Prettier/ESLint、ruff/black等</td></tr>
+        <tr><td>PRルール</td><td>レビューで守る</td><td>命名/例外/ログ/コメント方針</td></tr>
+        <tr><td>更新</td><td>変更理由を残す</td><td>ADRにリンク or 変更履歴欄</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-warning">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">規約は"読ませる"より"自動で守らせる"が基本です。フォーマッタ/リンタで担保できるものは規約から削って自動化します。</div>
+  </div>
+</div><h2>🧰 D-16 開発環境構築手順書 — 作成ガイド {#d16}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#f1f5f9">🧰</span><h2>READMEに最低限書くこと</h2></div>
+  <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2">
+    <li>前提（OS、ランタイム、Docker有無）</li>
+    <li>初回セットアップ（env、依存、DB起動、マイグレーション）</li>
+    <li>起動方法（API/FE/バッチ）</li>
+    <li>テストと静的解析（コマンド）</li>
+    <li>トラブルシュート（よくある失敗と対処）</li>
+  </ol>
+</div><h2>📘 D-17 詳細設計書（総括） — 作成ガイド {#d17}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#dcfce7">📘</span><h2>総括で"必ずリンクする"もの</h2></div>
+  <ul style="padding-left:1.2rem;font-size:.875rem;line-height:1.9">
+    <li><b>API</b>: D-03（OpenAPI）</li>
+    <li><b>DB</b>: D-06〜D-09（物理ER/インデックス/主要クエリ/マイグレーション）</li>
+    <li><b>外部IF</b>: D-10 / D-11（IF仕様/シーケンス）</li>
+    <li><b>セキュリティ</b>: D-12（認証/認可/監査）</li>
+    <li><b>テスト</b>: D-13 / D-14（単体/結合）</li>
+  </ul>
+</div><h2>🔎 D-18 トレーサビリティマトリクス — 作成ガイド {#d18}</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e0e7ff">🔎</span><h2>トレース表テンプレ（例）</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>要件ID</th><th>機能/画面</th><th>API</th><th>DB</th><th>テスト</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>R-010</td><td>F-001 / SCR-010</td><td>API-020</td><td>expenses</td><td>UT-001 / IT-010</td><td>-</td></tr>
+        <tr><td>NFR-020</td><td>性能（p95 1秒）</td><td>API-040</td><td>idx_expenses_user_date</td><td>負荷試験</td><td>測定条件を明記</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🛠️ ツール選定まとめ（D-01〜D-18）</h2>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>成果物</th><th>推奨ツール</th><th>代替</th></tr></thead>
+      <tbody>
+        <tr><td>D-01 詳細機能設計書</td><td>Markdown / Word</td><td>Confluence</td></tr>
+        <tr><td>D-02 詳細画面設計書</td><td>Figma（コメント機能活用）</td><td>Adobe XD</td></tr>
+        <tr><td>D-03 詳細API仕様書</td><td>OpenAPI 3.0 (YAML) + Swagger UI</td><td>Postman Collections</td></tr>
+        <tr><td>D-06 物理ER図</td><td>A5:SQL Mk-2 / DBeaver ERD</td><td>dbdiagram.io</td></tr>
+        <tr><td>D-07 インデックス設計書</td><td>Excel / Markdown</td><td>—</td></tr>
+        <tr><td>D-09 マイグレーション</td><td>Flyway / Liquibase</td><td>手動SQLスクリプト</td></tr>
+        <tr><td>D-11 シーケンス図</td><td>Mermaid（Markdownに埋め込み）</td><td>PlantUML、draw.io</td></tr>
+        <tr><td>D-15 コーディング規約書</td><td>Markdown（リポジトリに配置）</td><td>Confluence</td></tr>
+        <tr><td>D-16 開発環境手順書</td><td>README.md + Docker Compose</td><td>Confluence</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
     </div>
   </main>
@@ -507,4 +432,3 @@ COMMENT ON COLUMN users.department_id IS '所属部署ID';</code></pre>
 <script src="../sidebar.js"></script>
 </body>
 </html>
-

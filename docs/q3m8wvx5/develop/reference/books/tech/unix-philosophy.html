@@ -1,70 +1,61 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNIXという考え方 — 参考資料</title>
+  <title>UNIXという考え方</title>
   <link rel="stylesheet" href="../../../css/style.css">
+  
+  
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
   <main class="main">
+    
     <div class="page-header phase-adr">
       <div class="subtitle">書籍まとめ / 技術</div>
-      <h1>🐧 UNIXという考え方</h1>
+      <h1>UNIXという考え方</h1>
       <p class="description">Mike Gancarz著「The UNIX Philosophy」。UNIXが50年以上にわたって生き続けている理由は、コードの書き方ではなく「ものの考え方」にあります。小さく・シンプルに・組み合わせる——この哲学は、現代のソフトウェア開発にもそのまま通用します。</p>
     </div>
-
     <div class="content">
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">🧭</span>
-        <div class="callout-body">
-          <b>このページの使い方（初心者向け）</b><br>
-          UNIXの哲学は「コマンドラインの話」ではありません。<b>「どう設計するか・どう分割するか・どう組み合わせるか」</b>というソフトウェア設計の普遍的な原則です。9つのルールをひとつずつ、自分のコードや設計に当てはめて考えてみましょう。
-        </div>
-      </div>
-
-      <!-- UNIXとは -->
-      <h2 class="section-title"><span class="title-icon">🌍</span> なぜ「UNIX的考え方」が今も通用するのか</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">⏳</span><h2>50年以上生き続けた設計思想</h2></div>
-        <p>UNIXは1969年にAT&Tベル研究所で誕生しました。その後、Linux・macOS・AndroidなどあらゆるOSの土台となり、現代のクラウドサーバーの大半で動いています。これほど長く生き残った理由のひとつが、<strong>シンプルさを徹底した設計哲学</strong>にあります。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">❌ 複雑さを積み重ねるソフトウェア</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>機能が増えるほど重くなる</li>
-              <li>変更するたびに壊れるリスクが上がる</li>
-              <li>誰も全体を把握できなくなる</li>
-              <li>やがて誰も触れなくなる</li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">✅ UNIX的なソフトウェア</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>小さく・ひとつのことに集中する</li>
-              <li>シンプルなインターフェースで繋がる</li>
-              <li>組み合わせることで大きな力を発揮する</li>
-              <li>何十年も使い続けられる</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- ルール1: Small is Beautiful -->
-      <h2 class="section-title"><span class="title-icon">1️⃣</span> 小さいものは美しい</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🔬</span><h2>Small is Beautiful</h2></div>
-        <p>ひとつのプログラム・関数・クラスは<strong>できるだけ小さく保つ</strong>べきです。小さいコードは読みやすく、テストしやすく、再利用しやすい。大きなコードはその反対です。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545; font-size:0.9rem">😰 やりがちな失敗</h3>
-            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// 1つの関数が何でもやる
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方（初心者向け）</b><br>
+    UNIXの哲学は「コマンドラインの話」ではありません。<b>「どう設計するか・どう分割するか・どう組み合わせるか」</b>というソフトウェア設計の普遍的な原則です。9つのルールをひとつずつ、自分のコードや設計に当てはめて考えてみましょう。
+  </div>
+</div><h2>🌍 なぜ「UNIX的考え方」が今も通用するのか</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">⏳</span><h2>50年以上生き続けた設計思想</h2></div>
+  <p>UNIXは1969年にAT&Tベル研究所で誕生しました。その後、Linux・macOS・AndroidなどあらゆるOSの土台となり、現代のクラウドサーバーの大半で動いています。これほど長く生き残った理由のひとつが、<strong>シンプルさを徹底した設計哲学</strong>にあります。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">❌ 複雑さを積み重ねるソフトウェア</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>機能が増えるほど重くなる</li>
+        <li>変更するたびに壊れるリスクが上がる</li>
+        <li>誰も全体を把握できなくなる</li>
+        <li>やがて誰も触れなくなる</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">✅ UNIX的なソフトウェア</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>小さく・ひとつのことに集中する</li>
+        <li>シンプルなインターフェースで繋がる</li>
+        <li>組み合わせることで大きな力を発揮する</li>
+        <li>何十年も使い続けられる</li>
+      </ul>
+    </div>
+  </div>
+</div><h2>1️⃣ 小さいものは美しい</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🔬</span><h2>Small is Beautiful</h2></div>
+  <p>ひとつのプログラム・関数・クラスは<strong>できるだけ小さく保つ</strong>べきです。小さいコードは読みやすく、テストしやすく、再利用しやすい。大きなコードはその反対です。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545; font-size:0.9rem">😰 やりがちな失敗</h3>
+      <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// 1つの関数が何でもやる
 function processOrder(order) {
   // バリデーション(20行)
   // 在庫確認(30行)
@@ -73,10 +64,10 @@ function processOrder(order) {
   // DB保存(35行)
   // ログ出力(15行)
 } // 合計165行！</pre>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745; font-size:0.9rem">😊 UNIX的なアプローチ</h3>
-            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// 小さな関数を組み合わせる
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745; font-size:0.9rem">😊 UNIX的なアプローチ</h3>
+      <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:4px; overflow-x:auto">// 小さな関数を組み合わせる
 function processOrder(order) {
   validate(order);
   checkStock(order);
@@ -85,328 +76,257 @@ function processOrder(order) {
   sendConfirmEmail(order);
   logOrder(order);
 } // 各関数は10〜20行</pre>
-          </div>
-        </div>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>目安：</b>関数が画面に収まらなくなったら、分割を検討するサインです。「この関数は何をするか？」が一文で言えない場合も同様です。
-          </div>
-        </div>
+    </div>
+  </div>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>目安：</b>関数が画面に収まらなくなったら、分割を検討するサインです。「この関数は何をするか？」が一文で言えない場合も同様です。
+    </div>
+  </div>
+</div><h2>2️⃣ ひとつのことをうまくやれ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3cd">🎯</span><h2>Do One Thing and Do It Well</h2></div>
+  <p>これはUNIX哲学の中で最も有名なルールです。<strong>プログラムも関数も、ひとつの仕事に集中する</strong>べきです。複数のことをやろうとすると、どれも中途半端になります。</p>  <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; margin-top:0.75rem">
+    <h3 style="margin:0 0 0.75rem; color:var(--primary)">UNIXコマンドの例</h3>
+    <div style="display:grid; gap:0.5rem">
+      <div style="display:flex; gap:0.75rem; align-items:flex-start">
+        <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">ls</code>
+        <span>ファイル一覧を表示する。それだけ。</span>
       </div>
-
-      <!-- ルール2: Do One Thing -->
-      <h2 class="section-title"><span class="title-icon">2️⃣</span> ひとつのことをうまくやれ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3cd">🎯</span><h2>Do One Thing and Do It Well</h2></div>
-        <p>これはUNIX哲学の中で最も有名なルールです。<strong>プログラムも関数も、ひとつの仕事に集中する</strong>べきです。複数のことをやろうとすると、どれも中途半端になります。</p>
-
-        <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; margin-top:0.75rem">
-          <h3 style="margin:0 0 0.75rem; color:var(--primary)">UNIXコマンドの例</h3>
-          <div style="display:grid; gap:0.5rem">
-            <div style="display:flex; gap:0.75rem; align-items:flex-start">
-              <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">ls</code>
-              <span>ファイル一覧を表示する。それだけ。</span>
-            </div>
-            <div style="display:flex; gap:0.75rem; align-items:flex-start">
-              <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">grep</code>
-              <span>テキストを検索する。それだけ。</span>
-            </div>
-            <div style="display:flex; gap:0.75rem; align-items:flex-start">
-              <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">sort</code>
-              <span>並び替える。それだけ。</span>
-            </div>
-            <div style="display:flex; gap:0.75rem; align-items:flex-start">
-              <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">wc</code>
-              <span>文字数・行数を数える。それだけ。</span>
-            </div>
-          </div>
-          <p style="margin:1rem 0 0; font-size:0.9rem; color:var(--text-muted)">どれも単純ですが、組み合わせることで強力な処理ができます。</p>
-        </div>
-
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>「そして（and）」が出たら分割のサイン：</b>関数の説明に「〜して、かつ〜する」が入る場合、それは複数の責任を持っている証拠です。<br>
-            例：「ユーザーを保存して、メールも送る」→ <code>saveUser()</code> と <code>sendWelcomeEmail()</code> に分ける
-          </div>
-        </div>
+      <div style="display:flex; gap:0.75rem; align-items:flex-start">
+        <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">grep</code>
+        <span>テキストを検索する。それだけ。</span>
       </div>
-
-      <!-- ルール3: Prototype ASAP -->
-      <h2 class="section-title"><span class="title-icon">3️⃣</span> できる限り早くプロトタイプを作れ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🚀</span><h2>Build a Prototype as Soon as Possible</h2></div>
-        <p>完璧な設計を紙の上で考え続けるより、<strong>動くものを早く作ってフィードバックを得る</strong>方が最終的に良いものができます。プロトタイプは「使い捨て」でよく、試行錯誤のための道具です。</p>
-
-        <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">プロトタイプの目的</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>技術的に実現可能かを素早く確かめる</li>
-              <li>ユーザーに見せて「これでいいですか？」と確認する</li>
-              <li>設計の誤りを早期に発見する</li>
-              <li>チームの認識を揃える</li>
-            </ul>
-          </div>
-          <div class="callout callout-info">
-            <span class="callout-icon">💡</span>
-            <div class="callout-body">
-              <b>「完璧」は「完成」の敵：</b>プロトタイプは汚くていい。後で作り直すことを前提に、まず動かすことを優先しましょう。早く試すほど、早く学べます。
-            </div>
-          </div>
-        </div>
+      <div style="display:flex; gap:0.75rem; align-items:flex-start">
+        <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">sort</code>
+        <span>並び替える。それだけ。</span>
       </div>
-
-      <!-- ルール4: Portability -->
-      <h2 class="section-title"><span class="title-icon">4️⃣</span> 移植性を大切にせよ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🌐</span><h2>Portability over Efficiency</h2></div>
-        <p>特定の環境・OS・ハードウェアに依存したコードを書くと、環境が変わったときに動かなくなります。<strong>特定の環境に縛られないコードは、長く使い続けられます。</strong></p>
-
-        <div class="grid-2col" style="margin-top:0.75rem">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">移植性が低い例</h3>
-            <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
-              <li>Windowsのパス区切り文字 <code>\</code> をハードコード</li>
-              <li>特定のDBのSQLの方言に依存</li>
-              <li>特定のブラウザのAPIを直接使う</li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">移植性が高い例</h3>
-            <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
-              <li>パス操作ライブラリを使う（<code>path.join()</code> など）</li>
-              <li>標準SQLを使い、方言はORMに任せる</li>
-              <li>抽象化レイヤーを挟んで実装を隠す</li>
-            </ul>
-          </div>
-        </div>
+      <div style="display:flex; gap:0.75rem; align-items:flex-start">
+        <code style="background:#e8f4e8; padding:0.25rem 0.5rem; border-radius:4px; min-width:4rem; text-align:center">wc</code>
+        <span>文字数・行数を数える。それだけ。</span>
       </div>
-
-      <!-- ルール5: Store Data in Flat Text Files -->
-      <h2 class="section-title"><span class="title-icon">5️⃣</span> データはテキストファイルに格納せよ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fef3cd">📄</span><h2>Store Data in Flat Text Files</h2></div>
-        <p>バイナリ形式やプロプライエタリな形式より、<strong>人間が読めるテキスト形式</strong>を優先しましょう。テキストデータはどんな環境でも開け、バージョン管理でき、デバッグもしやすい。</p>
-
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>形式</th><th>メリット</th><th>デメリット</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>テキスト（JSON, YAML, CSV）</td>
-              <td>人間が読める・gitで差分が見える・ツールを選ばない</td>
-              <td>バイナリより少し大きい</td>
-            </tr>
-            <tr>
-              <td>バイナリ・独自形式</td>
-              <td>処理が速い・サイズが小さいことがある</td>
-              <td>専用ツールがないと読めない・デバッグが難しい</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>現代での応用：</b>設定ファイルはYAMLやJSON・TOMLに。ログはテキスト形式で出力。インフラ定義はコードとして管理（Infrastructure as Code）。これらはすべて「テキストを大切にする」UNIX哲学の現代的な表れです。
-          </div>
-        </div>
+    </div>
+    <p style="margin:1rem 0 0; font-size:0.9rem; color:var(--text-muted)">どれも単純ですが、組み合わせることで強力な処理ができます。</p>
+  </div>  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>「そして（and）」が出たら分割のサイン：</b>関数の説明に「〜して、かつ〜する」が入る場合、それは複数の責任を持っている証拠です。<br>
+      例：「ユーザーを保存して、メールも送る」→ <code>saveUser()</code> と <code>sendWelcomeEmail()</code> に分ける
+    </div>
+  </div>
+</div><h2>3️⃣ できる限り早くプロトタイプを作れ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🚀</span><h2>Build a Prototype as Soon as Possible</h2></div>
+  <p>完璧な設計を紙の上で考え続けるより、<strong>動くものを早く作ってフィードバックを得る</strong>方が最終的に良いものができます。プロトタイプは「使い捨て」でよく、試行錯誤のための道具です。</p>  <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">プロトタイプの目的</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>技術的に実現可能かを素早く確かめる</li>
+        <li>ユーザーに見せて「これでいいですか？」と確認する</li>
+        <li>設計の誤りを早期に発見する</li>
+        <li>チームの認識を揃える</li>
+      </ul>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <b>「完璧」は「完成」の敵：</b>プロトタイプは汚くていい。後で作り直すことを前提に、まず動かすことを優先しましょう。早く試すほど、早く学べます。
       </div>
-
-      <!-- ルール6: Use Software Leverage -->
-      <h2 class="section-title"><span class="title-icon">6️⃣</span> ソフトウェアのレバレッジを使え</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">⚙️</span><h2>Use Software Leverage to Your Advantage</h2></div>
-        <p>「ゼロから作る」より<strong>既存の道具・ライブラリ・プログラムを最大限に活用する</strong>べきです。車輪の再発明をしている時間は、本当に価値を生む部分に使いましょう。</p>
-
-        <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">レバレッジを使う具体例</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>認証機能 → OAuth・JWTライブラリを使う（自前で暗号化を実装しない）</li>
-              <li>日付計算 → dayjs・date-fns などのライブラリを使う</li>
-              <li>データ変換 → jq・pandas など専門ツールを使う</li>
-              <li>テスト → JUnit・pytest などのフレームワークを使う</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>注意：</b>ライブラリ選定でも「小さくシンプルなもの」を選ぶのがUNIX的。何でもできる巨大フレームワークより、ひとつのことをうまくやる小さなライブラリの方が長く使えることが多いです。
-          </div>
-        </div>
+    </div>
+  </div>
+</div><h2>4️⃣ 移植性を大切にせよ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🌐</span><h2>Portability over Efficiency</h2></div>
+  <p>特定の環境・OS・ハードウェアに依存したコードを書くと、環境が変わったときに動かなくなります。<strong>特定の環境に縛られないコードは、長く使い続けられます。</strong></p>  <div class="grid-2col" style="margin-top:0.75rem">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">移植性が低い例</h3>
+      <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
+        <li>Windowsのパス区切り文字 <code>\</code> をハードコード</li>
+        <li>特定のDBのSQLの方言に依存</li>
+        <li>特定のブラウザのAPIを直接使う</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">移植性が高い例</h3>
+      <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
+        <li>パス操作ライブラリを使う（<code>path.join()</code> など）</li>
+        <li>標準SQLを使い、方言はORMに任せる</li>
+        <li>抽象化レイヤーを挟んで実装を隠す</li>
+      </ul>
+    </div>
+  </div>
+</div><h2>5️⃣ データはテキストファイルに格納せよ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef3cd">📄</span><h2>Store Data in Flat Text Files</h2></div>
+  <p>バイナリ形式やプロプライエタリな形式より、<strong>人間が読めるテキスト形式</strong>を優先しましょう。テキストデータはどんな環境でも開け、バージョン管理でき、デバッグもしやすい。</p>  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>形式</th><th>メリット</th><th>デメリット</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>テキスト（JSON, YAML, CSV）</td>
+        <td>人間が読める・gitで差分が見える・ツールを選ばない</td>
+        <td>バイナリより少し大きい</td>
+      </tr>
+      <tr>
+        <td>バイナリ・独自形式</td>
+        <td>処理が速い・サイズが小さいことがある</td>
+        <td>専用ツールがないと読めない・デバッグが難しい</td>
+      </tr>
+    </tbody>
+  </table>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>現代での応用：</b>設定ファイルはYAMLやJSON・TOMLに。ログはテキスト形式で出力。インフラ定義はコードとして管理（Infrastructure as Code）。これらはすべて「テキストを大切にする」UNIX哲学の現代的な表れです。
+    </div>
+  </div>
+</div><h2>6️⃣ ソフトウェアのレバレッジを使え</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">⚙️</span><h2>Use Software Leverage to Your Advantage</h2></div>
+  <p>「ゼロから作る」より<strong>既存の道具・ライブラリ・プログラムを最大限に活用する</strong>べきです。車輪の再発明をしている時間は、本当に価値を生む部分に使いましょう。</p>  <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">レバレッジを使う具体例</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>認証機能 → OAuth・JWTライブラリを使う（自前で暗号化を実装しない）</li>
+        <li>日付計算 → dayjs・date-fns などのライブラリを使う</li>
+        <li>データ変換 → jq・pandas など専門ツールを使う</li>
+        <li>テスト → JUnit・pytest などのフレームワークを使う</li>
+      </ul>
+    </div>
+  </div>  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>注意：</b>ライブラリ選定でも「小さくシンプルなもの」を選ぶのがUNIX的。何でもできる巨大フレームワークより、ひとつのことをうまくやる小さなライブラリの方が長く使えることが多いです。
+    </div>
+  </div>
+</div><h2>7️⃣ シェルスクリプトを使って力を高めよ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#f3e8ff">💻</span><h2>Use Shell Scripts to Increase Leverage and Portability</h2></div>
+  <p>繰り返し行う作業は<strong>自動化する</strong>のがUNIX的です。手でやっていることはミスが起きます。スクリプトにすれば毎回同じ結果が得られ、他の人も使えます。</p>  <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">自動化すべきよくある作業</h3>
+      <div class="grid-2col" style="gap:0.5rem; font-size:0.9rem">
+        <ul style="margin:0; padding-left:1.25rem">
+          <li>ビルド・デプロイ手順</li>
+          <li>テストの実行</li>
+          <li>ログファイルの整理</li>
+        </ul>
+        <ul style="margin:0; padding-left:1.25rem">
+          <li>データのバックアップ</li>
+          <li>環境のセットアップ</li>
+          <li>定型レポートの生成</li>
+        </ul>
       </div>
-
-      <!-- ルール7: Scripting Shell -->
-      <h2 class="section-title"><span class="title-icon">7️⃣</span> シェルスクリプトを使って力を高めよ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#f3e8ff">💻</span><h2>Use Shell Scripts to Increase Leverage and Portability</h2></div>
-        <p>繰り返し行う作業は<strong>自動化する</strong>のがUNIX的です。手でやっていることはミスが起きます。スクリプトにすれば毎回同じ結果が得られ、他の人も使えます。</p>
-
-        <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">自動化すべきよくある作業</h3>
-            <div class="grid-2col" style="gap:0.5rem; font-size:0.9rem">
-              <ul style="margin:0; padding-left:1.25rem">
-                <li>ビルド・デプロイ手順</li>
-                <li>テストの実行</li>
-                <li>ログファイルの整理</li>
-              </ul>
-              <ul style="margin:0; padding-left:1.25rem">
-                <li>データのバックアップ</li>
-                <li>環境のセットアップ</li>
-                <li>定型レポートの生成</li>
-              </ul>
-            </div>
-          </div>
-          <div class="callout callout-info">
-            <span class="callout-icon">💡</span>
-            <div class="callout-body">
-              <b>初心者へ：</b>「シェルスクリプト」が難しければ、まずnpm scripts・Makefile・CI/CDのワークフロー定義から始めましょう。「手順をコードで記録する」という発想自体がUNIX哲学です。
-            </div>
-          </div>
-        </div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <b>初心者へ：</b>「シェルスクリプト」が難しければ、まずnpm scripts・Makefile・CI/CDのワークフロー定義から始めましょう。「手順をコードで記録する」という発想自体がUNIX哲学です。
       </div>
-
-      <!-- ルール8: Avoid Captive User Interface -->
-      <h2 class="section-title"><span class="title-icon">8️⃣</span> 対話的インターフェースを避けよ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔗</span><h2>Avoid Captive User Interfaces</h2></div>
-        <p>ユーザーに次のステップを強制する「対話的なインターフェース」は、自動化の妨げになります。<strong>入力と出力を標準化し、他のプログラムと繋がりやすくする</strong>設計を目指しましょう。</p>
-
-        <div class="grid-2col" style="margin-top:0.75rem">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">自動化しにくい設計</h3>
-            <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
-              <li>毎回「次へ」ボタンを押さないと進まないウィザード</li>
-              <li>パスワードを対話的に入力させるCLI</li>
-              <li>出力が固定幅テキストで解析しにくい</li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">自動化しやすい設計</h3>
-            <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
-              <li>引数・環境変数で全パラメータを受け取れる</li>
-              <li>出力はJSON・CSV など解析しやすい形式</li>
-              <li>終了コードで成功・失敗を伝える</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>APIに置き換えて考えると：</b>良いAPIは「どんな引数を渡せばどんな結果が返るか」が明確で、他のシステムから呼び出しやすい。これがUNIX哲学の「繋がりやすさ」の現代版です。
-          </div>
-        </div>
-      </div>
-
-      <!-- ルール9: Make Every Program a Filter -->
-      <h2 class="section-title"><span class="title-icon">9️⃣</span> すべてのプログラムはフィルタとして設計せよ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🔄</span><h2>Make Every Program a Filter</h2></div>
-        <p>UNIXの強力さは「パイプ（<code>|</code>）」——プログラムの出力を別のプログラムの入力に繋ぐ仕組みから来ています。<strong>データを受け取り、変換して、渡す「フィルタ」として設計する</strong>と、組み合わせの自由度が飛躍的に上がります。</p>
-
-        <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; margin-top:0.75rem">
-          <h3 style="margin:0 0 0.75rem; color:var(--primary)">パイプで繋ぐとこんなことができる</h3>
-          <pre style="margin:0; font-size:0.85rem; background:#1e1e1e; color:#d4d4d4; padding:1rem; border-radius:6px; overflow-x:auto"># エラーログを集計して多い順に上位10件を表示する
+    </div>
+  </div>
+</div><h2>8️⃣ 対話的インターフェースを避けよ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔗</span><h2>Avoid Captive User Interfaces</h2></div>
+  <p>ユーザーに次のステップを強制する「対話的なインターフェース」は、自動化の妨げになります。<strong>入力と出力を標準化し、他のプログラムと繋がりやすくする</strong>設計を目指しましょう。</p>  <div class="grid-2col" style="margin-top:0.75rem">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">自動化しにくい設計</h3>
+      <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
+        <li>毎回「次へ」ボタンを押さないと進まないウィザード</li>
+        <li>パスワードを対話的に入力させるCLI</li>
+        <li>出力が固定幅テキストで解析しにくい</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">自動化しやすい設計</h3>
+      <ul style="margin:0; padding-left:1.25rem; font-size:0.9rem">
+        <li>引数・環境変数で全パラメータを受け取れる</li>
+        <li>出力はJSON・CSV など解析しやすい形式</li>
+        <li>終了コードで成功・失敗を伝える</li>
+      </ul>
+    </div>
+  </div>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>APIに置き換えて考えると：</b>良いAPIは「どんな引数を渡せばどんな結果が返るか」が明確で、他のシステムから呼び出しやすい。これがUNIX哲学の「繋がりやすさ」の現代版です。
+    </div>
+  </div>
+</div><h2>9️⃣ すべてのプログラムはフィルタとして設計せよ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🔄</span><h2>Make Every Program a Filter</h2></div>
+  <p>UNIXの強力さは「パイプ（<code>|</code>）」——プログラムの出力を別のプログラムの入力に繋ぐ仕組みから来ています。<strong>データを受け取り、変換して、渡す「フィルタ」として設計する</strong>と、組み合わせの自由度が飛躍的に上がります。</p>  <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; margin-top:0.75rem">
+    <h3 style="margin:0 0 0.75rem; color:var(--primary)">パイプで繋ぐとこんなことができる</h3>
+    <pre style="margin:0; font-size:0.85rem; background:#1e1e1e; color:#d4d4d4; padding:1rem; border-radius:6px; overflow-x:auto"># エラーログを集計して多い順に上位10件を表示する
 cat app.log | grep "ERROR" | awk '{print $5}' | sort | uniq -c | sort -rn | head -10</pre>
-          <p style="margin:0.75rem 0 0; font-size:0.85rem; color:var(--text-muted)">
-            <code>cat</code>（読む）→ <code>grep</code>（絞る）→ <code>awk</code>（加工）→ <code>sort</code>（並べる）→ <code>uniq -c</code>（数える）→ <code>sort -rn</code>（再並べ）→ <code>head</code>（先頭だけ）という小さなフィルタの連鎖
-          </p>
-        </div>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>関数にも同じ発想を：</b>副作用が少なく、入力を受け取って出力を返す関数は「フィルタ」です。こういった関数は組み合わせやすく、テストもしやすい。関数型プログラミングの考え方とも通じています。
-          </div>
-        </div>
-      </div>
-
-      <!-- 9つのルールのまとめ -->
-      <h2 class="section-title"><span class="title-icon">📋</span> 9つのルール まとめ</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">📌</span><h2>UNIX哲学 チートシート</h2></div>
-
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>#</th><th>ルール</th><th>一言で言うと</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>小さいものは美しい</td><td>コードは小さく保つ</td></tr>
-            <tr><td>2</td><td>ひとつのことをうまくやれ</td><td>関数の責任はひとつだけ</td></tr>
-            <tr><td>3</td><td>できる限り早くプロトタイプを作れ</td><td>動くものを早く試す</td></tr>
-            <tr><td>4</td><td>移植性を大切にせよ</td><td>環境依存を減らす</td></tr>
-            <tr><td>5</td><td>データはテキストファイルに格納せよ</td><td>人が読める形式を優先する</td></tr>
-            <tr><td>6</td><td>ソフトウェアのレバレッジを使え</td><td>車輪の再発明をしない</td></tr>
-            <tr><td>7</td><td>シェルスクリプトを使って力を高めよ</td><td>繰り返し作業を自動化する</td></tr>
-            <tr><td>8</td><td>対話的インターフェースを避けよ</td><td>自動化しやすいインターフェースを作る</td></tr>
-            <tr><td>9</td><td>すべてのプログラムはフィルタとして設計せよ</td><td>組み合わせられる設計にする</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 現代への応用 -->
-      <h2 class="section-title"><span class="title-icon">🌱</span> UNIX哲学を現代開発に活かす</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🏗️</span><h2>マイクロサービス・クリーンアーキテクチャとのつながり</h2></div>
-        <p>「小さく・ひとつのことに集中し・組み合わせる」というUNIX哲学は、現代のソフトウェア設計にも形を変えて生き続けています。</p>
-
-        <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">マイクロサービス</h3>
-            <p style="margin:0">大きなアプリを「ひとつのことをうまくやる小さなサービス」に分割する考え方。UNIXの「小さいプログラムを繋げる」発想そのものです。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">単一責任の原則（SRP）</h3>
-            <p style="margin:0">「クラスは変更の理由をひとつだけ持つべき」——「ひとつのことをうまくやれ」のオブジェクト指向版です。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">CI/CD パイプライン</h3>
-            <p style="margin:0">「コードを取得 → ビルド → テスト → デプロイ」と処理を繋いでいく仕組み。まさにUNIXのパイプ思想の現代的な表れです。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">Infrastructure as Code</h3>
-            <p style="margin:0">インフラ設定をテキストファイル（YAMLなど）で管理する手法。「データはテキストで格納せよ」の直接的な応用です。</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- まとめ -->
-      <h2 class="section-title"><span class="title-icon">🎓</span> 明日からできること</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🚀</span><h2>UNIX哲学をコードに活かすファーストステップ</h2></div>
-
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>#</th><th>今日からできること</th><th>対応するルール</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>「長すぎる」と感じた関数を分割してみる</td><td>小さいものは美しい</td></tr>
-            <tr><td>2</td><td>「〜して、かつ〜する」関数を探して責任を分ける</td><td>ひとつのことをうまくやれ</td></tr>
-            <tr><td>3</td><td>手作業で繰り返している操作をスクリプト化する</td><td>自動化・レバレッジ</td></tr>
-            <tr><td>4</td><td>設定値をコードにハードコードせずファイルや環境変数に移す</td><td>移植性・テキスト格納</td></tr>
-            <tr><td>5</td><td>既存ライブラリで代替できる自作コードを探す</td><td>レバレッジを使え</td></tr>
-          </tbody>
-        </table>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">🌱</span>
-          <div class="callout-body">
-            <b>UNIX哲学の本質：</b>これらのルールは「こうしなければならない」という縛りではなく、<strong>50年間のソフトウェア開発者たちが学んだ知恵の結晶</strong>です。「なぜこのルールがあるのか」を理解すれば、状況に応じて柔軟に応用できます。シンプルさへの追求は、今日の開発にも変わらず有効です。
-          </div>
-        </div>
-      </div>
+    <p style="margin:0.75rem 0 0; font-size:0.85rem; color:var(--text-muted)">
+      <code>cat</code>（読む）→ <code>grep</code>（絞る）→ <code>awk</code>（加工）→ <code>sort</code>（並べる）→ <code>uniq -c</code>（数える）→ <code>sort -rn</code>（再並べ）→ <code>head</code>（先頭だけ）という小さなフィルタの連鎖
+    </p>
+  </div>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>関数にも同じ発想を：</b>副作用が少なく、入力を受け取って出力を返す関数は「フィルタ」です。こういった関数は組み合わせやすく、テストもしやすい。関数型プログラミングの考え方とも通じています。
+    </div>
+  </div>
+</div><h2>📋 9つのルール まとめ</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">📌</span><h2>UNIX哲学 チートシート</h2></div>  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>#</th><th>ルール</th><th>一言で言うと</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>小さいものは美しい</td><td>コードは小さく保つ</td></tr>
+      <tr><td>2</td><td>ひとつのことをうまくやれ</td><td>関数の責任はひとつだけ</td></tr>
+      <tr><td>3</td><td>できる限り早くプロトタイプを作れ</td><td>動くものを早く試す</td></tr>
+      <tr><td>4</td><td>移植性を大切にせよ</td><td>環境依存を減らす</td></tr>
+      <tr><td>5</td><td>データはテキストファイルに格納せよ</td><td>人が読める形式を優先する</td></tr>
+      <tr><td>6</td><td>ソフトウェアのレバレッジを使え</td><td>車輪の再発明をしない</td></tr>
+      <tr><td>7</td><td>シェルスクリプトを使って力を高めよ</td><td>繰り返し作業を自動化する</td></tr>
+      <tr><td>8</td><td>対話的インターフェースを避けよ</td><td>自動化しやすいインターフェースを作る</td></tr>
+      <tr><td>9</td><td>すべてのプログラムはフィルタとして設計せよ</td><td>組み合わせられる設計にする</td></tr>
+    </tbody>
+  </table>
+</div><h2>🌱 UNIX哲学を現代開発に活かす</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🏗️</span><h2>マイクロサービス・クリーンアーキテクチャとのつながり</h2></div>
+  <p>「小さく・ひとつのことに集中し・組み合わせる」というUNIX哲学は、現代のソフトウェア設計にも形を変えて生き続けています。</p>  <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">マイクロサービス</h3>
+      <p style="margin:0">大きなアプリを「ひとつのことをうまくやる小さなサービス」に分割する考え方。UNIXの「小さいプログラムを繋げる」発想そのものです。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">単一責任の原則（SRP）</h3>
+      <p style="margin:0">「クラスは変更の理由をひとつだけ持つべき」——「ひとつのことをうまくやれ」のオブジェクト指向版です。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">CI/CD パイプライン</h3>
+      <p style="margin:0">「コードを取得 → ビルド → テスト → デプロイ」と処理を繋いでいく仕組み。まさにUNIXのパイプ思想の現代的な表れです。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">Infrastructure as Code</h3>
+      <p style="margin:0">インフラ設定をテキストファイル（YAMLなど）で管理する手法。「データはテキストで格納せよ」の直接的な応用です。</p>
+    </div>
+  </div>
+</div><h2>🎓 明日からできること</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🚀</span><h2>UNIX哲学をコードに活かすファーストステップ</h2></div>  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>#</th><th>今日からできること</th><th>対応するルール</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>「長すぎる」と感じた関数を分割してみる</td><td>小さいものは美しい</td></tr>
+      <tr><td>2</td><td>「〜して、かつ〜する」関数を探して責任を分ける</td><td>ひとつのことをうまくやれ</td></tr>
+      <tr><td>3</td><td>手作業で繰り返している操作をスクリプト化する</td><td>自動化・レバレッジ</td></tr>
+      <tr><td>4</td><td>設定値をコードにハードコードせずファイルや環境変数に移す</td><td>移植性・テキスト格納</td></tr>
+      <tr><td>5</td><td>既存ライブラリで代替できる自作コードを探す</td><td>レバレッジを使え</td></tr>
+    </tbody>
+  </table>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">🌱</span>
+    <div class="callout-body">
+      <b>UNIX哲学の本質：</b>これらのルールは「こうしなければならない」という縛りではなく、<strong>50年間のソフトウェア開発者たちが学んだ知恵の結晶</strong>です。「なぜこのルールがあるのか」を理解すれば、状況に応じて柔軟に応用できます。シンプルさへの追求は、今日の開発にも変わらず有効です。
+    </div>
+  </div>
+</div>
 
     </div>
   </main>
 </div>
 
-<script>
-  fetch('../../../components/sidebar.html')
-    .then(r => r.text())
-    .then(html => { document.getElementById('sidebar-placeholder').outerHTML = html; });
-</script>
+
+<script src="../../../js/main.js"></script>
+<script src="../../../sidebar.js"></script>
 </body>
 </html>

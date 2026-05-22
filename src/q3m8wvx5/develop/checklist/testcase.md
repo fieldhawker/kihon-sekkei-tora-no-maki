@@ -1,0 +1,215 @@
+---
+title: テストケース作成チェックリスト
+subtitle: チェックリスト
+phase: impl
+description: テストケースを新規作成・レビューする際に確認すべき項目のチェックリストです。網羅性・命名・独立性・可読性・境界値・モックの観点を網羅しています。
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このチェックリストの使い方</b><br>
+    1) テスト設計時に「1. テスト設計・網羅性」「2. 命名」を確認 → 2) 実装時に「3. テストの独立性」「4. AAA構造」を意識 → 3) レビュー前に「5. 境界値・異常系」「6. モック」を確認。<br>
+    迷ったら、<b>テストの意図が一読で分かること・テストが単独で実行できること</b>を最優先にします。
+  </div>
+</div>
+
+<div class="callout callout-warning" style="margin-top:1rem">
+  <span class="callout-icon">📌</span>
+  <div class="callout-body">
+    <b>初心者がハマりやすい3点</b><br>
+    ① 正常系だけテストして「完璧だ」と思う（→ バグは境界値・異常系・エッジケースに潜む）<br>
+    ② テストが他のテストの実行結果に依存する（→ テストは完全に独立して実行できること）<br>
+    ③ 1つのテストメソッドで複数のことを確認しようとする（→ 1テスト1アサーション が基本）
+  </div>
+</div>
+
+## 1. テスト設計・網羅性
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="t1-1"><label for="t1-1">正常系（ハッピーパス）のテストケースが存在する</label></li>
+    <li><input type="checkbox" id="t1-2"><label for="t1-2">異常系・エラーケースのテストが存在する</label></li>
+    <li><input type="checkbox" id="t1-3"><label for="t1-3">境界値（最大値・最小値・上限ちょうど・上限+1など）のテストが存在する</label></li>
+    <li><input type="checkbox" id="t1-4"><label for="t1-4">nullや空文字・空コレクションを渡した場合のテストが存在する</label></li>
+    <li><input type="checkbox" id="t1-5"><label for="t1-5">テスト対象のすべての分岐（if/switch/三項演算子）がカバーされている</label></li>
+    <li><input type="checkbox" id="t1-6"><label for="t1-6">決定表・同値分割・境界値分析などのテスト技法が活用されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>テスト技法</th><th>概要</th><th>例</th></tr></thead>
+      <tbody>
+        <tr><td>同値分割</td><td>同じ動作をするグループからそれぞれ1つ選んでテストする</td><td>年齢チェック（0〜17歳: 未成年、18〜64歳: 成人、65歳〜: 高齢者）の各グループから1件ずつテスト</td></tr>
+        <tr><td>境界値分析</td><td>区切りの前後の値をテストする</td><td>18歳以上が条件なら「17歳・18歳・19歳」でテスト</td></tr>
+        <tr><td>決定表テスト</td><td>複数条件の組み合わせを表にして網羅する</td><td>会員区分（VIP/一般）× 購入金額（1万以上/未満）→ 4通りの割引率をテスト</td></tr>
+        <tr><td>状態遷移テスト</td><td>状態の遷移パターンをカバーする</td><td>注文状態（未確定→確定→発送済→完了）の各遷移と不正遷移（完了→未確定）をテスト</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 2. テストの命名
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="t2-1"><label for="t2-1">テストメソッド名を読むだけで「何を・どういう条件で・どうなるか」が分かる</label></li>
+    <li><input type="checkbox" id="t2-2"><label for="t2-2">命名パターンが統一されている（<code>メソッド名_条件_期待結果</code> など）</label></li>
+    <li><input type="checkbox" id="t2-3"><label for="t2-3"><code>test1</code>・<code>checkA</code> などの意味のない名前を使っていない</label></li>
+    <li><input type="checkbox" id="t2-4"><label for="t2-4">テストクラス名が <code>テスト対象クラス名 + Test</code> の形式になっている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>命名パターン</th><th>例</th><th>適した場面</th></tr></thead>
+      <tbody>
+        <tr><td><code>メソッド名_条件_期待結果</code></td><td><code>calculateDiscount_withVipMember_returns20PercentOff</code></td><td>ユニットテスト全般</td></tr>
+        <tr><td><code>should_期待動作_when_条件</code></td><td><code>should_throwException_when_emailIsNull</code></td><td>BDD スタイル</td></tr>
+        <tr><td><code>given_前提_when_操作_then_期待結果</code></td><td><code>given_emptyCart_when_addItem_then_cartHasOneItem</code></td><td>振る舞い記述が重要な場合</td></tr>
+        <tr><td>日本語メソッド名</td><td><code>VIPメンバーに対して20%割引が適用される()</code></td><td>テスト内容を日本語で明示したい場合（JUnit5・pytest等で使用可）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 3. テストの独立性
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="t3-1"><label for="t3-1">各テストが他のテストの実行順序や結果に依存していない</label></li>
+    <li><input type="checkbox" id="t3-2"><label for="t3-2">テストデータのセットアップが各テスト（または BeforeEach）で行われている</label></li>
+    <li><input type="checkbox" id="t3-3"><label for="t3-3">テスト後に共有状態（DB・ファイル・静的変数）が元に戻されている</label></li>
+    <li><input type="checkbox" id="t3-4"><label for="t3-4">テストが単独でも実行できる（他テストが存在しなくても通る）</label></li>
+    <li><input type="checkbox" id="t3-5"><label for="t3-5">並行実行しても安全なテストになっている</label></li>
+  </ul>
+  <div class="callout callout-warning" style="margin-top:1.5rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>テスト間の依存が引き起こす問題</b>: テストAが作成したデータをテストBが前提としている場合、Bを単独で実行すると失敗します。また実行順序が変わると結果が変わる「不安定なテスト（Flaky Test）」になります。<br>
+      ✅ 各テストで <code>@BeforeEach</code> でデータを準備し、<code>@AfterEach</code> または <code>@Transactional</code> でクリーンアップする。
+    </div>
+  </div>
+</div>
+
+## 4. AAA構造（Arrange-Act-Assert）
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="t4-1"><label for="t4-1">テストが「準備（Arrange）→ 実行（Act）→ 検証（Assert）」の3段構造になっている</label></li>
+    <li><input type="checkbox" id="t4-2"><label for="t4-2">1つのテストメソッドで検証する内容が1つに絞られている</label></li>
+    <li><input type="checkbox" id="t4-3"><label for="t4-3">Assertがテストの意図を明確に表している（assertTrueより assertEqualsやassertThrowsを使う）</label></li>
+    <li><input type="checkbox" id="t4-4"><label for="t4-4">テスト失敗時のメッセージから原因が分かる（アサーションにメッセージを追加している）</label></li>
+    <li><input type="checkbox" id="t4-5"><label for="t4-5">Act（実行）部分が1行に収まっている（複数の操作を一度にテストしていない）</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>フェーズ</th><th>役割</th><th>例</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Arrange</b>（準備）</td>
+          <td>テストに必要なオブジェクト・データを準備する</td>
+          <td><pre style="font-size:.8rem;margin:0">var user = new User("Taro", UserType.VIP);
+var cart = new ShoppingCart(user);
+cart.addItem(new Item("書籍", 3000));</pre></td>
+        </tr>
+        <tr>
+          <td><b>Act</b>（実行）</td>
+          <td>テスト対象のメソッドを1回だけ呼び出す</td>
+          <td><pre style="font-size:.8rem;margin:0">var discountedPrice = cart.calculateTotal();</pre></td>
+        </tr>
+        <tr>
+          <td><b>Assert</b>（検証）</td>
+          <td>結果が期待通りか確認する</td>
+          <td><pre style="font-size:.8rem;margin:0">assertEquals(2400, discountedPrice,
+  "VIP会員は20%割引のはず");</pre></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 5. 境界値・異常系テスト
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="t5-1"><label for="t5-1">数値の最大値・最小値・0・負数のテストが存在する</label></li>
+    <li><input type="checkbox" id="t5-2"><label for="t5-2">文字列の空文字・1文字・最大文字数・最大文字数+1のテストが存在する</label></li>
+    <li><input type="checkbox" id="t5-3"><label for="t5-3">コレクションが空の場合・要素が1件の場合・大量件数の場合のテストが存在する</label></li>
+    <li><input type="checkbox" id="t5-4"><label for="t5-4">期待する例外が正しい型・メッセージでスローされることをテストしている</label></li>
+    <li><input type="checkbox" id="t5-5"><label for="t5-5">存在しないIDや重複するデータを渡した場合のテストが存在する</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>対象</th><th>確認すべき値</th><th>テスト例</th></tr></thead>
+      <tbody>
+        <tr><td>数値</td><td>0、負数、最小値、最大値、最大値+1、最小値-1</td><td>割引率計算: <code>quantity=0</code>・<code>quantity=1</code>・<code>quantity=99999</code>・<code>quantity=100000</code>（上限超え）</td></tr>
+        <tr><td>文字列</td><td>null、空文字("")、スペースのみ、最大長ちょうど、最大長+1文字</td><td>ユーザー名バリデーション: <code>""</code>・<code>"a"</code>・<code>"a".repeat(50)</code>・<code>"a".repeat(51)</code></td></tr>
+        <tr><td>コレクション</td><td>null、空リスト、要素1件、大量件数</td><td>合計金額計算: 空カート・1アイテム・1000アイテム</td></tr>
+        <tr><td>日付・時刻</td><td>うるう年、月末、年末年始、タイムゾーン境界</td><td>年齢計算: 2/29生まれのうるう年以外の誕生日</td></tr>
+        <tr>
+          <td>例外テスト（JUnit5）</td>
+          <td colspan="2"><pre style="font-size:.8rem;margin:0">var ex = assertThrows(IllegalArgumentException.class,
+    () -&gt; service.createUser(null));
+assertEquals("emailは必須です", ex.getMessage());</pre></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 6. モック・スタブの使い方
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="t6-1"><label for="t6-1">外部依存（DB・外部API・メール送信）はモックに置き換えられている</label></li>
+    <li><input type="checkbox" id="t6-2"><label for="t6-2">モックの振る舞いがテストの意図に沿って設定されている</label></li>
+    <li><input type="checkbox" id="t6-3"><label for="t6-3">モックが呼ばれた回数・引数の検証が必要な場合は verify を使っている</label></li>
+    <li><input type="checkbox" id="t6-4"><label for="t6-4">モックが過剰（テスト対象でないものまでモック化）になっていない</label></li>
+    <li><input type="checkbox" id="t6-5"><label for="t6-5">結合テストでは実際のDB・サービスを使っている（モック過多で実動作を検証できていない状態を避ける）</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>種別</th><th>定義</th><th>使いどころ</th></tr></thead>
+      <tbody>
+        <tr><td><b>Stub</b></td><td>決まった値を返すだけのダミー実装</td><td>テスト対象が依存するオブジェクトの戻り値を固定したい場合。<code>when(repo.findById(1L)).thenReturn(Optional.of(user))</code></td></tr>
+        <tr><td><b>Mock</b></td><td>呼び出しの記録・検証もできるダミー実装</td><td>「このメソッドが1回だけ呼ばれたこと」を検証したい場合。<code>verify(emailService, times(1)).send(any())</code></td></tr>
+        <tr><td><b>Spy</b></td><td>実際のオブジェクトの一部だけをオーバーライドする</td><td>大部分は実装を使いつつ、一部の外部呼び出しだけを差し替えたい場合</td></tr>
+        <tr><td><b>Fake</b></td><td>実際に動くが本番用ではない実装（InMemory DBなど）</td><td>H2などのインメモリDBを使った結合テスト</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-warning" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>モック過多の罠</b>: Repositoryのモックに依存したServiceのテストだけでは、SQLクエリのバグ・トランザクションの問題を検出できません。<br>
+      ユニットテスト（高速・モック多用）と結合テスト（実DB使用）を組み合わせて使うことが重要です。
+    </div>
+  </div>
+</div>
+
+## 7. テストの保守性
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="t7-1"><label for="t7-1">テストデータにマジックナンバー・マジック文字列を使っていない（定数・ファクトリーメソッドを使う）</label></li>
+    <li><input type="checkbox" id="t7-2"><label for="t7-2">共通のテストデータ生成は Builder パターンやファクトリーメソッドでまとめられている</label></li>
+    <li><input type="checkbox" id="t7-3"><label for="t7-3">CIで自動実行されるテストスイートに含まれている</label></li>
+    <li><input type="checkbox" id="t7-4"><label for="t7-4">テストが遅すぎない（ユニットテストは1秒以内・結合テストは10秒以内が目安）</label></li>
+    <li><input type="checkbox" id="t7-5"><label for="t7-5">不安定なテスト（実行のたびに結果が変わるFlaky Test）が存在しない</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>テストデータのBuilder</td>
+          <td><pre style="font-size:.8rem;margin:0">// Builderを使って必要な部分だけ変更する
+var user = UserTestBuilder.defaultUser()
+    .withEmail("test@example.com")
+    .withType(UserType.VIP)
+    .build();</pre>
+各テストで全フィールドをベタ書きしない（フィールド追加時の修正箇所を最小化）</td>
+        </tr>
+        <tr><td>Flaky Testの原因と対策</td><td>① 時刻依存 → <code>Clock</code> を注入してテストで固定 ② テスト間の状態共有 → BeforeEachでリセット ③ 外部サービス依存 → モックまたはWireMockを使う ④ 実行順依存 → テストの独立性を確保</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

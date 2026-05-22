@@ -1,269 +1,209 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web APIの設計 — 参考資料</title>
+  <title>🌐 Web APIの設計</title>
   <link rel="stylesheet" href="../../../css/style.css">
+  
+  
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
   <main class="main">
+    
     <div class="page-header phase-adr">
       <div class="subtitle">書籍まとめ / 技術</div>
       <h1>🌐 Web APIの設計</h1>
       <p class="description">Arnaud Lauret（API Handyman）著。使いやすく・長く使われるWeb APIを設計するための実践的な知識を体系的にまとめた一冊。「動けばいい」APIではなく、<b>利用者が迷わず・間違えず使えるAPI</b>を作るための考え方とノウハウを学べます。</p>
     </div>
-
     <div class="content">
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">🧭</span>
-        <div class="callout-body">
-          <b>このページの使い方（初心者向け）</b><br>
-          APIは「他の人（やシステム）が使う窓口」です。自分だけが使う関数と違い、<b>一度公開したAPIは簡単に変更できません</b>。だからこそ最初の設計が重要です。<b>「APIとは何か」→「URLの設計」→「リクエスト・レスポンス」→「エラー設計」→「バージョン管理」</b>の順に読み進めると、実務で使える知識が整います。
-        </div>
-      </div>
-
-      <!-- APIとは何か -->
-      <h2 class="section-title"><span class="title-icon">🤔</span> そもそもAPIとは何か</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔌</span><h2>APIはシステム同士をつなぐ「契約」</h2></div>
-        <p>API（Application Programming Interface）とは、<strong>異なるシステムやプログラムが互いにやりとりするための「決まりごと」</strong>です。レストランに例えると、お客さん（API利用者）とキッチン（システム内部）の間に立つ「メニューとウェイター」の役割です。</p>
-
-        <div class="grid-2col">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; background:#f8f9fa">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">📋 メニュー（API仕様）</h3>
-            <p style="margin:0; font-size:0.9rem">「こういう注文ができますよ」という約束。利用者はメニューを見て何が頼めるかがわかります。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; background:#f8f9fa">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">🍽️ 料理（レスポンス）</h3>
-            <p style="margin:0; font-size:0.9rem">注文通りに料理が運ばれてきます。キッチンの中がどうなっているかは知らなくていい。</p>
-          </div>
-        </div>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>Web APIとは：</b>インターネット（HTTP）を通じて使えるAPIです。スマホアプリが天気情報を取得するとき、ECサイトが決済サービスに問い合わせるとき、裏側ではWeb APIが使われています。
-          </div>
-        </div>
-      </div>
-
-      <!-- REST APIの基本 -->
-      <h2 class="section-title"><span class="title-icon">🏛️</span> REST APIの基本原則</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f0fe">📐</span><h2>RESTとは「Webのルールに則った設計スタイル」</h2></div>
-        <p>REST（Representational State Transfer）は、Web APIを設計するための<strong>考え方・スタイル</strong>です。難しく聞こえますが、本質は「<strong>HTTPの仕組みを正しく使おう</strong>」ということです。</p>
-
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>REST の原則</th><th>意味</th><th>具体例</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>リソース指向</strong></td>
-              <td>操作ではなく「モノ（リソース）」でURLを設計する</td>
-              <td><code>/users/123</code>（ユーザーという「モノ」）</td>
-            </tr>
-            <tr>
-              <td><strong>HTTPメソッドを正しく使う</strong></td>
-              <td>GET/POST/PUT/DELETE で操作の種類を表す</td>
-              <td>取得はGET、作成はPOST</td>
-            </tr>
-            <tr>
-              <td><strong>ステートレス</strong></td>
-              <td>各リクエストは独立していて、前の状態を引きずらない</td>
-              <td>セッション情報に依存しない</td>
-            </tr>
-            <tr>
-              <td><strong>統一インターフェース</strong></td>
-              <td>どのリソースも同じルールでアクセスできる</td>
-              <td>一貫したURL構造・レスポンス形式</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- HTTPメソッドの使い分け -->
-      <h2 class="section-title"><span class="title-icon">🔧</span> HTTPメソッドの正しい使い分け</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fef3cd">📮</span><h2>メソッドは「動詞」——操作の意図を正確に伝える</h2></div>
-        <p>HTTPメソッドは「何をしたいか」を伝える動詞です。URLに <code>/getUser</code> や <code>/deleteOrder</code> のような動詞を入れるのはREST的ではありません。<strong>操作はメソッドで、対象はURLで</strong>表現します。</p>
-
-        <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
-          <div style="border-left:4px solid #28a745; padding:0.75rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <h3 style="margin:0 0 0.25rem; color:#28a745">GET — 取得（データを変えない）</h3>
-            <p style="margin:0; font-size:0.9rem"><code>GET /users/123</code> → ユーザー123の情報を返す。何度呼んでも同じ結果。副作用なし。</p>
-          </div>
-          <div style="border-left:4px solid #007bff; padding:0.75rem 1rem; background:#f0f7ff; border-radius:0 8px 8px 0">
-            <h3 style="margin:0 0 0.25rem; color:#007bff">POST — 作成（新しいリソースを生成）</h3>
-            <p style="margin:0; font-size:0.9rem"><code>POST /users</code> → リクエストボディの内容で新ユーザーを作成。毎回新しいリソースが生まれる。</p>
-          </div>
-          <div style="border-left:4px solid #fd7e14; padding:0.75rem 1rem; background:#fff8f0; border-radius:0 8px 8px 0">
-            <h3 style="margin:0 0 0.25rem; color:#fd7e14">PUT — 完全更新（リソース全体を置き換え）</h3>
-            <p style="margin:0; font-size:0.9rem"><code>PUT /users/123</code> → リクエストボディでユーザー123全体を上書き。送らなかった項目はnullになる。</p>
-          </div>
-          <div style="border-left:4px solid #6f42c1; padding:0.75rem 1rem; background:#f8f0ff; border-radius:0 8px 8px 0">
-            <h3 style="margin:0 0 0.25rem; color:#6f42c1">PATCH — 部分更新（一部だけ変更）</h3>
-            <p style="margin:0; font-size:0.9rem"><code>PATCH /users/123</code> → 送った項目だけ更新。名前だけ変えたいときはPATCHが適切。</p>
-          </div>
-          <div style="border-left:4px solid #dc3545; padding:0.75rem 1rem; background:#fff5f5; border-radius:0 8px 8px 0">
-            <h3 style="margin:0 0 0.25rem; color:#dc3545">DELETE — 削除</h3>
-            <p style="margin:0; font-size:0.9rem"><code>DELETE /users/123</code> → ユーザー123を削除。</p>
-          </div>
-        </div>
-
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>よくある間違い：</b><code>GET /deleteUser?id=123</code> のようにGETで削除を行うのはNG。GETはデータを変えない操作に限定すべきです。ブラウザのキャッシュやクローラーに予期せず実行される危険があります。
-          </div>
-        </div>
-      </div>
-
-      <!-- URLの設計 -->
-      <h2 class="section-title"><span class="title-icon">🗺️</span> URLの設計原則</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔗</span><h2>良いURLは「読むだけで意味がわかる」</h2></div>
-        <p>URLはAPIの「住所」です。利用者はURLを見て何のリソースにアクセスしているかを理解します。<strong>一貫性があり・予測可能で・直感的なURL</strong>を目指しましょう。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.75rem; color:#dc3545">😰 悪いURL例</h3>
-            <ul style="margin:0; padding-left:1.25rem; font-family:monospace; font-size:0.85rem; display:grid; gap:0.4rem">
-              <li>/getUsers</li>
-              <li>/user_list</li>
-              <li>/Users/GetById/123</li>
-              <li>/api/v1/createNewOrder</li>
-              <li>/orders/123/deleteItem/456</li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.75rem; color:#28a745">😊 良いURL例</h3>
-            <ul style="margin:0; padding-left:1.25rem; font-family:monospace; font-size:0.85rem; display:grid; gap:0.4rem">
-              <li>GET /users</li>
-              <li>GET /users（統一）</li>
-              <li>GET /users/123</li>
-              <li>POST /orders</li>
-              <li>DELETE /orders/123/items/456</li>
-            </ul>
-          </div>
-        </div>
-
-        <h3 style="margin:1.25rem 0 0.5rem">URL設計のルール</h3>
-        <div style="display:grid; gap:0.5rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>① 名詞の複数形を使う</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem">リソースは「モノ」なので名詞で表現します。<code>/users</code>、<code>/orders</code>、<code>/products</code> のように複数形で統一するのが一般的です。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>② 階層はリソースの関係を表す</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>/users/123/orders</code> は「ユーザー123の注文一覧」を意味します。親子関係があるリソースは階層で表現します。ただし深くなりすぎると読みにくいので、3階層程度が目安です。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>③ 小文字・ハイフン区切りで統一</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>/product-categories</code> ○、<code>/productCategories</code> や <code>/product_categories</code> は避ける。URLは大文字小文字が区別されるため、すべて小文字に統一します。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>④ クエリパラメータはフィルタリング・ソートに使う</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>/users?status=active&sort=created_at</code> のように、検索条件・絞り込み・並び替えはクエリパラメータで表現します。</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- リクエスト・レスポンス設計 -->
-      <h2 class="section-title"><span class="title-icon">📦</span> リクエスト・レスポンスの設計</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#f3e8ff">💌</span><h2>やりとりのデータ形式を統一する</h2></div>
-        <p>現代のWeb APIでは<strong>JSON形式</strong>が標準です。フィールド名・データ型・構造を一貫させることで、利用者が迷わず使えるAPIになります。</p>
-
-        <h3 style="margin:1rem 0 0.5rem">レスポンスの基本構造</h3>
-        <div class="grid-2col">
-          <div>
-            <p style="margin:0 0 0.25rem; font-size:0.85rem; color:#666">✅ 単一リソースの取得</p>
-            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:8px; overflow-x:auto">{
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方（初心者向け）</b><br>
+    APIは「他の人（やシステム）が使う窓口」です。自分だけが使う関数と違い、<b>一度公開したAPIは簡単に変更できません</b>。だからこそ最初の設計が重要です。<b>「APIとは何か」→「URLの設計」→「リクエスト・レスポンス」→「エラー設計」→「バージョン管理」</b>の順に読み進めると、実務で使える知識が整います。
+  </div>
+</div><h2 class="section-title"><span class="title-icon">🤔</span> そもそもAPIとは何か</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔌</span><h2>APIはシステム同士をつなぐ「契約」</h2></div>
+  <p>API（Application Programming Interface）とは、<strong>異なるシステムやプログラムが互いにやりとりするための「決まりごと」</strong>です。レストランに例えると、お客さん（API利用者）とキッチン（システム内部）の間に立つ「メニューとウェイター」の役割です。</p>  <div class="grid-2col">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; background:#f8f9fa">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">📋 メニュー（API仕様）</h3>
+      <p style="margin:0; font-size:0.9rem">「こういう注文ができますよ」という約束。利用者はメニューを見て何が頼めるかがわかります。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem; background:#f8f9fa">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">🍽️ 料理（レスポンス）</h3>
+      <p style="margin:0; font-size:0.9rem">注文通りに料理が運ばれてきます。キッチンの中がどうなっているかは知らなくていい。</p>
+    </div>
+  </div>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>Web APIとは：</b>インターネット（HTTP）を通じて使えるAPIです。スマホアプリが天気情報を取得するとき、ECサイトが決済サービスに問い合わせるとき、裏側ではWeb APIが使われています。
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">🏛️</span> REST APIの基本原則</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f0fe">📐</span><h2>RESTとは「Webのルールに則った設計スタイル」</h2></div>
+  <p>REST（Representational State Transfer）は、Web APIを設計するための<strong>考え方・スタイル</strong>です。難しく聞こえますが、本質は「<strong>HTTPの仕組みを正しく使おう</strong>」ということです。</p>  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>REST の原則</th><th>意味</th><th>具体例</th></tr></thead>
+    <tbody>
+      <tr><td><strong>リソース指向</strong></td><td>操作ではなく「モノ（リソース）」でURLを設計する</td><td><code>/users/123</code>（ユーザーという「モノ」）</td></tr>
+      <tr><td><strong>HTTPメソッドを正しく使う</strong></td><td>GET/POST/PUT/DELETE で操作の種類を表す</td><td>取得はGET、作成はPOST</td></tr>
+      <tr><td><strong>ステートレス</strong></td><td>各リクエストは独立していて、前の状態を引きずらない</td><td>セッション情報に依存しない</td></tr>
+      <tr><td><strong>統一インターフェース</strong></td><td>どのリソースも同じルールでアクセスできる</td><td>一貫したURL構造・レスポンス形式</td></tr>
+    </tbody>
+  </table>
+</div><h2 class="section-title"><span class="title-icon">🔧</span> HTTPメソッドの正しい使い分け</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef3cd">📮</span><h2>メソッドは「動詞」——操作の意図を正確に伝える</h2></div>
+  <p>HTTPメソッドは「何をしたいか」を伝える動詞です。URLに <code>/getUser</code> や <code>/deleteOrder</code> のような動詞を入れるのはREST的ではありません。<strong>操作はメソッドで、対象はURLで</strong>表現します。</p>  <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
+    <div style="border-left:4px solid #28a745; padding:0.75rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <h3 style="margin:0 0 0.25rem; color:#28a745">GET — 取得（データを変えない）</h3>
+      <p style="margin:0; font-size:0.9rem"><code>GET /users/123</code> → ユーザー123の情報を返す。何度呼んでも同じ結果。副作用なし。</p>
+    </div>
+    <div style="border-left:4px solid #007bff; padding:0.75rem 1rem; background:#f0f7ff; border-radius:0 8px 8px 0">
+      <h3 style="margin:0 0 0.25rem; color:#007bff">POST — 作成（新しいリソースを生成）</h3>
+      <p style="margin:0; font-size:0.9rem"><code>POST /users</code> → リクエストボディの内容で新ユーザーを作成。毎回新しいリソースが生まれる。</p>
+    </div>
+    <div style="border-left:4px solid #fd7e14; padding:0.75rem 1rem; background:#fff8f0; border-radius:0 8px 8px 0">
+      <h3 style="margin:0 0 0.25rem; color:#fd7e14">PUT — 完全更新（リソース全体を置き換え）</h3>
+      <p style="margin:0; font-size:0.9rem"><code>PUT /users/123</code> → リクエストボディでユーザー123全体を上書き。送らなかった項目はnullになる。</p>
+    </div>
+    <div style="border-left:4px solid #6f42c1; padding:0.75rem 1rem; background:#f8f0ff; border-radius:0 8px 8px 0">
+      <h3 style="margin:0 0 0.25rem; color:#6f42c1">PATCH — 部分更新（一部だけ変更）</h3>
+      <p style="margin:0; font-size:0.9rem"><code>PATCH /users/123</code> → 送った項目だけ更新。名前だけ変えたいときはPATCHが適切。</p>
+    </div>
+    <div style="border-left:4px solid #dc3545; padding:0.75rem 1rem; background:#fff5f5; border-radius:0 8px 8px 0">
+      <h3 style="margin:0 0 0.25rem; color:#dc3545">DELETE — 削除</h3>
+      <p style="margin:0; font-size:0.9rem"><code>DELETE /users/123</code> → ユーザー123を削除。</p>
+    </div>
+  </div>  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>よくある間違い：</b><code>GET /deleteUser?id=123</code> のようにGETで削除を行うのはNG。GETはデータを変えない操作に限定すべきです。ブラウザのキャッシュやクローラーに予期せず実行される危険があります。
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">🗺️</span> URLの設計原則</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔗</span><h2>良いURLは「読むだけで意味がわかる」</h2></div>
+  <p>URLはAPIの「住所」です。利用者はURLを見て何のリソースにアクセスしているかを理解します。<strong>一貫性があり・予測可能で・直感的なURL</strong>を目指しましょう。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.75rem; color:#dc3545">😰 悪いURL例</h3>
+      <ul style="margin:0; padding-left:1.25rem; font-family:monospace; font-size:0.85rem; display:grid; gap:0.4rem">
+        <li>/getUsers</li>
+        <li>/user_list</li>
+        <li>/Users/GetById/123</li>
+        <li>/api/v1/createNewOrder</li>
+        <li>/orders/123/deleteItem/456</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.75rem; color:#28a745">😊 良いURL例</h3>
+      <ul style="margin:0; padding-left:1.25rem; font-family:monospace; font-size:0.85rem; display:grid; gap:0.4rem">
+        <li>GET /users</li>
+        <li>GET /users（統一）</li>
+        <li>GET /users/123</li>
+        <li>POST /orders</li>
+        <li>DELETE /orders/123/items/456</li>
+      </ul>
+    </div>
+  </div>  <h3 style="margin:1.25rem 0 0.5rem">URL設計のルール</h3>
+  <div style="display:grid; gap:0.5rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>① 名詞の複数形を使う</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem">リソースは「モノ」なので名詞で表現します。<code>/users</code>、<code>/orders</code>、<code>/products</code> のように複数形で統一するのが一般的です。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>② 階層はリソースの関係を表す</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>/users/123/orders</code> は「ユーザー123の注文一覧」を意味します。親子関係があるリソースは階層で表現します。ただし深くなりすぎると読みにくいので、3階層程度が目安です。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>③ 小文字・ハイフン区切りで統一</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>/product-categories</code> ○、<code>/productCategories</code> や <code>/product_categories</code> は避ける。URLは大文字小文字が区別されるため、すべて小文字に統一します。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>④ クエリパラメータはフィルタリング・ソートに使う</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>/users?status=active&sort=created_at</code> のように、検索条件・絞り込み・並び替えはクエリパラメータで表現します。</p>
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">📦</span> リクエスト・レスポンスの設計</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#f3e8ff">💌</span><h2>やりとりのデータ形式を統一する</h2></div>
+  <p>現代のWeb APIでは<strong>JSON形式</strong>が標準です。フィールド名・データ型・構造を一貫させることで、利用者が迷わず使えるAPIになります。</p>  <h3 style="margin:1rem 0 0.5rem">レスポンスの基本構造</h3>
+  <div class="grid-2col">
+    <div>
+      <p style="margin:0 0 0.25rem; font-size:0.85rem; color:#666">✅ 単一リソースの取得</p>
+      <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:8px; overflow-x:auto">{
   "id": 123,
   "name": "田中太郎",
   "email": "tanaka@example.com",
   "createdAt": "2024-01-15T09:00:00Z"
 }</pre>
-          </div>
-          <div>
-            <p style="margin:0 0 0.25rem; font-size:0.85rem; color:#666">✅ 一覧の取得（ページング付き）</p>
-            <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:8px; overflow-x:auto">{
+    </div>
+    <div>
+      <p style="margin:0 0 0.25rem; font-size:0.85rem; color:#666">✅ 一覧の取得（ページング付き）</p>
+      <pre style="margin:0; font-size:0.8rem; background:#f8f9fa; padding:0.75rem; border-radius:8px; overflow-x:auto">{
   "items": [...],
   "total": 250,
   "page": 1,
   "perPage": 20,
   "hasNext": true
 }</pre>
-          </div>
-        </div>
-
-        <div style="display:grid; gap:0.5rem; margin-top:1rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>フィールド名はcamelCase（またはsnake_caseで統一）</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>createdAt</code> か <code>created_at</code> かは好みがありますが、<b>プロジェクト全体で統一</b>することが最重要です。混在しているのが最もよくないです。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>日付・時刻はISO 8601形式で</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>"2024-01-15T09:00:00Z"</code> のようにUTC+ISO 8601形式を使います。「2024/01/15 18:00」のような独自形式は避けましょう。タイムゾーン問題を防げます。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>不要なデータを返さない</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem">パスワードハッシュや内部管理フラグなど、利用者に不要な情報は含めません。セキュリティリスクにもなります。</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- HTTPステータスコード -->
-      <h2 class="section-title"><span class="title-icon">🚦</span> HTTPステータスコードを正しく使う</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">📊</span><h2>ステータスコードは「処理結果の信号」</h2></div>
-        <p>HTTPステータスコードは、リクエストの結果を数字で伝えます。<strong>常に200を返してエラー情報をレスポンスボディに入れる</strong>やり方は避けましょう。HTTPの仕組みを正しく使うと、クライアント側でのエラーハンドリングが楽になります。</p>
-
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>コード</th><th>意味</th><th>使い所</th></tr></thead>
-          <tbody>
-            <tr><td><strong style="color:#28a745">200 OK</strong></td><td>成功</td><td>GET・PUT・PATCHが成功したとき</td></tr>
-            <tr><td><strong style="color:#28a745">201 Created</strong></td><td>作成成功</td><td>POSTでリソースが作成されたとき</td></tr>
-            <tr><td><strong style="color:#28a745">204 No Content</strong></td><td>成功・返すデータなし</td><td>DELETEが成功したとき</td></tr>
-            <tr><td><strong style="color:#fd7e14">400 Bad Request</strong></td><td>リクエストが不正</td><td>バリデーションエラー、必須項目がないとき</td></tr>
-            <tr><td><strong style="color:#fd7e14">401 Unauthorized</strong></td><td>認証が必要</td><td>ログインしていない（トークンがない）とき</td></tr>
-            <tr><td><strong style="color:#fd7e14">403 Forbidden</strong></td><td>権限がない</td><td>ログインしているが操作する権限がないとき</td></tr>
-            <tr><td><strong style="color:#fd7e14">404 Not Found</strong></td><td>見つからない</td><td>指定したIDのリソースが存在しないとき</td></tr>
-            <tr><td><strong style="color:#fd7e14">409 Conflict</strong></td><td>競合</td><td>すでに存在するメールアドレスで登録しようとしたとき</td></tr>
-            <tr><td><strong style="color:#dc3545">500 Internal Server Error</strong></td><td>サーバーエラー</td><td>予期しないエラーが発生したとき</td></tr>
-          </tbody>
-        </table>
-
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>「なんでもとりあえず200」は禁止：</b>エラーが起きても200を返してボディに <code>{"success": false, "error": "..."}</code> を入れる実装をよく見かけます。これだとクライアント側でステータスコードを見るだけではエラー判定できず、常にボディを解析しなければなりません。
-          </div>
-        </div>
-      </div>
-
-      <!-- エラーレスポンスの設計 -->
-      <h2 class="section-title"><span class="title-icon">🚨</span> エラーレスポンスの設計</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔍</span><h2>エラーは「なぜ失敗したか」を伝える</h2></div>
-        <p>エラーが返ってきたとき、利用者が<strong>「何が問題で、どう直せばいいか」</strong>を理解できるように設計することが大切です。エラーメッセージは利用者への手紙です。</p>
-
-        <div class="grid-2col" style="margin-top:0.75rem">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.75rem; color:#dc3545">😰 悪いエラーレスポンス</h3>
-            <pre style="margin:0; font-size:0.8rem; background:#fff; padding:0.75rem; border-radius:4px">{
+    </div>
+  </div>  <div style="display:grid; gap:0.5rem; margin-top:1rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>フィールド名はcamelCase（またはsnake_caseで統一）</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>createdAt</code> か <code>created_at</code> かは好みがありますが、<b>プロジェクト全体で統一</b>することが最重要です。混在しているのが最もよくないです。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>日付・時刻はISO 8601形式で</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>"2024-01-15T09:00:00Z"</code> のようにUTC+ISO 8601形式を使います。「2024/01/15 18:00」のような独自形式は避けましょう。タイムゾーン問題を防げます。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>不要なデータを返さない</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem">パスワードハッシュや内部管理フラグなど、利用者に不要な情報は含めません。セキュリティリスクにもなります。</p>
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">🚦</span> HTTPステータスコードを正しく使う</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">📊</span><h2>ステータスコードは「処理結果の信号」</h2></div>
+  <p>HTTPステータスコードは、リクエストの結果を数字で伝えます。<strong>常に200を返してエラー情報をレスポンスボディに入れる</strong>やり方は避けましょう。HTTPの仕組みを正しく使うと、クライアント側でのエラーハンドリングが楽になります。</p>  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>コード</th><th>意味</th><th>使い所</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:#28a745">200 OK</strong></td><td>成功</td><td>GET・PUT・PATCHが成功したとき</td></tr>
+      <tr><td><strong style="color:#28a745">201 Created</strong></td><td>作成成功</td><td>POSTでリソースが作成されたとき</td></tr>
+      <tr><td><strong style="color:#28a745">204 No Content</strong></td><td>成功・返すデータなし</td><td>DELETEが成功したとき</td></tr>
+      <tr><td><strong style="color:#fd7e14">400 Bad Request</strong></td><td>リクエストが不正</td><td>バリデーションエラー、必須項目がないとき</td></tr>
+      <tr><td><strong style="color:#fd7e14">401 Unauthorized</strong></td><td>認証が必要</td><td>ログインしていない（トークンがない）とき</td></tr>
+      <tr><td><strong style="color:#fd7e14">403 Forbidden</strong></td><td>権限がない</td><td>ログインしているが操作する権限がないとき</td></tr>
+      <tr><td><strong style="color:#fd7e14">404 Not Found</strong></td><td>見つからない</td><td>指定したIDのリソースが存在しないとき</td></tr>
+      <tr><td><strong style="color:#fd7e14">409 Conflict</strong></td><td>競合</td><td>すでに存在するメールアドレスで登録しようとしたとき</td></tr>
+      <tr><td><strong style="color:#dc3545">500 Internal Server Error</strong></td><td>サーバーエラー</td><td>予期しないエラーが発生したとき</td></tr>
+    </tbody>
+  </table>  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>「なんでもとりあえず200」は禁止：</b>エラーが起きても200を返してボディに <code>{"success": false, "error": "..."}</code> を入れる実装をよく見かけます。これだとクライアント側でステータスコードを見るだけではエラー判定できず、常にボディを解析しなければなりません。
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">🚨</span> エラーレスポンスの設計</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔍</span><h2>エラーは「なぜ失敗したか」を伝える</h2></div>
+  <p>エラーが返ってきたとき、利用者が<strong>「何が問題で、どう直せばいいか」</strong>を理解できるように設計することが大切です。エラーメッセージは利用者への手紙です。</p>  <div class="grid-2col" style="margin-top:0.75rem">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.75rem; color:#dc3545">😰 悪いエラーレスポンス</h3>
+      <pre style="margin:0; font-size:0.8rem; background:#fff; padding:0.75rem; border-radius:4px">{
   "error": true,
   "message": "Error"
 }</pre>
-            <p style="margin:0.5rem 0 0; font-size:0.85rem">何のエラーか全くわからない。</p>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.75rem; color:#28a745">😊 良いエラーレスポンス</h3>
-            <pre style="margin:0; font-size:0.8rem; background:#fff; padding:0.75rem; border-radius:4px">{
+      <p style="margin:0.5rem 0 0; font-size:0.85rem">何のエラーか全くわからない。</p>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.75rem; color:#28a745">😊 良いエラーレスポンス</h3>
+      <pre style="margin:0; font-size:0.8rem; background:#fff; padding:0.75rem; border-radius:4px">{
   "code": "VALIDATION_ERROR",
   "message": "入力内容に誤りがあります",
   "details": [
@@ -273,208 +213,157 @@
     }
   ]
 }</pre>
-          </div>
-        </div>
-
-        <h3 style="margin:1.25rem 0 0.5rem">エラーレスポンスに含めるべき情報</h3>
-        <div style="display:grid; gap:0.5rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>エラーコード（機械が読む用）</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>"code": "VALIDATION_ERROR"</code> のような識別子。クライアントがコードで分岐処理を書けます。数値より文字列の方が意味が伝わります。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>メッセージ（人間が読む用）</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem">何が問題かを人間の言葉で説明します。開発中のデバッグに役立ちます。ただし本番環境では内部情報（スタックトレースなど）を含めないこと。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>詳細（バリデーションエラーの場合）</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem">どのフィールドに何の問題があるかをリストで返します。フォームのどの項目を直せばよいかがすぐにわかります。</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 認証・認可 -->
-      <h2 class="section-title"><span class="title-icon">🔐</span> 認証と認可の設計</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🛡️</span><h2>「誰か」と「何ができるか」は別の問題</h2></div>
-        <p>認証と認可は混同されがちですが、まったく別の概念です。</p>
-
-        <div class="grid-2col" style="margin-top:0.75rem">
-          <div style="border:2px solid #007bff; border-radius:8px; padding:1rem; background:#f0f7ff">
-            <h3 style="margin:0 0 0.5rem; color:#007bff">🪪 認証（Authentication）</h3>
-            <p style="margin:0; font-size:0.9rem">「あなたは誰ですか？」を確認すること。ログイン・トークン検証がこれにあたります。<br><br><b>例：</b>IDとパスワードを確認して「田中さんです」と証明する</p>
-          </div>
-          <div style="border:2px solid #6f42c1; border-radius:8px; padding:1rem; background:#f8f0ff">
-            <h3 style="margin:0 0 0.5rem; color:#6f42c1">🚪 認可（Authorization）</h3>
-            <p style="margin:0; font-size:0.9rem">「その操作をしていいですか？」を確認すること。権限チェックがこれにあたります。<br><br><b>例：</b>田中さんは一般ユーザーなので管理者ページは見られない</p>
-          </div>
-        </div>
-
-        <h3 style="margin:1.25rem 0 0.5rem">よく使われる認証方式</h3>
-        <table class="comparison-table">
-          <thead><tr><th>方式</th><th>仕組み</th><th>特徴</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>APIキー</strong></td>
-              <td>発行した固定の文字列をヘッダーで送る</td>
-              <td>シンプル。ただしキーが漏れると誰でも使えてしまう</td>
-            </tr>
-            <tr>
-              <td><strong>Bearer Token（JWT）</strong></td>
-              <td>ログイン後にトークンを発行し、以降はそれを送る</td>
-              <td>現在の主流。<code>Authorization: Bearer {token}</code> ヘッダーで送る</td>
-            </tr>
-            <tr>
-              <td><strong>OAuth 2.0</strong></td>
-              <td>「別サービスのアカウントで許可」を与える仕組み</td>
-              <td>「Googleでログイン」「GitHubでログイン」はこれ</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>401と403を混同しない：</b>未ログイン（認証なし）は <code>401 Unauthorized</code>、ログイン済みだが権限なし（認可失敗）は <code>403 Forbidden</code> です。この区別はクライアント側の処理（再ログインを促すかどうか）に影響します。
-          </div>
-        </div>
-      </div>
-
-      <!-- バージョン管理 -->
-      <h2 class="section-title"><span class="title-icon">📌</span> APIのバージョン管理</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3cd">🔄</span><h2>一度公開したAPIは簡単に変えられない</h2></div>
-        <p>APIは「利用者との契約」です。突然URLの構造やフィールド名を変えると、すでに動いているクライアントが壊れます。<strong>変更が必要なときはバージョニングで古いAPIと新しいAPIを共存させる</strong>のが基本です。</p>
-
-        <h3 style="margin:1rem 0 0.5rem">バージョニングの方法（3パターン）</h3>
-        <div style="display:grid; gap:0.75rem">
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.25rem; color:#28a745">① URLパスに含める（最も一般的）</h3>
-            <p style="margin:0; font-size:0.9rem; font-family:monospace"><code>/api/v1/users</code>、<code>/api/v2/users</code></p>
-            <p style="margin:0.5rem 0 0; font-size:0.9rem">見てすぐわかる。ブラウザのアドレスバーでも確認しやすい。多くのAPIが採用。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.25rem; color:var(--primary)">② クエリパラメータで指定</h3>
-            <p style="margin:0; font-size:0.9rem; font-family:monospace"><code>/users?version=2</code></p>
-            <p style="margin:0.5rem 0 0; font-size:0.9rem">URLは変わらないが、バージョンが見えにくい。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.25rem; color:var(--primary)">③ カスタムヘッダーで指定</h3>
-            <p style="margin:0; font-size:0.9rem; font-family:monospace"><code>Accept: application/vnd.myapi.v2+json</code></p>
-            <p style="margin:0.5rem 0 0; font-size:0.9rem">URLを汚さないが、ヘッダーを意識して設定する必要があり複雑になりがち。</p>
-          </div>
-        </div>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>破壊的変更と非破壊的変更：</b>「フィールドの追加」は非破壊的変更（既存クライアントが壊れない）なのでバージョンアップ不要。「フィールドの削除・名称変更・型の変更」は破壊的変更なのでバージョンアップが必要です。
-          </div>
-        </div>
-      </div>
-
-      <!-- ページング -->
-      <h2 class="section-title"><span class="title-icon">📄</span> ページングとフィルタリング</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">📋</span><h2>大量データを扱うときの設計</h2></div>
-        <p>データが数千・数万件あるとき、全件を一度に返すのはサーバー・クライアント双方に負荷がかかります。<strong>ページング（分割して返す）</strong>を設計に組み込みましょう。</p>
-
-        <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">オフセットベースのページング</h3>
-            <p style="margin:0 0 0.5rem; font-size:0.9rem; font-family:monospace"><code>GET /users?page=2&perPage=20</code></p>
-            <p style="margin:0; font-size:0.9rem">「2ページ目の20件」という指定。直感的でUIとの相性がよい。ただしデータが挿入・削除されると結果がずれることがある。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
-            <h3 style="margin:0 0 0.5rem; color:var(--primary)">カーソルベースのページング</h3>
-            <p style="margin:0 0 0.5rem; font-size:0.9rem; font-family:monospace"><code>GET /users?cursor=eyJpZCI6MTIzfQ&limit=20</code></p>
-            <p style="margin:0; font-size:0.9rem">「この位置から20件」という指定。データの挿入・削除があっても重複・欠落が起きない。SNSの無限スクロールに適している。</p>
-          </div>
-        </div>
-
-        <h3 style="margin:1.25rem 0 0.5rem">フィルタリング・ソートのパラメータ例</h3>
-        <pre style="font-size:0.85rem; background:#f8f9fa; padding:0.75rem; border-radius:8px; overflow-x:auto">GET /users?status=active&role=admin&sort=created_at&order=desc
+    </div>
+  </div>  <h3 style="margin:1.25rem 0 0.5rem">エラーレスポンスに含めるべき情報</h3>
+  <div style="display:grid; gap:0.5rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>エラーコード（機械が読む用）</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem"><code>"code": "VALIDATION_ERROR"</code> のような識別子。クライアントがコードで分岐処理を書けます。数値より文字列の方が意味が伝わります。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>メッセージ（人間が読む用）</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem">何が問題かを人間の言葉で説明します。開発中のデバッグに役立ちます。ただし本番環境では内部情報（スタックトレースなど）を含めないこと。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>詳細（バリデーションエラーの場合）</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem">どのフィールドに何の問題があるかをリストで返します。フォームのどの項目を直せばよいかがすぐにわかります。</p>
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">🔐</span> 認証と認可の設計</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f0fe">🛡️</span><h2>「誰か」と「何ができるか」は別の問題</h2></div>
+  <p>認証と認可は混同されがちですが、まったく別の概念です。</p>  <div class="grid-2col" style="margin-top:0.75rem">
+    <div style="border:2px solid #007bff; border-radius:8px; padding:1rem; background:#f0f7ff">
+      <h3 style="margin:0 0 0.5rem; color:#007bff">🪪 認証（Authentication）</h3>
+      <p style="margin:0; font-size:0.9rem">「あなたは誰ですか？」を確認すること。ログイン・トークン検証がこれにあたります。<br><br><b>例：</b>IDとパスワードを確認して「田中さんです」と証明する</p>
+    </div>
+    <div style="border:2px solid #6f42c1; border-radius:8px; padding:1rem; background:#f8f0ff">
+      <h3 style="margin:0 0 0.5rem; color:#6f42c1">🚪 認可（Authorization）</h3>
+      <p style="margin:0; font-size:0.9rem">「その操作をしていいですか？」を確認すること。権限チェックがこれにあたります。<br><br><b>例：</b>田中さんは一般ユーザーなので管理者ページは見られない</p>
+    </div>
+  </div>  <h3 style="margin:1.25rem 0 0.5rem">よく使われる認証方式</h3>
+  <table class="comparison-table">
+    <thead><tr><th>方式</th><th>仕組み</th><th>特徴</th></tr></thead>
+    <tbody>
+      <tr><td><strong>APIキー</strong></td><td>発行した固定の文字列をヘッダーで送る</td><td>シンプル。ただしキーが漏れると誰でも使えてしまう</td></tr>
+      <tr><td><strong>Bearer Token（JWT）</strong></td><td>ログイン後にトークンを発行し、以降はそれを送る</td><td>現在の主流。<code>Authorization: Bearer {token}</code> ヘッダーで送る</td></tr>
+      <tr><td><strong>OAuth 2.0</strong></td><td>「別サービスのアカウントで許可」を与える仕組み</td><td>「Googleでログイン」「GitHubでログイン」はこれ</td></tr>
+    </tbody>
+  </table>  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>401と403を混同しない：</b>未ログイン（認証なし）は <code>401 Unauthorized</code>、ログイン済みだが権限なし（認可失敗）は <code>403 Forbidden</code> です。この区別はクライアント側の処理（再ログインを促すかどうか）に影響します。
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">📌</span> APIのバージョン管理</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3cd">🔄</span><h2>一度公開したAPIは簡単に変えられない</h2></div>
+  <p>APIは「利用者との契約」です。突然URLの構造やフィールド名を変えると、すでに動いているクライアントが壊れます。<strong>変更が必要なときはバージョニングで古いAPIと新しいAPIを共存させる</strong>のが基本です。</p>  <h3 style="margin:1rem 0 0.5rem">バージョニングの方法（3パターン）</h3>
+  <div style="display:grid; gap:0.75rem">
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.25rem; color:#28a745">① URLパスに含める（最も一般的）</h3>
+      <p style="margin:0; font-size:0.9rem; font-family:monospace"><code>/api/v1/users</code>、<code>/api/v2/users</code></p>
+      <p style="margin:0.5rem 0 0; font-size:0.9rem">見てすぐわかる。ブラウザのアドレスバーでも確認しやすい。多くのAPIが採用。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.25rem; color:var(--primary)">② クエリパラメータで指定</h3>
+      <p style="margin:0; font-size:0.9rem; font-family:monospace"><code>/users?version=2</code></p>
+      <p style="margin:0.5rem 0 0; font-size:0.9rem">URLは変わらないが、バージョンが見えにくい。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.25rem; color:var(--primary)">③ カスタムヘッダーで指定</h3>
+      <p style="margin:0; font-size:0.9rem; font-family:monospace"><code>Accept: application/vnd.myapi.v2+json</code></p>
+      <p style="margin:0.5rem 0 0; font-size:0.9rem">URLを汚さないが、ヘッダーを意識して設定する必要があり複雑になりがち。</p>
+    </div>
+  </div>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>破壊的変更と非破壊的変更：</b>「フィールドの追加」は非破壊的変更（既存クライアントが壊れない）なのでバージョンアップ不要。「フィールドの削除・名称変更・型の変更」は破壊的変更なのでバージョンアップが必要です。
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">📄</span> ページングとフィルタリング</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">📋</span><h2>大量データを扱うときの設計</h2></div>
+  <p>データが数千・数万件あるとき、全件を一度に返すのはサーバー・クライアント双方に負荷がかかります。<strong>ページング（分割して返す）</strong>を設計に組み込みましょう。</p>  <div style="display:grid; gap:0.75rem; margin-top:0.75rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">オフセットベースのページング</h3>
+      <p style="margin:0 0 0.5rem; font-size:0.9rem; font-family:monospace"><code>GET /users?page=2&perPage=20</code></p>
+      <p style="margin:0; font-size:0.9rem">「2ページ目の20件」という指定。直感的でUIとの相性がよい。ただしデータが挿入・削除されると結果がずれることがある。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">カーソルベースのページング</h3>
+      <p style="margin:0 0 0.5rem; font-size:0.9rem; font-family:monospace"><code>GET /users?cursor=eyJpZCI6MTIzfQ&limit=20</code></p>
+      <p style="margin:0; font-size:0.9rem">「この位置から20件」という指定。データの挿入・削除があっても重複・欠落が起きない。SNSの無限スクロールに適している。</p>
+    </div>
+  </div>  <h3 style="margin:1.25rem 0 0.5rem">フィルタリング・ソートのパラメータ例</h3>
+  <pre style="font-size:0.85rem; background:#f8f9fa; padding:0.75rem; border-radius:8px; overflow-x:auto">GET /users?status=active&role=admin&sort=created_at&order=desc
 GET /products?minPrice=1000&maxPrice=5000&category=electronics</pre>
-        <p style="font-size:0.9rem; margin:0.5rem 0 0">フィルタ条件はクエリパラメータで渡します。パラメータ名は一貫したルール（<code>snake_case</code> など）で統一しましょう。</p>
-      </div>
-
-      <!-- APIドキュメント -->
-      <h2 class="section-title"><span class="title-icon">📖</span> APIドキュメントの重要性</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#f3e8ff">✍️</span><h2>使われるAPIには良いドキュメントがある</h2></div>
-        <p>どれだけ良く設計されたAPIでも、<strong>ドキュメントがなければ利用者は使い方がわからず使ってもらえません</strong>。APIドキュメントはAPIと同じくらい重要な成果物です。</p>
-
-        <div style="display:grid; gap:0.5rem; margin-top:0.75rem">
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>OpenAPI（Swagger）仕様で記述する</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem">YAMLまたはJSONでAPI仕様を記述すると、自動的にインタラクティブなドキュメント（Swagger UI）を生成できます。「仕様＝ドキュメント」になるため、ズレが生じにくいです。</p>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>ドキュメントに含めるべき情報</strong>
-            <ul style="margin:0.25rem 0 0; padding-left:1.25rem; font-size:0.9rem">
-              <li>エンドポイントのURL・HTTPメソッド</li>
-              <li>リクエストパラメータ・ボディの型と説明、必須/任意の区別</li>
-              <li>レスポンスの構造と各フィールドの説明</li>
-              <li>エラーコードの一覧と意味</li>
-              <li>具体的なリクエスト・レスポンスの例（サンプル）</li>
-            </ul>
-          </div>
-          <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
-            <strong>コードと一緒にドキュメントも更新する</strong>
-            <p style="margin:0.25rem 0 0; font-size:0.9rem">実装が変わったのにドキュメントが古いままだと、利用者が混乱します。プルリクエストのチェックリストに「ドキュメント更新」を含めるなど、仕組みで担保しましょう。</p>
-          </div>
-        </div>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>初心者へのアドバイス：</b>APIを作ったら、まず「自分がこのAPIの利用者だったら使えるか」を考えてみましょう。ドキュメントなしに自分の作ったAPIを使ってみると、足りない情報がよくわかります。
-          </div>
-        </div>
-      </div>
-
-      <!-- まとめ -->
-      <h2 class="section-title"><span class="title-icon">🎯</span> 良いAPI設計のチェックリスト</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">✅</span><h2>設計・レビュー時に確認するポイント</h2></div>
-        <p>APIを設計・実装したら、以下のポイントを確認しましょう。経験を積むにつれて、最初から意識できるようになります。</p>
-
-        <div style="display:grid; gap:0.5rem; margin-top:0.75rem">
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>URL設計</strong>：名詞の複数形、小文字、動詞はメソッドで表現しているか
-          </div>
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>HTTPメソッド</strong>：GET/POST/PUT/PATCH/DELETE を正しく使い分けているか
-          </div>
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>ステータスコード</strong>：処理結果に応じた適切なコードを返しているか
-          </div>
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>エラーレスポンス</strong>：エラーコード・メッセージ・詳細が含まれているか
-          </div>
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>認証・認可</strong>：401と403を適切に使い分けているか
-          </div>
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>命名の一貫性</strong>：フィールド名・パラメータ名のケースが統一されているか
-          </div>
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>ページング</strong>：大量データを返す一覧APIにページング機能があるか
-          </div>
-          <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
-            <strong>ドキュメント</strong>：全エンドポイントのリクエスト・レスポンス・エラーが文書化されているか
-          </div>
-        </div>
-      </div>
+  <p style="font-size:0.9rem; margin:0.5rem 0 0">フィルタ条件はクエリパラメータで渡します。パラメータ名は一貫したルール（<code>snake_case</code> など）で統一しましょう。</p>
+</div><h2 class="section-title"><span class="title-icon">📖</span> APIドキュメントの重要性</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#f3e8ff">✍️</span><h2>使われるAPIには良いドキュメントがある</h2></div>
+  <p>どれだけ良く設計されたAPIでも、<strong>ドキュメントがなければ利用者は使い方がわからず使ってもらえません</strong>。APIドキュメントはAPIと同じくらい重要な成果物です。</p>  <div style="display:grid; gap:0.5rem; margin-top:0.75rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>OpenAPI（Swagger）仕様で記述する</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem">YAMLまたはJSONでAPI仕様を記述すると、自動的にインタラクティブなドキュメント（Swagger UI）を生成できます。「仕様＝ドキュメント」になるため、ズレが生じにくいです。</p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>ドキュメントに含めるべき情報</strong>
+      <ul style="margin:0.25rem 0 0; padding-left:1.25rem; font-size:0.9rem">
+        <li>エンドポイントのURL・HTTPメソッド</li>
+        <li>リクエストパラメータ・ボディの型と説明、必須/任意の区別</li>
+        <li>レスポンスの構造と各フィールドの説明</li>
+        <li>エラーコードの一覧と意味</li>
+        <li>具体的なリクエスト・レスポンスの例（サンプル）</li>
+      </ul>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem 1rem">
+      <strong>コードと一緒にドキュメントも更新する</strong>
+      <p style="margin:0.25rem 0 0; font-size:0.9rem">実装が変わったのにドキュメントが古いままだと、利用者が混乱します。プルリクエストのチェックリストに「ドキュメント更新」を含めるなど、仕組みで担保しましょう。</p>
+    </div>
+  </div>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>初心者へのアドバイス：</b>APIを作ったら、まず「自分がこのAPIの利用者だったら使えるか」を考えてみましょう。ドキュメントなしに自分の作ったAPIを使ってみると、足りない情報がよくわかります。
+    </div>
+  </div>
+</div><h2 class="section-title"><span class="title-icon">🎯</span> 良いAPI設計のチェックリスト</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">✅</span><h2>設計・レビュー時に確認するポイント</h2></div>
+  <p>APIを設計・実装したら、以下のポイントを確認しましょう。経験を積むにつれて、最初から意識できるようになります。</p>  <div style="display:grid; gap:0.5rem; margin-top:0.75rem">
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>URL設計</strong>：名詞の複数形、小文字、動詞はメソッドで表現しているか
+    </div>
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>HTTPメソッド</strong>：GET/POST/PUT/PATCH/DELETE を正しく使い分けているか
+    </div>
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>ステータスコード</strong>：処理結果に応じた適切なコードを返しているか
+    </div>
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>エラーレスポンス</strong>：エラーコード・メッセージ・詳細が含まれているか
+    </div>
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>認証・認可</strong>：401と403を適切に使い分けているか
+    </div>
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>命名の一貫性</strong>：フィールド名・パラメータ名のケースが統一されているか
+    </div>
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>ページング</strong>：大量データを返す一覧APIにページング機能があるか
+    </div>
+    <div style="border-left:4px solid #28a745; padding:0.5rem 1rem; background:#f5fff5; border-radius:0 8px 8px 0">
+      <strong>ドキュメント</strong>：全エンドポイントのリクエスト・レスポンス・エラーが文書化されているか
+    </div>
+  </div>
+</div>
 
     </div>
   </main>
 </div>
 
-<script>
-  fetch('../../../components/sidebar.html')
-    .then(r => r.text())
-    .then(html => { document.getElementById('sidebar-placeholder').outerHTML = html; });
-</script>
+
+<script src="../../../js/main.js"></script>
+<script src="../../../sidebar.js"></script>
 </body>
 </html>

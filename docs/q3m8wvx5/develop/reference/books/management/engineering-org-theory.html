@@ -3,243 +3,211 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>エンジニアリング組織論への招待 — 参考資料</title>
+  <title>エンジニアリング組織論への招待</title>
   <link rel="stylesheet" href="../../../css/style.css">
+  
+  
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
   <main class="main">
+    
     <div class="page-header phase-adr">
       <div class="subtitle">書籍まとめ / マネジメント</div>
-      <h1>📘 エンジニアリング組織論への招待</h1>
+      <h1>エンジニアリング組織論への招待</h1>
       <p class="description">広木大地 著。「なぜエンジニアリング組織はうまく機能しないのか」を哲学・認知科学・組織論から解き明かし、不確実性を減らすための思考法と組織設計を解説した書籍です。</p>
     </div>
-
     <div class="content">
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">🧭</span>
-        <div class="callout-body">
-          <b>このページの使い方（初心者向け）</b><br>
-          本書は「エンジニアとして働く上での思考の枠組み」を提供してくれる本です。難しい言葉も出てきますが、<b>「不確実性（わからないこと）をどう減らすか」</b> という一本の軸で読み進めると理解しやすくなります。章ごとにポイントを整理しましたので、気になる章から読んでみてください。
-        </div>
-      </div>
-
-      <!-- 本書の全体像 -->
-      <h2 class="section-title"><span class="title-icon">🗺️</span> 本書の全体像</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🎯</span><h2>中心テーマ：不確実性との戦い</h2></div>
-        <p>ソフトウェア開発が難しいのは、<strong>「何を作るべきか」「どう作るか」「作ったものが正しいか」</strong> が最初からわからないからです。本書はこの「不確実性」を4種類に分類し、それぞれへの対処法を組織・チーム・個人の視点から解説しています。</p>
-        <table class="comparison-table" style="margin-top:1rem">
-          <thead><tr><th>不確実性の種類</th><th>具体例</th><th>対処のヒント</th></tr></thead>
-          <tbody>
-            <tr><td>環境の不確実性</td><td>市場・競合・法規制の変化</td><td>アジャイル・小さく試す</td></tr>
-            <tr><td>目的の不確実性</td><td>「何を作るべきか」が曖昧</td><td>仮説検証・ユーザーインタビュー</td></tr>
-            <tr><td>手段の不確実性</td><td>「どう作るか」がわからない</td><td>技術調査・スパイク・PoC</td></tr>
-            <tr><td>人・組織の不確実性</td><td>メンバーのスキル・関係性</td><td>1on1・フィードバック文化</td></tr>
-          </tbody>
-        </table>
-        <div class="callout callout-success" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">「なぜこのプロジェクトはうまくいかないのか？」と感じたとき、まず上の4種類のどの不確実性が高いかを考えてみましょう。原因を特定できれば対処法が見えてきます。</div>
-        </div>
-      </div>
-
-      <!-- 第1部：思考 -->
-      <h2 class="section-title"><span class="title-icon">🧠</span> 第1部：思考の不確実性を減らす</h2>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔍</span><h2>論理的思考と仮説思考</h2></div>
-        <p>エンジニアは「正しく考える力」が求められます。本書では <strong>論理思考・仮説思考・水平思考</strong> の3つを組み合わせることを推奨しています。</p>
-        <ul style="margin-top:0.75rem; padding-left:1.5rem; line-height:2">
-          <li><strong>論理思考</strong>：前提から結論を正確に導く（演繹・帰納）</li>
-          <li><strong>仮説思考</strong>：限られた情報でまず仮説を立て、素早く検証する</li>
-          <li><strong>水平思考</strong>：既成概念を崩し、別の視点から解決策を探す</li>
-        </ul>
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body"><b>初心者がはまりやすい罠：</b> 完全に分析してから動こうとすること。情報が揃う前に仮説を立てて動き、<b>動きながら学ぶ</b> サイクルが大切です。</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🪞</span><h2>メンタルモデルと認知バイアス</h2></div>
-        <p>人は物事を「頭の中の地図（メンタルモデル）」で理解しています。このモデルが間違っていると、正確に考えているつもりでも判断を誤ります。</p>
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>認知バイアスの例</th><th>どんな状況で起きるか</th><th>対策</th></tr></thead>
-          <tbody>
-            <tr><td>確証バイアス</td><td>自分の意見に賛成する情報だけ集める</td><td>反証を意識的に探す</td></tr>
-            <tr><td>サンクコスト効果</td><td>「ここまでやったから」で続けてしまう</td><td>「今から始めるとしたら？」と問い直す</td></tr>
-            <tr><td>計画錯誤</td><td>見積もりが楽観的になりすぎる</td><td>過去の実績データを参照する</td></tr>
-            <tr><td>集団思考</td><td>空気を読んで反対意見を言わない</td><td>心理的安全性を高める</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 第2部：コミュニケーション -->
-      <h2 class="section-title"><span class="title-icon">💬</span> 第2部：コミュニケーションの不確実性を減らす</h2>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3e0">🤝</span><h2>心理的安全性</h2></div>
-        <p>本書が特に重視するキーワードの一つ。<strong>「失敗しても責められない」「意見を言っても否定されない」</strong> と感じられるチームの雰囲気のことです。</p>
-        <div class="callout callout-info" style="margin-top:0.75rem">
-          <span class="callout-icon">📌</span>
-          <div class="callout-body">
-            <b>なぜ重要か：</b> 心理的安全性が低いと、メンバーは問題を隠し、早期の失敗検知ができなくなります。Google の「プロジェクト・アリストテレス」でも、高パフォーマンスチームの最大要因として確認されています。
-          </div>
-        </div>
-        <ul style="margin-top:0.75rem; padding-left:1.5rem; line-height:2">
-          <li>失敗を責めず「何を学べるか」を問う文化を作る</li>
-          <li>リーダー自身が「わからない」「間違えた」と言える姿を見せる</li>
-          <li>発言しやすい場づくり（少人数・匿名・ファシリテーション）</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3e0">🔄</span><h2>フィードバックの技術</h2></div>
-        <p>フィードバックは「成長の燃料」ですが、伝え方を誤ると関係性を壊します。本書は <strong>SBI モデル</strong> を推奨しています。</p>
-        <div style="background:#f8f9fa; border-radius:8px; padding:1rem; margin-top:0.75rem">
-          <b>SBI モデル</b>
-          <ul style="padding-left:1.5rem; margin-top:0.5rem; line-height:2">
-            <li><strong>S（Situation）：</strong> 「先週の火曜の設計レビューで」← いつ・どこかを具体的に</li>
-            <li><strong>B（Behavior）：</strong> 「あなたが発言を遮って進めたとき」← 行動を事実として伝える</li>
-            <li><strong>I（Impact）：</strong> 「他のメンバーが意見を言いにくくなった」← 影響を伝える</li>
-          </ul>
-        </div>
-        <div class="callout callout-success" style="margin-top:1rem">
-          <span class="callout-icon">✅</span>
-          <div class="callout-body">「あなたはいつも〇〇だ」という人格攻撃ではなく、<b>具体的な行動とその影響</b> だけを伝えることがポイントです。</div>
-        </div>
-      </div>
-
-      <!-- 第3部：チーム -->
-      <h2 class="section-title"><span class="title-icon">👥</span> 第3部：チームの不確実性を減らす</h2>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8eaf6">🌱</span><h2>成長を促す1on1</h2></div>
-        <p>1on1（ワンオンワン）は上司と部下の定期的な個別ミーティングです。本書では <strong>「上司のための報告会」ではなく「メンバーのための対話の場」</strong> と定義しています。</p>
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th></th><th>❌ よくない1on1</th><th>✅ 良い1on1</th></tr></thead>
-          <tbody>
-            <tr><td>目的</td><td>進捗確認・報告</td><td>本人の成長・課題の解消</td></tr>
-            <tr><td>話す量</td><td>上司が7割</td><td>メンバーが7割</td></tr>
-            <tr><td>議題</td><td>上司が決める</td><td>メンバーが持ってくる</td></tr>
-            <tr><td>話題</td><td>業務の進捗のみ</td><td>キャリア・悩み・フィードバック</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8eaf6">⚡</span><h2>技術的負債とリファクタリング</h2></div>
-        <p>本書では技術的負債を「<strong>短期的な速度向上のために将来払うことになるコスト</strong>」と定義し、組織・チームの意思決定として扱うべきと主張しています。</p>
-        <div class="callout callout-warn" style="margin-top:0.75rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>よくある誤解：</b> 「技術的負債は悪」ではありません。<b>意図的な負債</b>（締め切りに間に合わせるための一時的な妥協）は時に正しい判断です。問題は<b>無自覚な負債</b>が積み上がることです。
-          </div>
-        </div>
-        <ul style="margin-top:0.75rem; padding-left:1.5rem; line-height:2">
-          <li>負債を可視化し、チケット・ドキュメントで管理する</li>
-          <li>リファクタリングは機能追加と分けてレビューする</li>
-          <li>「後でやる」は「永遠にやらない」になりがち → 定期的な負債返済スプリントを設ける</li>
-        </ul>
-      </div>
-
-      <!-- 第4部：組織 -->
-      <h2 class="section-title"><span class="title-icon">🏢</span> 第4部：組織の不確実性を減らす</h2>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fce4ec">🗂️</span><h2>組織構造とコンウェイの法則</h2></div>
-        <p><strong>コンウェイの法則：</strong>「システムの設計は、それを設計した組織のコミュニケーション構造を反映する」</p>
-        <div class="callout callout-info" style="margin-top:0.75rem">
-          <span class="callout-icon">📌</span>
-          <div class="callout-body">
-            <b>具体例：</b> フロントエンドチーム・バックエンドチーム・インフラチームが縦割りになっていると、システムも自然とその境界で分断されます。チームの境界 ＝ システムの境界になるのです。
-          </div>
-        </div>
-        <p style="margin-top:0.75rem">本書はこれを踏まえ、<strong>「逆コンウェイ戦略」</strong>（作りたいシステムの形に合わせてチームを設計する）を推奨しています。</p>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fce4ec">📐</span><h2>スクラムとアジャイルの本質</h2></div>
-        <p>スクラムは「ルールのセット」ではなく、<strong>「不確実性に対処するための経験主義的フレームワーク」</strong> です。</p>
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>スクラムの要素</th><th>目的（なぜやるか）</th></tr></thead>
-          <tbody>
-            <tr><td>スプリント（短い反復）</td><td>早くフィードバックを得て方向を修正する</td></tr>
-            <tr><td>デイリースクラム</td><td>チームの同期と障壁の早期発見</td></tr>
-            <tr><td>スプリントレビュー</td><td>ステークホルダーとの認識合わせ</td></tr>
-            <tr><td>レトロスペクティブ</td><td>プロセス自体を改善し続ける</td></tr>
-          </tbody>
-        </table>
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">「スクラムをやっているのになぜか改善しない」場合、多くはレトロスペクティブでのアクションが実行されていないことが原因です。<b>「気づき」だけでなく「行動」まで落とす</b>ことが重要です。</div>
-        </div>
-      </div>
-
-      <!-- エンジニアのキャリア -->
-      <h2 class="section-title"><span class="title-icon">🚀</span> エンジニアのキャリアと成長</h2>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e0f7fa">📈</span><h2>T字型・π字型の知識</h2></div>
-        <p>本書は専門性と幅広さのバランスを重視しています。</p>
-        <ul style="padding-left:1.5rem; line-height:2; margin-top:0.5rem">
-          <li><strong>T字型（T-Shaped）：</strong> 一つの深い専門領域 ＋ 幅広い基礎知識。最初のキャリア目標に最適。</li>
-          <li><strong>π字型（Pi-Shaped）：</strong> 二つの深い専門領域 ＋ 幅広い知識。シニアエンジニアや Tech Lead の理想像。</li>
-        </ul>
-        <div class="callout callout-success" style="margin-top:1rem">
-          <span class="callout-icon">🎯</span>
-          <div class="callout-body">まずは<b>一つの領域を深く掘る</b>ことを優先しましょう。「何でも少しわかる人」より「これだけは誰にも負けない」領域を持つ人の方が、チームへの貢献度が高くなります。</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e0f7fa">🪜</span><h2>成長の4段階モデル</h2></div>
-        <p>スキル習得には「<strong>意識と無意識</strong>」の段階があります。</p>
-        <ol style="padding-left:1.5rem; line-height:2.2; margin-top:0.5rem">
-          <li><strong>無意識の無能</strong>：「何がわからないかもわからない」状態（最初の段階）</li>
-          <li><strong>意識的な無能</strong>：「何がわからないかがわかった」状態 ← <em>ここが一番つらいが成長している証拠</em></li>
-          <li><strong>意識的な有能</strong>：「意識してやればできる」状態</li>
-          <li><strong>無意識の有能</strong>：「考えなくてもできる」状態（熟練）</li>
-        </ol>
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">「最近、自分のダメなところがよくわかるようになってきた」と感じたら、それは <b>第2段階への成長</b> です。落ち込まず、学べている証拠だと捉えましょう。</div>
-        </div>
-      </div>
-
-      <!-- まとめ -->
-      <h2 class="section-title"><span class="title-icon">✅</span> 本書から学ぶ行動指針</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#f3e5f5">📋</span><h2>現場で今日からできること</h2></div>
-        <table class="comparison-table">
-          <thead><tr><th>場面</th><th>具体的な行動</th></tr></thead>
-          <tbody>
-            <tr><td>設計・実装</td><td>「なぜそうするか」を残す（ADR・コメント・PR説明）</td></tr>
-            <tr><td>コードレビュー</td><td>人格ではなくコードを批評し、SBIでフィードバックする</td></tr>
-            <tr><td>会議・議論</td><td>反証を意識的に探し、「それ本当に正しい？」を口にする</td></tr>
-            <tr><td>見積もり</td><td>楽観バイアスを前提に、過去データとバッファを加える</td></tr>
-            <tr><td>技術的負債</td><td>発見したら即チケット化し、対処方針を明記する</td></tr>
-            <tr><td>チーム作り</td><td>自分から「わからない」「失敗した」を発信し心理的安全性を高める</td></tr>
-          </tbody>
-        </table>
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">📚</span>
-          <div class="callout-body">
-            <b>本書の書誌情報</b><br>
-            書名：エンジニアリング組織論への招待 〜不確実性に向き合う思考と組織のリファクタリング<br>
-            著者：広木大地<br>
-            出版社：技術評論社（2018年）
-          </div>
-        </div>
-      </div>
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方（初心者向け）</b><br>
+    本書は「エンジニアとして働く上での思考の枠組み」を提供してくれる本です。難しい言葉も出てきますが、<b>「不確実性（わからないこと）をどう減らすか」</b> という一本の軸で読み進めると理解しやすくなります。章ごとにポイントを整理しましたので、気になる章から読んでみてください。
+  </div>
+</div><h2>🗺️ 本書の全体像</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🎯</span><h2>中心テーマ：不確実性との戦い</h2></div>
+  <p>ソフトウェア開発が難しいのは、<strong>「何を作るべきか」「どう作るか」「作ったものが正しいか」</strong> が最初からわからないからです。本書はこの「不確実性」を4種類に分類し、それぞれへの対処法を組織・チーム・個人の視点から解説しています。</p>
+  <table class="comparison-table" style="margin-top:1rem">
+    <thead><tr><th>不確実性の種類</th><th>具体例</th><th>対処のヒント</th></tr></thead>
+    <tbody>
+      <tr><td>環境の不確実性</td><td>市場・競合・法規制の変化</td><td>アジャイル・小さく試す</td></tr>
+      <tr><td>目的の不確実性</td><td>「何を作るべきか」が曖昧</td><td>仮説検証・ユーザーインタビュー</td></tr>
+      <tr><td>手段の不確実性</td><td>「どう作るか」がわからない</td><td>技術調査・スパイク・PoC</td></tr>
+      <tr><td>人・組織の不確実性</td><td>メンバーのスキル・関係性</td><td>1on1・フィードバック文化</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">「なぜこのプロジェクトはうまくいかないのか？」と感じたとき、まず上の4種類のどの不確実性が高いかを考えてみましょう。原因を特定できれば対処法が見えてきます。</div>
+  </div>
+</div><h2>🧠 第1部：思考の不確実性を減らす</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔍</span><h2>論理的思考と仮説思考</h2></div>
+  <p>エンジニアは「正しく考える力」が求められます。本書では <strong>論理思考・仮説思考・水平思考</strong> の3つを組み合わせることを推奨しています。</p>
+  <ul style="margin-top:0.75rem; padding-left:1.5rem; line-height:2">
+    <li><strong>論理思考</strong>：前提から結論を正確に導く（演繹・帰納）</li>
+    <li><strong>仮説思考</strong>：限られた情報でまず仮説を立て、素早く検証する</li>
+    <li><strong>水平思考</strong>：既成概念を崩し、別の視点から解決策を探す</li>
+  </ul>
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><b>初心者がはまりやすい罠：</b> 完全に分析してから動こうとすること。情報が揃う前に仮説を立てて動き、<b>動きながら学ぶ</b> サイクルが大切です。</div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🪞</span><h2>メンタルモデルと認知バイアス</h2></div>
+  <p>人は物事を「頭の中の地図（メンタルモデル）」で理解しています。このモデルが間違っていると、正確に考えているつもりでも判断を誤ります。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>認知バイアスの例</th><th>どんな状況で起きるか</th><th>対策</th></tr></thead>
+    <tbody>
+      <tr><td>確証バイアス</td><td>自分の意見に賛成する情報だけ集める</td><td>反証を意識的に探す</td></tr>
+      <tr><td>サンクコスト効果</td><td>「ここまでやったから」で続けてしまう</td><td>「今から始めるとしたら？」と問い直す</td></tr>
+      <tr><td>計画錯誤</td><td>見積もりが楽観的になりすぎる</td><td>過去の実績データを参照する</td></tr>
+      <tr><td>集団思考</td><td>空気を読んで反対意見を言わない</td><td>心理的安全性を高める</td></tr>
+    </tbody>
+  </table>
+</div><h2>💬 第2部：コミュニケーションの不確実性を減らす</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3e0">🤝</span><h2>心理的安全性</h2></div>
+  <p>本書が特に重視するキーワードの一つ。<strong>「失敗しても責められない」「意見を言っても否定されない」</strong> と感じられるチームの雰囲気のことです。</p>
+  <div class="callout callout-info" style="margin-top:0.75rem">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body">
+      <b>なぜ重要か：</b> 心理的安全性が低いと、メンバーは問題を隠し、早期の失敗検知ができなくなります。Google の「プロジェクト・アリストテレス」でも、高パフォーマンスチームの最大要因として確認されています。
+    </div>
+  </div>
+  <ul style="margin-top:0.75rem; padding-left:1.5rem; line-height:2">
+    <li>失敗を責めず「何を学べるか」を問う文化を作る</li>
+    <li>リーダー自身が「わからない」「間違えた」と言える姿を見せる</li>
+    <li>発言しやすい場づくり（少人数・匿名・ファシリテーション）</li>
+  </ul>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3e0">🔄</span><h2>フィードバックの技術</h2></div>
+  <p>フィードバックは「成長の燃料」ですが、伝え方を誤ると関係性を壊します。本書は <strong>SBI モデル</strong> を推奨しています。</p>
+  <div style="background:#f8f9fa; border-radius:8px; padding:1rem; margin-top:0.75rem">
+    <b>SBI モデル</b>
+    <ul style="padding-left:1.5rem; margin-top:0.5rem; line-height:2">
+      <li><strong>S（Situation）：</strong> 「先週の火曜の設計レビューで」← いつ・どこかを具体的に</li>
+      <li><strong>B（Behavior）：</strong> 「あなたが発言を遮って進めたとき」← 行動を事実として伝える</li>
+      <li><strong>I（Impact）：</strong> 「他のメンバーが意見を言いにくくなった」← 影響を伝える</li>
+    </ul>
+  </div>
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">「あなたはいつも〇〇だ」という人格攻撃ではなく、<b>具体的な行動とその影響</b> だけを伝えることがポイントです。</div>
+  </div>
+</div><h2>👥 第3部：チームの不確実性を減らす</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8eaf6">🌱</span><h2>成長を促す1on1</h2></div>
+  <p>1on1（ワンオンワン）は上司と部下の定期的な個別ミーティングです。本書では <strong>「上司のための報告会」ではなく「メンバーのための対話の場」</strong> と定義しています。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th></th><th>❌ よくない1on1</th><th>✅ 良い1on1</th></tr></thead>
+    <tbody>
+      <tr><td>目的</td><td>進捗確認・報告</td><td>本人の成長・課題の解消</td></tr>
+      <tr><td>話す量</td><td>上司が7割</td><td>メンバーが7割</td></tr>
+      <tr><td>議題</td><td>上司が決める</td><td>メンバーが持ってくる</td></tr>
+      <tr><td>話題</td><td>業務の進捗のみ</td><td>キャリア・悩み・フィードバック</td></tr>
+    </tbody>
+  </table>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8eaf6">⚡</span><h2>技術的負債とリファクタリング</h2></div>
+  <p>本書では技術的負債を「<strong>短期的な速度向上のために将来払うことになるコスト</strong>」と定義し、組織・チームの意思決定として扱うべきと主張しています。</p>
+  <div class="callout callout-warn" style="margin-top:0.75rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>よくある誤解：</b> 「技術的負債は悪」ではありません。<b>意図的な負債</b>（締め切りに間に合わせるための一時的な妥協）は時に正しい判断です。問題は<b>無自覚な負債</b>が積み上がることです。
+    </div>
+  </div>
+  <ul style="margin-top:0.75rem; padding-left:1.5rem; line-height:2">
+    <li>負債を可視化し、チケット・ドキュメントで管理する</li>
+    <li>リファクタリングは機能追加と分けてレビューする</li>
+    <li>「後でやる」は「永遠にやらない」になりがち → 定期的な負債返済スプリントを設ける</li>
+  </ul>
+</div><h2>🏢 第4部：組織の不確実性を減らす</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fce4ec">🗂️</span><h2>組織構造とコンウェイの法則</h2></div>
+  <p><strong>コンウェイの法則：</strong>「システムの設計は、それを設計した組織のコミュニケーション構造を反映する」</p>
+  <div class="callout callout-info" style="margin-top:0.75rem">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body">
+      <b>具体例：</b> フロントエンドチーム・バックエンドチーム・インフラチームが縦割りになっていると、システムも自然とその境界で分断されます。チームの境界 ＝ システムの境界になるのです。
+    </div>
+  </div>
+  <p style="margin-top:0.75rem">本書はこれを踏まえ、<strong>「逆コンウェイ戦略」</strong>（作りたいシステムの形に合わせてチームを設計する）を推奨しています。</p>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fce4ec">📐</span><h2>スクラムとアジャイルの本質</h2></div>
+  <p>スクラムは「ルールのセット」ではなく、<strong>「不確実性に対処するための経験主義的フレームワーク」</strong> です。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>スクラムの要素</th><th>目的（なぜやるか）</th></tr></thead>
+    <tbody>
+      <tr><td>スプリント（短い反復）</td><td>早くフィードバックを得て方向を修正する</td></tr>
+      <tr><td>デイリースクラム</td><td>チームの同期と障壁の早期発見</td></tr>
+      <tr><td>スプリントレビュー</td><td>ステークホルダーとの認識合わせ</td></tr>
+      <tr><td>レトロスペクティブ</td><td>プロセス自体を改善し続ける</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">「スクラムをやっているのになぜか改善しない」場合、多くはレトロスペクティブでのアクションが実行されていないことが原因です。<b>「気づき」だけでなく「行動」まで落とす</b>ことが重要です。</div>
+  </div>
+</div><h2>🚀 エンジニアのキャリアと成長</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e0f7fa">📈</span><h2>T字型・π字型の知識</h2></div>
+  <p>本書は専門性と幅広さのバランスを重視しています。</p>
+  <ul style="padding-left:1.5rem; line-height:2; margin-top:0.5rem">
+    <li><strong>T字型（T-Shaped）：</strong> 一つの深い専門領域 ＋ 幅広い基礎知識。最初のキャリア目標に最適。</li>
+    <li><strong>π字型（Pi-Shaped）：</strong> 二つの深い専門領域 ＋ 幅広い知識。シニアエンジニアや Tech Lead の理想像。</li>
+  </ul>
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-body">まずは<b>一つの領域を深く掘る</b>ことを優先しましょう。「何でも少しわかる人」より「これだけは誰にも負けない」領域を持つ人の方が、チームへの貢献度が高くなります。</div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e0f7fa">🪜</span><h2>成長の4段階モデル</h2></div>
+  <p>スキル習得には「<strong>意識と無意識</strong>」の段階があります。</p>
+  <ol style="padding-left:1.5rem; line-height:2.2; margin-top:0.5rem">
+    <li><strong>無意識の無能</strong>：「何がわからないかもわからない」状態（最初の段階）</li>
+    <li><strong>意識的な無能</strong>：「何がわからないかがわかった」状態 ← <em>ここが一番つらいが成長している証拠</em></li>
+    <li><strong>意識的な有能</strong>：「意識してやればできる」状態</li>
+    <li><strong>無意識の有能</strong>：「考えなくてもできる」状態（熟練）</li>
+  </ol>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">「最近、自分のダメなところがよくわかるようになってきた」と感じたら、それは <b>第2段階への成長</b> です。落ち込まず、学べている証拠だと捉えましょう。</div>
+  </div>
+</div><h2>✅ 本書から学ぶ行動指針</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#f3e5f5">📋</span><h2>現場で今日からできること</h2></div>
+  <table class="comparison-table">
+    <thead><tr><th>場面</th><th>具体的な行動</th></tr></thead>
+    <tbody>
+      <tr><td>設計・実装</td><td>「なぜそうするか」を残す（ADR・コメント・PR説明）</td></tr>
+      <tr><td>コードレビュー</td><td>人格ではなくコードを批評し、SBIでフィードバックする</td></tr>
+      <tr><td>会議・議論</td><td>反証を意識的に探し、「それ本当に正しい？」を口にする</td></tr>
+      <tr><td>見積もり</td><td>楽観バイアスを前提に、過去データとバッファを加える</td></tr>
+      <tr><td>技術的負債</td><td>発見したら即チケット化し、対処方針を明記する</td></tr>
+      <tr><td>チーム作り</td><td>自分から「わからない」「失敗した」を発信し心理的安全性を高める</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">📚</span>
+    <div class="callout-body">
+      <b>本書の書誌情報</b><br>
+      書名：エンジニアリング組織論への招待 〜不確実性に向き合う思考と組織のリファクタリング<br>
+      著者：広木大地<br>
+      出版社：技術評論社（2018年）
+    </div>
+  </div>
+</div>
 
     </div>
   </main>
 </div>
+
+
+<script src="../../../js/main.js"></script>
 <script src="../../../sidebar.js"></script>
 </body>
 </html>

@@ -1,0 +1,252 @@
+---
+title: 設計書テンプレート集
+subtitle: Templates
+phase: libs
+description: コピーしてすぐ使える設計書テンプレートです。T-01〜T-11 を収録しています。行をクリックするとプレビューが表示されます。
+style: |
+  .template-preview-panel { margin-top:1.5rem; border:1px solid var(--gray-200); border-radius:8px; overflow:hidden; }
+  .template-preview-header { display:flex; align-items:center; justify-content:space-between; padding:.75rem 1.25rem; background:var(--gray-50); border-bottom:1px solid var(--gray-200); gap:1rem; }
+  .template-preview-title { font-weight:600; font-size:.95rem; color:var(--gray-700); }
+  .template-preview-actions { display:flex; align-items:center; gap:.75rem; flex-shrink:0; }
+  .btn-md-link { display:inline-flex; align-items:center; gap:.35rem; padding:.3rem .75rem; border-radius:5px; font-size:.8rem; font-weight:500; text-decoration:none; background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; transition:background .15s; }
+  .btn-md-link:hover { background:#dbeafe; }
+  .template-preview-body { padding:1.5rem 1.75rem; overflow-x:auto; min-height:120px; max-height:520px; overflow-y:auto; }
+  .template-preview-body.loading { display:flex; align-items:center; justify-content:center; color:var(--gray-400); font-size:.9rem; }
+  .template-preview-body.error { color:#ef4444; font-size:.875rem; }
+  .md-rendered h1 { font-size:1.4rem; margin:.5rem 0 1rem; }
+  .md-rendered h2 { font-size:1.15rem; margin:1.25rem 0 .5rem; border-bottom:1px solid var(--gray-200); padding-bottom:.3rem; }
+  .md-rendered h3 { font-size:1rem; margin:1rem 0 .4rem; }
+  .md-rendered table { border-collapse:collapse; width:100%; margin:.75rem 0; font-size:.82rem; }
+  .md-rendered th { background:var(--gray-100); padding:.45rem .75rem; text-align:left; border:1px solid var(--gray-300); white-space:nowrap; }
+  .md-rendered td { padding:.4rem .75rem; border:1px solid var(--gray-200); vertical-align:top; }
+  .md-rendered tr:nth-child(even) td { background:var(--gray-50); }
+  .md-rendered code { font-size:.82em; background:var(--gray-100); padding:.1em .35em; border-radius:3px; }
+  .md-rendered pre { background:var(--gray-100); padding:.75rem 1rem; border-radius:6px; overflow-x:auto; font-size:.82rem; }
+  .md-rendered pre code { background:none; padding:0; }
+  .md-rendered blockquote { border-left:3px solid #93c5fd; margin:.75rem 0; padding:.5rem 1rem; background:#eff6ff; color:var(--gray-600); }
+  .md-rendered ul, .md-rendered ol { padding-left:1.5rem; margin:.5rem 0; }
+  .md-rendered li { margin:.2rem 0; }
+  .md-rendered hr { border:none; border-top:1px solid var(--gray-200); margin:1rem 0; }
+  .md-rendered p { margin:.5rem 0; line-height:1.7; }
+  .template-table tbody tr { cursor:pointer; }
+  .template-table tbody tr:hover td { background:#eff6ff; }
+  .template-table tbody tr.active td { background:#dbeafe; }
+  .template-table .preview-btn { display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .55rem; border-radius:4px; font-size:.78rem; font-weight:500; cursor:pointer; border:1px solid var(--gray-300); background:white; color:var(--gray-600); white-space:nowrap; transition:background .15s; }
+  .template-table .preview-btn:hover { background:var(--gray-100); }
+  .template-table .md-open-link { display:inline-flex; align-items:center; gap:.25rem; font-size:.78rem; color:#2563eb; text-decoration:none; }
+  .template-table .md-open-link:hover { text-decoration:underline; }
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方</b><br>
+    1) 目的に合うID（T-01〜）をクリックしてプレビューを確認 → 2)「MDを開く」でMarkdown原本を表示・コピー → 3) プロジェクト固有の用語・ID体系に書き換えて使用します。<br>
+    テンプレートは<b>そのまま使う</b>のではなく、レビュー手順などをプロジェクトに合わせて揃えるのがコツです。
+  </div>
+</div>
+
+## 📑 テンプレート一覧
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="template-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>テンプレート名</th>
+          <th>対応成果物</th>
+          <th>フェーズ</th>
+          <th style="white-space:nowrap">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-template="T-01" data-file="template/T-01_機能一覧.md">
+          <td><span class="badge badge-primary">T-01</span></td>
+          <td>機能一覧</td>
+          <td>B-03 機能一覧</td>
+          <td>基本設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-01_機能一覧.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-02" data-file="template/T-02_画面一覧.md">
+          <td><span class="badge badge-primary">T-02</span></td>
+          <td>画面一覧</td>
+          <td>B-04 画面一覧</td>
+          <td>基本設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-02_画面一覧.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-03" data-file="template/T-03_API一覧.md">
+          <td><span class="badge badge-primary">T-03</span></td>
+          <td>API一覧</td>
+          <td>B-07 API一覧</td>
+          <td>基本設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-03_API一覧.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-04" data-file="template/T-04_テーブル定義書.md">
+          <td><span class="badge badge-primary">T-04</span></td>
+          <td>テーブル定義書</td>
+          <td>B-10 テーブル定義書（サンプルデータつき）</td>
+          <td>基本設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-04_テーブル定義書.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-05" data-file="template/T-05_権限マトリクス.md">
+          <td><span class="badge badge-primary">T-05</span></td>
+          <td>権限マトリクス</td>
+          <td>B-15 権限マトリクス</td>
+          <td>基本設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-05_権限マトリクス.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-06" data-file="template/T-06_外部IF設計書.md">
+          <td><span class="badge badge-primary">T-06</span></td>
+          <td>外部IF設計書</td>
+          <td>B-12 外部インタフェース設計書</td>
+          <td>基本設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-06_外部IF設計書.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-07" data-file="template/T-07_非機能要件設計書.md">
+          <td><span class="badge badge-primary">T-07</span></td>
+          <td>非機能要件設計書</td>
+          <td>B-13 非機能要件設計書</td>
+          <td>基本設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-07_非機能要件設計書.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-08" data-file="template/T-08_トレーサビリティマトリクス.md">
+          <td><span class="badge badge-primary">T-08</span></td>
+          <td>トレーサビリティマトリクス</td>
+          <td>B-19 / D-18 トレーサビリティマトリクス</td>
+          <td>基本・詳細設計</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-08_トレーサビリティマトリクス.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-09" data-file="template/T-09_テスト計画書.md">
+          <td><span class="badge badge-success">T-09</span></td>
+          <td>テスト計画書</td>
+          <td>テスト計画書</td>
+          <td>テスト</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-09_テスト計画書.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-10" data-file="template/T-10_UATシナリオ.md">
+          <td><span class="badge badge-success">T-10</span></td>
+          <td>UATシナリオ</td>
+          <td>受入テストシナリオ書</td>
+          <td>UAT</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-10_UATシナリオ.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+        <tr data-template="T-11" data-file="template/T-11_カットオーバー手順書.md">
+          <td><span class="badge badge-success">T-11</span></td>
+          <td>カットオーバー手順書</td>
+          <td>カットオーバー・バックアウト手順書</td>
+          <td>リリース</td>
+          <td>
+            <button class="preview-btn" onclick="previewTemplate(this)">👁 プレビュー</button>
+            <a class="md-open-link" href="template/T-11_カットオーバー手順書.md" target="_blank">📄 MD</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="template-preview-container" style="display:none">
+  <h2 class="section-title"><span class="title-icon">📄</span> <span id="preview-section-title">テンプレートプレビュー</span></h2>
+  <div class="card" style="padding:0">
+    <div class="template-preview-panel">
+      <div class="template-preview-header">
+        <span class="template-preview-title" id="preview-panel-title">—</span>
+        <div class="template-preview-actions">
+          <a id="preview-md-link" class="btn-md-link" href="#" target="_blank">
+            📄 MDファイルを開く
+          </a>
+          <button class="preview-btn" onclick="closePreview()" style="border-color:var(--gray-300)">✕ 閉じる</button>
+        </div>
+      </div>
+      <div class="template-preview-body md-rendered" id="preview-body">
+        <span class="loading">読み込み中…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+(function () {
+  let currentRow = null;
+
+  window.previewTemplate = function (btn) {
+    const row = btn.closest('tr');
+    const file = row.dataset.file;
+    const templateId = row.dataset.template;
+    const templateName = row.cells[1].textContent.trim();
+
+    if (currentRow) currentRow.classList.remove('active');
+    row.classList.add('active');
+    currentRow = row;
+
+    const container = document.getElementById('template-preview-container');
+    const body = document.getElementById('preview-body');
+    const title = document.getElementById('preview-panel-title');
+    const sectionTitle = document.getElementById('preview-section-title');
+    const mdLink = document.getElementById('preview-md-link');
+
+    container.style.display = '';
+    title.textContent = templateId + ' ' + templateName;
+    sectionTitle.textContent = templateId + ' ' + templateName + ' — プレビュー';
+    mdLink.href = file;
+    body.className = 'template-preview-body loading';
+    body.innerHTML = '読み込み中…';
+
+    fetch(file)
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(md => {
+        body.className = 'template-preview-body md-rendered';
+        body.innerHTML = marked.parse(md);
+      })
+      .catch(err => {
+        body.className = 'template-preview-body error';
+        body.innerHTML =
+          '<p>⚠️ ファイルの読み込みに失敗しました。</p>' +
+          '<p style="color:var(--gray-500);font-size:0.8rem">' + err.message + '</p>' +
+          '<p style="font-size:0.85rem">ローカルファイルとして開いている場合は、代わりに <a href="' + file + '" target="_blank">MDファイルを直接開いてください</a>。</p>';
+      });
+
+    setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  };
+
+  window.closePreview = function () {
+    document.getElementById('template-preview-container').style.display = 'none';
+    if (currentRow) { currentRow.classList.remove('active'); currentRow = null; }
+  };
+})();
+</script>

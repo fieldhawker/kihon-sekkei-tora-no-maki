@@ -1,0 +1,252 @@
+---
+title: PMBOK（Project Management Body of Knowledge）
+subtitle: 書籍まとめ / マネジメント
+phase: adr
+description: PMI（Project Management Institute）が発行するプロジェクトマネジメントの知識体系ガイド。世界標準として広く参照されており、第7版（2021年）からは「プロセス中心」から「原則・パフォーマンス領域中心」へと大きく刷新されました。
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方（初心者向け）</b><br>
+    PMBOKは「プロジェクトを成功させるための知恵集」です。最初から全部覚える必要はありません。<b>「今のプロジェクトで何が課題か？」</b> を意識しながら、関係する章を読み進めるのが効果的です。難しい専門用語もこのページでわかりやすく解説しています。
+  </div>
+</div>
+
+## 🗺️ PMBOKとは何か？
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🎯</span><h2>プロジェクトマネジメントの「共通言語」</h2></div>
+  <p>PMBOK（ピンボック）は、世界中のプロジェクトマネジャーが共有する<strong>「プロジェクト管理の知識・手法・ベストプラクティス」</strong>をまとめたガイドブックです。業種を問わず適用できるため、ITシステム開発・建設・製品開発など幅広い分野で活用されています。</p>
+  <table class="comparison-table" style="margin-top:1rem">
+    <thead><tr><th>版</th><th>特徴</th></tr></thead>
+    <tbody>
+      <tr><td>第6版以前</td><td>49のプロセスを定義した「プロセス中心」のアプローチ</td></tr>
+      <tr><td>第7版（2021年〜）</td><td>12の原則と8つのパフォーマンス領域に整理。アジャイルにも対応した「成果・価値中心」のアプローチ</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">職場でPMBOKを参照するときは「第6版か第7版か」を確認しましょう。プロセス名や用語が異なる場合があります。</div>
+  </div>
+</div>
+
+## 📌 まず「プロジェクト」を正しく理解する
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">📋</span><h2>プロジェクトの定義</h2></div>
+  <p>PMBOKでは、プロジェクトを次のように定義しています。</p>
+  <blockquote style="border-left:4px solid var(--primary); padding:0.75rem 1rem; background:var(--bg-sub); border-radius:0 8px 8px 0; margin:1rem 0">
+    <strong>「独自のプロダクト・サービス・所産を創出するために実施される、有期性のある業務」</strong>
+  </blockquote>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>キーワード</th><th>意味</th><th>具体例</th></tr></thead>
+    <tbody>
+      <tr><td>有期性（始まりと終わりがある）</td><td>永遠に続く業務ではない</td><td>○○システム開発（〇月〜〇月）</td></tr>
+      <tr><td>独自性（ユニークな成果物）</td><td>全く同じプロジェクトは存在しない</td><td>同じ機能でもチーム・環境が違えば別プロジェクト</td></tr>
+      <tr><td>不確実性（リスクがある）</td><td>計画どおりにいかないことがある</td><td>要件変更・技術的な障害・人員変更など</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><b>「運用業務」はプロジェクトではない：</b> 繰り返し同じことをする定常業務（日次バッチ実行・定期メンテナンス）は「オペレーション」と呼ばれ、PMBOKのプロジェクト管理とは区別されます。</div>
+  </div>
+</div>
+
+## 🧱 第7版：12のプロジェクトマネジメント原則
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef3cd">📜</span><h2>「どうやるか」より「何のためにやるか」を重視</h2></div>
+  <p>第7版では、細かい手順ではなく<strong>「プロジェクトマネジャーとして大切にすべき考え方」</strong>が12の原則として示されています。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>#</th><th>原則</th><th>ひとことで言うと</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>スチュワードシップ（誠実な管理）</td><td>組織・チーム・社会に対して誠実であれ</td></tr>
+      <tr><td>2</td><td>チームの育成</td><td>メンバーが協力しやすい環境を作れ</td></tr>
+      <tr><td>3</td><td>ステークホルダーの関与</td><td>関係者と積極的にコミュニケーションを取れ</td></tr>
+      <tr><td>4</td><td>価値の重視</td><td>「本当に価値があること」に集中しろ</td></tr>
+      <tr><td>5</td><td>システム思考</td><td>プロジェクトを孤立した活動ではなく全体として捉えろ</td></tr>
+      <tr><td>6</td><td>リーダーシップ</td><td>状況に応じたリーダーシップを発揮せよ</td></tr>
+      <tr><td>7</td><td>テーラリング（状況への適応）</td><td>「正解の手法」は1つではない。状況に合わせろ</td></tr>
+      <tr><td>8</td><td>品質の組み込み</td><td>品質はあとから追加するものではなく、最初から組み込め</td></tr>
+      <tr><td>9</td><td>複雑性への対処</td><td>複雑な問題は丸ごと解こうとせず分解して対処せよ</td></tr>
+      <tr><td>10</td><td>リスク対応</td><td>リスクから逃げず、積極的に識別・対処せよ</td></tr>
+      <tr><td>11</td><td>適応性と回復力</td><td>変化に柔軟に対応できる体制を作れ</td></tr>
+      <tr><td>12</td><td>変革のための変化管理</td><td>プロジェクトは組織を変えるチャンスでもある</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">原則は「守るべきルール」ではなく「判断の拠り所」です。状況が複雑なとき「この原則に照らしてどうか？」と問い直すことで、より良い判断ができます。</div>
+  </div>
+</div>
+
+## 🎯 第7版：8つのパフォーマンス領域
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">📊</span><h2>「何に注目して管理するか」の8つの視点</h2></div>
+  <p>パフォーマンス領域とは、<strong>プロジェクトの成功のために日常的に意識・管理すべき8つのテーマ</strong>です。それぞれが連動しているため、1つだけ管理しても全体はうまくいきません。</p>
+
+  <div style="display:grid; gap:0.75rem; margin-top:1rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">① ステークホルダー</h3>
+      <p style="margin:0">関係者（顧客・上司・利用者など）を特定し、期待や懸念を把握して継続的に関与を維持する。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：「誰に報告すべきか」「誰が反対しそうか」を早めに洗い出す</span></p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">② チーム</h3>
+      <p style="margin:0">チームの生産性・心理的安全性・モチベーションを高める活動全般。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：1on1や振り返り（レトロ）を定期的に実施する</span></p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">③ 開発アプローチとライフサイクル</h3>
+      <p style="margin:0">ウォーターフォール・アジャイル・ハイブリッドなど、プロジェクトに最適な開発方式を選ぶ。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：「要件が固まっているか？」「変化が多いか？」で判断する</span></p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">④ 計画</h3>
+      <p style="margin:0">スコープ・スケジュール・コスト・品質・リソースを計画する。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：計画は「作って終わり」ではなく、常に実績と比較して更新する</span></p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">⑤ プロジェクト作業</h3>
+      <p style="margin:0">タスクの実行・課題管理・変更管理など日々の作業を適切に管理する。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：「課題（Issue）」と「リスク（Risk）」は別物として管理する</span></p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">⑥ デリバリー</h3>
+      <p style="margin:0">スコープと品質の要件を満たした成果物を確実に届ける。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：「完成」の定義（DoD: Definition of Done）をチームで共有する</span></p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">⑦ 測定</h3>
+      <p style="margin:0">KPIや進捗指標を用いてプロジェクトの状態を客観的に把握する。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：「なんとなく遅れている」より「予定比120%の工数消化」と数値で把握する</span></p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">⑧ 不確実性</h3>
+      <p style="margin:0">リスク・曖昧さ・複雑さを識別し、影響を最小化する対策を取る。<br><span style="color:var(--text-sub); font-size:0.9em">🔑 ポイント：リスクは「発生したら対処」ではなく「発生前に予防」が基本</span></p>
+    </div>
+  </div>
+</div>
+
+## 🔄 第6版：5つのプロセス群（プロジェクトの流れ）
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fce8e8">📅</span><h2>プロジェクトはこの5段階で動く</h2></div>
+  <p>第6版まで使われてきたプロセス群は、現在も実務で広く参照されています。プロジェクトがどのフェーズにいるかを意識することが重要です。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>プロセス群</th><th>何をするフェーズ？</th><th>主な成果物</th></tr></thead>
+    <tbody>
+      <tr><td>① 立上げ</td><td>プロジェクトを公式に認可し、目標・体制を決める</td><td>プロジェクト憲章、ステークホルダー登録簿</td></tr>
+      <tr><td>② 計画</td><td>スコープ・スケジュール・コスト・品質などを詳細計画する</td><td>プロジェクト管理計画書、WBS</td></tr>
+      <tr><td>③ 実行</td><td>計画に沿って実際の作業を行う</td><td>成果物（コード・ドキュメントなど）</td></tr>
+      <tr><td>④ 監視・コントロール</td><td>進捗を測定し、ずれがあれば是正する</td><td>進捗報告書、変更要求</td></tr>
+      <tr><td>⑤ 終結</td><td>プロジェクトを正式に完了し、教訓を記録する</td><td>最終報告書、教訓登録簿</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">🔍</span>
+    <div class="callout-body">「監視・コントロール」は特定のフェーズではなく、<b>プロジェクト全体を通じて並行して行う</b>活動です。立上げから終結まで、常に計画と実績を比較し続けます。</div>
+  </div>
+</div>
+
+## 🛠️ 現場で使える重要な管理技法
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">📐</span><h2>WBS（Work Breakdown Structure）：作業分解構造</h2></div>
+  <p>プロジェクトの<strong>全作業を階層的に分解した図</strong>です。「何をやるか」を漏れなく洗い出すための最重要ツールです。</p>
+  <pre style="background:var(--bg-sub); padding:1rem; border-radius:8px; font-size:0.85em; overflow-x:auto">プロジェクト全体
+├─ 要件定義
+│   ├─ 現状調査
+│   ├─ ユーザーインタビュー
+│   └─ 要件定義書作成
+├─ 設計
+│   ├─ 基本設計
+│   └─ 詳細設計
+├─ 開発
+│   ├─ フロントエンド実装
+│   └─ バックエンド実装
+└─ テスト・リリース</pre>
+  <div class="callout callout-success" style="margin-top:0.75rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">WBSは「これ以上分解できない作業単位（ワークパッケージ）」まで細かくすることで、見積もり精度が上がります。目安は1〜2週間で完了できる粒度。</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">⚡</span><h2>リスク管理：起きてから慌てないために</h2></div>
+  <p>PMBOKではリスクを「プロジェクトの目標に影響を与える可能性のある不確かな事象や条件」と定義しています。リスクはマイナスだけでなく<strong>プラス（機会）も含みます</strong>。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>ステップ</th><th>内容</th><th>初心者向けヒント</th></tr></thead>
+    <tbody>
+      <tr><td>識別</td><td>起こりうるリスクを洗い出す</td><td>「もし〇〇が起きたら？」をチームでブレスト</td></tr>
+      <tr><td>定性的分析</td><td>リスクの発生確率と影響度を評価</td><td>高・中・低で仕分けするだけでOK</td></tr>
+      <tr><td>定量的分析</td><td>リスクを数値で評価（上級）</td><td>大規模プロジェクトで実施する</td></tr>
+      <tr><td>対応計画</td><td>回避・軽減・転嫁・受容の戦略を決める</td><td>「誰が」「何をする」まで決めておく</td></tr>
+      <tr><td>監視・コントロール</td><td>定期的にリスク状況を更新する</td><td>週次定例でリスク状況を確認する習慣を</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><b>リスクと課題は別物：</b> リスクは「まだ起きていない問題の可能性」、課題（Issue）は「すでに発生している問題」です。混同すると対応が後手に回ります。</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef3cd">📈</span><h2>EVM（アーンドバリュー管理）：進捗と予算を同時に見る</h2></div>
+  <p>進捗と予算の状態を<strong>金額（バリュー）に換算して一元管理</strong>する手法です。「工程は60%完了。でも予算は80%消化…」という状況を早期に発見できます。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>指標</th><th>略称</th><th>意味</th></tr></thead>
+    <tbody>
+      <tr><td>計画バリュー</td><td>PV</td><td>この時点までに完了予定だった作業の予算額</td></tr>
+      <tr><td>アーンドバリュー</td><td>EV</td><td>この時点で実際に完了した作業の予算額</td></tr>
+      <tr><td>実コスト</td><td>AC</td><td>この時点で実際に使ったコスト</td></tr>
+      <tr><td>スケジュール差異</td><td>SV = EV − PV</td><td>マイナス＝進捗遅れ</td></tr>
+      <tr><td>コスト差異</td><td>CV = EV − AC</td><td>マイナス＝コスト超過</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">最初は難しく感じますが、「<b>予定どおり進んでいるか（SV）</b>」と「<b>予算内に収まっているか（CV）</b>」の2つだけ意識するところから始めましょう。</div>
+  </div>
+</div>
+
+## 👥 ステークホルダー管理：関係者を味方にする
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🤝</span><h2>プロジェクト成功の鍵は「人」の管理</h2></div>
+  <p>技術的に完璧なシステムを作っても、<strong>利用者や発注者が納得していなければプロジェクトは失敗</strong>です。ステークホルダー管理はPMBOKでも特に重要視されています。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>関与度レベル</th><th>状態</th><th>対応策</th></tr></thead>
+    <tbody>
+      <tr><td>無認識</td><td>プロジェクトの存在を知らない</td><td>情報提供・説明会の実施</td></tr>
+      <tr><td>抵抗</td><td>知っているが反対している</td><td>懸念事項のヒアリングと解消</td></tr>
+      <tr><td>中立</td><td>知っているが関心が低い</td><td>メリットの可視化</td></tr>
+      <tr><td>支持</td><td>賛成しており協力的</td><td>現状維持・感謝を伝える</td></tr>
+      <tr><td>先導</td><td>積極的に推進している</td><td>引き続き巻き込み、代弁者になってもらう</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">🌟</span>
+    <div class="callout-body">「抵抗」しているステークホルダーを無視すると、後になって大きな障害になります。早期に懸念を聞き出し、対話で解決することがプロジェクト成功への近道です。</div>
+  </div>
+</div>
+
+## ✅ まとめ：PMBOKをどう活かすか
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🚀</span><h2>初心者がまず身につけたい3つのこと</h2></div>
+  <table class="comparison-table">
+    <thead><tr><th>優先度</th><th>学ぶべきこと</th><th>なぜ重要か</th></tr></thead>
+    <tbody>
+      <tr><td>★★★</td><td>スコープ管理（WBS）</td><td>「何をやるか」が明確でないと、すべてがずれる</td></tr>
+      <tr><td>★★★</td><td>リスク管理</td><td>問題が起きてから慌てる前に予防できる</td></tr>
+      <tr><td>★★☆</td><td>ステークホルダー管理</td><td>人間関係を整えるだけでプロジェクトがスムーズになる</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">📖</span>
+    <div class="callout-body">
+      <b>参考資料</b><br>
+      <ul style="margin:0.5rem 0 0; padding-left:1.5rem; line-height:2">
+        <li>PMI公式：<em>PMBOK Guide – Seventh Edition</em>（2021年）</li>
+        <li>IPA：「プロジェクトマネジメント知識体系ガイド」日本語訳</li>
+        <li>資格：PMP（Project Management Professional）— PMBOKを実務で活用したい場合の代表的な国際資格</li>
+      </ul>
+    </div>
+  </div>
+</div>

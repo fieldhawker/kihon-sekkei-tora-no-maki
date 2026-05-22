@@ -1,432 +1,366 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>命名規則ガイド（リーダブルコード） — 虎の巻</title>
+  <title>命名規則ガイド</title>
   <link rel="stylesheet" href="../../css/style.css">
+  
   <style>
-    /* NG/OK 対比カード */
-    .compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1rem 0; }
-    @media(max-width:680px){ .compare-grid{grid-template-columns:1fr;} }
-    .compare-card { border-radius:var(--radius-lg); padding:1rem 1.25rem; }
-    .compare-card.ng { background:#fef2f2; border:1.5px solid #fca5a5; }
-    .compare-card.ok { background:#f0fdf4; border:1.5px solid #86efac; }
-    .compare-label { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.5rem; }
-    .compare-card.ng .compare-label { color:#dc2626; }
-    .compare-card.ok .compare-label { color:#16a34a; }
-    .compare-card pre { margin:.5rem 0 0; background:#1e293b; color:#e2e8f0; padding:.85rem 1rem; border-radius:6px; font-size:.82rem; line-height:1.6; overflow-x:auto; }
-    .compare-card pre code { background:transparent; color:inherit; padding:0; border-radius:0; font-size:inherit; }
-    /* 原則バッジ */
-    .principle-badge { display:inline-block; background:#1e3a8a; color:#e0f2fe; border-radius:6px; padding:.15rem .6rem; font-size:.72rem; font-weight:700; margin-left:.5rem; vertical-align:middle; }
-    /* セクション分割線 */
-    .rule-section { border-left:4px solid var(--primary); padding-left:1rem; margin:1.5rem 0 .75rem; }
-    .rule-section h3 { margin:0; font-size:1rem; color:var(--primary); }
-    .rule-section p { margin:.25rem 0 0; font-size:.87rem; color:var(--gray-600); }
-    /* NG/OK インライン */
-    .ng-text { color:#dc2626; font-weight:600; }
-    .ok-text { color:#16a34a; font-weight:600; }
-    /* 表内コード */
-    table code { font-size:.82rem; }
-    /* コラムグリッド */
-    .three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1rem 0; }
-    @media(max-width:760px){ .three-col{grid-template-columns:1fr;} }
-    .mini-card { background:#f8fafc; border:1px solid var(--gray-200); border-radius:var(--radius); padding:.85rem 1rem; }
-    .mini-card-title { font-size:.8rem; font-weight:700; color:var(--gray-700); margin-bottom:.4rem; }
-    /* TOC */
-    .toc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
-    @media(max-width:700px){ .toc-grid{grid-template-columns:1fr 1fr;} }
-    .toc-link { display:block; background:#f1f5f9; border:1px solid var(--gray-200); border-radius:var(--radius); padding:.5rem .75rem; font-size:.83rem; text-decoration:none; color:var(--gray-800); }
-    .toc-link:hover { background:#e2e8f0; }
-    /* 設計書命名テーブル */
-    .doc-prefix { display:inline-block; background:#1a56db; color:#fff; border-radius:4px; padding:1px 6px; font-size:.78rem; font-weight:700; margin-right:4px; }
-    /* 重要ポイント吹き出し */
-    .point-box { background:#fffbeb; border:1.5px solid #fbbf24; border-radius:var(--radius); padding:.75rem 1rem; margin:.75rem 0; font-size:.87rem; }
-    .point-box strong { color:#92400e; }
+.page-header { background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#7c3aed 100%) !important; color:#fff !important; padding:3rem 3rem 2.5rem !important; }
+.page-header .subtitle { color:#c4b5fd !important; }
+.compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1rem 0; }
+@media(max-width:680px){ .compare-grid{grid-template-columns:1fr;} }
+.compare-card { border-radius:var(--radius-lg); padding:1rem 1.25rem; }
+.compare-card.ng { background:#fef2f2; border:1.5px solid #fca5a5; }
+.compare-card.ok { background:#f0fdf4; border:1.5px solid #86efac; }
+.compare-label { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.5rem; }
+.compare-card.ng .compare-label { color:#dc2626; }
+.compare-card.ok .compare-label { color:#16a34a; }
+.compare-card pre { margin:.5rem 0 0; background:#1e293b; color:#e2e8f0; padding:.85rem 1rem; border-radius:6px; font-size:.82rem; line-height:1.6; overflow-x:auto; }
+.compare-card pre code { background:transparent; color:inherit; padding:0; border-radius:0; font-size:inherit; }
+.principle-badge { display:inline-block; background:#1e3a8a; color:#e0f2fe; border-radius:6px; padding:.15rem .6rem; font-size:.72rem; font-weight:700; margin-left:.5rem; vertical-align:middle; }
+.rule-section { border-left:4px solid var(--primary); padding-left:1rem; margin:1.5rem 0 .75rem; }
+.rule-section h3 { margin:0; font-size:1rem; color:var(--primary); }
+.rule-section p { margin:.25rem 0 0; font-size:.87rem; color:var(--gray-600); }
+.ng-text { color:#dc2626; font-weight:600; }
+.ok-text { color:#16a34a; font-weight:600; }
+table code { font-size:.82rem; }
+.three-col { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1rem 0; }
+@media(max-width:760px){ .three-col{grid-template-columns:1fr;} }
+.mini-card { background:#f8fafc; border:1px solid var(--gray-200); border-radius:var(--radius); padding:.85rem 1rem; }
+.mini-card-title { font-size:.8rem; font-weight:700; color:var(--gray-700); margin-bottom:.4rem; }
+.toc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+@media(max-width:700px){ .toc-grid{grid-template-columns:1fr 1fr;} }
+.toc-link { display:block; background:#f1f5f9; border:1px solid var(--gray-200); border-radius:var(--radius); padding:.5rem .75rem; font-size:.83rem; text-decoration:none; color:var(--gray-800); }
+.toc-link:hover { background:#e2e8f0; }
+.doc-prefix { display:inline-block; background:#1a56db; color:#fff; border-radius:4px; padding:1px 6px; font-size:.78rem; font-weight:700; margin-right:4px; }
+.point-box { background:#fffbeb; border:1.5px solid #fbbf24; border-radius:var(--radius); padding:.75rem 1rem; margin:.75rem 0; font-size:.87rem; }
+.point-box strong { color:#92400e; }
+
   </style>
 </head>
 <body>
 <div class="layout">
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
-  <!-- MAIN -->
   <main class="main">
-    <div class="page-header" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#7c3aed 100%); color:#fff; padding:3rem 3rem 2.5rem;">
-      <div class="subtitle" style="color:#c4b5fd; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:.5rem;">Reference — 命名規則</div>
-      <h1 style="font-size:2rem; font-weight:700; margin-bottom:.75rem;">📖 命名規則ガイド<br><span style="font-size:1.1rem; font-weight:400; color:#e2e8f0;">リーダブルコードの原則を実務に活かす</span></h1>
-      <p style="color:#cbd5e1; font-size:.93rem; max-width:580px; line-height:1.8;">
-        「<b style="color:#e9d5ff;">The Art of Readable Code（リーダブルコード）</b>」で提言されている命名の原則を、
-        変数・関数・クラス・DB・API・設計書ファイル名まで、実務の具体例と対比形式でまとめた資料です。
-        「なんとなく」の命名から脱出し、チームメンバーが読んで迷わないコード・設計書を作る習慣を身につけましょう。
-      </p>
+    
+    <div class="page-header phase-adr">
+      <div class="subtitle">Reference — 命名規則</div>
+      <h1>命名規則ガイド</h1>
+      <p class="description">リーダブルコードの原則を実務に活かす — 変数・関数・クラス・DB・API・設計書ファイル名まで、実務の具体例と対比形式でまとめた資料です。</p>
     </div>
-
     <div class="content">
-
-      <!-- 原則早見表 -->
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">⚡</span>
-        <div class="callout-body">
-          <div class="callout-title">リーダブルコード 命名の7原則（早見）</div>
-          <ol style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
-            <li><b>具体的な名前をつける</b> — 汎用語（<code>data</code>, <code>manager</code>, <code>info</code>）を避け、何を表すか一目で分かる名前にする</li>
-            <li><b>誤解を招かない名前にする</b> — 読み手が「こういう意味かな」と別の意味に解釈できる名前は使わない</li>
-            <li><b>長さより情報量</b> — 短くても意味が失われるくらいなら、少し長くても情報が多い名前を選ぶ</li>
-            <li><b>省略は慎重に</b> — チーム内で自明な略語のみ使用し、それ以外は書き下す</li>
-            <li><b>スコープに合わせた長さ</b> — ループ変数など狭いスコープは短くてよい。広いスコープの変数は詳細な名前にする</li>
-            <li><b>コメントは「なぜ」を書く</b> — 名前で表現できない理由・背景・制約だけをコメントにする（「何」はコードを読めばわかる）</li>
-            <li><b>否定形・フラグ名は慎重に</b> — <code>disabled</code>/<code>notFound</code> などは二重否定になりやすい。肯定形で設計する</li>
-          </ol>
-        </div>
-      </div>
-
-      <!-- 目次 -->
-      <div class="card" style="margin-top:1.25rem">
-        <div style="font-weight:700; margin-bottom:.75rem;">目次</div>
-        <div class="toc-grid">
-          <a class="toc-link" href="#variables">1. 変数名</a>
-          <a class="toc-link" href="#functions">2. 関数・メソッド名</a>
-          <a class="toc-link" href="#classes">3. クラス・型名</a>
-          <a class="toc-link" href="#boolean">4. 真偽値・フラグ名</a>
-          <a class="toc-link" href="#constants">5. 定数名</a>
-          <a class="toc-link" href="#database">6. DB テーブル・カラム名</a>
-          <a class="toc-link" href="#api">7. API エンドポイント</a>
-          <a class="toc-link" href="#docs">8. 設計書・ファイル名</a>
-          <a class="toc-link" href="#comments">9. コメントの書き方</a>
-          <a class="toc-link" href="#it-english">10. IT英語 推奨単語集</a>
-          <a class="toc-link" href="#domain-naming">11. ドメイン・業務用語との一致</a>
-        </div>
-      </div>
-
-      <!-- ===== 1. 変数名 ===== -->
-      <h2 class="section-title" id="variables"><span class="title-icon">📦</span> 1. 変数名</h2>
-
-      <div class="rule-section">
-        <h3>原則①：汎用語を避け、具体的な名前を使う <span class="principle-badge">具体性</span></h3>
-        <p><code>data</code>・<code>value</code>・<code>info</code>・<code>result</code> は「何でも入る箱」に見える。何のデータかを名前で示す。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 読んでも何かわからない</div>
-          <pre><code>// 何の data? value?
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">⚡</span>
+  <div class="callout-body">
+    <div class="callout-title">リーダブルコード 命名の7原則（早見）</div>
+    <ol style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
+      <li><b>具体的な名前をつける</b> — 汎用語（<code>data</code>, <code>manager</code>, <code>info</code>）を避け、何を表すか一目で分かる名前にする</li>
+      <li><b>誤解を招かない名前にする</b> — 読み手が「こういう意味かな」と別の意味に解釈できる名前は使わない</li>
+      <li><b>長さより情報量</b> — 短くても意味が失われるくらいなら、少し長くても情報が多い名前を選ぶ</li>
+      <li><b>省略は慎重に</b> — チーム内で自明な略語のみ使用し、それ以外は書き下す</li>
+      <li><b>スコープに合わせた長さ</b> — ループ変数など狭いスコープは短くてよい。広いスコープの変数は詳細な名前にする</li>
+      <li><b>コメントは「なぜ」を書く</b> — 名前で表現できない理由・背景・制約だけをコメントにする（「何」はコードを読めばわかる）</li>
+      <li><b>否定形・フラグ名は慎重に</b> — <code>disabled</code>/<code>notFound</code> などは二重否定になりやすい。肯定形で設計する</li>
+    </ol>
+  </div>
+</div><div class="card" style="margin-top:1.25rem">
+  <div style="font-weight:700; margin-bottom:.75rem;">目次</div>
+  <div class="toc-grid">
+    <a class="toc-link" href="#variables">1. 変数名</a>
+    <a class="toc-link" href="#functions">2. 関数・メソッド名</a>
+    <a class="toc-link" href="#classes">3. クラス・型名</a>
+    <a class="toc-link" href="#boolean">4. 真偽値・フラグ名</a>
+    <a class="toc-link" href="#constants">5. 定数名</a>
+    <a class="toc-link" href="#database">6. DB テーブル・カラム名</a>
+    <a class="toc-link" href="#api">7. API エンドポイント</a>
+    <a class="toc-link" href="#docs">8. 設計書・ファイル名</a>
+    <a class="toc-link" href="#comments">9. コメントの書き方</a>
+    <a class="toc-link" href="#it-english">10. IT英語 推奨単語集</a>
+    <a class="toc-link" href="#domain-naming">11. ドメイン・業務用語との一致</a>
+  </div>
+</div><h2>📦 1. 変数名 {#variables}</h2>
+<div class="rule-section">
+  <h3>原則①：汎用語を避け、具体的な名前を使う <span class="principle-badge">具体性</span></h3>
+  <p><code>data</code>・<code>value</code>・<code>info</code>・<code>result</code> は「何でも入る箱」に見える。何のデータかを名前で示す。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 読んでも何かわからない</div>
+    <pre><code>// 何の data? value?
 const data = await fetchApi();
 const value = data.result;
 let info = {};
 let temp = [];
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 内容が名前から伝わる</div>
-          <pre><code>// 何を取得したか一目瞭然
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 内容が名前から伝わる</div>
+    <pre><code>// 何を取得したか一目瞭然
 const orderList = await fetchApi();
 const totalPrice = orderList.totalAmount;
 let userProfile = {};
 let pendingOrders = [];
 </code></pre>
-        </div>
-      </div>
-
-      <div class="rule-section">
-        <h3>原則②：スコープに合わせた長さにする <span class="principle-badge">スコープ</span></h3>
-        <p>ループの添字 <code>i</code> は慣習として許容される。しかし複数のループが入れ子になるときは意味のある名前を使う。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — i/j が何を指すか混乱する</div>
-          <pre><code>for (let i = 0; i &lt; orders.length; i++) {
+  </div>
+</div><div class="rule-section">
+  <h3>原則②：スコープに合わせた長さにする <span class="principle-badge">スコープ</span></h3>
+  <p>ループの添字 <code>i</code> は慣習として許容される。しかし複数のループが入れ子になるときは意味のある名前を使う。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — i/j が何を指すか混乱する</div>
+    <pre><code>for (let i = 0; i &lt; orders.length; i++) {
   for (let j = 0; j &lt; orders[i].items.length; j++) {
     process(orders[i].items[j]);
   }
 }
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 変数名がループの意図を示す</div>
-          <pre><code>for (const order of orders) {
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 変数名がループの意図を示す</div>
+    <pre><code>for (const order of orders) {
   for (const item of order.items) {
     processOrderItem(item);
   }
 }
 </code></pre>
-        </div>
-      </div>
-
-      <div class="rule-section">
-        <h3>原則③：単位・型ヒントを名前に含める <span class="principle-badge">単位明示</span></h3>
-        <p>時間・金額・バイト数など単位を持つ値は、名前に単位を入れるとバグを防げる。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 単位が不明でバグの温床に</div>
-          <pre><code>const timeout = 30;       // 秒? ミリ秒?
+  </div>
+</div><div class="rule-section">
+  <h3>原則③：単位・型ヒントを名前に含める <span class="principle-badge">単位明示</span></h3>
+  <p>時間・金額・バイト数など単位を持つ値は、名前に単位を入れるとバグを防げる。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 単位が不明でバグの温床に</div>
+    <pre><code>const timeout = 30;       // 秒? ミリ秒?
 const fileSize = 1024;    // バイト? KB?
 const price = 5000;       // 円? ドル?
 const start = Date.now(); // 変数名だけでは用途不明
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 単位込みで誤用できない</div>
-          <pre><code>const timeoutMs = 30_000;        // ミリ秒
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 単位込みで誤用できない</div>
+    <pre><code>const timeoutMs = 30_000;        // ミリ秒
 const fileSizeBytes = 1024;      // バイト
 const priceYen = 5000;           // 円
 const sessionStartedAt = Date.now(); // 開始時刻
 </code></pre>
-        </div>
-      </div>
-
-      <div class="point-box">
-        <strong>💡 実務ポイント：</strong>
-        Spring Boot の <code>application.yml</code> では <code>timeout: 30</code> が秒かミリ秒か毎回迷う。
-        プロパティキーを <code>timeout-ms: 30000</code> にするだけでレビュー時の質問が消える。
-      </div>
-
-      <!-- ===== 2. 関数・メソッド名 ===== -->
-      <h2 class="section-title" id="functions"><span class="title-icon">⚙️</span> 2. 関数・メソッド名</h2>
-
-      <div class="rule-section">
-        <h3>原則①：動詞＋目的語で「何をする関数か」を示す <span class="principle-badge">動詞先頭</span></h3>
-        <p><code>get</code>/<code>fetch</code>/<code>calculate</code>/<code>validate</code>/<code>send</code> などの動詞で始め、目的語で対象を示す。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 動詞なし・曖昧</div>
-          <pre><code>function user() { ... }          // 取得? 生成?
+  </div>
+</div><div class="point-box">
+  <strong>💡 実務ポイント：</strong>
+  Spring Boot の <code>application.yml</code> では <code>timeout: 30</code> が秒かミリ秒か毎回迷う。
+  プロパティキーを <code>timeout-ms: 30000</code> にするだけでレビュー時の質問が消える。
+</div><h2>⚙️ 2. 関数・メソッド名 {#functions}</h2>
+<div class="rule-section">
+  <h3>原則①：動詞＋目的語で「何をする関数か」を示す <span class="principle-badge">動詞先頭</span></h3>
+  <p><code>get</code>/<code>fetch</code>/<code>calculate</code>/<code>validate</code>/<code>send</code> などの動詞で始め、目的語で対象を示す。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 動詞なし・曖昧</div>
+    <pre><code>function user() { ... }          // 取得? 生成?
 function order(id) { ... }       // 検索? 削除?
 function data(input) { ... }     // 何の処理?
 function doProcess(x) { ... }    // do は何も言ってない
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 動詞＋目的語で明確</div>
-          <pre><code>function fetchCurrentUser() { ... }
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 動詞＋目的語で明確</div>
+    <pre><code>function fetchCurrentUser() { ... }
 function cancelOrder(orderId) { ... }
 function validateEmailFormat(email) { ... }
 function calculateTotalPrice(items) { ... }
 </code></pre>
-        </div>
-      </div>
-
-      <div class="rule-section">
-        <h3>原則②：<code>get</code> vs <code>fetch</code> vs <code>find</code> の使い分け <span class="principle-badge">一貫性</span></h3>
-        <p>チーム内で動詞の意味を統一する。混在するとルールが読み取れない。</p>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:20%;">動詞</th><th>推奨用途</th><th>例</th></tr></thead>
-            <tbody>
-              <tr><td><code>get</code></td><td>同期・即時・ローカルから取得（キャッシュ・プロパティ等）</td><td><code>getOrderStatus()</code></td></tr>
-              <tr><td><code>fetch</code></td><td>非同期・外部API・DBへのI/O</td><td><code>fetchUserProfile(userId)</code></td></tr>
-              <tr><td><code>find</code></td><td>コレクションを検索して1件返す（見つからない場合は null）</td><td><code>findOrderById(orderId)</code></td></tr>
-              <tr><td><code>list</code></td><td>コレクションを検索して複数件返す</td><td><code>listActiveOrders()</code></td></tr>
-              <tr><td><code>create</code></td><td>新規リソースの生成（DBへの INSERT を含む）</td><td><code>createUserAccount(dto)</code></td></tr>
-              <tr><td><code>update</code></td><td>既存リソースの更新（DB UPDATE）</td><td><code>updateShippingAddress(orderId, address)</code></td></tr>
-              <tr><td><code>delete</code> / <code>remove</code></td><td>削除。<code>delete</code> は物理削除、<code>archive</code> は論理削除で区別すると明確</td><td><code>deleteExpiredSessions()</code></td></tr>
-              <tr><td><code>validate</code></td><td>バリデーションのみ（副作用なし）。失敗時は例外 or false</td><td><code>validatePasswordStrength(raw)</code></td></tr>
-              <tr><td><code>calculate</code></td><td>計算のみ（副作用なし）</td><td><code>calculateDiscountAmount(price, rate)</code></td></tr>
-              <tr><td><code>send</code></td><td>外部へ送信（メール・通知・Webhook等）</td><td><code>sendPasswordResetEmail(user)</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="rule-section">
-        <h3>原則③：誤解を招く名前を避ける <span class="principle-badge">誤解防止</span></h3>
-        <p><code>filter</code> は「除外」か「絞り込み」か読み手によって解釈が割れる。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 解釈が割れる</div>
-          <pre><code>// filterUsers — 有効ユーザーだけ残す?
+  </div>
+</div><div class="rule-section">
+  <h3>原則②：<code>get</code> vs <code>fetch</code> vs <code>find</code> の使い分け <span class="principle-badge">一貫性</span></h3>
+  <p>チーム内で動詞の意味を統一する。混在するとルールが読み取れない。</p>
+</div>
+<div class="card" style="padding:1rem 1.25rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:20%;">動詞</th><th>推奨用途</th><th>例</th></tr></thead>
+      <tbody>
+        <tr><td><code>get</code></td><td>同期・即時・ローカルから取得（キャッシュ・プロパティ等）</td><td><code>getOrderStatus()</code></td></tr>
+        <tr><td><code>fetch</code></td><td>非同期・外部API・DBへのI/O</td><td><code>fetchUserProfile(userId)</code></td></tr>
+        <tr><td><code>find</code></td><td>コレクションを検索して1件返す（見つからない場合は null）</td><td><code>findOrderById(orderId)</code></td></tr>
+        <tr><td><code>list</code></td><td>コレクションを検索して複数件返す</td><td><code>listActiveOrders()</code></td></tr>
+        <tr><td><code>create</code></td><td>新規リソースの生成（DBへの INSERT を含む）</td><td><code>createUserAccount(dto)</code></td></tr>
+        <tr><td><code>update</code></td><td>既存リソースの更新（DB UPDATE）</td><td><code>updateShippingAddress(orderId, address)</code></td></tr>
+        <tr><td><code>delete</code> / <code>remove</code></td><td>削除。<code>delete</code> は物理削除、<code>archive</code> は論理削除で区別すると明確</td><td><code>deleteExpiredSessions()</code></td></tr>
+        <tr><td><code>validate</code></td><td>バリデーションのみ（副作用なし）。失敗時は例外 or false</td><td><code>validatePasswordStrength(raw)</code></td></tr>
+        <tr><td><code>calculate</code></td><td>計算のみ（副作用なし）</td><td><code>calculateDiscountAmount(price, rate)</code></td></tr>
+        <tr><td><code>send</code></td><td>外部へ送信（メール・通知・Webhook等）</td><td><code>sendPasswordResetEmail(user)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="rule-section">
+  <h3>原則③：誤解を招く名前を避ける <span class="principle-badge">誤解防止</span></h3>
+  <p><code>filter</code> は「除外」か「絞り込み」か読み手によって解釈が割れる。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 解釈が割れる</div>
+    <pre><code>// filterUsers — 有効ユーザーだけ残す?
 //              無効ユーザーを除去する?
-const result = filterUsers(users);
-
-// clipText(100) — 100文字で切る?
+const result = filterUsers(users);<p>// clipText(100) — 100文字で切る?
 //                 100文字の先だけ残す?
 const s = clipText(body, 100);
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 動作が一意に読める</div>
-          <pre><code>// 有効なユーザーのみ抽出（残すほう）
-const activeUsers = selectActiveUsers(users);
-
-// 先頭100文字を返す（切り取るほう）
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 動作が一意に読める</div>
+    <pre><code>// 有効なユーザーのみ抽出（残すほう）
+const activeUsers = selectActiveUsers(users);</p>
+<p>// 先頭100文字を返す（切り取るほう）
 const preview = truncateToLength(body, 100);
 </code></pre>
-        </div>
-      </div>
-
-      <!-- ===== 3. クラス・型名 ===== -->
-      <h2 class="section-title" id="classes"><span class="title-icon">🏗️</span> 3. クラス・型・インタフェース名</h2>
-
-      <div class="rule-section">
-        <h3>原則①：名詞で「何であるか」を示す。役割サフィックスを統一する <span class="principle-badge">名詞・役割</span></h3>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:22%;">パターン</th><th style="width:30%;">用途</th><th>例</th></tr></thead>
-            <tbody>
-              <tr><td><code>XxxService</code></td><td>ビジネスロジック層</td><td><code>OrderService</code>, <code>UserAuthService</code></td></tr>
-              <tr><td><code>XxxRepository</code></td><td>DB アクセス層（DAO相当）</td><td><code>OrderRepository</code>, <code>ProductRepository</code></td></tr>
-              <tr><td><code>XxxController</code></td><td>HTTPリクエスト受付（MVC）</td><td><code>OrderController</code>, <code>AuthController</code></td></tr>
-              <tr><td><code>XxxDto</code></td><td>API入出力専用データ構造</td><td><code>CreateOrderRequestDto</code>, <code>UserSummaryDto</code></td></tr>
-              <tr><td><code>XxxEntity</code></td><td>DBテーブルに対応するドメインオブジェクト</td><td><code>OrderEntity</code>, <code>UserEntity</code></td></tr>
-              <tr><td><code>XxxMapper</code></td><td>Entity ↔ Dto 変換</td><td><code>OrderMapper</code></td></tr>
-              <tr><td><code>XxxException</code></td><td>独自例外クラス</td><td><code>OrderNotFoundException</code>, <code>PaymentFailedException</code></td></tr>
-              <tr><td><code>XxxConfig</code></td><td>設定クラス</td><td><code>SecurityConfig</code>, <code>DatabaseConfig</code></td></tr>
-              <tr><td><code>IXxx</code> / <code>XxxInterface</code></td><td>インタフェース（言語慣習に合わせる）</td><td>Java: <code>UserRepository</code>（Iなし）, TypeScript: <code>IUserRepository</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 役割がわからない・混在している</div>
-          <pre><code>class UserManager { ... }      // Service? Repository?
+  </div></p>
+</div><h2>🏗️ 3. クラス・型・インタフェース名 {#classes}</h2>
+<div class="rule-section">
+  <h3>原則①：名詞で「何であるか」を示す。役割サフィックスを統一する <span class="principle-badge">名詞・役割</span></h3>
+</div>
+<div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:22%;">パターン</th><th style="width:30%;">用途</th><th>例</th></tr></thead>
+      <tbody>
+        <tr><td><code>XxxService</code></td><td>ビジネスロジック層</td><td><code>OrderService</code>, <code>UserAuthService</code></td></tr>
+        <tr><td><code>XxxRepository</code></td><td>DB アクセス層（DAO相当）</td><td><code>OrderRepository</code>, <code>ProductRepository</code></td></tr>
+        <tr><td><code>XxxController</code></td><td>HTTPリクエスト受付（MVC）</td><td><code>OrderController</code>, <code>AuthController</code></td></tr>
+        <tr><td><code>XxxDto</code></td><td>API入出力専用データ構造</td><td><code>CreateOrderRequestDto</code>, <code>UserSummaryDto</code></td></tr>
+        <tr><td><code>XxxEntity</code></td><td>DBテーブルに対応するドメインオブジェクト</td><td><code>OrderEntity</code>, <code>UserEntity</code></td></tr>
+        <tr><td><code>XxxMapper</code></td><td>Entity ↔ Dto 変換</td><td><code>OrderMapper</code></td></tr>
+        <tr><td><code>XxxException</code></td><td>独自例外クラス</td><td><code>OrderNotFoundException</code>, <code>PaymentFailedException</code></td></tr>
+        <tr><td><code>XxxConfig</code></td><td>設定クラス</td><td><code>SecurityConfig</code>, <code>DatabaseConfig</code></td></tr>
+        <tr><td><code>IXxx</code> / <code>XxxInterface</code></td><td>インタフェース（言語慣習に合わせる）</td><td>Java: <code>UserRepository</code>（Iなし）, TypeScript: <code>IUserRepository</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 役割がわからない・混在している</div>
+    <pre><code>class UserManager { ... }      // Service? Repository?
 class OrderHelper { ... }      // 何を助けるの?
 class DataProcessor { ... }    // 何の data?
 class AuthUtil { ... }         // 関数の寄せ集め?
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 役割がサフィックスで一目瞭然</div>
-          <pre><code>class UserAuthService { ... }  // 認証ビジネスロジック
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 役割がサフィックスで一目瞭然</div>
+    <pre><code>class UserAuthService { ... }  // 認証ビジネスロジック
 class OrderRepository { ... }  // 注文DB操作
 class InvoiceGeneratorService { ... }
 class JwtTokenConfig { ... }
 </code></pre>
-        </div>
-      </div>
-
-      <!-- ===== 4. 真偽値・フラグ名 ===== -->
-      <h2 class="section-title" id="boolean"><span class="title-icon">🔀</span> 4. 真偽値・フラグ名</h2>
-
-      <div class="rule-section">
-        <h3>原則①：<code>is</code> / <code>has</code> / <code>can</code> / <code>should</code> で始める <span class="principle-badge">is/has/can</span></h3>
-        <p>真偽値は質問文の形にすると <code>if (isLoggedIn)</code> のように自然な英文になる。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — true/false が読み取れない</div>
-          <pre><code>let login = true;          // ログイン中? ログイン処理?
+  </div>
+</div><h2>🔀 4. 真偽値・フラグ名 {#boolean}</h2>
+<div class="rule-section">
+  <h3>原則①：<code>is</code> / <code>has</code> / <code>can</code> / <code>should</code> で始める <span class="principle-badge">is/has/can</span></h3>
+  <p>真偽値は質問文の形にすると <code>if (isLoggedIn)</code> のように自然な英文になる。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — true/false が読み取れない</div>
+    <pre><code>let login = true;          // ログイン中? ログイン処理?
 let adminFlag = false;     // Flag は何を意味する?
 let permission = true;     // 許可? 権限オブジェクト?
 let deleted = true;        // 論理削除? 物理削除済み?
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — if 文で自然に読める</div>
-          <pre><code>let isLoggedIn = true;
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — if 文で自然に読める</div>
+    <pre><code>let isLoggedIn = true;
 let isAdmin = false;
 let canEditOrder = true;
 let isDeleted = true;      // 論理削除フラグ
 </code></pre>
-        </div>
-      </div>
-
-      <div class="rule-section">
-        <h3>原則②：二重否定を避ける <span class="principle-badge">否定回避</span></h3>
-        <p><code>!isNotFound</code> や <code>!isDisabled</code> のような二重否定はバグの原因になる。肯定形で設計する。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 二重否定で意味が逆になりやすい</div>
-          <pre><code>if (!isNotFound) { ... }
-// !isNotFound = 見つかった、ということ?
-
-let isDisabled = false;
+  </div>
+</div><div class="rule-section">
+  <h3>原則②：二重否定を避ける <span class="principle-badge">否定回避</span></h3>
+  <p><code>!isNotFound</code> や <code>!isDisabled</code> のような二重否定はバグの原因になる。肯定形で設計する。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 二重否定で意味が逆になりやすい</div>
+    <pre><code>if (!isNotFound) { ... }
+// !isNotFound = 見つかった、ということ?<p>let isDisabled = false;
 if (!isDisabled) { ... }
 // 有効なとき、という意味だが頭を使う
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 肯定形で直感的に読める</div>
-          <pre><code>if (isFound) { ... }
-// 見つかったとき、と一目でわかる
-
-let isEnabled = true;
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 肯定形で直感的に読める</div>
+    <pre><code>if (isFound) { ... }
+// 見つかったとき、と一目でわかる</p>
+<p>let isEnabled = true;
 if (isEnabled) { ... }
 // 有効なとき、とそのまま読める
 </code></pre>
-        </div>
-      </div>
-
-      <!-- ===== 5. 定数名 ===== -->
-      <h2 class="section-title" id="constants"><span class="title-icon">🔒</span> 5. 定数名</h2>
-
-      <div class="rule-section">
-        <h3>原則：UPPER_SNAKE_CASE で「変えてはいけない値」であることを明示する <span class="principle-badge">大文字</span></h3>
-        <p>定数は変数と視覚的に区別できると、誤って代入してしまうリスクが減る。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 変数と見分けがつかない・意味が不明</div>
-          <pre><code>const maxRetry = 3;
+  </div></p>
+</div><h2>🔒 5. 定数名 {#constants}</h2>
+<div class="rule-section">
+  <h3>原則：UPPER_SNAKE_CASE で「変えてはいけない値」であることを明示する <span class="principle-badge">大文字</span></h3>
+  <p>定数は変数と視覚的に区別できると、誤って代入してしまうリスクが減る。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 変数と見分けがつかない・意味が不明</div>
+    <pre><code>const maxRetry = 3;
 const key = "X-Api-Key";
 const timeout = 5000;
 const v1 = "/api/v1";
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 定数とわかり・意味も明確</div>
-          <pre><code>const MAX_RETRY_COUNT = 3;
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 定数とわかり・意味も明確</div>
+    <pre><code>const MAX_RETRY_COUNT = 3;
 const API_KEY_HEADER_NAME = "X-Api-Key";
 const REQUEST_TIMEOUT_MS = 5_000;
 const API_V1_BASE_PATH = "/api/v1";
 </code></pre>
-        </div>
-      </div>
-
-      <div class="card" style="padding:1rem 1.25rem; margin-top:1rem;">
-        <div style="font-weight:700; margin-bottom:.5rem; font-size:.9rem;">よく使う定数の命名パターン（Java / TypeScript 共通）</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>用途</th><th class="ng-text">NG例</th><th class="ok-text">OK例</th></tr></thead>
-            <tbody>
-              <tr><td>HTTPヘッダ名</td><td><code>authHeader</code></td><td><code>AUTHORIZATION_HEADER_NAME</code></td></tr>
-              <tr><td>DB接続タイムアウト</td><td><code>dbTimeout</code></td><td><code>DB_CONNECTION_TIMEOUT_MS</code></td></tr>
-              <tr><td>最大アップロードサイズ</td><td><code>maxSize</code></td><td><code>MAX_UPLOAD_SIZE_BYTES</code></td></tr>
-              <tr><td>パスワード最小長</td><td><code>minLen</code></td><td><code>PASSWORD_MIN_LENGTH</code></td></tr>
-              <tr><td>ロール名</td><td><code>admin</code></td><td><code>ROLE_ADMIN</code> / <code>ROLE_VIEWER</code></td></tr>
-              <tr><td>APIバージョン</td><td><code>v1</code></td><td><code>API_VERSION_V1</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ===== 6. DB ===== -->
-      <h2 class="section-title" id="database"><span class="title-icon">🗄️</span> 6. DB テーブル・カラム名</h2>
-
-      <div class="rule-section">
-        <h3>原則①：テーブル名は複数形 snake_case・カラムは snake_case で統一 <span class="principle-badge">snake_case</span></h3>
-        <p>DBはJavaのcamelCaseルールが使えない。チーム内で表記を統一することが重要。</p>
-      </div>
-
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:22%;">対象</th><th>ルール</th><th class="ng-text">NG例</th><th class="ok-text">OK例</th></tr></thead>
-            <tbody>
-              <tr><td>テーブル名</td><td>複数形・snake_case・英単語</td><td><code>userInfo</code>, <code>Order</code></td><td><code>users</code>, <code>orders</code></td></tr>
-              <tr><td>中間テーブル</td><td><code>親_子</code> の形（アルファベット順）</td><td><code>role_user</code></td><td><code>user_roles</code></td></tr>
-              <tr><td>主キー</td><td><code>id</code> 固定（BIGINT）</td><td><code>user_id</code>, <code>seq</code></td><td><code>id</code>（テーブル内では不要）</td></tr>
-              <tr><td>外部キー</td><td><code>参照テーブル名_id</code></td><td><code>userId</code>, <code>uid</code></td><td><code>user_id</code></td></tr>
-              <tr><td>フラグ系カラム</td><td><code>is_xxx</code> / <code>has_xxx</code>（BOOLEAN）</td><td><code>deleted</code>, <code>adminFlg</code></td><td><code>is_deleted</code>, <code>is_admin</code></td></tr>
-              <tr><td>日時カラム</td><td><code>xxx_at</code>（timestamp）/ <code>xxx_date</code>（date型）</td><td><code>create_time</code>, <code>updated</code></td><td><code>created_at</code>, <code>updated_at</code></td></tr>
-              <tr><td>ステータスカラム</td><td><code>xxx_status</code>（ENUM or VARCHAR）</td><td><code>status</code>（単独は曖昧）</td><td><code>order_status</code>, <code>payment_status</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 表記ゆれ・用途不明</div>
-          <pre><code>CREATE TABLE UserInfo (
+  </div>
+</div><div class="card" style="padding:1rem 1.25rem; margin-top:1rem;">
+  <div style="font-weight:700; margin-bottom:.5rem; font-size:.9rem;">よく使う定数の命名パターン（Java / TypeScript 共通）</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>用途</th><th class="ng-text">NG例</th><th class="ok-text">OK例</th></tr></thead>
+      <tbody>
+        <tr><td>HTTPヘッダ名</td><td><code>authHeader</code></td><td><code>AUTHORIZATION_HEADER_NAME</code></td></tr>
+        <tr><td>DB接続タイムアウト</td><td><code>dbTimeout</code></td><td><code>DB_CONNECTION_TIMEOUT_MS</code></td></tr>
+        <tr><td>最大アップロードサイズ</td><td><code>maxSize</code></td><td><code>MAX_UPLOAD_SIZE_BYTES</code></td></tr>
+        <tr><td>パスワード最小長</td><td><code>minLen</code></td><td><code>PASSWORD_MIN_LENGTH</code></td></tr>
+        <tr><td>ロール名</td><td><code>admin</code></td><td><code>ROLE_ADMIN</code> / <code>ROLE_VIEWER</code></td></tr>
+        <tr><td>APIバージョン</td><td><code>v1</code></td><td><code>API_VERSION_V1</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🗄️ 6. DB テーブル・カラム名 {#database}</h2>
+<div class="rule-section">
+  <h3>原則①：テーブル名は複数形 snake_case・カラムは snake_case で統一 <span class="principle-badge">snake_case</span></h3>
+  <p>DBはJavaのcamelCaseルールが使えない。チーム内で表記を統一することが重要。</p>
+</div><div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:22%;">対象</th><th>ルール</th><th class="ng-text">NG例</th><th class="ok-text">OK例</th></tr></thead>
+      <tbody>
+        <tr><td>テーブル名</td><td>複数形・snake_case・英単語</td><td><code>userInfo</code>, <code>Order</code></td><td><code>users</code>, <code>orders</code></td></tr>
+        <tr><td>中間テーブル</td><td><code>親_子</code> の形（アルファベット順）</td><td><code>role_user</code></td><td><code>user_roles</code></td></tr>
+        <tr><td>主キー</td><td><code>id</code> 固定（BIGINT）</td><td><code>user_id</code>, <code>seq</code></td><td><code>id</code>（テーブル内では不要）</td></tr>
+        <tr><td>外部キー</td><td><code>参照テーブル名_id</code></td><td><code>userId</code>, <code>uid</code></td><td><code>user_id</code></td></tr>
+        <tr><td>フラグ系カラム</td><td><code>is_xxx</code> / <code>has_xxx</code>（BOOLEAN）</td><td><code>deleted</code>, <code>adminFlg</code></td><td><code>is_deleted</code>, <code>is_admin</code></td></tr>
+        <tr><td>日時カラム</td><td><code>xxx_at</code>（timestamp）/ <code>xxx_date</code>（date型）</td><td><code>create_time</code>, <code>updated</code></td><td><code>created_at</code>, <code>updated_at</code></td></tr>
+        <tr><td>ステータスカラム</td><td><code>xxx_status</code>（ENUM or VARCHAR）</td><td><code>status</code>（単独は曖昧）</td><td><code>order_status</code>, <code>payment_status</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 表記ゆれ・用途不明</div>
+    <pre><code>CREATE TABLE UserInfo (
   seq        BIGINT PRIMARY KEY,
   userName   VARCHAR(100),
   adminFlg   TINYINT,
@@ -434,10 +368,10 @@ const API_V1_BASE_PATH = "/api/v1";
   updateDate DATETIME
 );
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 統一・意図が明確</div>
-          <pre><code>CREATE TABLE users (
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 統一・意図が明確</div>
+    <pre><code>CREATE TABLE users (
   id         BIGINT PRIMARY KEY AUTO_INCREMENT,
   user_name  VARCHAR(100) NOT NULL,
   is_admin   BOOLEAN NOT NULL DEFAULT FALSE,
@@ -445,722 +379,482 @@ const API_V1_BASE_PATH = "/api/v1";
   updated_at DATETIME NOT NULL
 );
 </code></pre>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.5rem;">
-        <h3>原則②：意味が重複するカラム名を避ける <span class="principle-badge">重複排除</span></h3>
-        <p>テーブル名が <code>orders</code> のとき、カラムに <code>order_id</code>（自テーブルの主キー）は冗長。外部キーのみ <code>xxx_id</code> とする。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — テーブル名と重複</div>
-          <pre><code>-- orders テーブル
+  </div>
+</div><div class="rule-section" style="margin-top:1.5rem;">
+  <h3>原則②：意味が重複するカラム名を避ける <span class="principle-badge">重複排除</span></h3>
+  <p>テーブル名が <code>orders</code> のとき、カラムに <code>order_id</code>（自テーブルの主キー）は冗長。外部キーのみ <code>xxx_id</code> とする。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — テーブル名と重複</div>
+    <pre><code>-- orders テーブル
 order_id     BIGINT PK  -- orders.order_id は冗長
 order_status VARCHAR    -- order_ も冗長
 order_total  DECIMAL
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — テーブル名との重複なし</div>
-          <pre><code>-- orders テーブル
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — テーブル名との重複なし</div>
+    <pre><code>-- orders テーブル
 id           BIGINT PK  -- テーブル内では id で十分
 status       VARCHAR    -- テーブルが order のコンテキスト
 total_amount DECIMAL
 </code></pre>
-        </div>
-      </div>
-
-      <!-- ===== 7. API エンドポイント ===== -->
-      <h2 class="section-title" id="api"><span class="title-icon">🔌</span> 7. API エンドポイント名</h2>
-
-      <div class="rule-section">
-        <h3>原則：リソース名（名詞・複数形）で表現し、動詞はHTTPメソッドに任せる <span class="principle-badge">RESTful</span></h3>
-        <p>URLに動詞を入れると <code>/getUser</code>/<code>/fetchUser</code>/<code>/retrieveUser</code> のように揺れが生まれる。名詞＋HTTPメソッドで統一する。</p>
-      </div>
-
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:10%;">HTTP</th><th style="width:35%;" class="ng-text">NG例</th><th style="width:35%;" class="ok-text">OK例</th><th>意味</th></tr></thead>
-            <tbody>
-              <tr><td>GET</td><td><code>/getUsers</code></td><td><code>/users</code></td><td>ユーザー一覧取得</td></tr>
-              <tr><td>GET</td><td><code>/getUserById?id=1</code></td><td><code>/users/{id}</code></td><td>ユーザー1件取得</td></tr>
-              <tr><td>POST</td><td><code>/createUser</code></td><td><code>/users</code></td><td>ユーザー作成</td></tr>
-              <tr><td>PUT</td><td><code>/updateUser/1</code></td><td><code>/users/{id}</code></td><td>ユーザー全体更新</td></tr>
-              <tr><td>PATCH</td><td><code>/changePassword</code></td><td><code>/users/{id}/password</code></td><td>パスワード変更（部分更新）</td></tr>
-              <tr><td>DELETE</td><td><code>/deleteUser/1</code></td><td><code>/users/{id}</code></td><td>ユーザー削除</td></tr>
-              <tr><td>POST</td><td><code>/doLogin</code></td><td><code>/auth/sessions</code></td><td>ログイン（セッション生成）</td></tr>
-              <tr><td>DELETE</td><td><code>/logout</code></td><td><code>/auth/sessions/current</code></td><td>ログアウト（セッション削除）</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>原則②：パスパラメータとクエリパラメータの使い分け <span class="principle-badge">パラメータ</span></h3>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>種別</th><th>用途</th><th class="ng-text">NG</th><th class="ok-text">OK</th></tr></thead>
-            <tbody>
-              <tr>
-                <td>パスパラメータ <code>{id}</code></td>
-                <td>特定1件を一意に識別するID</td>
-                <td><code>/orders?orderId=123</code></td>
-                <td><code>/orders/123</code></td>
-              </tr>
-              <tr>
-                <td>クエリパラメータ <code>?key=val</code></td>
-                <td>絞り込み・ソート・ページング</td>
-                <td><code>/orders/active/page/2</code></td>
-                <td><code>/orders?status=active&page=2</code></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ===== 8. 設計書・ファイル名 ===== -->
-      <h2 class="section-title" id="docs"><span class="title-icon">📄</span> 8. 設計書・ファイル名の命名</h2>
-
-      <div class="rule-section">
-        <h3>原則①：プレフィックス＋連番で「種別と順序」を示す <span class="principle-badge">プレフィックス</span></h3>
-        <p>ファイル名だけで「何フェーズの・何の文書か」がわかると、Slack で共有したときも迷わない。</p>
-      </div>
-
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:15%;">プレフィックス</th><th>フェーズ</th><th>命名パターン</th><th>例</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><span class="doc-prefix">B-</span></td>
-                <td>基本設計</td>
-                <td><code>B-{連番}_{概要}_{yyyymmdd}.xlsx</code></td>
-                <td><code>B-01_画面一覧_20260401.xlsx</code></td>
-              </tr>
-              <tr>
-                <td><span class="doc-prefix">D-</span></td>
-                <td>詳細設計</td>
-                <td><code>D-{連番}_{概要}_{yyyymmdd}.xlsx</code></td>
-                <td><code>D-03_API仕様_注文系_20260415.yaml</code></td>
-              </tr>
-              <tr>
-                <td><span class="doc-prefix">C-</span></td>
-                <td>共通ライブラリ</td>
-                <td><code>C-{連番}_{ライブラリ名}.md</code></td>
-                <td><code>C-01_認証ライブラリ設計.md</code></td>
-              </tr>
-              <tr>
-                <td><span class="doc-prefix">ADR-</span></td>
-                <td>意思決定記録</td>
-                <td><code>ADR-{連番}_{決定事項}.md</code></td>
-                <td><code>ADR-003_認証方式の選定.md</code></td>
-              </tr>
-              <tr>
-                <td><span class="doc-prefix">WBS-</span></td>
-                <td>スケジュール</td>
-                <td><code>WBS_{プロジェクト名}_{yyyymm}.xlsx</code></td>
-                <td><code>WBS_受注管理システム_202604.xlsx</code></td>
-              </tr>
-              <tr>
-                <td><span class="doc-prefix">CR-</span></td>
-                <td>変更要求</td>
-                <td><code>CR-{連番}_{変更概要}_{yyyymmdd}.xlsx</code></td>
-                <td><code>CR-005_消費税計算仕様変更_20260520.xlsx</code></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>原則②：バージョン管理は日付 or v番号を末尾につける <span class="principle-badge">バージョン</span></h3>
-        <p>「最終版」「最終版(2)」「本当に最終版」は絶対禁止。ルールを決めてブレをなくす。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — バージョン管理が破綻する</div>
-          <pre><code>基本設計書.xlsx
+  </div>
+</div><h2>🔌 7. API エンドポイント名 {#api}</h2>
+<div class="rule-section">
+  <h3>原則：リソース名（名詞・複数形）で表現し、動詞はHTTPメソッドに任せる <span class="principle-badge">RESTful</span></h3>
+  <p>URLに動詞を入れると <code>/getUser</code>/<code>/fetchUser</code>/<code>/retrieveUser</code> のように揺れが生まれる。名詞＋HTTPメソッドで統一する。</p>
+</div><div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:10%;">HTTP</th><th style="width:35%;" class="ng-text">NG例</th><th style="width:35%;" class="ok-text">OK例</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td><code>/getUsers</code></td><td><code>/users</code></td><td>ユーザー一覧取得</td></tr>
+        <tr><td>GET</td><td><code>/getUserById?id=1</code></td><td><code>/users/{id}</code></td><td>ユーザー1件取得</td></tr>
+        <tr><td>POST</td><td><code>/createUser</code></td><td><code>/users</code></td><td>ユーザー作成</td></tr>
+        <tr><td>PUT</td><td><code>/updateUser/1</code></td><td><code>/users/{id}</code></td><td>ユーザー全体更新</td></tr>
+        <tr><td>PATCH</td><td><code>/changePassword</code></td><td><code>/users/{id}/password</code></td><td>パスワード変更（部分更新）</td></tr>
+        <tr><td>DELETE</td><td><code>/deleteUser/1</code></td><td><code>/users/{id}</code></td><td>ユーザー削除</td></tr>
+        <tr><td>POST</td><td><code>/doLogin</code></td><td><code>/auth/sessions</code></td><td>ログイン（セッション生成）</td></tr>
+        <tr><td>DELETE</td><td><code>/logout</code></td><td><code>/auth/sessions/current</code></td><td>ログアウト（セッション削除）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>原則②：パスパラメータとクエリパラメータの使い分け <span class="principle-badge">パラメータ</span></h3>
+</div>
+<div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>種別</th><th>用途</th><th class="ng-text">NG</th><th class="ok-text">OK</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>パスパラメータ <code>{id}</code></td>
+          <td>特定1件を一意に識別するID</td>
+          <td><code>/orders?orderId=123</code></td>
+          <td><code>/orders/123</code></td>
+        </tr>
+        <tr>
+          <td>クエリパラメータ <code>?key=val</code></td>
+          <td>絞り込み・ソート・ページング</td>
+          <td><code>/orders/active/page/2</code></td>
+          <td><code>/orders?status=active&page=2</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>📄 8. 設計書・ファイル名の命名 {#docs}</h2>
+<div class="rule-section">
+  <h3>原則①：プレフィックス＋連番で「種別と順序」を示す <span class="principle-badge">プレフィックス</span></h3>
+  <p>ファイル名だけで「何フェーズの・何の文書か」がわかると、Slack で共有したときも迷わない。</p>
+</div><div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:15%;">プレフィックス</th><th>フェーズ</th><th>命名パターン</th><th>例</th></tr></thead>
+      <tbody>
+        <tr><td><span class="doc-prefix">B-</span></td><td>基本設計</td><td><code>B-{連番}_{概要}_{yyyymmdd}.xlsx</code></td><td><code>B-01_画面一覧_20260401.xlsx</code></td></tr>
+        <tr><td><span class="doc-prefix">D-</span></td><td>詳細設計</td><td><code>D-{連番}_{概要}_{yyyymmdd}.xlsx</code></td><td><code>D-03_API仕様_注文系_20260415.yaml</code></td></tr>
+        <tr><td><span class="doc-prefix">C-</span></td><td>共通ライブラリ</td><td><code>C-{連番}_{ライブラリ名}.md</code></td><td><code>C-01_認証ライブラリ設計.md</code></td></tr>
+        <tr><td><span class="doc-prefix">ADR-</span></td><td>意思決定記録</td><td><code>ADR-{連番}_{決定事項}.md</code></td><td><code>ADR-003_認証方式の選定.md</code></td></tr>
+        <tr><td><span class="doc-prefix">WBS-</span></td><td>スケジュール</td><td><code>WBS_{プロジェクト名}_{yyyymm}.xlsx</code></td><td><code>WBS_受注管理システム_202604.xlsx</code></td></tr>
+        <tr><td><span class="doc-prefix">CR-</span></td><td>変更要求</td><td><code>CR-{連番}_{変更概要}_{yyyymmdd}.xlsx</code></td><td><code>CR-005_消費税計算仕様変更_20260520.xlsx</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>原則②：バージョン管理は日付 or v番号を末尾につける <span class="principle-badge">バージョン</span></h3>
+  <p>「最終版」「最終版(2)」「本当に最終版」は絶対禁止。ルールを決めてブレをなくす。</p>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — バージョン管理が破綻する</div>
+    <pre><code>基本設計書.xlsx
 基本設計書_最終.xlsx
 基本設計書_最終版(2).xlsx
 基本設計書_本当に最終.xlsx
 基本設計書_レビュー後修正版.xlsx
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 日付 or v番号で一意</div>
-          <pre><code>B-01_画面一覧_20260401.xlsx    ← 初版
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 日付 or v番号で一意</div>
+    <pre><code>B-01_画面一覧_20260401.xlsx    ← 初版
 B-01_画面一覧_20260408.xlsx    ← レビュー後更新
-B-01_画面一覧_20260415.xlsx    ← 最終承認版
-
--- または semver で管理する場合 --
+B-01_画面一覧_20260415.xlsx    ← 最終承認版<p>-- または semver で管理する場合 --
 B-01_画面一覧_v1.0.0.xlsx
 B-01_画面一覧_v1.1.0.xlsx
 </code></pre>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>原則③：ソースコードのファイル名・クラス名は「役割」を含める <span class="principle-badge">役割名</span></h3>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>種別</th><th class="ng-text">NG例（曖昧）</th><th class="ok-text">OK例（役割が明確）</th></tr></thead>
-            <tbody>
-              <tr><td>Javaパッケージ</td><td><code>com.example.util</code></td><td><code>com.example.order.service</code><br><code>com.example.user.repository</code></td></tr>
-              <tr><td>Javaクラスファイル</td><td><code>OrderManager.java</code></td><td><code>OrderRegistrationService.java</code></td></tr>
-              <tr><td>TypeScript ファイル</td><td><code>user.ts</code></td><td><code>user-profile.service.ts</code><br><code>user-auth.repository.ts</code></td></tr>
-              <tr><td>Flywayマイグレーション</td><td><code>V1__init.sql</code></td><td><code>V1__create_users_table.sql</code><br><code>V2__add_order_status_to_orders.sql</code></td></tr>
-              <tr><td>テストクラス</td><td><code>OrderTest.java</code></td><td><code>OrderRegistrationServiceTest.java</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ===== 9. コメント ===== -->
-      <h2 class="section-title" id="comments"><span class="title-icon">💬</span> 9. コメントの書き方（命名を補う手段として）</h2>
-
-      <div class="callout callout-warning">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">コメントで補う前に、まず命名を改善する</div>
-          コードにコメントが必要になったとき、まず「変数名・関数名を改善すればコメント不要にできるか？」を考える。
-          名前で表現できる情報はコメントにしない。コメントが必要なのは「名前では伝えられない理由・背景・制約」だけ。
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>原則：コメントは「なぜ（Why）」を書く。「何（What）」はコードを読めばわかる <span class="principle-badge">Why</span></h3>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — コードを日本語に訳しているだけ</div>
-          <pre><code>// ユーザーを取得する
-const user = await userRepository.findById(id);
-
-// ループで注文を処理する
+  </div></p>
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>原則③：ソースコードのファイル名・クラス名は「役割」を含める <span class="principle-badge">役割名</span></h3>
+</div>
+<div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>種別</th><th class="ng-text">NG例（曖昧）</th><th class="ok-text">OK例（役割が明確）</th></tr></thead>
+      <tbody>
+        <tr><td>Javaパッケージ</td><td><code>com.example.util</code></td><td><code>com.example.order.service</code><br><code>com.example.user.repository</code></td></tr>
+        <tr><td>Javaクラスファイル</td><td><code>OrderManager.java</code></td><td><code>OrderRegistrationService.java</code></td></tr>
+        <tr><td>TypeScript ファイル</td><td><code>user.ts</code></td><td><code>user-profile.service.ts</code><br><code>user-auth.repository.ts</code></td></tr>
+        <tr><td>Flywayマイグレーション</td><td><code>V1__init.sql</code></td><td><code>V1__create_users_table.sql</code><br><code>V2__add_order_status_to_orders.sql</code></td></tr>
+        <tr><td>テストクラス</td><td><code>OrderTest.java</code></td><td><code>OrderRegistrationServiceTest.java</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>💬 9. コメントの書き方（命名を補う手段として） {#comments}</h2>
+<div class="callout callout-warning">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">コメントで補う前に、まず命名を改善する</div>
+    コードにコメントが必要になったとき、まず「変数名・関数名を改善すればコメント不要にできるか？」を考える。
+    名前で表現できる情報はコメントにしない。コメントが必要なのは「名前では伝えられない理由・背景・制約」だけ。
+  </div>
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>原則：コメントは「なぜ（Why）」を書く。「何（What）」はコードを読めばわかる <span class="principle-badge">Why</span></h3>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — コードを日本語に訳しているだけ</div>
+    <pre><code>// ユーザーを取得する
+const user = await userRepository.findById(id);<p>// ループで注文を処理する
 for (const order of orders) {
   process(order); // 処理する
-}
-
-// nullチェック
+}</p>
+<p>// nullチェック
 if (user == null) {
-  throw new Error("not found");
+  throw new Error(&quot;not found&quot;);
 }
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 読んでもわからない「理由」だけ書く</div>
-          <pre><code>// キャッシュヒット率向上のため findById より
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 読んでもわからない「理由」だけ書く</div>
+    <pre><code>// キャッシュヒット率向上のため findById より
 // findByIdWithCache を使う（平均 40ms → 5ms）
-const user = await userRepository.findByIdWithCache(id);
-
-// 解約済み注文も再送対象に含める仕様（CR-012参照）
+const user = await userRepository.findByIdWithCache(id);</p>
+<p>// 解約済み注文も再送対象に含める仕様（CR-012参照）
 for (const order of orders) {
   processForResend(order);
-}
-
-// findById は存在しない場合 null を返す仕様
+}</p>
+<p>// findById は存在しない場合 null を返す仕様
 // Optional を返すよう変更予定（ADR-009参照）
 if (user == null) {
   throw new UserNotFoundException(id);
 }
 </code></pre>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>コメントが「必要な」4つのケース</h3>
-      </div>
-      <div class="three-col">
-        <div class="mini-card">
-          <div class="mini-card-title">① 非自明な制約・仕様</div>
-          <code style="font-size:.8rem;">// 消費税は受注時点の税率を固定する<br>// 変更しても過去の注文に影響しない</code>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">② 意図的に非直感的な実装</div>
-          <code style="font-size:.8rem;">// パフォーマンスのため N+1 を許容<br>// バッチサイズ 100件以下のため問題なし</code>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">③ 外部ドキュメントへの参照</div>
-          <code style="font-size:.8rem;">// 仕様: ADR-003 参照<br>// 変更: CR-012 承認済み</code>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">④ TODO / FIXME</div>
-          <code style="font-size:.8rem;">// TODO: v2.1 で Redis キャッシュに変更<br>// FIXME: タイムゾーン変換が未実装</code>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">⑤ ライブラリのバグ回避</div>
-          <code style="font-size:.8rem;">// jackson v2.14 のバグ回避<br>// https://github.com/.../issues/123</code>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">⑥ 難解なアルゴリズムの概要</div>
-          <code style="font-size:.8rem;">// Luhn アルゴリズムでカード番号を検証<br>// 詳細は https://... 参照</code>
-        </div>
-      </div>
-
-      <!-- ===== 10. IT英語 推奨単語集 ===== -->
-      <h2 class="section-title" id="it-english"><span class="title-icon">🌐</span> 10. IT英語 推奨単語集</h2>
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">📖</span>
-        <div class="callout-body">
-          <div class="callout-title">「チームを動かすIT英語実践マニュアル」が提言する命名観</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            日本人エンジニアが書くコードには「和製英語」「曖昧すぎる汎用語」「本来の英語と意味がズレた単語」が混入しやすい。
-            同書では「<b>チーム全員が同じ意味でイメージできる英単語</b>」を選ぶことを最優先とし、
-            以下のカテゴリ別推奨語を提示している。
-          </p>
-        </div>
-      </div>
-
-      <!-- 10-1. 動詞リスト（拡張版） -->
-      <div class="rule-section">
-        <h3>① 操作・処理を表す動詞の選び方 <span class="principle-badge">動詞</span></h3>
-        <p>「何をするか」が一意に伝わる動詞を選ぶ。意味が近い語でも文脈によって正解が異なる。</p>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:18%;">動詞</th><th>コード上の推奨用途</th><th style="width:28%;">使用例</th><th style="width:20%;">注意・NG語</th></tr></thead>
-            <tbody>
-              <tr><td><code>fetch</code></td><td>非同期でリモートからデータを取得する</td><td><code>fetchOrderHistory()</code></td><td><code>get</code> との混用に注意</td></tr>
-              <tr><td><code>retrieve</code></td><td>条件を指定して検索・取得（一般的な取得）</td><td><code>retrieveActiveUsers()</code></td><td>日常会話では冗長に聞こえる場合あり</td></tr>
-              <tr><td><code>load</code></td><td>ファイル・設定・リソースを読み込む</td><td><code>loadConfiguration()</code></td><td>データ取得に使うと「fetch」と競合する</td></tr>
-              <tr><td><code>parse</code></td><td>文字列・バイト列を構造化データに変換</td><td><code>parseJsonResponse(raw)</code></td><td><code>convert</code> と混用しない</td></tr>
-              <tr><td><code>convert</code></td><td>型・形式を変換（Entity↔DTO等）</td><td><code>convertToDto(entity)</code></td><td><code>parse</code> は文字列解析専用に限定</td></tr>
-              <tr><td><code>transform</code></td><td>データを別の構造・形式に変形（パイプライン）</td><td><code>transformToSummary(list)</code></td><td>軽微な変換に使うと大げさ</td></tr>
-              <tr><td><code>build</code></td><td>オブジェクト・クエリ・リクエストを組み立てる</td><td><code>buildSearchQuery(params)</code></td><td>生成が主目的なら <code>create</code> を優先</td></tr>
-              <tr><td><code>generate</code></td><td>動的にコード・ID・レポートを生成する</td><td><code>generateInvoicePdf(order)</code></td><td><code>create</code> との違い：生成物が計算・自動生成される場合</td></tr>
-              <tr><td><code>register</code></td><td>システムへの登録（アカウント・設定等）</td><td><code>registerNewUser(dto)</code></td><td>DB INSERT とは限らないので <code>create</code> と使い分ける</td></tr>
-              <tr><td><code>submit</code></td><td>フォーム・申請をユーザーが提出する</td><td><code>submitOrderRequest()</code></td><td>内部処理には使わない（UIアクション専用）</td></tr>
-              <tr><td><code>dispatch</code></td><td>イベント・メッセージをキューやバスに送る</td><td><code>dispatchNotificationEvent(e)</code></td><td><code>send</code> はネットワーク送信、<code>dispatch</code> は内部イベント</td></tr>
-              <tr><td><code>publish</code></td><td>メッセージブローカーへのパブリッシュ</td><td><code>publishOrderCreatedEvent()</code></td><td>MQ/イベント駆動文脈に限定する</td></tr>
-              <tr><td><code>consume</code></td><td>キュー・ストリームからのメッセージ消費</td><td><code>consumePaymentEvents()</code></td><td>読み込み（<code>read</code>）と混用しない</td></tr>
-              <tr><td><code>process</code></td><td>受け取ったデータに複数の処理を施す（汎用）</td><td><code>processPaymentCallback(payload)</code></td><td>単独では汎用すぎる。目的語を必ずつける</td></tr>
-              <tr><td><code>handle</code></td><td>イベント・エラーの受け付け・処理</td><td><code>handleAuthError(err)</code></td><td>ビジネスロジックに使うと責務が曖昧になる</td></tr>
-              <tr><td><code>execute</code></td><td>クエリ・バッチ・コマンドを実行する</td><td><code>executeBatchImport()</code></td><td>一般的な関数呼び出しには使いすぎない</td></tr>
-              <tr><td><code>apply</code></td><td>ルール・パッチ・割引を適用する</td><td><code>applyDiscountRule(order, rule)</code></td><td><code>set</code> との違い：副作用を伴う変換に使う</td></tr>
-              <tr><td><code>merge</code></td><td>複数のオブジェクト・コレクションを統合</td><td><code>mergeUserSettings(base, override)</code></td><td>DB の UPSERT 的文脈にも使われる</td></tr>
-              <tr><td><code>sync</code> / <code>synchronize</code></td><td>2つのデータソース間を同期させる</td><td><code>syncInventoryFromErp()</code></td><td><code>update</code> との違い：双方向同期を示す</td></tr>
-              <tr><td><code>expire</code></td><td>有効期限が切れる（自動・受動的）</td><td><code>expireSessionToken(token)</code></td><td>能動的に削除するなら <code>invalidate</code> を使う</td></tr>
-              <tr><td><code>invalidate</code></td><td>キャッシュ・トークンを明示的に無効化</td><td><code>invalidateCachedUser(userId)</code></td><td><code>delete</code> と違い「無効化」であり削除ではない</td></tr>
-              <tr><td><code>revoke</code></td><td>権限・トークン・許可を取り消す</td><td><code>revokeAccessToken(tokenId)</code></td><td>セキュリティ文脈での取り消しに限定</td></tr>
-              <tr><td><code>notify</code></td><td>ユーザー・外部システムへ通知する</td><td><code>notifyShippingDelay(order)</code></td><td><code>send</code> はデータ送信、<code>notify</code> は通知・知らせる</td></tr>
-              <tr><td><code>schedule</code></td><td>将来の実行を予約・スケジュールする</td><td><code>scheduleReminderEmail(user, at)</code></td><td>即時実行は <code>execute</code>、予約は <code>schedule</code></td></tr>
-              <tr><td><code>rollback</code></td><td>処理を元の状態に戻す</td><td><code>rollbackOrderTransaction()</code></td><td>DB トランザクション外でも使える</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 10-2. 状態・属性を表す形容詞・名詞 -->
-      <div class="rule-section">
-        <h3>② 状態・属性を表す形容詞・名詞 <span class="principle-badge">状態語</span></h3>
-        <p>ステータス・フラグ・プロパティ名に使う語。「意味が1つに決まる」語を選ぶことで、ENUMの値名や変数名の迷いがなくなる。</p>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:20%;">単語</th><th>意味・使いどころ</th><th style="width:28%;">使用例</th><th style="width:20%;">対義語</th></tr></thead>
-            <tbody>
-              <tr><td><code>active</code></td><td>現在有効・稼働中（最も汎用的）</td><td><code>isActive</code>, <code>ACTIVE</code></td><td><code>inactive</code></td></tr>
-              <tr><td><code>enabled</code></td><td>機能・設定がオン状態</td><td><code>isEnabled</code>, <code>featureEnabled</code></td><td><code>disabled</code></td></tr>
-              <tr><td><code>visible</code></td><td>UI上で表示状態</td><td><code>isVisible</code>, <code>VISIBLE</code></td><td><code>hidden</code></td></tr>
-              <tr><td><code>available</code></td><td>利用可能・在庫あり・接続可能</td><td><code>isAvailable</code>, <code>available_stock</code></td><td><code>unavailable</code></td></tr>
-              <tr><td><code>pending</code></td><td>処理待ち・承認待ち・保留中</td><td><code>PENDING</code>, <code>pendingOrders</code></td><td><code>completed</code> / <code>resolved</code></td></tr>
-              <tr><td><code>approved</code></td><td>承認済み</td><td><code>isApproved</code>, <code>APPROVED</code></td><td><code>rejected</code></td></tr>
-              <tr><td><code>rejected</code></td><td>却下・拒否済み</td><td><code>isRejected</code>, <code>REJECTED</code></td><td><code>approved</code></td></tr>
-              <tr><td><code>completed</code></td><td>処理が完了した（最終状態）</td><td><code>COMPLETED</code>, <code>isCompleted</code></td><td><code>pending</code> / <code>in_progress</code></td></tr>
-              <tr><td><code>cancelled</code></td><td>ユーザーまたはシステムによるキャンセル</td><td><code>CANCELLED</code>, <code>isCancelled</code></td><td><code>confirmed</code></td></tr>
-              <tr><td><code>expired</code></td><td>有効期限切れ</td><td><code>isExpired</code>, <code>EXPIRED</code></td><td><code>valid</code></td></tr>
-              <tr><td><code>archived</code></td><td>論理削除・アーカイブ済み（データは残る）</td><td><code>isArchived</code>, <code>ARCHIVED</code></td><td><code>active</code></td></tr>
-              <tr><td><code>deleted</code></td><td>論理削除フラグ（物理削除ではない文脈）</td><td><code>is_deleted</code></td><td><code>is_archived</code> と役割を統一して使い分ける</td></tr>
-              <tr><td><code>verified</code></td><td>本人確認・検証済み</td><td><code>isEmailVerified</code>, <code>VERIFIED</code></td><td><code>unverified</code></td></tr>
-              <tr><td><code>confirmed</code></td><td>ユーザーが確認・同意した</td><td><code>isConfirmed</code>, <code>CONFIRMED</code></td><td><code>unconfirmed</code></td></tr>
-              <tr><td><code>published</code></td><td>公開済み（CMS・記事・ドキュメント）</td><td><code>isPublished</code>, <code>PUBLISHED</code></td><td><code>draft</code></td></tr>
-              <tr><td><code>draft</code></td><td>下書き・未公開状態</td><td><code>DRAFT</code>, <code>isDraft</code></td><td><code>published</code></td></tr>
-              <tr><td><code>locked</code></td><td>編集不可・ロック状態</td><td><code>isLocked</code>, <code>LOCKED</code></td><td><code>unlocked</code></td></tr>
-              <tr><td><code>required</code></td><td>入力必須・必須項目</td><td><code>isRequired</code>, <code>required_fields</code></td><td><code>optional</code></td></tr>
-              <tr><td><code>optional</code></td><td>任意・省略可能</td><td><code>isOptional</code>, <code>optionalParams</code></td><td><code>required</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 10-3. 時間・タイミングを表す語 -->
-      <div class="rule-section">
-        <h3>③ 時間・タイミングを表す語 <span class="principle-badge">時間語</span></h3>
-        <p>日時カラムや変数名のサフィックスを統一することで、「いつの日時か」が名前だけで判別できる。</p>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:22%;">パターン</th><th>意味</th><th style="width:30%;">使用例</th><th>型の目安</th></tr></thead>
-            <tbody>
-              <tr><td><code>xxx_at</code> / <code>xxxAt</code></td><td>特定の時刻（timestamp）</td><td><code>created_at</code>, <code>sentAt</code></td><td>DATETIME / Instant</td></tr>
-              <tr><td><code>xxx_date</code> / <code>xxxDate</code></td><td>日付のみ（time は含まない）</td><td><code>due_date</code>, <code>birthDate</code></td><td>DATE / LocalDate</td></tr>
-              <tr><td><code>xxx_on</code> / <code>xxxOn</code></td><td>特定の日（on a day）</td><td><code>scheduled_on</code>, <code>expiredOn</code></td><td>DATE</td></tr>
-              <tr><td><code>xxx_from</code> / <code>xxx_to</code></td><td>期間の開始・終了</td><td><code>valid_from</code>, <code>valid_to</code></td><td>DATE or DATETIME</td></tr>
-              <tr><td><code>xxx_since</code></td><td>「〜以降」を表す開始点</td><td><code>activeSince</code>, <code>member_since</code></td><td>DATE or DATETIME</td></tr>
-              <tr><td><code>xxx_until</code></td><td>「〜まで」を表す終了点</td><td><code>validUntil</code>, <code>locked_until</code></td><td>DATE or DATETIME</td></tr>
-              <tr><td><code>xxx_ms</code></td><td>ミリ秒単位の数値</td><td><code>timeoutMs</code>, <code>elapsed_ms</code></td><td>long / number</td></tr>
-              <tr><td><code>xxx_sec</code> / <code>xxx_seconds</code></td><td>秒単位の数値</td><td><code>ttlSec</code>, <code>retry_interval_sec</code></td><td>int / number</td></tr>
-              <tr><td><code>scheduled_at</code></td><td>実行予定日時</td><td><code>scheduled_at</code></td><td>DATETIME</td></tr>
-              <tr><td><code>processed_at</code></td><td>処理完了日時</td><td><code>processed_at</code></td><td>DATETIME (nullable)</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 10-4. よく使うIT名詞 -->
-      <div class="rule-section">
-        <h3>④ システム設計でよく使う名詞 <span class="principle-badge">名詞</span></h3>
-        <p>クラス名・テーブル名・変数名のコアとなる名詞。同書では「日本語をそのまま訳した和製英語」を避け、業界標準語を使うことを推奨している。</p>
-      </div>
-      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1.5rem;">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:22%;">推奨語</th><th>意味・使いどころ</th><th style="width:28%;">NG（和製英語など）</th></tr></thead>
-            <tbody>
-              <tr><td><code>user</code> / <code>account</code></td><td>ユーザー。<code>account</code> は認証に紐づく概念</td><td><code>member</code>（会員と混同）, <code>customer</code>（顧客と混同）</td></tr>
-              <tr><td><code>customer</code></td><td>購買・契約関係にある外部ユーザー</td><td><code>user</code> と混用しない（役割を明確に分ける）</td></tr>
-              <tr><td><code>profile</code></td><td>ユーザーの表示情報・属性情報</td><td><code>userInfo</code>（<code>info</code> は汎用すぎる）</td></tr>
-              <tr><td><code>credential</code></td><td>認証情報（パスワード・APIキー等）</td><td><code>auth</code>（名詞として使うには不正確）</td></tr>
-              <tr><td><code>permission</code></td><td>特定操作への許可（細粒度）</td><td><code>authority</code>（Springの用語と混同注意）</td></tr>
-              <tr><td><code>role</code></td><td>権限ロール（粗粒度、複数permissionを束ねる）</td><td><code>authority</code> と <code>role</code> を混用しない</td></tr>
-              <tr><td><code>token</code></td><td>JWT・APIトークン・一時的な認証キー</td><td><code>key</code>（APIキーと混同）, <code>ticket</code>（和製英語的）</td></tr>
-              <tr><td><code>session</code></td><td>ログイン状態を維持するサーバー側状態</td><td><code>loginInfo</code>, <code>loginData</code></td></tr>
-              <tr><td><code>request</code></td><td>HTTPリクエスト or DTO（入力データ）</td><td><code>input</code>（汎用すぎる）</td></tr>
-              <tr><td><code>response</code></td><td>HTTPレスポンス or DTO（出力データ）</td><td><code>result</code>, <code>output</code>（汎用すぎる）</td></tr>
-              <tr><td><code>payload</code></td><td>リクエスト・イベントの本体データ</td><td><code>data</code>, <code>body</code>（HTTPボディ以外には曖昧）</td></tr>
-              <tr><td><code>entity</code></td><td>DBテーブルに対応するドメインオブジェクト</td><td><code>model</code>（役割が曖昧）, <code>object</code></td></tr>
-              <tr><td><code>repository</code></td><td>DB操作を抽象化する層（DAOパターン）</td><td><code>dao</code>, <code>manager</code>（層の意図が不明確）</td></tr>
-              <tr><td><code>service</code></td><td>ビジネスロジック層</td><td><code>manager</code>, <code>handler</code>（役割が混同しやすい）</td></tr>
-              <tr><td><code>gateway</code></td><td>外部システムとの接続インタフェース</td><td><code>connector</code>, <code>bridge</code>（プロジェクトごとにブレやすい）</td></tr>
-              <tr><td><code>event</code></td><td>システム内で発生した出来事（ドメインイベント）</td><td><code>action</code>, <code>trigger</code>（命名が揺れやすい）</td></tr>
-              <tr><td><code>command</code></td><td>状態変更を意図した操作指示（CQRS文脈）</td><td><code>action</code>, <code>operation</code></td></tr>
-              <tr><td><code>query</code></td><td>データ読み取り専用の操作（CQRS文脈）</td><td><code>search</code>, <code>request</code>（変更操作と区別するため）</td></tr>
-              <tr><td><code>handler</code></td><td>イベント・リクエストを受け取り処理する部品</td><td><code>processor</code>（変換処理との混同を避ける）</td></tr>
-              <tr><td><code>listener</code></td><td>イベントを待ち受けて反応する部品</td><td><code>observer</code>（Observerパターンと区別する場合）</td></tr>
-              <tr><td><code>scheduler</code></td><td>定期実行・スケジュール実行を制御する部品</td><td><code>batch</code>（バッチ処理全体を指す場合と混同）</td></tr>
-              <tr><td><code>batch</code></td><td>一括処理・大量データの非同期処理</td><td><code>bulk</code>（一括という意味は近いが用途が異なる）</td></tr>
-              <tr><td><code>cache</code></td><td>高速化のための一時データ保存</td><td><code>buffer</code>（バッファは一時的なキューに近い）</td></tr>
-              <tr><td><code>config</code> / <code>configuration</code></td><td>設定・設定クラス</td><td><code>setting</code>（UIの設定画面等に限定），<code>property</code></td></tr>
-              <tr><td><code>constant</code></td><td>変更不可の定数値</td><td><code>define</code>（Cの #define の和製英語転用）</td></tr>
-              <tr><td><code>error</code></td><td>プログラムの異常状態（例外・エラー）</td><td><code>exception</code> との使い分け：<code>exception</code> はJava等の例外クラス, <code>error</code> はより広い概念</td></tr>
-              <tr><td><code>log</code></td><td>ログデータ・ログ出力</td><td><code>history</code>（履歴テーブルと混同）</td></tr>
-              <tr><td><code>audit</code></td><td>操作履歴・監査ログ</td><td><code>log</code>（セキュリティ要件のある履歴は <code>audit</code> で明示）</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 10-5. 注意点 -->
-      <div class="rule-section">
-        <h3>⑤ 注意点：日本人エンジニアが陥りやすい落とし穴 <span class="principle-badge">注意</span></h3>
-      </div>
-
-      <div class="callout callout-warning">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">注意①：和製英語・カタカナ英語をそのまま使わない</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            日本語の業務用語を英語に変換するとき、カタカナ語をそのまま転写すると意味がずれる場合がある。
-            例：「マスタ」→ <code>master</code>（Gitのブランチ名と混同）→ <code>category</code> / <code>reference</code> に言い換える。
-            「管理」→ <code>management</code>（Manager は責務が広すぎる）→ <code>service</code> / <code>administration</code> を使い分ける。
-          </p>
-        </div>
-      </div>
-
-      <div class="callout callout-warning" style="margin-top:.75rem;">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">注意②：<code>manage</code> / <code>handle</code> / <code>process</code> は「なんでも動詞」になりやすい</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            <code>manageUser()</code> / <code>handleOrder()</code> / <code>processData()</code> は何をするのか一切わからない。
-            これらの動詞を使いたくなったときは「具体的に何をするのか」を再考し、より精確な動詞（<code>register</code> / <code>validate</code> / <code>calculate</code> 等）に置き換える。
-          </p>
-        </div>
-      </div>
-
-      <div class="callout callout-warning" style="margin-top:.75rem;">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">注意③：<code>flag</code> / <code>flg</code> は絶対に使わない</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            <code>deleteFlg</code> / <code>adminFlag</code> のような命名は、英語圏のエンジニアには通じにくい略語であり、
-            かつ真偽値であることが名前から読み取れない。必ず <code>is_deleted</code> / <code>is_admin</code> の形（<code>is_</code> / <code>has_</code> プレフィックス）に統一する。
-          </p>
-        </div>
-      </div>
-
-      <div class="callout callout-warning" style="margin-top:.75rem;">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">注意④：略語は「チーム全員が即座に読める」もの以外は使わない</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            同書では「略語の節約より、読者のデコード時間の節約を優先せよ」と述べている。
-            プロジェクト固有の略語（例: <code>ord</code>＝order, <code>usr</code>＝user）はチームの新参者を迷わせる。
-            略語を使う場合は必ず CLAUDE.md や命名規則ドキュメントに列挙する。
-            <br>許容される略語の例：<code>id</code>, <code>url</code>, <code>dto</code>, <code>api</code>, <code>db</code>, <code>jwt</code>, <code>http</code>, <code>sql</code>（業界標準として確立しているもの）
-          </p>
-        </div>
-      </div>
-
-      <div class="callout callout-warning" style="margin-top:.75rem;">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">注意⑤：<code>status</code> と <code>state</code> を混用しない</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            <code>status</code> はビジネスレベルの状態（注文ステータス・支払いステータス等）に使う。
-            <code>state</code> は内部的・技術的な状態（UIコンポーネントの状態・ステートマシン等）に使う。
-            同書では「ビジネスドメインのENUM値には <code>status</code>、アプリケーション内部の動作状態には <code>state</code>」と使い分けることを推奨している。
-          </p>
-        </div>
-      </div>
-
-      <div class="callout callout-warning" style="margin-top:.75rem;">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">注意⑥：<code>check</code> / <code>verify</code> / <code>validate</code> の違いを意識する</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            <code>check</code> は最も汎用的で意味が薄い。可能であれば以下に置き換える。<br>
-            <code>validate</code>：入力値・ビジネスルールの整合性確認（戻り値：bool or 例外）<br>
-            <code>verify</code>：外部的な事実・本人確認・署名の確認（セキュリティ文脈）<br>
-            <code>assert</code>：テスト・デバッグ時の前提条件の確認（失敗すると即時エラー）
-          </p>
-        </div>
-      </div>
-
-      <!-- ===== 11. ドメイン・業務用語との一致 ===== -->
-      <h2 class="section-title" id="domain-naming"><span class="title-icon">🏢</span> 11. ドメイン・業務用語との一致</h2>
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">💡</span>
-        <div class="callout-body">
-          <div class="callout-title">命名は「コーディング規約」ではなく「設計の問題」</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            技術的な命名規則（snake_case・camelCase 等）はコーディング規約の話だが、
-            「何という名前をつけるか」は<b>要件定義・基本設計フェーズでの意思決定</b>である。
-            コードの名前が業務の言葉と一致していなければ、実装者・レビュワー・ビジネス担当者の間に
-            「認識のズレ」が生まれ、仕様バグの温床になる。
-          </p>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>原則①：登場人物・事柄の役割を明確にし、別名で区別する <span class="principle-badge">役割分離</span></h3>
-        <p>同じ「人」でも業務上の役割が異なれば、別の名前で表現する。曖昧に <code>user</code> でまとめると、責務の境界が壊れる。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 役割が混在している</div>
-          <pre><code>// ECサイトで「サイトを使う人」を全部 user と呼ぶ
+  </div></p>
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>コメントが「必要な」4つのケース</h3>
+</div>
+<div class="three-col">
+  <div class="mini-card">
+    <div class="mini-card-title">① 非自明な制約・仕様</div>
+    <code style="font-size:.8rem;">// 消費税は受注時点の税率を固定する<br>// 変更しても過去の注文に影響しない</code>
+  </div>
+  <div class="mini-card">
+    <div class="mini-card-title">② 意図的に非直感的な実装</div>
+    <code style="font-size:.8rem;">// パフォーマンスのため N+1 を許容<br>// バッチサイズ 100件以下のため問題なし</code>
+  </div>
+  <div class="mini-card">
+    <div class="mini-card-title">③ 外部ドキュメントへの参照</div>
+    <code style="font-size:.8rem;">// 仕様: ADR-003 参照<br>// 変更: CR-012 承認済み</code>
+  </div>
+  <div class="mini-card">
+    <div class="mini-card-title">④ TODO / FIXME</div>
+    <code style="font-size:.8rem;">// TODO: v2.1 で Redis キャッシュに変更<br>// FIXME: タイムゾーン変換が未実装</code>
+  </div>
+  <div class="mini-card">
+    <div class="mini-card-title">⑤ ライブラリのバグ回避</div>
+    <code style="font-size:.8rem;">// jackson v2.14 のバグ回避<br>// https://github.com/.../issues/123</code>
+  </div>
+  <div class="mini-card">
+    <div class="mini-card-title">⑥ 難解なアルゴリズムの概要</div>
+    <code style="font-size:.8rem;">// Luhn アルゴリズムでカード番号を検証<br>// 詳細は https://... 参照</code>
+  </div>
+</div><h2>🌐 10. IT英語 推奨単語集 {#it-english}</h2>
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">📖</span>
+  <div class="callout-body">
+    <div class="callout-title">「チームを動かすIT英語実践マニュアル」が提言する命名観</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+      日本人エンジニアが書くコードには「和製英語」「曖昧すぎる汎用語」「本来の英語と意味がズレた単語」が混入しやすい。
+      同書では「<b>チーム全員が同じ意味でイメージできる英単語</b>」を選ぶことを最優先とし、
+      以下のカテゴリ別推奨語を提示している。
+    </p>
+  </div>
+</div><div class="rule-section">
+  <h3>① 操作・処理を表す動詞の選び方 <span class="principle-badge">動詞</span></h3>
+  <p>「何をするか」が一意に伝わる動詞を選ぶ。意味が近い語でも文脈によって正解が異なる。</p>
+</div>
+<div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:18%;">動詞</th><th>コード上の推奨用途</th><th style="width:28%;">使用例</th><th style="width:20%;">注意・NG語</th></tr></thead>
+      <tbody>
+        <tr><td><code>fetch</code></td><td>非同期でリモートからデータを取得する</td><td><code>fetchOrderHistory()</code></td><td><code>get</code> との混用に注意</td></tr>
+        <tr><td><code>retrieve</code></td><td>条件を指定して検索・取得（一般的な取得）</td><td><code>retrieveActiveUsers()</code></td><td>日常会話では冗長に聞こえる場合あり</td></tr>
+        <tr><td><code>load</code></td><td>ファイル・設定・リソースを読み込む</td><td><code>loadConfiguration()</code></td><td>データ取得に使うと「fetch」と競合する</td></tr>
+        <tr><td><code>parse</code></td><td>文字列・バイト列を構造化データに変換</td><td><code>parseJsonResponse(raw)</code></td><td><code>convert</code> と混用しない</td></tr>
+        <tr><td><code>convert</code></td><td>型・形式を変換（Entity↔DTO等）</td><td><code>convertToDto(entity)</code></td><td><code>parse</code> は文字列解析専用に限定</td></tr>
+        <tr><td><code>transform</code></td><td>データを別の構造・形式に変形（パイプライン）</td><td><code>transformToSummary(list)</code></td><td>軽微な変換に使うと大げさ</td></tr>
+        <tr><td><code>build</code></td><td>オブジェクト・クエリ・リクエストを組み立てる</td><td><code>buildSearchQuery(params)</code></td><td>生成が主目的なら <code>create</code> を優先</td></tr>
+        <tr><td><code>generate</code></td><td>動的にコード・ID・レポートを生成する</td><td><code>generateInvoicePdf(order)</code></td><td><code>create</code> との違い：生成物が計算・自動生成される場合</td></tr>
+        <tr><td><code>register</code></td><td>システムへの登録（アカウント・設定等）</td><td><code>registerNewUser(dto)</code></td><td>DB INSERT とは限らないので <code>create</code> と使い分ける</td></tr>
+        <tr><td><code>submit</code></td><td>フォーム・申請をユーザーが提出する</td><td><code>submitOrderRequest()</code></td><td>内部処理には使わない（UIアクション専用）</td></tr>
+        <tr><td><code>dispatch</code></td><td>イベント・メッセージをキューやバスに送る</td><td><code>dispatchNotificationEvent(e)</code></td><td><code>send</code> はネットワーク送信、<code>dispatch</code> は内部イベント</td></tr>
+        <tr><td><code>publish</code></td><td>メッセージブローカーへのパブリッシュ</td><td><code>publishOrderCreatedEvent()</code></td><td>MQ/イベント駆動文脈に限定する</td></tr>
+        <tr><td><code>consume</code></td><td>キュー・ストリームからのメッセージ消費</td><td><code>consumePaymentEvents()</code></td><td>読み込み（<code>read</code>）と混用しない</td></tr>
+        <tr><td><code>process</code></td><td>受け取ったデータに複数の処理を施す（汎用）</td><td><code>processPaymentCallback(payload)</code></td><td>単独では汎用すぎる。目的語を必ずつける</td></tr>
+        <tr><td><code>handle</code></td><td>イベント・エラーの受け付け・処理</td><td><code>handleAuthError(err)</code></td><td>ビジネスロジックに使うと責務が曖昧になる</td></tr>
+        <tr><td><code>execute</code></td><td>クエリ・バッチ・コマンドを実行する</td><td><code>executeBatchImport()</code></td><td>一般的な関数呼び出しには使いすぎない</td></tr>
+        <tr><td><code>apply</code></td><td>ルール・パッチ・割引を適用する</td><td><code>applyDiscountRule(order, rule)</code></td><td><code>set</code> との違い：副作用を伴う変換に使う</td></tr>
+        <tr><td><code>merge</code></td><td>複数のオブジェクト・コレクションを統合</td><td><code>mergeUserSettings(base, override)</code></td><td>DB の UPSERT 的文脈にも使われる</td></tr>
+        <tr><td><code>sync</code> / <code>synchronize</code></td><td>2つのデータソース間を同期させる</td><td><code>syncInventoryFromErp()</code></td><td><code>update</code> との違い：双方向同期を示す</td></tr>
+        <tr><td><code>expire</code></td><td>有効期限が切れる（自動・受動的）</td><td><code>expireSessionToken(token)</code></td><td>能動的に削除するなら <code>invalidate</code> を使う</td></tr>
+        <tr><td><code>invalidate</code></td><td>キャッシュ・トークンを明示的に無効化</td><td><code>invalidateCachedUser(userId)</code></td><td><code>delete</code> と違い「無効化」であり削除ではない</td></tr>
+        <tr><td><code>revoke</code></td><td>権限・トークン・許可を取り消す</td><td><code>revokeAccessToken(tokenId)</code></td><td>セキュリティ文脈での取り消しに限定</td></tr>
+        <tr><td><code>notify</code></td><td>ユーザー・外部システムへ通知する</td><td><code>notifyShippingDelay(order)</code></td><td><code>send</code> はデータ送信、<code>notify</code> は通知・知らせる</td></tr>
+        <tr><td><code>schedule</code></td><td>将来の実行を予約・スケジュールする</td><td><code>scheduleReminderEmail(user, at)</code></td><td>即時実行は <code>execute</code>、予約は <code>schedule</code></td></tr>
+        <tr><td><code>rollback</code></td><td>処理を元の状態に戻す</td><td><code>rollbackOrderTransaction()</code></td><td>DB トランザクション外でも使える</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="rule-section">
+  <h3>② 状態・属性を表す形容詞・名詞 <span class="principle-badge">状態語</span></h3>
+</div>
+<div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:20%;">単語</th><th>意味・使いどころ</th><th style="width:28%;">使用例</th><th style="width:20%;">対義語</th></tr></thead>
+      <tbody>
+        <tr><td><code>active</code></td><td>現在有効・稼働中（最も汎用的）</td><td><code>isActive</code>, <code>ACTIVE</code></td><td><code>inactive</code></td></tr>
+        <tr><td><code>enabled</code></td><td>機能・設定がオン状態</td><td><code>isEnabled</code>, <code>featureEnabled</code></td><td><code>disabled</code></td></tr>
+        <tr><td><code>visible</code></td><td>UI上で表示状態</td><td><code>isVisible</code>, <code>VISIBLE</code></td><td><code>hidden</code></td></tr>
+        <tr><td><code>available</code></td><td>利用可能・在庫あり・接続可能</td><td><code>isAvailable</code>, <code>available_stock</code></td><td><code>unavailable</code></td></tr>
+        <tr><td><code>pending</code></td><td>処理待ち・承認待ち・保留中</td><td><code>PENDING</code>, <code>pendingOrders</code></td><td><code>completed</code> / <code>resolved</code></td></tr>
+        <tr><td><code>approved</code></td><td>承認済み</td><td><code>isApproved</code>, <code>APPROVED</code></td><td><code>rejected</code></td></tr>
+        <tr><td><code>completed</code></td><td>処理が完了した（最終状態）</td><td><code>COMPLETED</code>, <code>isCompleted</code></td><td><code>pending</code> / <code>in_progress</code></td></tr>
+        <tr><td><code>cancelled</code></td><td>ユーザーまたはシステムによるキャンセル</td><td><code>CANCELLED</code>, <code>isCancelled</code></td><td><code>confirmed</code></td></tr>
+        <tr><td><code>expired</code></td><td>有効期限切れ</td><td><code>isExpired</code>, <code>EXPIRED</code></td><td><code>valid</code></td></tr>
+        <tr><td><code>archived</code></td><td>論理削除・アーカイブ済み（データは残る）</td><td><code>isArchived</code>, <code>ARCHIVED</code></td><td><code>active</code></td></tr>
+        <tr><td><code>verified</code></td><td>本人確認・検証済み</td><td><code>isEmailVerified</code>, <code>VERIFIED</code></td><td><code>unverified</code></td></tr>
+        <tr><td><code>published</code></td><td>公開済み（CMS・記事・ドキュメント）</td><td><code>isPublished</code>, <code>PUBLISHED</code></td><td><code>draft</code></td></tr>
+        <tr><td><code>draft</code></td><td>下書き・未公開状態</td><td><code>DRAFT</code>, <code>isDraft</code></td><td><code>published</code></td></tr>
+        <tr><td><code>locked</code></td><td>編集不可・ロック状態</td><td><code>isLocked</code>, <code>LOCKED</code></td><td><code>unlocked</code></td></tr>
+        <tr><td><code>required</code></td><td>入力必須・必須項目</td><td><code>isRequired</code>, <code>required_fields</code></td><td><code>optional</code></td></tr>
+        <tr><td><code>optional</code></td><td>任意・省略可能</td><td><code>isOptional</code>, <code>optionalParams</code></td><td><code>required</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="rule-section">
+  <h3>③ 時間・タイミングを表す語 <span class="principle-badge">時間語</span></h3>
+</div>
+<div class="card" style="padding:1rem 1.25rem; margin-bottom:1rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:22%;">パターン</th><th>意味</th><th style="width:30%;">使用例</th><th>型の目安</th></tr></thead>
+      <tbody>
+        <tr><td><code>xxx_at</code> / <code>xxxAt</code></td><td>特定の時刻（timestamp）</td><td><code>created_at</code>, <code>sentAt</code></td><td>DATETIME / Instant</td></tr>
+        <tr><td><code>xxx_date</code> / <code>xxxDate</code></td><td>日付のみ（time は含まない）</td><td><code>due_date</code>, <code>birthDate</code></td><td>DATE / LocalDate</td></tr>
+        <tr><td><code>xxx_on</code> / <code>xxxOn</code></td><td>特定の日（on a day）</td><td><code>scheduled_on</code>, <code>expiredOn</code></td><td>DATE</td></tr>
+        <tr><td><code>xxx_from</code> / <code>xxx_to</code></td><td>期間の開始・終了</td><td><code>valid_from</code>, <code>valid_to</code></td><td>DATE or DATETIME</td></tr>
+        <tr><td><code>xxx_ms</code></td><td>ミリ秒単位の数値</td><td><code>timeoutMs</code>, <code>elapsed_ms</code></td><td>long / number</td></tr>
+        <tr><td><code>xxx_sec</code> / <code>xxx_seconds</code></td><td>秒単位の数値</td><td><code>ttlSec</code>, <code>retry_interval_sec</code></td><td>int / number</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="rule-section">
+  <h3>④ システム設計でよく使う名詞 <span class="principle-badge">名詞</span></h3>
+</div>
+<div class="card" style="padding:1rem 1.25rem; margin-bottom:1.5rem;">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:22%;">推奨語</th><th>意味・使いどころ</th><th style="width:28%;">NG（和製英語など）</th></tr></thead>
+      <tbody>
+        <tr><td><code>user</code> / <code>account</code></td><td>ユーザー。<code>account</code> は認証に紐づく概念</td><td><code>member</code>（会員と混同）, <code>customer</code>（顧客と混同）</td></tr>
+        <tr><td><code>customer</code></td><td>購買・契約関係にある外部ユーザー</td><td><code>user</code> と混用しない（役割を明確に分ける）</td></tr>
+        <tr><td><code>profile</code></td><td>ユーザーの表示情報・属性情報</td><td><code>userInfo</code>（<code>info</code> は汎用すぎる）</td></tr>
+        <tr><td><code>credential</code></td><td>認証情報（パスワード・APIキー等）</td><td><code>auth</code>（名詞として使うには不正確）</td></tr>
+        <tr><td><code>permission</code></td><td>特定操作への許可（細粒度）</td><td><code>authority</code>（Springの用語と混同注意）</td></tr>
+        <tr><td><code>role</code></td><td>権限ロール（粗粒度、複数permissionを束ねる）</td><td><code>authority</code> と <code>role</code> を混用しない</td></tr>
+        <tr><td><code>token</code></td><td>JWT・APIトークン・一時的な認証キー</td><td><code>key</code>（APIキーと混同）, <code>ticket</code>（和製英語的）</td></tr>
+        <tr><td><code>session</code></td><td>ログイン状態を維持するサーバー側状態</td><td><code>loginInfo</code>, <code>loginData</code></td></tr>
+        <tr><td><code>entity</code></td><td>DBテーブルに対応するドメインオブジェクト</td><td><code>model</code>（役割が曖昧）, <code>object</code></td></tr>
+        <tr><td><code>repository</code></td><td>DB操作を抽象化する層（DAOパターン）</td><td><code>dao</code>, <code>manager</code>（層の意図が不明確）</td></tr>
+        <tr><td><code>service</code></td><td>ビジネスロジック層</td><td><code>manager</code>, <code>handler</code>（役割が混同しやすい）</td></tr>
+        <tr><td><code>gateway</code></td><td>外部システムとの接続インタフェース</td><td><code>connector</code>, <code>bridge</code></td></tr>
+        <tr><td><code>event</code></td><td>システム内で発生した出来事（ドメインイベント）</td><td><code>action</code>, <code>trigger</code></td></tr>
+        <tr><td><code>config</code> / <code>configuration</code></td><td>設定・設定クラス</td><td><code>setting</code>（UIの設定画面等に限定），<code>property</code></td></tr>
+        <tr><td><code>cache</code></td><td>高速化のための一時データ保存</td><td><code>buffer</code>（バッファは一時的なキューに近い）</td></tr>
+        <tr><td><code>audit</code></td><td>操作履歴・監査ログ</td><td><code>log</code>（セキュリティ要件のある履歴は <code>audit</code> で明示）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="rule-section">
+  <h3>⑤ 注意点：日本人エンジニアが陥りやすい落とし穴 <span class="principle-badge">注意</span></h3>
+</div><div class="callout callout-warning">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">注意①：和製英語・カタカナ英語をそのまま使わない</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">例：「マスタ」→ <code>master</code>（Gitのブランチ名と混同）→ <code>category</code> / <code>reference</code> に言い換える。「管理」→ <code>management</code>（Manager は責務が広すぎる）→ <code>service</code> / <code>administration</code> を使い分ける。</p>
+  </div>
+</div><div class="callout callout-warning" style="margin-top:.75rem;">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">注意②：<code>manage</code> / <code>handle</code> / <code>process</code> は「なんでも動詞」になりやすい</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;"><code>manageUser()</code> / <code>handleOrder()</code> / <code>processData()</code> は何をするのか一切わからない。これらの動詞を使いたくなったときは「具体的に何をするのか」を再考し、より精確な動詞（<code>register</code> / <code>validate</code> / <code>calculate</code> 等）に置き換える。</p>
+  </div>
+</div><div class="callout callout-warning" style="margin-top:.75rem;">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">注意③：<code>flag</code> / <code>flg</code> は絶対に使わない</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;"><code>deleteFlg</code> / <code>adminFlag</code> のような命名は英語圏のエンジニアには通じにくい略語であり、真偽値であることが名前から読み取れない。必ず <code>is_deleted</code> / <code>is_admin</code> の形（<code>is_</code> / <code>has_</code> プレフィックス）に統一する。</p>
+  </div>
+</div><div class="callout callout-warning" style="margin-top:.75rem;">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">注意④：略語は「チーム全員が即座に読める」もの以外は使わない</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">許容される略語の例：<code>id</code>, <code>url</code>, <code>dto</code>, <code>api</code>, <code>db</code>, <code>jwt</code>, <code>http</code>, <code>sql</code>（業界標準として確立しているもの）</p>
+  </div>
+</div><div class="callout callout-warning" style="margin-top:.75rem;">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">注意⑤：<code>status</code> と <code>state</code> を混用しない</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;"><code>status</code> はビジネスレベルの状態（注文ステータス・支払いステータス等）に使う。<code>state</code> は内部的・技術的な状態（UIコンポーネントの状態・ステートマシン等）に使う。</p>
+  </div>
+</div><div class="callout callout-warning" style="margin-top:.75rem;">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">注意⑥：<code>check</code> / <code>verify</code> / <code>validate</code> の違いを意識する</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;"><code>validate</code>：入力値・ビジネスルールの整合性確認（戻り値：bool or 例外）<br><code>verify</code>：外部的な事実・本人確認・署名の確認（セキュリティ文脈）<br><code>assert</code>：テスト・デバッグ時の前提条件の確認（失敗すると即時エラー）</p>
+  </div>
+</div><h2>🏢 11. ドメイン・業務用語との一致 {#domain-naming}</h2>
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">💡</span>
+  <div class="callout-body">
+    <div class="callout-title">命名は「コーディング規約」ではなく「設計の問題」</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+      コードの名前が業務の言葉と一致していなければ、実装者・レビュワー・ビジネス担当者の間に「認識のズレ」が生まれ、仕様バグの温床になる。
+    </p>
+  </div>
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>原則①：登場人物・事柄の役割を明確にし、別名で区別する <span class="principle-badge">役割分離</span></h3>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 役割が混在している</div>
+    <pre><code>// ECサイトで「サイトを使う人」を全部 user と呼ぶ
 class User { ... }
 // 購買者も管理者も会員も全部 user — 責務が混乱
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 役割ごとに名前を分離</div>
-          <pre><code>class Customer { ... }   // 購買・契約関係にある顧客
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 役割ごとに名前を分離</div>
+    <pre><code>class Customer { ... }   // 購買・契約関係にある顧客
 class Member { ... }     // 会員登録して特典を持つ会員
 class AdminUser { ... }  // 管理画面操作者
-// 役割が明確 → 責務・権限設計も明確になる
 </code></pre>
-        </div>
-      </div>
-
-      <div class="card" style="padding:1rem 1.25rem; margin:1rem 0;">
-        <div style="font-weight:700; margin-bottom:.5rem; font-size:.9rem;">役割分離の典型パターン</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:20%;">業務上の役割</th><th>推奨語</th><th>使い分けの基準</th></tr></thead>
-            <tbody>
-              <tr><td>システムを利用する人（汎用）</td><td><code>user</code></td><td>役割が特定できない場合の最終手段</td></tr>
-              <tr><td>購買・契約している顧客</td><td><code>customer</code></td><td>お金を払う・契約関係がある</td></tr>
-              <tr><td>会員登録して特典を持つ人</td><td><code>member</code></td><td>ポイント・グレード等の属性を持つ</td></tr>
-              <tr><td>管理者・運用担当者</td><td><code>admin</code> / <code>operator</code></td><td>管理画面へのアクセス権を持つ</td></tr>
-              <tr><td>サービス提供者（BtoBの出店者等）</td><td><code>vendor</code> / <code>merchant</code></td><td>プラットフォーム上で商品・サービスを提供する側</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>原則②：コードの名前とチームの会話の言葉を一致させる <span class="principle-badge">用語統一</span></h3>
-        <p>設計書・会議・Slackでは「受注」と呼んでいるのに、コードでは <code>order</code>・<code>purchase</code>・<code>reservation</code> が混在している状態は危険。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 会話と実装の用語が乖離</div>
-          <pre><code>// 設計書では「受注」「注文」「購買」が混在
+  </div>
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>原則②：コードの名前とチームの会話の言葉を一致させる <span class="principle-badge">用語統一</span></h3>
+</div>
+<div class="compare-grid">
+  <div class="compare-card ng">
+    <div class="compare-label">✗ NG — 会話と実装の用語が乖離</div>
+    <pre><code>// 設計書では「受注」「注文」「購買」が混在
 class PurchaseService { ... }       // 購買?
 class OrderRepository { ... }       // 注文?
 class ReservationController { ... } // 予約?
 </code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 会話・設計書・コードで統一</div>
-          <pre><code>// チームで「受注 = order」と決定し全員が統一
+  </div>
+  <div class="compare-card ok">
+    <div class="compare-label">✓ OK — 会話・設計書・コードで統一</div>
+    <pre><code>// チームで「受注 = order」と決定し全員が統一
 class OrderService { ... }
 class OrderRepository { ... }
 class OrderController { ... }
 // 設計書・会話・DBテーブルすべて「order」
 </code></pre>
-        </div>
-      </div>
-
-      <div class="point-box">
-        <strong>💡 実践的アプローチ：</strong>
-        プロジェクト開始時に「用語集（グロッサリー）」をチームで作成する。
-        業務用語 ↔ 英語名の対応表を一度作ると、全員が同じ名前を使い始める。
-        ADR や CLAUDE.md に記載してコードレビューの基準にする。
-      </div>
-
-      <div class="rule-section" style="margin-top:1.25rem;">
-        <h3>原則③：名前を声に出して読み、違和感を検出する <span class="principle-badge">音声確認</span></h3>
-        <p>コードレビューや設計書レビューで「名前を声に出して説明できるか」を確認する。説明に詰まった名前は、設計が曖昧なサインである。</p>
-      </div>
-      <div class="three-col">
-        <div class="mini-card">
-          <div class="mini-card-title">確認フレーズ①</div>
-          「この <code>XxxService</code> は<b>何をするクラスか</b>、一文で説明できるか？」<br>
-          <small style="color:var(--gray-600);">説明が長くなるなら責務が多すぎる</small>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">確認フレーズ②</div>
-          「この変数に入っているものを同僚に口頭で説明するとき、なんと言うか？」<br>
-          <small style="color:var(--gray-600);">口頭で言う言葉がそのまま変数名になるべき</small>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">確認フレーズ③</div>
-          「この関数名を読んだとき、戻り値・副作用を誰もが同じようにイメージできるか？」<br>
-          <small style="color:var(--gray-600);">解釈が割れるなら名前を変える</small>
-        </div>
-      </div>
-
-      <div class="rule-section" style="margin-top:1.5rem;">
-        <h3>原則④：仕様変更時は命名も見直す。アンカリング効果に注意 <span class="principle-badge">命名更新</span></h3>
-        <p>
-          要件が変わったのに名前だけ古いまま残ると「名前が嘘をつく」状態になる。
-          これを<b>アンカリング効果（既存命名への過度な依存）</b>と呼び、意識的に命名を見直す機会を設ける必要がある。
-        </p>
-      </div>
-
-      <div class="callout callout-warning">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <div class="callout-title">アンカリング効果：既存の命名に引っ張られて見直しを怠る</div>
-          <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
-            「最初に <code>notification</code> と名付けたから、SMS対応になっても <code>notification</code> のままでいいや」という思考がアンカリング。
-            仕様変更や機能拡張の際は「<b>この名前は今の実態を正確に表しているか？</b>」を問い直す習慣を持つ。
-            リネームのコストより、名前が嘘をつき続けるコストのほうが高い。
-          </p>
-          <div class="compare-grid" style="margin-top:.75rem;">
-            <div class="compare-card ng">
-              <div class="compare-label">✗ 仕様変更後に名前を放置</div>
-              <pre><code>// 当初: メール通知のみ
+  </div>
+</div><div class="point-box">
+  <strong>💡 実践的アプローチ：</strong>
+  プロジェクト開始時に「用語集（グロッサリー）」をチームで作成する。
+  業務用語 ↔ 英語名の対応表を一度作ると、全員が同じ名前を使い始める。
+  ADR や CLAUDE.md に記載してコードレビューの基準にする。
+</div><div class="rule-section" style="margin-top:1.25rem;">
+  <h3>原則③：仕様変更時は命名も見直す。アンカリング効果に注意 <span class="principle-badge">命名更新</span></h3>
+</div><div class="callout callout-warning">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">
+    <div class="callout-title">アンカリング効果：既存の命名に引っ張られて見直しを怠る</div>
+    <p style="margin:.4rem 0 0; font-size:.87rem; line-height:1.8;">
+      仕様変更や機能拡張の際は「<b>この名前は今の実態を正確に表しているか？</b>」を問い直す習慣を持つ。
+      リネームのコストより、名前が嘘をつき続けるコストのほうが高い。
+    </p>
+    <div class="compare-grid" style="margin-top:.75rem;">
+      <div class="compare-card ng">
+        <div class="compare-label">✗ 仕様変更後に名前を放置</div>
+        <pre><code>// 当初: メール通知のみ
 class EmailNotificationService { ... }
-
 // 仕様変更でSMS・Push通知も追加されたが
 // クラス名は EmailNotification のまま放置
-// → 名前が実態と乖離
 </code></pre>
-            </div>
-            <div class="compare-card ok">
-              <div class="compare-label">✓ 仕様変更に合わせて命名を更新</div>
-              <pre><code>// 変更後: チャネル横断の通知に責務が変わった
+      </div>
+      <div class="compare-card ok">
+        <div class="compare-label">✓ 仕様変更に合わせて命名を更新</div>
+        <pre><code>// 変更後: チャネル横断の通知に責務が変わった
 class NotificationDispatchService { ... }
 // または
 class MultiChannelNotificationService { ... }
-// → 名前が現在の実態を正確に表す
 </code></pre>
-            </div>
-          </div>
-        </div>
       </div>
+    </div>
+  </div>
+</div><h2>✅ 命名レビュー チェックリスト</h2>
+<div class="card">
+  <p style="font-size:.87rem; color:var(--gray-600); margin-bottom:1rem;">
+    コードレビュー・設計書レビュー時に以下を確認する。全項目 OK であれば命名起因のバグ・誤解は大幅に減る。
+  </p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:5%;"></th><th>確認項目</th><th style="width:30%;">NG の兆候</th></tr></thead>
+      <tbody>
+        <tr><td>☐</td><td>変数名・引数名に <code>data</code>/<code>value</code>/<code>info</code>/<code>result</code>/<code>temp</code> を使っていない</td><td>何でも入る「なんとなく名前」が多い</td></tr>
+        <tr><td>☐</td><td>関数名が「動詞＋目的語」の形になっている</td><td><code>user()</code>/<code>order()</code>/<code>doProcess()</code></td></tr>
+        <tr><td>☐</td><td>チーム内で <code>get</code>/<code>fetch</code>/<code>find</code> の使い分けが統一されている</td><td>同じ意味の動詞が混在している</td></tr>
+        <tr><td>☐</td><td>真偽値が <code>is/has/can/should</code> で始まっている</td><td><code>loginFlag</code>/<code>adminFlg</code>/<code>permission</code></td></tr>
+        <tr><td>☐</td><td>二重否定の変数・条件式がない</td><td><code>!isNotFound</code>/<code>!isDisabled</code></td></tr>
+        <tr><td>☐</td><td>時間・金額・サイズなど単位が名前に含まれている</td><td><code>timeout</code>/<code>size</code>/<code>price</code>（単位不明）</td></tr>
+        <tr><td>☐</td><td>DBカラム名が snake_case で統一されている</td><td><code>userName</code>/<code>createTime</code>/<code>adminFlg</code></td></tr>
+        <tr><td>☐</td><td>APIエンドポイントに動詞が入っていない</td><td><code>/getUser</code>/<code>/createOrder</code>/<code>/doLogin</code></td></tr>
+        <tr><td>☐</td><td>設計書ファイル名が「プレフィックス＋連番＋概要＋日付」になっている</td><td><code>設計書_最終版(2).xlsx</code></td></tr>
+        <tr><td>☐</td><td>コメントが「何（What）」ではなく「なぜ（Why）」を説明している</td><td>コードをそのまま日本語に訳したコメント</td></tr>
+        <tr><td>☐</td><td>コードの名前がチームの会話・設計書の用語と一致している</td><td>会議では「受注」・コードでは <code>purchase</code> / <code>reservation</code> が混在</td></tr>
+        <tr><td>☐</td><td>仕様変更後に古い命名が実態と乖離していないか確認した</td><td>機能拡張後も <code>Email</code>Notification のまま残っている</td></tr>
+        <tr><td>☐</td><td>「新しい」「更新後」「改善版」などの腐る修飾語を使っていない</td><td><code>NewUserService</code>, <code>updatedLogic</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="callout callout-info" style="margin-top:1.5rem;">
+  <span class="callout-icon">📚</span>
+  <div class="callout-body">
+    <div class="callout-title">参考文献・関連ページ</div>
+    <ul style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
+      <li>Dustin Boswell, Trevor Foucher 著「<b>リーダブルコード ―より良いコードを書くためのシンプルで実践的なテクニック</b>」（O'Reilly Japan）</li>
+      <li>「<b>チームを動かすIT英語実践マニュアル</b>」― 第10節「IT英語 推奨単語集」</li>
+      <li>Qiita「<b>目的から命名を考える — 存在駆動ではなく目的駆動の命名</b>」（@Nao52）</li>
+      <li><a href="../detailed/techniques.html">詳細設計技法まとめ</a></li>
+      <li><a href="../detailed/common-libs.html">共通ライブラリ設計</a></li>
+      <li><a href="../reference/adr.html">ADR サンプル集</a></li>
+    </ul>
+  </div>
+</div>
 
-      <div class="rule-section" style="margin-top:1.5rem;">
-        <h3>原則⑤：形容詞・修飾語の濫用に注意する <span class="principle-badge">修飾語</span></h3>
-        <p>「新しい〇〇」「改善後の〇〇」のような修飾語は、時間が経つと意味を失う。状態・版数は名前ではなくバージョン管理や ENUM で表現する。</p>
-      </div>
-      <div class="compare-grid">
-        <div class="compare-card ng">
-          <div class="compare-label">✗ NG — 修飾語が腐る</div>
-          <pre><code>class NewUserRegistrationService { ... }
-// → いつ「古い」ものになるか不明
-// → NewNew... と増殖するリスク
-
-const updatedCalculationLogic = () => { ... }
-// → 何に対して updated なのか不明
-</code></pre>
-        </div>
-        <div class="compare-card ok">
-          <div class="compare-label">✓ OK — 実態・責務で名前をつける</div>
-          <pre><code>class OAuthUserRegistrationService { ... }
-// → 何が違うのかが名前から分かる
-
-const calculateTaxIncludedPrice = () => { ... }
-// → 何を計算するかが一意に読める
-</code></pre>
-        </div>
-      </div>
-
-      <!-- まとめチェックリスト -->
-      <h2 class="section-title" style="margin-top:2rem;"><span class="title-icon">✅</span> 命名レビュー チェックリスト</h2>
-      <div class="card">
-        <p style="font-size:.87rem; color:var(--gray-600); margin-bottom:1rem;">
-          コードレビュー・設計書レビュー時に以下を確認する。全項目 OK であれば命名起因のバグ・誤解は大幅に減る。
-        </p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:5%;"></th><th>確認項目</th><th style="width:30%;">NG の兆候</th></tr></thead>
-            <tbody>
-              <tr><td>☐</td><td>変数名・引数名に <code>data</code>/<code>value</code>/<code>info</code>/<code>result</code>/<code>temp</code> を使っていない</td><td>何でも入る「なんとなく名前」が多い</td></tr>
-              <tr><td>☐</td><td>関数名が「動詞＋目的語」の形になっている</td><td><code>user()</code>/<code>order()</code>/<code>doProcess()</code></td></tr>
-              <tr><td>☐</td><td>チーム内で <code>get</code>/<code>fetch</code>/<code>find</code> の使い分けが統一されている</td><td>同じ意味の動詞が混在している</td></tr>
-              <tr><td>☐</td><td>真偽値が <code>is/has/can/should</code> で始まっている</td><td><code>loginFlag</code>/<code>adminFlg</code>/<code>permission</code></td></tr>
-              <tr><td>☐</td><td>二重否定の変数・条件式がない</td><td><code>!isNotFound</code>/<code>!isDisabled</code></td></tr>
-              <tr><td>☐</td><td>時間・金額・サイズなど単位が名前に含まれている</td><td><code>timeout</code>/<code>size</code>/<code>price</code>（単位不明）</td></tr>
-              <tr><td>☐</td><td>DBカラム名が snake_case で統一されている</td><td><code>userName</code>/<code>createTime</code>/<code>adminFlg</code></td></tr>
-              <tr><td>☐</td><td>APIエンドポイントに動詞が入っていない</td><td><code>/getUser</code>/<code>/createOrder</code>/<code>/doLogin</code></td></tr>
-              <tr><td>☐</td><td>設計書ファイル名が「プレフィックス＋連番＋概要＋日付」になっている</td><td><code>設計書_最終版(2).xlsx</code></td></tr>
-              <tr><td>☐</td><td>コメントが「何（What）」ではなく「なぜ（Why）」を説明している</td><td>コードをそのまま日本語に訳したコメント</td></tr>
-              <tr><td>☐</td><td>コードの名前がチームの会話・設計書の用語と一致している</td><td>会議では「受注」・コードでは <code>purchase</code> / <code>reservation</code> が混在</td></tr>
-              <tr><td>☐</td><td>同じ「人・物」でも役割が違う場合は別名で区別している</td><td><code>user</code> 1つで顧客・会員・管理者を表している</td></tr>
-              <tr><td>☐</td><td>仕様変更後に古い命名が実態と乖離していないか確認した</td><td>機能拡張後も <code>Email</code>Notification のまま、<code>New</code>XxxService のまま残っている</td></tr>
-              <tr><td>☐</td><td>「新しい」「更新後」「改善版」などの腐る修飾語を使っていない</td><td><code>NewUserService</code>, <code>updatedLogic</code>, <code>revised</code> プレフィックス</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 参考 -->
-      <div class="callout callout-info" style="margin-top:1.5rem;">
-        <span class="callout-icon">📚</span>
-        <div class="callout-body">
-          <div class="callout-title">参考文献・関連ページ</div>
-          <ul style="margin:.5rem 0 0; padding-left:1.4rem; line-height:2;">
-            <li>Dustin Boswell, Trevor Foucher 著「<b>リーダブルコード ―より良いコードを書くためのシンプルで実践的なテクニック</b>」（O'Reilly Japan）</li>
-            <li>「<b>チームを動かすIT英語実践マニュアル</b>」― 第10節「IT英語 推奨単語集」の動詞・状態語・名詞カテゴリ分類・注意点はこの書籍の提言に基づく</li>
-            <li>Qiita「<b>目的から命名を考える — 存在駆動ではなく目的駆動の命名</b>」（@Nao52）― 第11節「ドメイン・業務用語との一致」の役割分離・用語統一・アンカリング効果の観点はこの記事の提言に基づく</li>
-            <li><a href="../detailed/techniques.html">詳細設計技法まとめ</a> — フローチャート・シーケンス図・デシジョンテーブル</li>
-            <li><a href="../detailed/common-libs.html">共通ライブラリ設計</a> — 認証・エラーハンドリング等の実装例</li>
-            <li><a href="../reference/adr.html">ADR サンプル集</a> — 設計上の意思決定記録の書き方</li>
-          </ul>
-        </div>
-      </div>
-
-    </div><!-- /content -->
+    </div>
   </main>
 </div>
 
-<script src="../js/main.js"></script>
+
+<script src="../../js/main.js"></script>
 <script src="../../sidebar.js"></script>
 </body>
 </html>

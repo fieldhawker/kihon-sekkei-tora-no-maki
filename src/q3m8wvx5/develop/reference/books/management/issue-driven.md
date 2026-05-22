@@ -1,0 +1,247 @@
+---
+title: イシューからはじめよ
+subtitle: 書籍まとめ / マネジメント
+phase: adr
+description: 安宅和人（あたか かずと）著。マッキンゼーとヤフーで培った「問題解決の本質」を説いた一冊。「がむしゃらに頑張る」より「正しい問いを立てる」ことが生産性の鍵だという考え方を、具体的な方法論とともに解説しています。
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方（初心者向け）</b><br>
+    この本のメッセージはシンプルです。<b>「解く前に、本当に解くべき問題かを確かめよ」</b>。バグ修正・機能追加・設計作業のどんな場面でも使える考え方です。最初に「犬の道を避ける」考え方と「イシューの見極め方」だけ読めば、すぐ実務に活かせます。
+  </div>
+</div>
+
+## 🎯 本の核心：「バリューのある仕事」とは何か？
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">💎</span><h2>「頑張り方」より「何に頑張るか」が重要</h2></div>
+  <p>著者は仕事の成果を次の式で表しています。</p>
+  <blockquote style="border-left:4px solid var(--primary); padding:0.75rem 1rem; background:var(--bg-sub); border-radius:0 8px 8px 0; margin:1rem 0; font-size:1.1em; text-align:center">
+    <strong>バリュー（価値）＝ イシュー度 × 解の質</strong>
+  </blockquote>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>要素</th><th>意味</th><th>例</th></tr></thead>
+    <tbody>
+      <tr><td><strong>イシュー度</strong></td><td>「そもそも解くべき問題かどうか」の重要性</td><td>ユーザーが本当に困っている課題かどうか</td></tr>
+      <tr><td><strong>解の質</strong></td><td>問題に対する答えの正確さ・深さ</td><td>調査・実装・分析の精度</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>イシュー度が低い問題をいくら完璧に解いても、価値はゼロに近い。</b><br>
+      どれだけ丁寧なコードを書いても、誰も使わない機能では意味がない——という発想です。
+    </div>
+  </div>
+</div>
+
+## 🐕 避けるべき「犬の道」
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🚫</span><h2>「とにかくやってみる」という落とし穴</h2></div>
+  <p>著者は、多くの人が陥るパターンを<strong>「犬の道」</strong>と呼んでいます。</p>
+  <div style="display:grid; gap:0.75rem; margin-top:1rem">
+    <div style="border:2px solid #e57373; border-radius:8px; padding:1rem; background:#fff8f8">
+      <h3 style="margin:0 0 0.5rem; color:#c62828">犬の道のパターン</h3>
+      <ol style="margin:0; padding-left:1.5rem">
+        <li>問いを確認せず、とにかく作業量を増やす</li>
+        <li>資料・調査・コードを大量に生産する</li>
+        <li>「頑張ったのに成果が出ない」と消耗する</li>
+      </ol>
+    </div>
+    <div style="border:2px solid var(--primary); border-radius:8px; padding:1rem; background:var(--bg-sub)">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">正しいアプローチ（イシュードリブン）</h3>
+      <ol style="margin:0; padding-left:1.5rem">
+        <li><strong>イシュー（本当の問い）</strong>を見極める</li>
+        <li>仮説を立てて検証方法を設計する</li>
+        <li>必要最小限の作業で答えを出す</li>
+      </ol>
+    </div>
+  </div>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      エンジニアに置き換えると——「仕様書を読まずにコーディングを始める」「バグの原因を調べずにコードを書き換え続ける」は典型的な犬の道です。
+    </div>
+  </div>
+</div>
+
+## ❓ 「イシュー」とは何か？
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🔍</span><h2>すべての問いがイシューになるわけではない</h2></div>
+  <p>著者によれば、本当のイシューには次の3条件があります。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>条件</th><th>説明</th><th>エンジニアの例</th></tr></thead>
+    <tbody>
+      <tr><td><strong>①　答えが出せる</strong></td><td>現実的に検証・解決が可能である</td><td>「なぜこの画面だけ表示が遅いのか」は調査できる</td></tr>
+      <tr><td><strong>②　答える価値がある</strong></td><td>解くことで状況が大きく変わる</td><td>ユーザーの離脱率が改善されるなど</td></tr>
+      <tr><td><strong>③　今答えるべき</strong></td><td>タイミングとして重要である</td><td>リリース前のクリティカルバグ vs. 将来の技術的負債</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">
+      <b>イシューの見極め方：</b>「もしこの問いに答えが出たら、何が変わるか？」と問い直す。「変わることが少ない」なら、それはイシューではないかもしれません。
+    </div>
+  </div>
+</div>
+
+## 💡 ステップ①：仮説を立てる
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef3cd">🔬</span><h2>「問い」を「仮説」に変える</h2></div>
+  <p>イシューが決まったら、<strong>「〜ではないか？」という仮説の形</strong>に落とし込みます。仮説があれば、検証に必要な情報だけを集めれば済むため、無駄な作業が激減します。</p>
+
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>問いの形（NG）</th><th>仮説の形（OK）</th></tr></thead>
+    <tbody>
+      <tr><td>「なぜパフォーマンスが悪いのか調査する」</td><td>「N+1クエリが原因ではないか？」</td></tr>
+      <tr><td>「ユーザーが使いにくい理由を調べる」</td><td>「入力フォームのステップ数が多すぎるのではないか？」</td></tr>
+      <tr><td>「テストが通らない原因を探す」</td><td>「先週のライブラリ更新で非互換が起きたのではないか？」</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      仮説は外れてもよい。「外れた」とわかるだけで、次の仮説に素早く移れます。正しい仮説を作ることより、<b>仮説を持って動くこと</b>が大事です。
+    </div>
+  </div>
+</div>
+
+## 🗂️ ステップ②：ストーリーラインを組む
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">📐</span><h2>答えを「どう伝えるか」を先に設計する</h2></div>
+  <p>著者は、<strong>分析を始める前に「答えの伝え方（ストーリーライン）」を設計する</strong>ことを推奨しています。これにより、何を調べればよいかが明確になります。</p>
+
+  <div style="display:grid; gap:0.75rem; margin-top:1rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">ストーリーラインの例（パフォーマンス問題の場合）</h3>
+      <ol style="margin:0; padding-left:1.5rem">
+        <li>「この画面のレスポンスが遅い」という事実の確認</li>
+        <li>「原因はDBクエリの非効率にある」という仮説の提示</li>
+        <li>「N+1クエリをEager Loadingで解消する」という解決策</li>
+        <li>「改善後のベンチマーク比較」で効果を示す</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>「とにかく調べてから考える」は非効率：</b> 先にストーリーを描くことで、「このデータは要る」「あのデータは不要」と判断でき、分析量を絞り込めます。
+    </div>
+  </div>
+</div>
+
+## 📊 ステップ③：アウトプット駆動で進める
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8eaf6">🖨️</span><h2>「何を作るか」から逆算して動く</h2></div>
+  <p>著者が強調する<strong>「アウトプット駆動」</strong>とは、最終成果物（報告書・設計書・実装）を先に想定し、そこから逆算して必要な作業を決めるアプローチです。</p>
+
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>段階</th><th>やること</th></tr></thead>
+    <tbody>
+      <tr><td>① 完成形を描く</td><td>「最終的に何を誰に見せるか？」をまず決める</td></tr>
+      <tr><td>② 必要な要素を洗い出す</td><td>完成形に必要な情報・データ・コードを列挙する</td></tr>
+      <tr><td>③ 優先順位をつける</td><td>「これがないと成立しない」要素から着手する</td></tr>
+      <tr><td>④ 最短ルートで実行する</td><td>不要な情報収集・実装はしない</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">
+      <b>エンジニアの実例：</b> 設計書を書く前に「レビュアーが確認したいポイントは何か？」を考える。それが明確なら、書くべき内容が絞れて、無駄なセクションを省けます。
+    </div>
+  </div>
+</div>
+
+## ⚡ 「速さ」と「深さ」を両立する
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🏎️</span><h2>80点を素早く出し、議論してから深掘りする</h2></div>
+  <p>著者は「<strong>完璧を目指して時間をかけるより、まず80点の答えを出してフィードバックをもらえ</strong>」と言います。これはアジャイル開発のスプリントと似た発想です。</p>
+
+  <div style="display:grid; gap:0.75rem; margin-top:1rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">実践のコツ</h3>
+      <ul style="margin:0; padding-left:1.5rem">
+        <li>「まずたたき台を作る」宣言をしてから動く</li>
+        <li>ラフな図・箇条書きでも早めに共有してズレを修正する</li>
+        <li>「これで合ってますか？」を早い段階で確認する</li>
+        <li>100点を目指して一人で抱え込まない</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      コードレビューでも同じです。完璧なPRを一人で作り込むより、WIP（Work In Progress）のPRを早めにレビューに出してフィードバックをもらう方が、最終的に品質が上がることがあります。
+    </div>
+  </div>
+</div>
+
+## 🛠️ エンジニアの日常業務への適用
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef3cd">💻</span><h2>「イシュー思考」を日常に組み込む</h2></div>
+  <p>以下は、イシュードリブンの考え方をエンジニアの仕事に当てはめた例です。</p>
+
+  <div style="display:grid; gap:0.75rem; margin-top:1rem">
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">🐛 バグ修正のとき</h3>
+      <p style="margin:0">
+        <b>犬の道：</b> エラーログをなんとなく眺めてコードをいじり始める<br>
+        <b>イシュードリブン：</b> 「どこで・何が・なぜ起きているか」を仮説化してから、ピンポイントで調査する
+      </p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">📋 タスク着手のとき</h3>
+      <p style="margin:0">
+        <b>犬の道：</b> チケットに書いてある通りに実装を開始する<br>
+        <b>イシュードリブン：</b> 「このチケットが解決するビジネス上の問題は何か？」を確認してから着手する
+      </p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">📝 設計・レビューのとき</h3>
+      <p style="margin:0">
+        <b>犬の道：</b> 思いつくままに設計書を書いたり、すべての観点でレビューコメントを出す<br>
+        <b>イシュードリブン：</b> 「この設計で解決すべき最重要課題は何か？」を起点に、重要な観点に絞る
+      </p>
+    </div>
+    <div style="border:1px solid var(--border); border-radius:8px; padding:1rem">
+      <h3 style="margin:0 0 0.5rem; color:var(--primary)">💬 ミーティングのとき</h3>
+      <p style="margin:0">
+        <b>犬の道：</b> 議題のないまま集まって話す<br>
+        <b>イシュードリブン：</b> 「このミーティングで決めるべきイシューは何か？」を事前に明示する
+      </p>
+    </div>
+  </div>
+</div>
+
+## 📌 まとめ：3つだけ覚えるなら
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">🎓</span><h2>本書のエッセンス</h2></div>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>#</th><th>メッセージ</th><th>一言で</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>解く前に「それは本当に解くべき問いか？」を問え</td><td><strong>イシューを見極めよ</strong></td></tr>
+      <tr><td>2</td><td>作業量より「何に時間を使うか」の選択が成果を決める</td><td><strong>選択が価値を生む</strong></td></tr>
+      <tr><td>3</td><td>完璧より「早く出して直す」サイクルを回せ</td><td><strong>速さ × 仮説検証</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-success" style="margin-top:1rem">
+    <span class="callout-icon">📖</span>
+    <div class="callout-body">
+      <b>次のステップ：</b> 今日からできること——タスクに着手する前に「このタスクが解決するイシューは何か？」と10秒だけ立ち止まってみてください。それだけで仕事の質が変わります。
+    </div>
+  </div>
+</div>

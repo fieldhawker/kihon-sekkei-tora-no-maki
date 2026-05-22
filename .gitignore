@@ -1,0 +1,9 @@
+# Node.js
+node_modules/
+npm-debug.log*
+
+# ビルド成果物
+output/
+
+# Claude Code ローカル設定（個人環境固有の設定）
+.claude/settings.local.json

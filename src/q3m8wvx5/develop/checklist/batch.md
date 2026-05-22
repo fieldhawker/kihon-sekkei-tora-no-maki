@@ -1,0 +1,176 @@
+---
+title: バッチ作成チェックリスト
+subtitle: チェックリスト
+phase: impl
+description: バッチ処理を新規作成・レビューする際に確認すべき項目のチェックリストです。設計・実装・テストの各フェーズで活用してください。
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このチェックリストの使い方</b><br>
+    1) 実装前に「1. 設計・要件定義」で<b>対象範囲・再実行・依存関係</b>を確定 → 2) 実装時に「2. エラーハンドリング」「4. 実行管理・運用」を同時に作り込む → 3) 最後に「6. テスト」を本番相当データ量で確認。
+  </div>
+</div>
+
+<div class="callout callout-warning" style="margin-top:1rem">
+  <span class="callout-icon">📌</span>
+  <div class="callout-body">
+    <b>初心者がハマりやすい3点</b><br>
+    ① 途中失敗時に「どこまで処理したか」分からずリランできない（→ 進捗/再実行設計が必要）<br>
+    ② 全件を1トランザクションで処理してロールバック地獄（→ チャンク処理を検討）<br>
+    ③ 二重起動で二重更新（→ 排他・ロックが必要）
+  </div>
+</div>
+
+## 1 設計・要件定義
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="b1-1"><label for="b1-1">実行トリガーが明確になっている（定時・手動・イベント駆動）</label></li>
+    <li><input type="checkbox" id="b1-2"><label for="b1-2">実行スケジュール（頻度・時刻・タイムゾーン）が定義されている</label></li>
+    <li><input type="checkbox" id="b1-3"><label for="b1-3">処理対象のデータ範囲・条件が明確になっている</label></li>
+    <li><input type="checkbox" id="b1-4"><label for="b1-4">処理件数の上限・想定件数が見積もられている</label></li>
+    <li><input type="checkbox" id="b1-5"><label for="b1-5">冪等性が考慮されている（同一バッチを複数回実行しても結果が変わらない）</label></li>
+    <li><input type="checkbox" id="b1-6"><label for="b1-6">再実行（リラン）の仕様が定義されている</label></li>
+    <li><input type="checkbox" id="b1-7"><label for="b1-7">処理の前提条件・依存関係（先行バッチなど）が整理されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>項目</th><th>具体例</th><th>なぜ必要か</th></tr></thead>
+      <tbody>
+        <tr><td>実行トリガー</td><td>「毎日 02:00 JST に定時起動」「注文確定イベント受信時に起動」「手動実行コマンド <code>./run_batch.sh --date=YYYY-MM-DD</code>」</td><td>トリガーが曖昧だと二重実行・実行漏れの原因になる</td></tr>
+        <tr><td>タイムゾーン</td><td>cron設定は <code>0 17 * * *</code>（UTC）= JST 翌 02:00。サーバー/コンテナのタイムゾーン設定を明記する</td><td>UTC/JSTの混在はサマータイム切替時に処理時刻がずれる</td></tr>
+        <tr><td>冪等性</td><td>処理前に <code>processed_at IS NULL</code> を確認し、処理後に <code>processed_at = NOW()</code> をセット。再実行しても処理済みはスキップされる</td><td>障害リランや誤実行でデータが重複するリスクを排除する</td></tr>
+        <tr><td>依存関係</td><td>「売上集計バッチ」は「注文取込バッチ」の完了を待ってから起動。ステータステーブルまたはジョブスケジューラの依存設定で管理</td><td>先行バッチが未完了のまま集計すると集計漏れが発生する</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 2 エラーハンドリング
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="b2-1"><label for="b2-1">エラー発生時の動作（中断 or スキップ）が定義されている</label></li>
+    <li><input type="checkbox" id="b2-2"><label for="b2-2">エラーログの出力仕様が定義されている（ログレベル・出力先・フォーマット）</label></li>
+    <li><input type="checkbox" id="b2-3"><label for="b2-3">アラート通知の仕様が定義されている（通知先・条件・内容）</label></li>
+    <li><input type="checkbox" id="b2-4"><label for="b2-4">部分失敗時のロールバック・補償処理が考慮されている</label></li>
+    <li><input type="checkbox" id="b2-5"><label for="b2-5">タイムアウト時間が設定されている</label></li>
+    <li><input type="checkbox" id="b2-6"><label for="b2-6">デッドロック・ロック競合の考慮がされている</label></li>
+  </ul>
+  <div class="callout callout-warning" style="margin-top:1.5rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>中断 vs スキップの判断基準</b>
+      <ul style="margin-top:.5rem;padding-left:1.2rem">
+        <li><b>中断（ABORT）</b>: 1件のエラーが後続処理全体に影響する場合。例：マスタ取込バッチで参照先データが壊れている</li>
+        <li><b>スキップ（SKIP）</b>: 1件のエラーが他の件に無関係な場合。例：メール送信バッチで特定ユーザーのアドレスが不正</li>
+      </ul>
+    </div>
+  </div>
+  <div class="table-wrap" style="margin-top:1rem">
+    <table>
+      <thead><tr><th>項目</th><th>具体例</th><th>なぜ必要か</th></tr></thead>
+      <tbody>
+        <tr><td>ログフォーマット</td><td><code>[ERROR] YYYY-MM-DDThh:mm:ss+09:00 batch=order-summary record_id=12345 msg="DB接続失敗" err="connection refused"</code></td><td>構造化ログにすることで、ログ集約ツール（Datadog等）での絞り込みが可能になる</td></tr>
+        <tr><td>アラート通知</td><td>バッチ終了ステータスが FAILED の場合、Slackの #alert-batch チャンネルに通知。通知内容：バッチ名・実行日時・エラー件数・ログリンク</td><td>エラーに気づかず翌日の業務に影響するリスクを防ぐ</td></tr>
+        <tr><td>タイムアウト</td><td>バッチ全体の上限を 4時間 に設定。DB クエリ単体のタイムアウトは 30秒。タイムアウト時はアラートを上げてプロセスを強制終了する</td><td>無限ループ・デッドロックによるリソース占有を防ぐ</td></tr>
+        <tr><td>デッドロック対策</td><td>複数テーブルを更新する場合、常に同じ順序でロック取得する。デッドロック検知時は 3回まで自動リトライ（指数バックオフ）</td><td>更新順序が不定だとトランザクション間で循環待ちが発生する</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 3 パフォーマンス・スケーラビリティ
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="b3-1"><label for="b3-1">大量データのチャンク分割処理が考慮されている</label></li>
+    <li><input type="checkbox" id="b3-2"><label for="b3-2">DBへの負荷（大量SELECT/UPDATE）が考慮されている</label></li>
+    <li><input type="checkbox" id="b3-3"><label for="b3-3">インデックスの利用が最適化されている</label></li>
+    <li><input type="checkbox" id="b3-4"><label for="b3-4">トランザクションの粒度が適切に設計されている</label></li>
+    <li><input type="checkbox" id="b3-5"><label for="b3-5">並列処理の可否と実装方針が定義されている</label></li>
+    <li><input type="checkbox" id="b3-6"><label for="b3-6">メモリ使用量の上限が考慮されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+      <tbody>
+        <tr><td>チャンク分割</td><td>100万件を一度に SELECT すると OOM やタイムアウトが発生する。<code>WHERE id &gt; last_processed_id LIMIT 1000</code>（カーソル方式が更新系には安全）で分割処理する</td></tr>
+        <tr><td>DB負荷軽減</td><td>バッチ実行時間帯をオフピーク（深夜）に設定。大量 UPDATE は <code>UPDATE ... WHERE id IN (select 1000件)</code> の形で分割し、業務DBへの長時間ロックを避ける</td></tr>
+        <tr><td>トランザクション粒度</td><td>「100件ずつコミット」が基本。全件を1トランザクションにすると、エラー時に全件ロールバックが必要になり、undo ログが肥大化する</td></tr>
+        <tr><td>並列処理</td><td>「ユーザーID の末尾で4分割して並列実行」など、データが独立している場合のみ並列化する。DBコネクション数の上限に注意し、接続プールを共有する</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 4 実行管理・運用
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="b4-1"><label for="b4-1">実行ログ（開始・終了・処理件数）が出力される</label></li>
+    <li><input type="checkbox" id="b4-2"><label for="b4-2">実行状態（成功・失敗・実行中）を管理する仕組みがある</label></li>
+    <li><input type="checkbox" id="b4-3"><label for="b4-3">二重起動防止の仕組みがある</label></li>
+    <li><input type="checkbox" id="b4-4"><label for="b4-4">処理進捗を確認できる手段がある</label></li>
+    <li><input type="checkbox" id="b4-5"><label for="b4-5">バッチ実行の履歴が残る仕組みがある</label></li>
+    <li><input type="checkbox" id="b4-6"><label for="b4-6">手動実行・強制停止の手順が定義されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+      <tbody>
+        <tr><td>実行ログ</td><td><code>[INFO] batch=order-summary start_at=2026-05-22T02:00:00 target_date=2026-05-21</code><br><code>[INFO] batch=order-summary end_at=2026-05-22T02:15:00 processed=48320 skipped=5 errors=2 status=COMPLETED</code></td></tr>
+        <tr><td>二重起動防止</td><td>① DB の <code>batch_lock</code> テーブルに排他レコードを INSERT し、終了時に DELETE ② ファイルロック（<code>flock</code>）をプロセス起動時に取得 ③ ジョブスケジューラの「同一ジョブの重複起動禁止」設定を使う</td></tr>
+        <tr><td>手動実行・停止</td><td>手動実行: <code>./batch.sh --target-date=YYYY-MM-DD --dry-run</code>（dry-run オプションで副作用なし確認可能）<br>強制停止: プロセス ID を <code>kill -TERM</code> で送信→ SIGTERM ハンドラでチャンク境界まで処理してから終了</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 5 セキュリティ
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="b5-1"><label for="b5-1">実行権限・実行ユーザーが適切に設定されている</label></li>
+    <li><input type="checkbox" id="b5-2"><label for="b5-2">処理する個人情報・機密データのマスキング・暗号化が考慮されている</label></li>
+    <li><input type="checkbox" id="b5-3"><label for="b5-3">外部ファイル入出力がある場合、ファイルの入力値検証が行われる</label></li>
+    <li><input type="checkbox" id="b5-4"><label for="b5-4">接続情報（DB・API）が安全に管理されている（ハードコードしない）</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+      <tbody>
+        <tr><td>実行ユーザー</td><td>バッチ専用の OS ユーザー・DB ユーザーを作成し、必要最小限の権限のみ付与する。例：バッチ用 DB ユーザーは SELECT / INSERT / UPDATE のみで DROP は不可</td></tr>
+        <tr><td>個人情報のログ出力</td><td>ログに氏名・メールアドレスを出力しない。出力が必要な場合は <code>user_id=12345</code> のように ID のみにする。デバッグログ（DEBUG レベル）を本番環境で有効にしない</td></tr>
+        <tr><td>接続情報の管理</td><td>DB パスワードや API キーをソースコードに直書きしない。環境変数（<code>DB_PASSWORD</code>）または Secrets Manager（AWS・Vault等）から実行時に取得する</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 6 テスト
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="b6-1"><label for="b6-1">正常系テストケースが用意されている（全件処理、0件処理）</label></li>
+    <li><input type="checkbox" id="b6-2"><label for="b6-2">異常系テストケースが用意されている（データ不備、DB障害）</label></li>
+    <li><input type="checkbox" id="b6-3"><label for="b6-3">境界値テスト（最大件数、チャンク境界）が実施されている</label></li>
+    <li><input type="checkbox" id="b6-4"><label for="b6-4">再実行テストが実施されている</label></li>
+    <li><input type="checkbox" id="b6-5"><label for="b6-5">本番相当のデータ量での性能テストが実施されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>テストケース</th><th>確認内容</th></tr></thead>
+      <tbody>
+        <tr><td>正常系（全件）</td><td>対象データが複数件存在する状態で実行し、全件処理・ステータス更新・ログ出力が正しいことを確認</td></tr>
+        <tr><td>正常系（0件）</td><td>対象データが0件の状態で実行し、エラーなく正常終了すること・処理件数=0のログが出ることを確認</td></tr>
+        <tr><td>異常系（データ不備）</td><td>必須カラムが NULL のレコードを含めて実行し、スキップ or 中断が仕様どおり動作することを確認</td></tr>
+        <tr><td>境界値（チャンク境界）</td><td>処理件数がチャンクサイズ（例: 1000件）の倍数になるデータで実行し、全件処理されることを確認</td></tr>
+        <tr><td>再実行（リラン）</td><td>同じパラメータで2回実行し、2回目は処理済みレコードをスキップして結果が同一になることを確認</td></tr>
+        <tr><td>性能テスト</td><td>本番想定の最大件数（例: 50万件）で実行し、制限時間内（例: 4時間以内）に完了することを確認</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

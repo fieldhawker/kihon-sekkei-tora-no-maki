@@ -1,0 +1,165 @@
+---
+title: クラス作成チェックリスト
+subtitle: チェックリスト
+phase: impl
+description: クラスを新規作成・レビューする際に確認すべき項目のチェックリストです。責務・命名・カプセル化・継承・依存関係・SOLID原則の観点を網羅しています。
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このチェックリストの使い方</b><br>
+    1) 設計時に「1. 責務・設計」「2. 命名」を確認 → 2) 実装時に「3. カプセル化」「4. 継承・コンポジション」を意識 → 3) 完成後に「5. 依存関係・SOLID」「6. テスト容易性」を確認。<br>
+    迷ったら、<b>単一責任・適切なカプセル化・依存の方向</b>を最優先にします。
+  </div>
+</div>
+
+<div class="callout callout-warning" style="margin-top:1rem">
+  <span class="callout-icon">📌</span>
+  <div class="callout-body">
+    <b>初心者がハマりやすい3点</b><br>
+    ① クラスに何でも詰め込んで「神クラス（God Class）」になる（→ 単一責任原則を徹底）<br>
+    ② すべてのフィールドをpublicにしてカプセル化を壊す（→ フィールドはprivate、getterは必要なものだけ）<br>
+    ③ 「is-a関係」でない継承を使う（→ コンポジション（has-a）を優先する）
+  </div>
+</div>
+
+## 1. 責務・設計
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="c1-1"><label for="c1-1">クラスが単一の責務を持っている（クラスの変更理由が1つに絞れる）</label></li>
+    <li><input type="checkbox" id="c1-2"><label for="c1-2">クラスの責務を一文で説明できる</label></li>
+    <li><input type="checkbox" id="c1-3"><label for="c1-3">フィールドの数が多すぎない（目安: 7〜10個以内）</label></li>
+    <li><input type="checkbox" id="c1-4"><label for="c1-4">クラスが適切なレイヤー（Controller / Service / Repository / Entity）に属している</label></li>
+    <li><input type="checkbox" id="c1-5"><label for="c1-5">静的ファクトリーメソッドやファクトリークラスの要否が検討されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>レイヤー</th><th>責務</th><th>持つべきでないもの</th></tr></thead>
+      <tbody>
+        <tr><td>Controller</td><td>HTTPリクエストの受け取り・レスポンスの返却。リクエストのバリデーション</td><td>ビジネスロジック・DB操作</td></tr>
+        <tr><td>Service</td><td>ビジネスロジックの実装。トランザクション制御</td><td>HTTPの概念（Request/Response）・SQL</td></tr>
+        <tr><td>Repository</td><td>データの永続化・検索。SQLまたはORMの使用</td><td>ビジネスロジック</td></tr>
+        <tr><td>Entity / Domain</td><td>ビジネスの概念・ルールの表現。自身の状態を変更するメソッド</td><td>インフラ層への依存（DB・外部API）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 2. 命名
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="c2-1"><label for="c2-1">クラス名が名詞（または名詞句）である</label></li>
+    <li><input type="checkbox" id="c2-2"><label for="c2-2">クラス名がPascalCase（UpperCamelCase）になっている</label></li>
+    <li><input type="checkbox" id="c2-3"><label for="c2-3">クラスの役割を表す接尾辞が使われている（Service / Repository / Controller / Factory / Handler / Validator など）</label></li>
+    <li><input type="checkbox" id="c2-4"><label for="c2-4">略語・意味不明な名前（<code>Mgr</code>・<code>Util2</code>・<code>CommonClass</code>など）を使っていない</label></li>
+    <li><input type="checkbox" id="c2-5"><label for="c2-5">インターフェースと実装クラスの命名規則が統一されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>種別</th><th>良い命名例 ✅</th><th>悪い命名例 ❌</th></tr></thead>
+      <tbody>
+        <tr><td>Service</td><td><code>OrderService</code>・<code>UserAuthenticationService</code></td><td><code>OrderMgr</code>・<code>ServiceClass</code></td></tr>
+        <tr><td>Repository</td><td><code>UserRepository</code>・<code>ProductRepository</code></td><td><code>UserDAO2</code>・<code>DataAccess</code></td></tr>
+        <tr><td>Controller</td><td><code>OrderController</code>・<code>UserController</code></td><td><code>OrderHandler</code>（慣習と異なる）</td></tr>
+        <tr><td>Entity</td><td><code>User</code>・<code>Order</code>・<code>Product</code></td><td><code>UserEntity</code>（Entity接尾辞は冗長）・<code>UserBean</code></td></tr>
+        <tr><td>インターフェース</td><td><code>PaymentGateway</code>（実装: <code>StripePaymentGateway</code>）</td><td><code>IPayment</code>（I接頭辞はJavaでは慣習外）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 3. カプセル化
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="c3-1"><label for="c3-1">フィールドが <code>private</code> で宣言されている</label></li>
+    <li><input type="checkbox" id="c3-2"><label for="c3-2">必要なフィールドのみ getter が公開されている（setterは極力提供しない）</label></li>
+    <li><input type="checkbox" id="c3-3"><label for="c3-3">不変（Immutable）にできるフィールドは <code>final</code> が付いている</label></li>
+    <li><input type="checkbox" id="c3-4"><label for="c3-4">コレクションフィールドを返す場合はコピーか不変ビューを返している</label></li>
+    <li><input type="checkbox" id="c3-5"><label for="c3-5">内部状態の変更はクラス自身のメソッドを通して行われている</label></li>
+  </ul>
+  <div class="callout callout-warning" style="margin-top:1.5rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>コレクションの漏洩（防衛的コピー）</b>: フィールドのListをそのまま返すと、呼び出し側から直接変更できてしまいます。<br>
+      ❌ <code>return this.items;</code>（外部からリストを変更される）<br>
+      ✅ <code>return Collections.unmodifiableList(this.items);</code> または <code>return new ArrayList&lt;&gt;(this.items);</code>
+    </div>
+  </div>
+  <div class="table-wrap" style="margin-top:1rem">
+    <table>
+      <thead><tr><th>項目</th><th>具体例・考え方</th></tr></thead>
+      <tbody>
+        <tr><td>setterを提供しない</td><td>Entityは状態遷移メソッドで表現する。❌ <code>order.setStatus("SHIPPED")</code> → ✅ <code>order.ship()</code>（状態遷移の妥当性をクラスが担保できる）</td></tr>
+        <tr><td>不変クラス（Value Object）</td><td>金額・日付範囲・郵便番号などはImmutableなValue Objectとして設計する。コンストラクタで値を受け取り、全フィールドをfinalにする</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 4. 継承・コンポジション
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="c4-1"><label for="c4-1">継承が「is-a関係」を表している（〇〇は△△の一種である）</label></li>
+    <li><input type="checkbox" id="c4-2"><label for="c4-2">コード再利用だけが目的の継承を使っていない（コンポジションを優先している）</label></li>
+    <li><input type="checkbox" id="c4-3"><label for="c4-3">継承の深さが3階層以下である</label></li>
+    <li><input type="checkbox" id="c4-4"><label for="c4-4">インターフェースによって実装への依存を避けている</label></li>
+    <li><input type="checkbox" id="c4-5"><label for="c4-5">抽象クラスを使う場合、継承先クラスで実装すべきメソッドが <code>abstract</code> で定義されている</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>判断基準</th><th>継承 ✅</th><th>コンポジション ✅</th></tr></thead>
+      <tbody>
+        <tr><td>関係性</td><td>Cat is-a Animal（CatはAnimalの一種）</td><td>Car has-a Engine（CarはEngineを持つ）</td></tr>
+        <tr><td>適切なケース</td><td>ポリモーフィズムが必要。親クラスのインターフェースを外部に公開したい</td><td>コード再利用が目的。実装の詳細を隠蔽したい。継承階層を浅く保ちたい</td></tr>
+        <tr><td>悪い継承の例</td><td colspan="2">Stack は Vector を継承（JavaのStack）→ Vector の全操作が公開されてしまい、LIFO規則を破れる。コンポジション（内部にListを持つ）が正しい</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 5. 依存関係・SOLID原則
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="c5-1"><label for="c5-1">依存するオブジェクトはコンストラクタインジェクションで受け取っている（DIコンテナ使用時）</label></li>
+    <li><input type="checkbox" id="c5-2"><label for="c5-2">クラスが具体クラスでなくインターフェースに依存している（依存逆転原則）</label></li>
+    <li><input type="checkbox" id="c5-3"><label for="c5-3">変更が予想される箇所が拡張に開かれ、修正に閉じている（開放閉鎖原則）</label></li>
+    <li><input type="checkbox" id="c5-4"><label for="c5-4">使わないメソッドを実装させるインターフェースを実装していない（インターフェース分離原則）</label></li>
+    <li><input type="checkbox" id="c5-5"><label for="c5-5">循環依存が発生していない（A→B→C→A のような依存）</label></li>
+  </ul>
+  <div class="table-wrap" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>原則</th><th>概要</th><th>違反例 → 改善例</th></tr></thead>
+      <tbody>
+        <tr><td><b>S</b>ingle Responsibility</td><td>クラスの変更理由は1つだけ</td><td>UserクラスがDB保存・メール送信・PDF生成を行う → それぞれ別クラスに分離</td></tr>
+        <tr><td><b>O</b>pen/Closed</td><td>拡張に開き、修正に閉じる</td><td>支払い方法を追加するたびに既存のifを修正 → PaymentStrategyインターフェース＋実装クラスで拡張</td></tr>
+        <tr><td><b>L</b>iskov Substitution</td><td>サブクラスは親クラスと置き換え可能</td><td>ReadOnlyListがListを継承してaddで例外 → 継承でなくコンポジションを使う</td></tr>
+        <tr><td><b>I</b>nterface Segregation</td><td>クライアントが使わないメソッドへの依存を強制しない</td><td>巨大なIWorkerを全クラスに実装させる → 読み取り専用IReader、書き込み専用IWriterに分割</td></tr>
+        <tr><td><b>D</b>ependency Inversion</td><td>上位モジュールは抽象に依存する</td><td>ServiceがMySQLRepositoryに直接依存 → UserRepositoryインターフェースに依存させ、実装は注入</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## 6. テスト容易性
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="c6-1"><label for="c6-1">依存オブジェクトをコンストラクタで受け取るためモック・スタブに置き換えができる</label></li>
+    <li><input type="checkbox" id="c6-2"><label for="c6-2">テスト対象のロジックが外部依存（DB・時刻・乱数）と分離されている</label></li>
+    <li><input type="checkbox" id="c6-3"><label for="c6-3">クラスの主要な振る舞いに対してユニットテストが用意されている</label></li>
+    <li><input type="checkbox" id="c6-4"><label for="c6-4">テストのセットアップが複雑すぎない（クラスが小さく依存が少ない証拠）</label></li>
+  </ul>
+  <div class="callout callout-info" style="margin-top:1.5rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>「テストが書きにくい」はクラス設計の問題サイン</b><br>
+      テストを書くのが難しい場合、それはクラスが大きすぎる・依存が多すぎる・責務が混在しているサインです。設計を見直すチャンスとして活用しましょう。
+    </div>
+  </div>
+</div>

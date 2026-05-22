@@ -1,0 +1,218 @@
+---
+title: 基本設計 手順書
+subtitle: Phase 1
+phase: basic
+description: 要件定義完了後、システムの「骨格・方針・全体の整合性」を決めるフェーズです。STEP 0〜8 のチェックリストに従って進めてください。
+mermaid: true
+style: |
+  .arch-diagram { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem; margin:1rem 0; }
+  .arch-layer { background:#fff; border:2px solid; border-radius:var(--radius); padding:.75rem 1rem; text-align:center; font-size:.85rem; font-weight:700; }
+  .arch-layer.frontend { border-color:#3b82f6; background:#eff6ff; color:#1e40af; }
+  .arch-layer.backend  { border-color:#10b981; background:#f0fdf4; color:#065f46; }
+  .arch-layer.db       { border-color:#f59e0b; background:#fffbeb; color:#78350f; }
+  .arch-layer.infra    { border-color:#8b5cf6; background:#f5f3ff; color:#4c1d95; }
+  .arch-layer.ext      { border-color:#6b7280; background:#f9fafb; color:#374151; }
+---
+
+<!-- 進捗バー -->
+<div class="card" style="margin-top:0">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+    <span class="font-bold">全体進捗</span>
+    <span class="text-sm text-muted progress-label">0 / 0 完了</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+</div>
+
+<div class="callout callout-info" style="margin-top:1rem">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方</b><br>
+    1) STEP 0 でインプットが揃っているか確認 → 2) STEP 1 から順に進める → 3) 各STEPの成果物を作りながらチェックを付ける。<br>
+    不明点が出たら「TBD（未決）」として放置せず、<b>誰が・いつまでに・何を決めるか</b>を決めて更新します。
+  </div>
+</div>
+
+## 🔄 作業フロー（依存関係）
+
+<div class="mermaid-wrap">
+  <div class="mermaid">
+flowchart LR
+  S0["STEP 0\nインプット確認"]:::easy
+  S1["STEP 1\nアーキテクチャ設計\n★★★"]:::hard
+  S2["STEP 2\n機能設計\n★★☆"]:::mid
+  S3["STEP 3\nデータ設計\n★★★"]:::hard
+  S4["STEP 4\n外部IF設計\n★★☆"]:::mid
+  S5["STEP 5\n非機能要件\n★★☆"]:::mid
+  S6["STEP 6\nセキュリティ\n★★★"]:::hard
+  S7["STEP 7\n運用・移行\n★★☆"]:::mid
+  S7b["STEP 7b\nテスト戦略\n★☆☆"]:::easy
+  S8["STEP 8\nレビュー・承認"]:::mid
+
+  S0 --> S1 --> S2
+  S2 --> S3
+  S2 --> S4
+  S1 --> S5
+  S4 --> S6
+  S5 --> S6
+  S6 --> S7 --> S7b --> S8
+
+  classDef easy fill:#d1fae5,color:#065f46,stroke:#10b981
+  classDef mid  fill:#fef9c3,color:#713f12,stroke:#d97706
+  classDef hard fill:#fee2e2,color:#991b1b,stroke:#dc2626
+  </div>
+</div>
+
+★は難易度目安です（★☆☆: 軽い / ★★☆: 普通 / ★★★: 重い・影響大）。迷ったら先にSTEP 1（アーキテクチャ）を固めます。
+
+## STEP 0 — インプット確認 {#step0}
+
+<div class="callout callout-info">
+  <span class="callout-icon">🎯</span>
+  <div class="callout-body"><b>目的</b>: 要件定義成果物が基本設計を始めるのに十分な状態かを確認する。ここで時間をかけることが後工程の手戻りを防ぐ最大の投資です。</div>
+</div>
+
+<div class="card">
+  <div class="callout callout-info" style="margin-bottom:1rem">
+    <span class="callout-icon">👥</span>
+    <div class="callout-body">
+      <b>RACI確認（体制を最初に明確化する）</b><br>
+      設計書の各成果物に対して「誰が作成（R）」「誰が最終承認（A）」「誰に相談（C）」「誰に通知（I）」かをPLと合意してから進めます。
+      特に「承認者（A）が1名か」「顧客確認が必要か」を事前に確認しないと、レビュー前に差し戻しが発生します。
+    </div>
+  </div>
+  <ul class="checklist">
+    <li><input type="checkbox" id="s0-1"><label for="s0-1">要件定義書（正式版・承認済み）を受け取った<br><small class="text-muted">設計のすべての根拠となる文書。承認が取れていない場合は設計を開始しないこと（後から「そんな仕様は合意していない」が発覚します）</small></label></li>
+    <li><input type="checkbox" id="s0-2"><label for="s0-2">機能要件一覧（画面・API・バッチ・帳票・外部IF）を確認した</label></li>
+    <li><input type="checkbox" id="s0-3"><label for="s0-3">非機能要件（性能・可用性・セキュリティ・運用）を確認した</label></li>
+    <li><input type="checkbox" id="s0-4"><label for="s0-4">技術的制約（使用する言語・クラウド・既存システム等）を確認した</label></li>
+    <li><input type="checkbox" id="s0-5"><label for="s0-5">プロジェクトスケジュール・マイルストーンを確認した</label></li>
+    <li><input type="checkbox" id="s0-6"><label for="s0-6">基本設計フェーズのメンバーと役割分担を確認した</label></li>
+  </ul>
+</div>
+
+## STEP 1 — アーキテクチャ設計 ★★★ {#step1}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s1-1"><label for="s1-1">システム構成図（論理・物理）を作成した（B-01）<br><small class="text-muted">まず「役割（論理）」を描き、次に「クラウド/オンプレ・AZ配置（物理）」に落とします。単一障害点・外部接続の出口/入口・監視対象を説明できる状態にします</small></label></li>
+    <li><input type="checkbox" id="s1-2"><label for="s1-2">技術スタック選定書（ADR）を作成した（B-02）<br><small class="text-muted">ADR（Architecture Decision Record）＝「なぜその技術を採用したか」を記録する文書。背景・意思決定・代替案・影響を1決定1ファイルで残します</small></label></li>
+    <li><input type="checkbox" id="s1-3"><label for="s1-3">技術選定の根拠（性能/コスト/運用/チームスキル）を明文化した</label></li>
+    <li><input type="checkbox" id="s1-4"><label for="s1-4">主要な連携先・外部システムを洗い出した</label></li>
+  </ul>
+</div>
+
+## STEP 2 — 機能設計 ★★☆ {#step2}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s2-1"><label for="s2-1">機能一覧（B-03）を作成した<br><small class="text-muted">機能ID・機能名・概要・対象ロール・優先度（Must/Should/Could）・リリース区分を記載。粒度は「ユーザーが達成したい目的」単位で</small></label></li>
+    <li><input type="checkbox" id="s2-2"><label for="s2-2">画面一覧（B-04）を作成した（画面ID・URL・対象ロール・主な操作）</label></li>
+    <li><input type="checkbox" id="s2-3"><label for="s2-3">画面レイアウト定義書（B-05）を作成した（ワイヤーフレーム・項目定義）</label></li>
+    <li><input type="checkbox" id="s2-4"><label for="s2-4">画面遷移図（B-06）を作成した（正常系・権限NG・エラー導線を含む）</label></li>
+    <li><input type="checkbox" id="s2-5"><label for="s2-5">API一覧（概要版）（B-07）を作成した（エンドポイント・認証要否・主なI/O）</label></li>
+    <li><input type="checkbox" id="s2-6"><label for="s2-6">バッチ一覧（B-08）を作成した（起動方式・失敗時の扱い・冪等性の確認）</label></li>
+  </ul>
+</div>
+
+## STEP 3 — データ設計 ★★★ {#step3}
+
+<div class="callout callout-warning">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">主要な機能設計（STEP 2）が固まるまで、テーブルの細かい設計は始めないこと。機能が変わるたびにテーブルを作り直すことになります。</div>
+</div>
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s3-1"><label for="s3-1">ER図（概念・論理）（B-09）を作成した（エンティティ・リレーション・カーディナリティ）</label></li>
+    <li><input type="checkbox" id="s3-2"><label for="s3-2">テーブル定義書（B-10）を作成した（論理名・型の目安・必須・キー）<br><small class="text-muted">物理的な桁数・インデックスは詳細設計で確定。ここでは論理設計の骨格を固めます</small></label></li>
+    <li><input type="checkbox" id="s3-3"><label for="s3-3">マスタデータ定義書（B-11）を作成した（区分値一覧・初期投入・変更運用方針）</label></li>
+    <li><input type="checkbox" id="s3-4"><label for="s3-4">履歴データ・論理削除・削除方針を決定した</label></li>
+  </ul>
+</div>
+
+## STEP 4 — 外部IF設計 ★★☆ {#step4}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s4-1"><label for="s4-1">外部IF設計書（B-12）を作成した（連携先・方式・認証・頻度・タイムアウト/リトライ）</label></li>
+    <li><input type="checkbox" id="s4-2"><label for="s4-2">文字コード・改行・タイムゾーンの方針を確認した</label></li>
+    <li><input type="checkbox" id="s4-3"><label for="s4-3">冪等性（再送・重複）の設計方針を確認した</label></li>
+    <li><input type="checkbox" id="s4-4"><label for="s4-4">個人情報の暗号化・マスキング方針を確認した</label></li>
+  </ul>
+</div>
+
+## STEP 5 — 非機能要件設計 ★★☆ {#step5}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s5-1"><label for="s5-1">非機能要件設計書（B-13）を作成した（性能目標・可用性・バックアップ/DR）<br><small class="text-muted">数値目標には必ず根拠と測定方法（負荷試験・監視指標）をセットで書きます</small></label></li>
+    <li><input type="checkbox" id="s5-2"><label for="s5-2">性能目標（応答時間・スループット・同時接続数）を顧客と合意した</label></li>
+    <li><input type="checkbox" id="s5-3"><label for="s5-3">可用性目標（稼働率・RTO/RPO）を顧客と合意した</label></li>
+    <li><input type="checkbox" id="s5-4"><label for="s5-4">監視・ログ収集・アラートの方針を決定した</label></li>
+  </ul>
+</div>
+
+## STEP 6 — セキュリティ設計 ★★★ {#step6}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s6-1"><label for="s6-1">セキュリティ設計書（B-14）を作成した（認証・認可・入力検証・暗号化・監査ログ）</label></li>
+    <li><input type="checkbox" id="s6-2"><label for="s6-2">権限マトリクス（B-15）を作成し、顧客と合意した<br><small class="text-muted">行=機能/画面/操作、列=ロール、セル=可否（✅/❌）＋条件（自分のみ/部署内等）</small></label></li>
+    <li><input type="checkbox" id="s6-3"><label for="s6-3">個人情報・機密情報の流れを確認した（保管場所・アクセス制限・保存期間）</label></li>
+    <li><input type="checkbox" id="s6-4"><label for="s6-4">OWASP Top 10 の主要リスクへの対策方針を確認した</label></li>
+  </ul>
+</div>
+
+## STEP 7 — 運用・移行設計 ★★☆ {#step7}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s7-1"><label for="s7-1">運用設計書（B-16）を作成した（監視・障害対応・定常作業・SLA）</label></li>
+    <li><input type="checkbox" id="s7-2"><label for="s7-2">移行設計書（B-17）を作成した（対象データ・方式・検証・ロールバック）</label></li>
+    <li><input type="checkbox" id="s7-3"><label for="s7-3">停止許容時間・移行データ品質・責任分界を合意した</label></li>
+  </ul>
+</div>
+
+## STEP 7b — テスト戦略 ★☆☆ {#step7b}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s7b-1"><label for="s7b-1">テストレベル（単体/結合/システム/UAT）と担当者を定義した</label></li>
+    <li><input type="checkbox" id="s7b-2"><label for="s7b-2">テスト環境の構成方針を決定した</label></li>
+    <li><input type="checkbox" id="s7b-3"><label for="s7b-3">外部IF・セキュリティ・性能テストの実施方針を定義した</label></li>
+  </ul>
+</div>
+
+## STEP 8 — レビュー・承認 {#step8}
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="s8-1"><label for="s8-1">基本設計書（総括）（B-18）を作成した（B-01〜B-17を「1冊のストーリー」にまとめ）</label></li>
+    <li><input type="checkbox" id="s8-2"><label for="s8-2">トレーサビリティマトリクス（B-19）を作成した（要件→設計の対応関係）</label></li>
+    <li><input type="checkbox" id="s8-3"><label for="s8-3">内部レビューを実施し、指摘事項を対応した</label></li>
+    <li><input type="checkbox" id="s8-4"><label for="s8-4">顧客レビューを実施し、正式承認を得た</label></li>
+    <li><input type="checkbox" id="s8-5"><label for="s8-5">未決事項（TBD）がすべて解消されていることを確認した</label></li>
+  </ul>
+</div>
+
+## ⚠️ よくある抜け漏れパターン
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>パターン</th><th>症状</th><th>対策</th></tr></thead>
+      <tbody>
+        <tr><td>要件の読み飛ばし</td><td>実装後に「この機能が設計書にない」</td><td>機能要件一覧をすべてトレース</td></tr>
+        <tr><td>技術選定理由の未記録</td><td>後から「なぜこれを選んだのか」不明</td><td>ADRで必ず記録する</td></tr>
+        <tr><td>非機能要件の数値確認不足</td><td>顧客が「性能が出ない」と言い始める</td><td>数値を必ず顧客と合意</td></tr>
+        <tr><td>セキュリティ後回し</td><td>実装完了後に大規模改修</td><td>各STEPで同時に考える</td></tr>
+        <tr><td>データ設計の先行着手</td><td>機能変更でテーブルを何度も作り直す</td><td>主要機能が固まるまで待つ</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="callout callout-success">
+  <span class="callout-icon">✅</span>
+  <div class="callout-body">基本設計書の正式承認が取れたら <a href="../detailed/design.html">詳細設計フェーズ</a> へ進みます。</div>
+</div>

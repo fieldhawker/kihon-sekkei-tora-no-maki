@@ -1,74 +1,65 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SQLアンチパターン — 参考資料</title>
+  <title>SQLアンチパターン</title>
   <link rel="stylesheet" href="../../../css/style.css">
+  
+  
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
   <main class="main">
+    
     <div class="page-header phase-adr">
       <div class="subtitle">書籍まとめ / 技術</div>
-      <h1>🗄️ SQLアンチパターン</h1>
-      <p class="description">Bill Karwin著。データベース設計・SQLクエリで「やってしまいがちな罠（アンチパターン）」を24個挙げ、なぜ問題になるのか・どう解決するかをわかりやすく解説した実践書。「動いているからOK」ではなく、<b>長期的にメンテナンスしやすいDB設計</b>を身につけるための必読書です。</p>
+      <h1>SQLアンチパターン</h1>
+      <p class="description">Bill Karwin著。データベース設計・SQLクエリで「やってしまいがちな罠（アンチパターン）」を24個挙げ、なぜ問題になるのか・どう解決するかをわかりやすく解説した実践書。「動いているからOK」ではなく、長期的にメンテナンスしやすいDB設計を身につけるための必読書です。</p>
     </div>
-
     <div class="content">
-
-      <div class="callout callout-info" style="margin-top:0">
-        <span class="callout-icon">🧭</span>
-        <div class="callout-body">
-          <b>このページの使い方（初心者向け）</b><br>
-          アンチパターンとは「よかれと思ってやってしまう、実は問題のある設計・実装」のことです。<b>まず「なぜ問題なのか」を理解し、次に「どう直すか」を覚える</b>のが近道です。全部一気に覚えなくてOK。設計・実装で迷ったときに辞書として引いてください。
-        </div>
-      </div>
-
-      <!-- 概要 -->
-      <h2 class="section-title"><span class="title-icon">📚</span> アンチパターンの全体像</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🗂️</span><h2>24のアンチパターンは4カテゴリに分類される</h2></div>
-        <p>本書のアンチパターンは以下の4つに分類されています。このページでは特に初心者がハマりやすいものを厳選して解説します。</p>
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>カテゴリ</th><th>内容</th><th>代表的なアンチパターン</th></tr></thead>
-          <tbody>
-            <tr><td>① 論理設計</td><td>テーブル・カラムの設計上の問題</td><td>ジェイウォーク、EAV、IDリクワイアドなど</td></tr>
-            <tr><td>② 物理設計</td><td>インデックスや型の設定上の問題</td><td>インデックスショットガン、丸め誤差など</td></tr>
-            <tr><td>③ クエリ</td><td>SQLの書き方の問題</td><td>スパゲッティクエリ、暗黙の列など</td></tr>
-            <tr><td>④ アプリケーション開発</td><td>アプリとDBの連携上の問題</td><td>パスワード平文保存、SQLインジェクションなど</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- ===== 論理設計 ===== -->
-      <h2 class="section-title"><span class="title-icon">🏗️</span> 論理設計のアンチパターン</h2>
-
-      <!-- ジェイウォーク -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🚶</span><h2>① ジェイウォーク（Jaywalking）— カンマ区切りリストを1カラムに詰め込む</h2></div>
-        <p><strong>「複数の値を1つのカラムに入れれば楽」</strong>と思ってカンマ区切りなどで詰め込んでしまう設計です。横断歩道を無視して道を渡る（Jaywalk）ことになぞらえています。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターンの例</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- タグをカンマ区切りで1カラムに保存
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方（初心者向け）</b><br>
+    アンチパターンとは「よかれと思ってやってしまう、実は問題のある設計・実装」のことです。<b>まず「なぜ問題なのか」を理解し、次に「どう直すか」を覚える</b>のが近道です。全部一気に覚えなくてOK。設計・実装で迷ったときに辞書として引いてください。
+  </div>
+</div><h2>📚 アンチパターンの全体像</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#e8f4e8">🗂️</span><h2>24のアンチパターンは4カテゴリに分類される</h2></div>
+  <p>本書のアンチパターンは以下の4つに分類されています。このページでは特に初心者がハマりやすいものを厳選して解説します。</p>
+  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>カテゴリ</th><th>内容</th><th>代表的なアンチパターン</th></tr></thead>
+    <tbody>
+      <tr><td>① 論理設計</td><td>テーブル・カラムの設計上の問題</td><td>ジェイウォーク、EAV、IDリクワイアドなど</td></tr>
+      <tr><td>② 物理設計</td><td>インデックスや型の設定上の問題</td><td>インデックスショットガン、丸め誤差など</td></tr>
+      <tr><td>③ クエリ</td><td>SQLの書き方の問題</td><td>スパゲッティクエリ、暗黙の列など</td></tr>
+      <tr><td>④ アプリケーション開発</td><td>アプリとDBの連携上の問題</td><td>パスワード平文保存、SQLインジェクションなど</td></tr>
+    </tbody>
+  </table>
+</div><h2>🏗️ 論理設計のアンチパターン</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🚶</span><h2>① ジェイウォーク（Jaywalking）— カンマ区切りリストを1カラムに詰め込む</h2></div>
+  <p><strong>「複数の値を1つのカラムに入れれば楽」</strong>と思ってカンマ区切りなどで詰め込んでしまう設計です。横断歩道を無視して道を渡る（Jaywalk）ことになぞらえています。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターンの例</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- タグをカンマ区切りで1カラムに保存
 CREATE TABLE articles (
   id    INT PRIMARY KEY,
   title VARCHAR(255),
   tags  VARCHAR(255)  -- "tech,db,sql"
 );</pre>
-            <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
-              <li>特定タグで検索するのが困難・遅い</li>
-              <li>タグの追加・削除でアプリ側の文字列操作が必要</li>
-              <li>タグ数の制限やバリデーションができない</li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい設計（中間テーブル）</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 多対多の関係は中間テーブルで表現
+      <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
+        <li>特定タグで検索するのが困難・遅い</li>
+        <li>タグの追加・削除でアプリ側の文字列操作が必要</li>
+        <li>タグ数の制限やバリデーションができない</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい設計（中間テーブル）</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 多対多の関係は中間テーブルで表現
 CREATE TABLE tags (
   id   INT PRIMARY KEY,
   name VARCHAR(50)
@@ -78,27 +69,22 @@ CREATE TABLE article_tags (
   tag_id     INT REFERENCES tags(id),
   PRIMARY KEY (article_id, tag_id)
 );</pre>
-            <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
-              <li>インデックスが効いて高速検索できる</li>
-              <li>JOIN で柔軟に組み合わせられる</li>
-            </ul>
-          </div>
-        </div>
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body"><b>見分け方：</b>カラムに「,（カンマ）」や「/（スラッシュ）」「;（セミコロン）」で区切った値を入れようとしたら要注意。「もしかして多対多の関係では？」と自問しましょう。</div>
-        </div>
-      </div>
-
-      <!-- EAV -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🌀</span><h2>② EAV（Entity-Attribute-Value）— 汎用テーブルで属性を縦持ちにする</h2></div>
-        <p>「将来どんな属性が増えても対応できるように」とすべての属性を「名前・値」の形で縦に並べる設計です。柔軟に見えて、実際には非常に扱いにくくなります。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターンの例</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- すべての属性をkey-valueで管理
+      <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
+        <li>インデックスが効いて高速検索できる</li>
+        <li>JOIN で柔軟に組み合わせられる</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body"><b>見分け方：</b>カラムに「,（カンマ）」や「/（スラッシュ）」「;（セミコロン）」で区切った値を入れようとしたら要注意。「もしかして多対多の関係では？」と自問しましょう。</div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🌀</span><h2>② EAV（Entity-Attribute-Value）— 汎用テーブルで属性を縦持ちにする</h2></div>
+  <p>「将来どんな属性が増えても対応できるように」とすべての属性を「名前・値」の形で縦に並べる設計です。柔軟に見えて、実際には非常に扱いにくくなります。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターンの例</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- すべての属性をkey-valueで管理
 CREATE TABLE user_attributes (
   user_id        INT,
   attribute_name VARCHAR(50),
@@ -107,364 +93,285 @@ CREATE TABLE user_attributes (
 -- ("1", "name",  "田中太郎")
 -- ("1", "email", "tanaka@example.com")
 -- ("1", "age",   "30")</pre>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい設計</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 属性はカラムとして定義する
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい設計</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 属性はカラムとして定義する
 CREATE TABLE users (
   id    INT PRIMARY KEY,
   name  VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL,
   age   INT
 );</pre>
-            <p style="margin:0.5rem 0 0; font-size:0.9rem">属性が頻繁に増える場合はJSON型カラムや、サブクラス設計（テーブル継承）も検討する。</p>
-          </div>
-        </div>
-
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body"><b>EAVの問題点：</b>型のバリデーション不可（数値も文字列もVARCHAR）、NOT NULL制約が使えない、JOIN が複雑で読みにくい、パフォーマンスが悪い。「柔軟性」と引き換えに失うものが多すぎます。</div>
-        </div>
-      </div>
-
-      <!-- IDリクワイアド -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3cd">🆔</span><h2>③ IDリクワイアド（ID Required）— とにかく id カラムを追加する</h2></div>
-        <p>「テーブルには必ず id という名前の連番主キーを付ける」というルールを盲目的に適用してしまうアンチパターンです。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 問題になるケース</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 中間テーブルに不要な id を付ける
+      <p style="margin:0.5rem 0 0; font-size:0.9rem">属性が頻繁に増える場合はJSON型カラムや、サブクラス設計（テーブル継承）も検討する。</p>
+    </div>
+  </div>  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><b>EAVの問題点：</b>型のバリデーション不可（数値も文字列もVARCHAR）、NOT NULL制約が使えない、JOIN が複雑で読みにくい、パフォーマンスが悪い。「柔軟性」と引き換えに失うものが多すぎます。</div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3cd">🆔</span><h2>③ IDリクワイアド（ID Required）— とにかく id カラムを追加する</h2></div>
+  <p>「テーブルには必ず id という名前の連番主キーを付ける」というルールを盲目的に適用してしまうアンチパターンです。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 問題になるケース</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 中間テーブルに不要な id を付ける
 CREATE TABLE article_tags (
   id         INT PRIMARY KEY AUTO_INCREMENT, -- 不要
   article_id INT,
   tag_id     INT
 );
 -- → article_id + tag_id の重複を防げない！</pre>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 自然キーや複合主キーを使う</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 複合主キーで重複を防ぐ
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 自然キーや複合主キーを使う</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- 複合主キーで重複を防ぐ
 CREATE TABLE article_tags (
   article_id INT REFERENCES articles(id),
   tag_id     INT REFERENCES tags(id),
   PRIMARY KEY (article_id, tag_id)
   -- 同じ組み合わせの重複登録を DB が防ぐ
 );</pre>
-          </div>
-        </div>
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body"><b>主キーの選び方：</b>「一意性を保証する自然なキーがあるか」を先に考える。なければサロゲートキー（連番 id）を使う。とにかく id を付けるのが目的ではなく、<strong>データの一意性を保証すること</strong>が目的です。</div>
-        </div>
-      </div>
-
-      <!-- キーレスエントリ -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔑</span><h2>④ キーレスエントリ（Keyless Entry）— 外部キー制約を使わない</h2></div>
-        <p>「後で入れればいい」「パフォーマンスが下がる気がする」などの理由で外部キー制約（FOREIGN KEY）を設定しないアンチパターンです。</p>
-
-        <div class="callout callout-warn" style="margin-top:0.5rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>外部キーなしの問題：</b>
-            <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
-              <li>存在しない親レコードを参照するデータが入り込む（孤児データ）</li>
-              <li>親を削除しても子が残り続ける（ゴミデータ）</li>
-              <li>アプリ側でのチェックは漏れやすく、バグの温床になる</li>
-            </ul>
-          </div>
-        </div>
-        <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5; margin-top:1rem">
-          <h3 style="margin:0 0 0.5rem; color:#28a745">正しい対応</h3>
-          <p style="margin:0">外部キー制約を設定し、<code>ON DELETE CASCADE</code>（親削除時に子も削除）や <code>ON DELETE RESTRICT</code>（参照されている親は削除不可）を意識して選択する。<b>データの整合性はアプリではなくDBに守らせる</b>のが基本原則。</p>
-        </div>
-      </div>
-
-      <!-- ===== 物理設計 ===== -->
-      <h2 class="section-title"><span class="title-icon">⚙️</span> 物理設計のアンチパターン</h2>
-
-      <!-- インデックスショットガン -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3cd">🔫</span><h2>⑤ インデックスショットガン — インデックスを闇雲に付ける（または全く付けない）</h2></div>
-        <p>インデックスの理解が浅いまま「なんとなく全部に付ける」または「パフォーマンスを意識しないで全く付けない」というアンチパターンです。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 よくある失敗</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>全カラムにインデックスを付ける<br><small>→ INSERT/UPDATE が遅くなる</small></li>
-              <li>WHERE句で使うカラムにインデックスなし<br><small>→ 全件スキャンで遅い</small></li>
-              <li>カーディナリティが低い列（フラグ等）にインデックス<br><small>→ ほぼ効果がない</small></li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 インデックスの考え方</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>検索条件（WHERE）・JOIN・ORDER BY に使うカラムに付ける</li>
-              <li>値の種類が多い（カーディナリティが高い）カラムに付ける</li>
-              <li><code>EXPLAIN</code> でクエリの実行計画を確認する</li>
-              <li>付け過ぎは更新コストが上がるので注意</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- 丸め誤差 -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">💸</span><h2>⑥ 丸め誤差（Rounding Errors）— 金額や精密な数値に FLOAT を使う</h2></div>
-        <p>浮動小数点型（FLOAT / DOUBLE）は2進数で数値を表現するため、<strong>10進数の値を正確に表現できません</strong>。金額計算など精度が求められる場面で使うと誤差が発生します。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターン</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">CREATE TABLE orders (
+    </div>
+  </div>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body"><b>主キーの選び方：</b>「一意性を保証する自然なキーがあるか」を先に考える。なければサロゲートキー（連番 id）を使う。とにかく id を付けるのが目的ではなく、<strong>データの一意性を保証すること</strong>が目的です。</div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔑</span><h2>④ キーレスエントリ（Keyless Entry）— 外部キー制約を使わない</h2></div>
+  <p>「後で入れればいい」「パフォーマンスが下がる気がする」などの理由で外部キー制約（FOREIGN KEY）を設定しないアンチパターンです。</p>  <div class="callout callout-warn" style="margin-top:0.5rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>外部キーなしの問題：</b>
+      <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
+        <li>存在しない親レコードを参照するデータが入り込む（孤児データ）</li>
+        <li>親を削除しても子が残り続ける（ゴミデータ）</li>
+        <li>アプリ側でのチェックは漏れやすく、バグの温床になる</li>
+      </ul>
+    </div>
+  </div>
+  <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5; margin-top:1rem">
+    <h3 style="margin:0 0 0.5rem; color:#28a745">正しい対応</h3>
+    <p style="margin:0">外部キー制約を設定し、<code>ON DELETE CASCADE</code>（親削除時に子も削除）や <code>ON DELETE RESTRICT</code>（参照されている親は削除不可）を意識して選択する。<b>データの整合性はアプリではなくDBに守らせる</b>のが基本原則。</p>
+  </div>
+</div><h2>⚙️ 物理設計のアンチパターン</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3cd">🔫</span><h2>⑤ インデックスショットガン — インデックスを闇雲に付ける（または全く付けない）</h2></div>
+  <p>インデックスの理解が浅いまま「なんとなく全部に付ける」または「パフォーマンスを意識しないで全く付けない」というアンチパターンです。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 よくある失敗</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>全カラムにインデックスを付ける<br><small>→ INSERT/UPDATE が遅くなる</small></li>
+        <li>WHERE句で使うカラムにインデックスなし<br><small>→ 全件スキャンで遅い</small></li>
+        <li>カーディナリティが低い列（フラグ等）にインデックス<br><small>→ ほぼ効果がない</small></li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 インデックスの考え方</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>検索条件（WHERE）・JOIN・ORDER BY に使うカラムに付ける</li>
+        <li>値の種類が多い（カーディナリティが高い）カラムに付ける</li>
+        <li><code>EXPLAIN</code> でクエリの実行計画を確認する</li>
+        <li>付け過ぎは更新コストが上がるので注意</li>
+      </ul>
+    </div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">💸</span><h2>⑥ 丸め誤差（Rounding Errors）— 金額や精密な数値に FLOAT を使う</h2></div>
+  <p>浮動小数点型（FLOAT / DOUBLE）は2進数で数値を表現するため、<strong>10進数の値を正確に表現できません</strong>。金額計算など精度が求められる場面で使うと誤差が発生します。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターン</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">CREATE TABLE orders (
   id     INT PRIMARY KEY,
   amount FLOAT  -- NG: 誤差が出る
 );</pre>
-            <p style="margin:0.5rem 0 0; font-size:0.9rem">例：<code>0.1 + 0.2</code> が <code>0.30000000000000004</code> になる現象</p>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい型を使う</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">CREATE TABLE orders (
+      <p style="margin:0.5rem 0 0; font-size:0.9rem">例：<code>0.1 + 0.2</code> が <code>0.30000000000000004</code> になる現象</p>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい型を使う</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">CREATE TABLE orders (
   id     INT PRIMARY KEY,
   -- NUMERIC(精度, 小数桁) で正確に管理
   amount NUMERIC(10, 2)  -- OK
 );</pre>
-            <p style="margin:0.5rem 0 0; font-size:0.9rem"><code>DECIMAL</code>（= <code>NUMERIC</code>）は10進数を正確に保持できる。</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== クエリ ===== -->
-      <h2 class="section-title"><span class="title-icon">🔍</span> クエリのアンチパターン</h2>
-
-      <!-- 暗黙の列 -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3cd">👻</span><h2>⑦ 暗黙の列（Implicit Columns）— SELECT * を使う</h2></div>
-        <p><code>SELECT *</code> はすべてのカラムを取得するため「楽」に見えますが、長期的には多くの問題を引き起こします。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 SELECT * の問題</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>不要なカラムまで取得してパフォーマンスが悪化</li>
-              <li>カラムが追加されたとき、アプリ側で予期しない動作が起きる</li>
-              <li>どのカラムを使っているかコードから読み取れない</li>
-              <li>JOINしたとき同名カラムが衝突する</li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 必要なカラムを明示する</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- NG
-SELECT * FROM users WHERE id = 1;
-
--- OK: 必要なカラムだけ指定
+      <p style="margin:0.5rem 0 0; font-size:0.9rem"><code>DECIMAL</code>（= <code>NUMERIC</code>）は10進数を正確に保持できる。</p>
+    </div>
+  </div>
+</div><h2>🔍 クエリのアンチパターン</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3cd">👻</span><h2>⑦ 暗黙の列（Implicit Columns）— SELECT * を使う</h2></div>
+  <p><code>SELECT *</code> はすべてのカラムを取得するため「楽」に見えますが、長期的には多くの問題を引き起こします。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 SELECT * の問題</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>不要なカラムまで取得してパフォーマンスが悪化</li>
+        <li>カラムが追加されたとき、アプリ側で予期しない動作が起きる</li>
+        <li>どのカラムを使っているかコードから読み取れない</li>
+        <li>JOINしたとき同名カラムが衝突する</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 必要なカラムを明示する</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- NG
+SELECT * FROM users WHERE id = 1;<p>-- OK: 必要なカラムだけ指定
 SELECT id, name, email
 FROM users
 WHERE id = 1;</pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- 曖昧なグループ -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🌫️</span><h2>⑧ 曖昧なグループ（Ambiguous Groups）— GROUP BY の誤用</h2></div>
-        <p><code>GROUP BY</code> の結果に、グループ化していないカラムをそのまま <code>SELECT</code> しようとするアンチパターンです。MySQLなど一部のDBは警告なく動いてしまうため、特に注意が必要です。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターン</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- department_id でグループ化しているのに
+    </div>
+  </div></p>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🌫️</span><h2>⑧ 曖昧なグループ（Ambiguous Groups）— GROUP BY の誤用</h2></div>
+  <p><code>GROUP BY</code> の結果に、グループ化していないカラムをそのまま <code>SELECT</code> しようとするアンチパターンです。MySQLなど一部のDBは警告なく動いてしまうため、特に注意が必要です。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 アンチパターン</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- department_id でグループ化しているのに
 -- name（非集計カラム）を SELECT している
 -- → どの name が返るか不定！
 SELECT department_id, name, MAX(salary)
 FROM employees
 GROUP BY department_id;</pre>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい書き方</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- GROUP BY に含めるか、集計関数を使う
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい書き方</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- GROUP BY に含めるか、集計関数を使う
 SELECT department_id, MAX(salary)
 FROM employees
-GROUP BY department_id;
-
--- 名前も欲しい場合はサブクエリや JOIN を使う</pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- スパゲッティクエリ -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🍝</span><h2>⑨ スパゲッティクエリ — 1つのクエリで全部やろうとする</h2></div>
-        <p>複数の集計・結合を1つの巨大なクエリにまとめようとするアンチパターンです。「SQLは1文で書けるだけ書いたほうが賢い」と誤解されがちですが、複雑すぎると正しい結果が得られないことがあります。</p>
-
-        <div class="callout callout-warn" style="margin-top:0.5rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>デカルト積（Cartesian Product）の罠：</b> 関係のない2テーブルを JOIN 条件なしで結合すると、行数が掛け算で爆発します（10行 × 10行 = 100行）。複雑なクエリほどこのミスが起きやすく、気づきにくいです。
-          </div>
-        </div>
-        <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5; margin-top:1rem">
-          <h3 style="margin:0 0 0.5rem; color:#28a745">対策：分割して考える</h3>
-          <ul style="margin:0; padding-left:1.25rem">
-            <li>まず小さなクエリで意図した結果が出るか確認する</li>
-            <li>複雑な処理は WITH句（CTE: Common Table Expression）で段階的に書く</li>
-            <li>読みやすさ・メンテナンス性を「賢さ」より優先する</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 未知への恐怖 -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3cd">❓</span><h2>⑩ 未知への恐怖（Fear of the Unknown）— NULL の誤解</h2></div>
-        <p><code>NULL</code> は「値がない・不明」を表す特別な値です。ところが <code>NULL = NULL</code> は <code>TRUE</code> ではなく <code>NULL</code>（不明）になるなど、直感に反する動作があります。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 よくあるミス</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- NULL と = で比較しても常に偽になる
+GROUP BY department_id;<p>-- 名前も欲しい場合はサブクエリや JOIN を使う</pre>
+    </div>
+  </div></p>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🍝</span><h2>⑨ スパゲッティクエリ — 1つのクエリで全部やろうとする</h2></div>
+  <p>複数の集計・結合を1つの巨大なクエリにまとめようとするアンチパターンです。「SQLは1文で書けるだけ書いたほうが賢い」と誤解されがちですが、複雑すぎると正しい結果が得られないことがあります。</p>  <div class="callout callout-warn" style="margin-top:0.5rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>デカルト積（Cartesian Product）の罠：</b> 関係のない2テーブルを JOIN 条件なしで結合すると、行数が掛け算で爆発します（10行 × 10行 = 100行）。複雑なクエリほどこのミスが起きやすく、気づきにくいです。
+    </div>
+  </div>
+  <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5; margin-top:1rem">
+    <h3 style="margin:0 0 0.5rem; color:#28a745">対策：分割して考える</h3>
+    <ul style="margin:0; padding-left:1.25rem">
+      <li>まず小さなクエリで意図した結果が出るか確認する</li>
+      <li>複雑な処理は WITH句（CTE: Common Table Expression）で段階的に書く</li>
+      <li>読みやすさ・メンテナンス性を「賢さ」より優先する</li>
+    </ul>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3cd">❓</span><h2>⑩ 未知への恐怖（Fear of the Unknown）— NULL の誤解</h2></div>
+  <p><code>NULL</code> は「値がない・不明」を表す特別な値です。ところが <code>NULL = NULL</code> は <code>TRUE</code> ではなく <code>NULL</code>（不明）になるなど、直感に反する動作があります。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 よくあるミス</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- NULL と = で比較しても常に偽になる
 WHERE deleted_at = NULL   -- NG（常に偽）
-WHERE deleted_at != NULL  -- NG（常に偽）
-
--- NOT IN に NULL が含まれると全件除外
+WHERE deleted_at != NULL  -- NG（常に偽）<p>-- NOT IN に NULL が含まれると全件除外
 WHERE id NOT IN (1, 2, NULL)
 -- → 結果が0件になる！</pre>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい書き方</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- IS NULL / IS NOT NULL を使う
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい書き方</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">-- IS NULL / IS NOT NULL を使う
 WHERE deleted_at IS NULL      -- OK
-WHERE deleted_at IS NOT NULL  -- OK
-
--- NOT IN の代わりに NOT EXISTS か
+WHERE deleted_at IS NOT NULL  -- OK</p>
+<p>-- NOT IN の代わりに NOT EXISTS か
 -- LEFT JOIN ... WHERE x IS NULL を使う</pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== アプリケーション開発 ===== -->
-      <h2 class="section-title"><span class="title-icon">🖥️</span> アプリケーション開発のアンチパターン</h2>
-
-      <!-- SQLインジェクション -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">💉</span><h2>⑪ SQLインジェクション — ユーザー入力を直接クエリに埋め込む</h2></div>
-        <p>ユーザーが入力した値を検証せずにSQLに埋め込むと、悪意のある入力によってデータが破壊・漏洩する最も危険なアンチパターンです。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 危険なコード例（PHP）</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">// ユーザー入力をそのまま埋め込む
+    </div>
+  </div></p>
+</div><h2>🖥️ アプリケーション開発のアンチパターン</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">💉</span><h2>⑪ SQLインジェクション — ユーザー入力を直接クエリに埋め込む</h2></div>
+  <p>ユーザーが入力した値を検証せずにSQLに埋め込むと、悪意のある入力によってデータが破壊・漏洩する最も危険なアンチパターンです。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 危険なコード例（PHP）</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">// ユーザー入力をそのまま埋め込む
 $sql = "SELECT * FROM users
         WHERE name = '$name'";
 // name に「' OR '1'='1」と入力されると
 // 全ユーザーが取得できてしまう</pre>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 プリペアドステートメントを使う</h3>
-            <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">// プレースホルダーを使う
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 プリペアドステートメントを使う</h3>
+      <pre style="margin:0; font-size:0.85rem; background:#fff; padding:0.5rem; border-radius:4px; overflow-x:auto">// プレースホルダーを使う
 $stmt = $pdo->prepare(
   "SELECT * FROM users WHERE name = ?"
 );
 $stmt->execute([$name]);
 // 入力値は値として扱われ、SQL構文にならない</pre>
-          </div>
-        </div>
-        <div class="callout callout-warn" style="margin-top:1rem">
-          <span class="callout-icon">🚨</span>
-          <div class="callout-body"><b>絶対に守ること：</b>ユーザー入力・外部からのデータは<strong>必ずプリペアドステートメント（バインド変数）</strong>を使う。文字列をエスケープするだけでは不十分な場合があります。</div>
-        </div>
-      </div>
-
-      <!-- パスワード平文 -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔓</span><h2>⑫ 読めるパスワード（Readable Passwords）— パスワードを平文で保存する</h2></div>
-        <p>パスワードをそのままDBに保存するアンチパターンです。DBが漏洩した瞬間に全ユーザーのパスワードが流出します。</p>
-
-        <div class="grid-2col">
-          <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
-            <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 やってはいけない</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li>パスワードをそのまま保存（例：<code>"password123"</code>）</li>
-              <li>MD5やSHA-1などの旧来ハッシュを使う（解析が容易）</li>
-              <li>ハッシュだけでソルトなし（レインボーテーブル攻撃に脆弱）</li>
-            </ul>
-          </div>
-          <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
-            <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい方法</h3>
-            <ul style="margin:0; padding-left:1.25rem">
-              <li><b>bcrypt / Argon2 / scrypt</b> などのパスワード専用ハッシュ関数を使う</li>
-              <li>ソルト（ランダム値）を付与してハッシュ化する（多くのライブラリが自動処理）</li>
-              <li>フレームワークの認証ライブラリに任せるのが最も安全</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- ファントムファイル -->
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fff3cd">👻</span><h2>⑬ ファントムファイル（Phantom Files）— ファイルパスをDBに保存してファイル本体はDBの外で管理</h2></div>
-        <p>画像などのファイルをDBの外（ファイルシステムやS3等）に置き、DBにはそのパスだけ保存する設計は広く使われています。ただし、ファイルとDBの整合性管理を怠るとゴーストデータが溜まります。</p>
-
-        <div class="callout callout-warn" style="margin-top:0.5rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>よくある問題：</b>
-            <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
-              <li>DBのレコードを削除したがファイルが残り続ける（ストレージの無駄）</li>
-              <li>ファイルが削除されたのにDBにパスが残り、アクセス時に404エラー</li>
-              <li>バックアップでDBとファイルの整合性が取れない</li>
-            </ul>
-          </div>
-        </div>
-        <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5; margin-top:1rem">
-          <h3 style="margin:0 0 0.5rem; color:#28a745">対策</h3>
-          <ul style="margin:0; padding-left:1.25rem">
-            <li>レコード削除時のファイル削除をアプリ層で確実に実装する（または非同期ジョブで処理）</li>
-            <li>定期的にDBとファイルシステムの整合性チェックバッチを走らせる</li>
-            <li>重要データはDBのBLOB型に保存する選択肢も検討する</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- まとめ -->
-      <h2 class="section-title"><span class="title-icon">🎓</span> まとめ：設計時のチェックリスト</h2>
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">✅</span><h2>設計・実装前に自問するべきこと</h2></div>
-
-        <table class="comparison-table" style="margin-top:0.75rem">
-          <thead><tr><th>#</th><th>チェック項目</th><th>対応するアンチパターン</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>1つのカラムに複数の値を詰め込もうとしていないか？</td><td>ジェイウォーク</td></tr>
-            <tr><td>2</td><td>属性をkey-value方式で縦持ちにしようとしていないか？</td><td>EAV</td></tr>
-            <tr><td>3</td><td>中間テーブルに不要な id カラムを付けていないか？</td><td>IDリクワイアド</td></tr>
-            <tr><td>4</td><td>外部キー制約を設定しているか？</td><td>キーレスエントリ</td></tr>
-            <tr><td>5</td><td>金額・精密な数値に FLOAT を使っていないか？</td><td>丸め誤差</td></tr>
-            <tr><td>6</td><td>SELECT * を使っていないか？</td><td>暗黙の列</td></tr>
-            <tr><td>7</td><td>GROUP BY に含まれないカラムを SELECT していないか？</td><td>曖昧なグループ</td></tr>
-            <tr><td>8</td><td>NULL を = で比較していないか？</td><td>未知への恐怖</td></tr>
-            <tr><td>9</td><td>ユーザー入力をプリペアドステートメントで扱っているか？</td><td>SQLインジェクション</td></tr>
-            <tr><td>10</td><td>パスワードをbcrypt等で適切にハッシュ化しているか？</td><td>読めるパスワード</td></tr>
-          </tbody>
-        </table>
-
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">🌱</span>
-          <div class="callout-body">
-            <b>アンチパターンを学ぶ意味：</b>これらは「やってしまいがちな落とし穴」であり、<strong>知っているだけで多くの問題を未然に防げます</strong>。最初から完璧な設計は難しいですが、「これはアンチパターンかも？」と立ち止まる習慣が、長期的に保守しやすいシステムを作ります。
-          </div>
-        </div>
-      </div>
+    </div>
+  </div>
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <span class="callout-icon">🚨</span>
+    <div class="callout-body"><b>絶対に守ること：</b>ユーザー入力・外部からのデータは<strong>必ずプリペアドステートメント（バインド変数）</strong>を使う。文字列をエスケープするだけでは不十分な場合があります。</div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fde8e8">🔓</span><h2>⑫ 読めるパスワード（Readable Passwords）— パスワードを平文で保存する</h2></div>
+  <p>パスワードをそのままDBに保存するアンチパターンです。DBが漏洩した瞬間に全ユーザーのパスワードが流出します。</p>  <div class="grid-2col">
+    <div style="border:2px solid #dc3545; border-radius:8px; padding:1rem; background:#fff5f5">
+      <h3 style="margin:0 0 0.5rem; color:#dc3545">😰 やってはいけない</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li>パスワードをそのまま保存（例：<code>"password123"</code>）</li>
+        <li>MD5やSHA-1などの旧来ハッシュを使う（解析が容易）</li>
+        <li>ハッシュだけでソルトなし（レインボーテーブル攻撃に脆弱）</li>
+      </ul>
+    </div>
+    <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5">
+      <h3 style="margin:0 0 0.5rem; color:#28a745">😊 正しい方法</h3>
+      <ul style="margin:0; padding-left:1.25rem">
+        <li><b>bcrypt / Argon2 / scrypt</b> などのパスワード専用ハッシュ関数を使う</li>
+        <li>ソルト（ランダム値）を付与してハッシュ化する（多くのライブラリが自動処理）</li>
+        <li>フレームワークの認証ライブラリに任せるのが最も安全</li>
+      </ul>
+    </div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fff3cd">👻</span><h2>⑬ ファントムファイル（Phantom Files）— ファイルパスをDBに保存してファイル本体はDBの外で管理</h2></div>
+  <p>画像などのファイルをDBの外（ファイルシステムやS3等）に置き、DBにはそのパスだけ保存する設計は広く使われています。ただし、ファイルとDBの整合性管理を怠るとゴーストデータが溜まります。</p>  <div class="callout callout-warn" style="margin-top:0.5rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>よくある問題：</b>
+      <ul style="margin:0.5rem 0 0; padding-left:1.25rem">
+        <li>DBのレコードを削除したがファイルが残り続ける（ストレージの無駄）</li>
+        <li>ファイルが削除されたのにDBにパスが残り、アクセス時に404エラー</li>
+        <li>バックアップでDBとファイルの整合性が取れない</li>
+      </ul>
+    </div>
+  </div>
+  <div style="border:2px solid #28a745; border-radius:8px; padding:1rem; background:#f5fff5; margin-top:1rem">
+    <h3 style="margin:0 0 0.5rem; color:#28a745">対策</h3>
+    <ul style="margin:0; padding-left:1.25rem">
+      <li>レコード削除時のファイル削除をアプリ層で確実に実装する（または非同期ジョブで処理）</li>
+      <li>定期的にDBとファイルシステムの整合性チェックバッチを走らせる</li>
+      <li>重要データはDBのBLOB型に保存する選択肢も検討する</li>
+    </ul>
+  </div>
+</div><h2>🎓 まとめ：設計時のチェックリスト</h2>
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:var(--primary-lt)">✅</span><h2>設計・実装前に自問するべきこと</h2></div>  <table class="comparison-table" style="margin-top:0.75rem">
+    <thead><tr><th>#</th><th>チェック項目</th><th>対応するアンチパターン</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>1つのカラムに複数の値を詰め込もうとしていないか？</td><td>ジェイウォーク</td></tr>
+      <tr><td>2</td><td>属性をkey-value方式で縦持ちにしようとしていないか？</td><td>EAV</td></tr>
+      <tr><td>3</td><td>中間テーブルに不要な id カラムを付けていないか？</td><td>IDリクワイアド</td></tr>
+      <tr><td>4</td><td>外部キー制約を設定しているか？</td><td>キーレスエントリ</td></tr>
+      <tr><td>5</td><td>金額・精密な数値に FLOAT を使っていないか？</td><td>丸め誤差</td></tr>
+      <tr><td>6</td><td>SELECT * を使っていないか？</td><td>暗黙の列</td></tr>
+      <tr><td>7</td><td>GROUP BY に含まれないカラムを SELECT していないか？</td><td>曖昧なグループ</td></tr>
+      <tr><td>8</td><td>NULL を = で比較していないか？</td><td>未知への恐怖</td></tr>
+      <tr><td>9</td><td>ユーザー入力をプリペアドステートメントで扱っているか？</td><td>SQLインジェクション</td></tr>
+      <tr><td>10</td><td>パスワードをbcrypt等で適切にハッシュ化しているか？</td><td>読めるパスワード</td></tr>
+    </tbody>
+  </table>  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">🌱</span>
+    <div class="callout-body">
+      <b>アンチパターンを学ぶ意味：</b>これらは「やってしまいがちな落とし穴」であり、<strong>知っているだけで多くの問題を未然に防げます</strong>。最初から完璧な設計は難しいですが、「これはアンチパターンかも？」と立ち止まる習慣が、長期的に保守しやすいシステムを作ります。
+    </div>
+  </div>
+</div>
 
     </div>
   </main>
 </div>
 
-<script>
-  fetch('../../../components/sidebar.html')
-    .then(r => r.text())
-    .then(html => { document.getElementById('sidebar-placeholder').outerHTML = html; });
-</script>
+
+<script src="../../../js/main.js"></script>
+<script src="../../../sidebar.js"></script>
 </body>
 </html>

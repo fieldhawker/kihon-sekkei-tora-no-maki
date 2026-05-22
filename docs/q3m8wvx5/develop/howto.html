@@ -3,51 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>全体フロー・HowTo — 設計手順書</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>全体フロー・HowTo</title>
+  <link rel="stylesheet" href="./css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  
 </head>
 <body>
 <div class="layout">
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar-placeholder"></aside>
 
   <main class="main">
-    <div class="page-header">
+    
+    <div class="page-header ">
       <div class="subtitle">How To Guide</div>
-      <h1>🗺️ 全体フロー・HowTo</h1>
+      <h1>全体フロー・HowTo</h1>
       <p class="description">要件定義フェーズから詳細設計フェーズまでを、経験の浅いエンジニアが迷わず進められるよう「何をする」「どの資料を見る」「どの順番で進める」を一本道で説明します。</p>
     </div>
-
     <div class="content">
-
-      <!-- 参照資料マップ -->
-      <h2 class="section-title"><span class="title-icon">📑</span> 参照資料マップ</h2>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>No.</th><th>資料名</th><th>場所</th><th>使うタイミング</th></tr></thead>
-            <tbody>
-              <tr><td><span class="badge badge-primary">①</span></td><td>基本設計手順</td><td><a href="basic/design.html">基本設計 手順書</a></td><td>要件定義完了〜基本設計フェーズ全体</td></tr>
-              <tr><td><span class="badge badge-primary">②</span></td><td>基本設計 成果物ガイド</td><td><a href="basic/deliverables.html">基本設計 成果物ガイド</a></td><td>基本設計の各成果物を作るとき</td></tr>
-              <tr><td><span class="badge badge-success">③</span></td><td>詳細設計手順</td><td><a href="detailed/design.html">詳細設計 手順書</a></td><td>基本設計完了〜詳細設計フェーズ全体</td></tr>
-              <tr><td><span class="badge badge-success">④</span></td><td>詳細設計 成果物ガイド</td><td><a href="detailed/deliverables.html">詳細設計 成果物ガイド</a></td><td>詳細設計の各成果物を作るとき</td></tr>
-              <tr><td><span class="badge badge-purple">⑤</span></td><td>共通ライブラリ設計書</td><td><a href="detailed/common-libs.html">共通ライブラリ設計</a></td><td>詳細設計フェーズ開始時に先行して実施</td></tr>
-              <tr><td><span class="badge badge-gray">⑥</span></td><td>ADRサンプル</td><td><a href="reference/adr.html">ADRサンプル集</a></td><td>アーキテクチャの意思決定を記録するとき</td></tr>
-              <tr><td><span class="badge badge-warning">⑦</span></td><td>実装手順</td><td><a href="impl/implementation.html">実装手順</a></td><td>詳細設計完了〜実装フェーズ全体</td></tr>
-              <tr><td><span class="badge badge-danger">⑧</span></td><td>テスト実施手順</td><td><a href="impl/testing.html">テスト実施手順</a></td><td>実装完了〜UAT・カットオーバーまで</td></tr>
-              <tr><td><span class="badge badge-gray">⑨</span></td><td>設計書テンプレート</td><td><a href="reference/templates.html">設計書テンプレート</a></td><td>各フェーズの成果物作成時にコピーして使用</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 全体フロー -->
-      <h2 class="section-title"><span class="title-icon">🔄</span> 全体フロー</h2>
-      <div class="mermaid-wrap">
-        <div class="mermaid-title">開発フェーズ全体フロー</div>
-        <div class="mermaid">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script><h2>📑 参照資料マップ</h2>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>No.</th><th>資料名</th><th>場所</th><th>使うタイミング</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-primary">①</span></td><td>基本設計手順</td><td><a href="basic/design.html">基本設計 手順書</a></td><td>要件定義完了〜基本設計フェーズ全体</td></tr>
+        <tr><td><span class="badge badge-primary">②</span></td><td>基本設計 成果物ガイド</td><td><a href="basic/deliverables.html">基本設計 成果物ガイド</a></td><td>基本設計の各成果物を作るとき</td></tr>
+        <tr><td><span class="badge badge-success">③</span></td><td>詳細設計手順</td><td><a href="detailed/design.html">詳細設計 手順書</a></td><td>基本設計完了〜詳細設計フェーズ全体</td></tr>
+        <tr><td><span class="badge badge-success">④</span></td><td>詳細設計 成果物ガイド</td><td><a href="detailed/deliverables.html">詳細設計 成果物ガイド</a></td><td>詳細設計の各成果物を作るとき</td></tr>
+        <tr><td><span class="badge badge-purple">⑤</span></td><td>共通ライブラリ設計書</td><td><a href="detailed/common-libs.html">共通ライブラリ設計</a></td><td>詳細設計フェーズ開始時に先行して実施</td></tr>
+        <tr><td><span class="badge badge-gray">⑥</span></td><td>ADRサンプル</td><td><a href="reference/adr.html">ADRサンプル集</a></td><td>アーキテクチャの意思決定を記録するとき</td></tr>
+        <tr><td><span class="badge badge-warning">⑦</span></td><td>実装手順</td><td><a href="impl/implementation.html">実装手順</a></td><td>詳細設計完了〜実装フェーズ全体</td></tr>
+        <tr><td><span class="badge badge-danger">⑧</span></td><td>テスト実施手順</td><td><a href="impl/testing.html">テスト実施手順</a></td><td>実装完了〜UAT・カットオーバーまで</td></tr>
+        <tr><td><span class="badge badge-gray">⑨</span></td><td>設計書テンプレート</td><td><a href="reference/templates.html">設計書テンプレート</a></td><td>各フェーズの成果物作成時にコピーして使用</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🔄 全体フロー</h2>
+<div class="mermaid-wrap">
+  <div class="mermaid-title">開発フェーズ全体フロー</div>
+  <div class="mermaid">
 flowchart TD
   P0["📋 PHASE 0\n要件定義\n(前提条件)"]:::phase0
   subgraph P1["📐 PHASE 1 — 基本設計"]
@@ -83,244 +77,188 @@ flowchart TD
     S20 --> S2L --> S21 --> S22 --> S23 --> S24 --> S25 --> S27 --> S28 --> S29
   end
   P3["💻 PHASE 3\n実装"]:::phase3
-  P4["🧪 PHASE 4\nテスト"]:::phase4
-
-  P0 -->|"要件定義書(承認済み)"| P1
-  P1 -->|"基本設計書(承認済み)"| P2
-  P2 -->|"詳細設計書(承認済み)"| P3
-  P3 --> P4
-
-  classDef phase0 fill:#6d28d9,color:#fff,stroke:none
+  P4["🧪 PHASE 4\nテスト"]:::phase4<p>  P0 --&gt;|&quot;要件定義書(承認済み)&quot;| P1
+  P1 --&gt;|&quot;基本設計書(承認済み)&quot;| P2
+  P2 --&gt;|&quot;詳細設計書(承認済み)&quot;| P3
+  P3 --&gt; P4</p>
+<p>  classDef phase0 fill:#6d28d9,color:#fff,stroke:none
   classDef phase3 fill:#d97706,color:#fff,stroke:none
   classDef phase4 fill:#dc2626,color:#fff,stroke:none
   classDef step fill:#e8f0fe,color:#1e3a8a,stroke:#1a56db
   classDef step_mid fill:#fef9c3,color:#713f12,stroke:#d97706
   classDef step_hard fill:#fee2e2,color:#991b1b,stroke:#dc2626
   classDef step_lib fill:#ede9fe,color:#4c1d95,stroke:#6d28d9
-        </div>
-      </div>
-
-      <!-- 基本設計 vs 詳細設計 -->
-      <h2 class="section-title"><span class="title-icon">⚖️</span> 基本設計 vs 詳細設計 — どこまで決めるか</h2>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>問い</th><th>要件定義</th><th>基本設計</th><th>詳細設計</th></tr></thead>
-            <tbody>
-              <tr><td>何を作るか</td><td>⭐ここで決める</td><td>確認・精査</td><td>—</td></tr>
-              <tr><td>どう作るか（方針・骨格）</td><td>—</td><td>⭐ここで決める</td><td>—</td></tr>
-              <tr><td>具体的にどう実装するか</td><td>—</td><td>決めない</td><td>⭐ここで決める</td></tr>
-              <tr><td>DB項目の型・桁数</td><td>—</td><td>決めない</td><td>⭐ここで決める</td></tr>
-              <tr><td>関数・クラスの設計</td><td>—</td><td>決めない</td><td>⭐ここで決める</td></tr>
-              <tr><td>画面の配置・項目定義</td><td>概要のみ</td><td>ワイヤーフレームレベル</td><td>⭐詳細を決める</td></tr>
-              <tr><td>テスト計画</td><td>—</td><td>基本方針を決める</td><td>⭐詳細を決める</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-info mt-0" style="margin-top:1rem">
-          <span class="callout-icon">💡</span>
-          <div class="callout-body">
-            <b>一言でいうと</b>: 基本設計は「骨格・方針・全体の整合性」を決める場所。「どの関数をどう書くか」は詳細設計の領域です。迷ったときは「この決定は方針か、実装の詳細か？」を問いかけてください。
-          </div>
-        </div>
-      </div>
-
-      <!-- 作業時間目安 -->
-      <h2 class="section-title"><span class="title-icon">⏱️</span> 各ステップ 作業時間目安</h2>
-      <div class="callout callout-warning">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">小規模システム（画面10〜20、テーブル20〜40、API20〜40 程度）を1〜2名のSEで担当した場合の目安です。システム規模・複雑さ・チームの経験によって大幅に変わります。</div>
-      </div>
-
-      <div class="tab-container">
-        <div class="tab-nav">
-          <button class="tab-btn active" data-tab="basic">📐 基本設計フェーズ</button>
-          <button class="tab-btn" data-tab="detail">🔬 詳細設計フェーズ</button>
-        </div>
-        <div class="tab-pane active" data-pane="basic">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>STEP</th><th>作業内容</th><th>目安日数</th><th>難易度</th><th>補足</th></tr></thead>
-              <tbody>
-                <tr><td>STEP 0</td><td>インプット確認</td><td>0.5〜1日</td><td><span class="badge diff-1">★☆☆</span></td><td>揃っていない成果物の追いかけに時間がかかることがある</td></tr>
-                <tr><td>STEP 1</td><td>アーキテクチャ設計</td><td>3〜5日</td><td><span class="badge diff-3">★★★</span></td><td>最初の判断が後続全体に影響。先輩・アーキテクトに相談しながら進める</td></tr>
-                <tr><td>STEP 2</td><td>機能設計（画面・API）</td><td>5〜8日</td><td><span class="badge diff-2">★★☆</span></td><td>画面数が多いほど比例して伸びる</td></tr>
-                <tr><td>STEP 3</td><td>データ設計</td><td>3〜5日</td><td><span class="badge diff-3">★★★</span></td><td>正規化の見直しや機能との整合確認で手戻りが起きやすい</td></tr>
-                <tr><td>STEP 4</td><td>外部IF設計</td><td>1〜3日</td><td><span class="badge diff-2">★★☆</span></td><td>連携先が多いほど伸びる。連携先担当者の調整待ちが発生する</td></tr>
-                <tr><td>STEP 5</td><td>非機能要件設計</td><td>1〜2日</td><td><span class="badge diff-2">★★☆</span></td><td>顧客へ数値確認が必要なことが多く、回答待ちで止まりやすい</td></tr>
-                <tr><td>STEP 6</td><td>セキュリティ設計</td><td>1〜2日</td><td><span class="badge diff-2">★★☆</span></td><td>要件が曖昧なまま進めると後で大幅修正になる</td></tr>
-                <tr><td>STEP 7</td><td>運用・移行設計</td><td>2〜3日</td><td><span class="badge diff-2">★★☆</span></td><td>移行データが多い場合は大幅に伸びる</td></tr>
-                <tr><td>STEP 7b</td><td>テスト戦略</td><td>0.5〜1日</td><td><span class="badge diff-1">★☆☆</span></td><td>詳細設計フェーズのスケジュールを考慮して決める</td></tr>
-                <tr><td>STEP 8</td><td>取りまとめ・レビュー</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td><td>指摘対応の往復回数によって大きく変動する</td></tr>
-                <tr style="background:var(--primary-lt)"><td colspan="2"><b>合計</b></td><td><b>約19〜34日</b></td><td>—</td><td>規模・チームの習熟度によって変動</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div style="margin-top:1rem"><canvas id="chartBasicHowto" height="80"></canvas></div>
-        </div>
-        <div class="tab-pane" data-pane="detail">
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>STEP</th><th>作業内容</th><th>目安日数</th><th>難易度</th></tr></thead>
-              <tbody>
-                <tr><td>STEP 0</td><td>インプット確認</td><td>0.5日</td><td><span class="badge diff-1">★☆☆</span></td></tr>
-                <tr><td>STEP 先</td><td>共通ライブラリ設計・実装</td><td>3〜5日</td><td><span class="badge diff-2">★★☆</span></td></tr>
-                <tr><td>STEP 1</td><td>詳細機能設計</td><td>5〜10日</td><td><span class="badge diff-3">★★★</span></td></tr>
-                <tr><td>STEP 2</td><td>詳細画面設計</td><td>4〜7日</td><td><span class="badge diff-2">★★☆</span></td></tr>
-                <tr><td>STEP 3</td><td>詳細API設計</td><td>3〜6日</td><td><span class="badge diff-2">★★☆</span></td></tr>
-                <tr><td>STEP 4</td><td>詳細データ設計</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td></tr>
-                <tr><td>STEP 5〜6</td><td>外部IF・セキュリティ</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td></tr>
-                <tr><td>STEP 7</td><td>テスト設計</td><td>3〜5日</td><td><span class="badge diff-2">★★☆</span></td></tr>
-                <tr><td>STEP 8</td><td>開発環境・コーディング規約</td><td>1〜2日</td><td><span class="badge diff-1">★☆☆</span></td></tr>
-                <tr><td>STEP 9</td><td>取りまとめ・レビュー</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td></tr>
-                <tr style="background:var(--secondary-lt)"><td colspan="2"><b>合計</b></td><td><b>約25〜47日</b></td><td>—</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div style="margin-top:1rem"><canvas id="chartDetailHowto" height="80"></canvas></div>
-        </div>
-      </div>
-
-      <!-- PHASE 0 前提確認 -->
-      <h2 class="section-title"><span class="title-icon">✅</span> PHASE 0 — 前提確認（要件定義完了チェック）</h2>
-      <div class="callout callout-danger">
-        <span class="callout-icon">🚫</span>
-        <div class="callout-body">
-          <b>要件定義書の承認が取れていない場合</b>: 設計を先行することは原則やめてください。承認なしで進めると、後から要件が変わったときに設計をすべてやり直すことになります。
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <span class="card-icon" style="background:var(--danger-lt)">⚠️</span>
-          <h2>設計開始前の必須確認事項</h2>
-        </div>
-        <ul class="checklist" id="phase0-checklist">
-          <li><input type="checkbox" id="p0-1"><label for="p0-1">要件定義書（承認済み）が存在する<br><small class="text-muted">なければ設計の根拠がなく、後から「そんな要件は合意していない」となる</small></label></li>
-          <li><input type="checkbox" id="p0-2"><label for="p0-2">機能要件一覧（機能IDつき）が揃っている<br><small class="text-muted">なければ設計書と要件書を紐づけられず、抜け漏れが検出できない。IDがない場合は起票を依頼します</small></label></li>
-          <li><input type="checkbox" id="p0-3"><label for="p0-3">非機能要件（数値つき）が定義されている<br><small class="text-muted">なければ性能・可用性の設計基準が決まらない。「応答3秒以内」「稼働率99.9%」のように必ず数値で定義します。数値がなければ顧客に確認します</small></label></li>
-          <li><input type="checkbox" id="p0-4"><label for="p0-4">ステークホルダー一覧（連絡先）がある<br><small class="text-muted">なければ確認が必要なとき誰に聞けばいいか分からない</small></label></li>
-          <li><input type="checkbox" id="p0-5"><label for="p0-5">未決事項（TBD）一覧が整理されている<br><small class="text-muted">なければ設計途中で「実はこれ未定でした」が発覚して手戻りになる</small></label></li>
-        </ul>
-        <div style="margin-top:1rem">
-          <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
-          <div class="text-xs text-muted mt-1 progress-label">0 / 5 完了</div>
-        </div>
-      </div>
-
-
-      <!-- ======================================================
-           PMBOK: リスク管理
-           ====================================================== -->
-      <h2 class="section-title"><span class="title-icon">⚠️</span> リスク管理 — 設計フェーズのリスク登録簿</h2>
-      <div class="callout callout-info">
-        <span class="callout-icon">💡</span>
-        <div class="callout-body">
-          <b>PMBOKにおけるリスク管理とは</b><br>
-          リスクとは「まだ起きていないが、発生した場合にプロジェクト目標（スケジュール・品質・コスト）に影響を与える不確かな事象」です。<br>
-          ① 識別（何が起きうるか）→ ② 評価（発生確率×影響度でスコアを付ける）→ ③ 対応計画（回避・軽減・転嫁・受容の4択）→ ④ 監視（定期的に状況を確認） のサイクルで管理します。<br>
-          <b>設計フェーズのリスクを早期に識別することが、後工程の手戻りを防ぐ最大の投資です。</b>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fee2e2">📋</span><h2>リスク登録簿テンプレート</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>リスクID</th>
-                <th>リスク内容（〜が〜になる可能性）</th>
-                <th>発生確率<br><small>高/中/低</small></th>
-                <th>影響度<br><small>高/中/低</small></th>
-                <th>スコア<br><small>確率×影響</small></th>
-                <th>対応方針<br><small>回避/軽減/転嫁/受容</small></th>
-                <th>対策内容</th>
-                <th>担当者</th>
-                <th>ステータス</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>R-001</td>
-                <td>要件定義書のTBDが解消されず、基本設計に手戻りが発生する</td>
-                <td><span class="badge badge-danger">高</span></td>
-                <td><span class="badge badge-danger">高</span></td>
-                <td style="background:#fee2e2;font-weight:700">9</td>
-                <td>回避</td>
-                <td>PHASE 0でTBD解消期限を確定。解消されない場合は設計開始を延期</td>
-                <td>PL</td>
-                <td>監視中</td>
-              </tr>
-              <tr>
-                <td>R-002</td>
-                <td>外部システム連携先の仕様確定が遅延し、インタフェース設計が進まない</td>
-                <td><span class="badge badge-warning">中</span></td>
-                <td><span class="badge badge-danger">高</span></td>
-                <td style="background:#fef9c3;font-weight:700">6</td>
-                <td>軽減</td>
-                <td>連携先担当者との週次確認ミーティングを設定。暫定仕様でモック設計を進める</td>
-                <td>SE</td>
-                <td>監視中</td>
-              </tr>
-              <tr>
-                <td>R-003</td>
-                <td>技術選定後にスキルギャップが判明し、実装フェーズが遅延する</td>
-                <td><span class="badge badge-warning">中</span></td>
-                <td><span class="badge badge-warning">中</span></td>
-                <td style="background:#fef9c3;font-weight:700">4</td>
-                <td>軽減</td>
-                <td>STEP 1でPoC（試作）を実施してスキルを事前確認。必要ならトレーニング計画を立てる</td>
-                <td>PL・SE</td>
-                <td>対応済</td>
-              </tr>
-              <tr style="opacity:.6">
-                <td>R-XXX</td>
-                <td colspan="8">← このテンプレートをコピーしてプロジェクト固有のリスクを追記する</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-warning" style="margin-top:1rem">
-          <span class="callout-icon">📌</span>
-          <div class="callout-body">
-            <b>スコアの計算目安</b>：発生確率（高=3/中=2/低=1）× 影響度（高=3/中=2/低=1）。スコア6以上は赤信号として優先的に対応策を決めます。<br>
-            <b>対応方針の4択</b>：<b>回避</b>＝リスクが発生しない行動を選ぶ / <b>軽減</b>＝発生確率または影響度を下げる / <b>転嫁</b>＝保険・契約で損失を第三者に移す / <b>受容</b>＝許容できるので対策しない（理由を記録する）
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#fef9c3">🗂️</span><h2>設計フェーズ 典型リスクカタログ</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>フェーズ</th><th>典型リスク</th><th>早期警戒サイン</th><th>推奨対応</th></tr></thead>
-            <tbody>
-              <tr><td>基本設計</td><td>要件の読み取り漏れによる設計抜け</td><td>機能一覧の行数が要件書より少ない</td><td>トレーサビリティマトリクス（B-19）で全件照合</td></tr>
-              <tr><td>基本設計</td><td>アーキテクチャ選定ミスによる後工程の大規模修正</td><td>PoC結果が非機能要件を満たさない</td><td>STEP 1を先行してPoCで検証。ADRに根拠を記録</td></tr>
-              <tr><td>詳細設計</td><td>共通ライブラリの後出し変更による全機能コードの修正</td><td>STEP先が完了前に機能設計に入っている</td><td>C-01〜C-05が確定するまで機能実装を開始しない</td></tr>
-              <tr><td>詳細設計</td><td>DB設計の後戻りによるマイグレーション履歴の破綻</td><td>物理ER図が頻繁に変わっている</td><td>主要機能が固まってからD-06〜D-09に着手</td></tr>
-              <tr><td>実装</td><td>スコープクリープ（要件外機能の自発的追加）による遅延</td><td>設計書に記載のないIssueが増えている</td><td>変更管理プロセス（下記）を通じていない追加は禁止</td></tr>
-              <tr><td>テスト</td><td>テスト環境の未整備によるテスト開始の遅延</td><td>テスト直前に環境構築が始まっている</td><td>STEP 8（開発環境・規約）でステージング環境も同時に整備</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ======================================================
-           PMBOK: 変更管理（統合管理）
-           ====================================================== -->
-      <h2 class="section-title"><span class="title-icon">🔄</span> 変更管理プロセス — スコープクリープを防ぐ</h2>
-      <div class="callout callout-danger">
-        <span class="callout-icon">🚫</span>
-        <div class="callout-body">
-          <b>設計書・要件が変わりそうなとき、勝手に進めてはいけません。</b><br>
-          承認なしで変更を実装すると、スコープ（作る範囲）が知らぬ間に膨らみ、スケジュール・コスト・品質すべてに影響します（スコープクリープ）。変更はすべて変更要求票を起票し、影響分析を行った上で承認を得てから進めます。
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#dbeafe">🔄</span><h2>変更管理フロー（CCBプロセス）</h2></div>
-        <div class="mermaid">
+  </div></p>
+</div><h2>⚖️ 基本設計 vs 詳細設計 — どこまで決めるか</h2>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>問い</th><th>要件定義</th><th>基本設計</th><th>詳細設計</th></tr></thead>
+      <tbody>
+        <tr><td>何を作るか</td><td>⭐ここで決める</td><td>確認・精査</td><td>—</td></tr>
+        <tr><td>どう作るか（方針・骨格）</td><td>—</td><td>⭐ここで決める</td><td>—</td></tr>
+        <tr><td>具体的にどう実装するか</td><td>—</td><td>決めない</td><td>⭐ここで決める</td></tr>
+        <tr><td>DB項目の型・桁数</td><td>—</td><td>決めない</td><td>⭐ここで決める</td></tr>
+        <tr><td>関数・クラスの設計</td><td>—</td><td>決めない</td><td>⭐ここで決める</td></tr>
+        <tr><td>画面の配置・項目定義</td><td>概要のみ</td><td>ワイヤーフレームレベル</td><td>⭐詳細を決める</td></tr>
+        <tr><td>テスト計画</td><td>—</td><td>基本方針を決める</td><td>⭐詳細を決める</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <b>一言でいうと</b>: 基本設計は「骨格・方針・全体の整合性」を決める場所。「どの関数をどう書くか」は詳細設計の領域です。迷ったときは「この決定は方針か、実装の詳細か？」を問いかけてください。
+    </div>
+  </div>
+</div><h2>⏱️ 各ステップ 作業時間目安</h2>
+<div class="callout callout-warning">
+  <span class="callout-icon">⚠️</span>
+  <div class="callout-body">小規模システム（画面10〜20、テーブル20〜40、API20〜40 程度）を1〜2名のSEで担当した場合の目安です。システム規模・複雑さ・チームの経験によって大幅に変わります。</div>
+</div><div class="tab-container">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="basic">📐 基本設計フェーズ</button>
+    <button class="tab-btn" data-tab="detail">🔬 詳細設計フェーズ</button>
+  </div>
+  <div class="tab-pane active" data-pane="basic">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>STEP</th><th>作業内容</th><th>目安日数</th><th>難易度</th><th>補足</th></tr></thead>
+        <tbody>
+          <tr><td>STEP 0</td><td>インプット確認</td><td>0.5〜1日</td><td><span class="badge diff-1">★☆☆</span></td><td>揃っていない成果物の追いかけに時間がかかることがある</td></tr>
+          <tr><td>STEP 1</td><td>アーキテクチャ設計</td><td>3〜5日</td><td><span class="badge diff-3">★★★</span></td><td>最初の判断が後続全体に影響。先輩・アーキテクトに相談しながら進める</td></tr>
+          <tr><td>STEP 2</td><td>機能設計（画面・API）</td><td>5〜8日</td><td><span class="badge diff-2">★★☆</span></td><td>画面数が多いほど比例して伸びる</td></tr>
+          <tr><td>STEP 3</td><td>データ設計</td><td>3〜5日</td><td><span class="badge diff-3">★★★</span></td><td>正規化の見直しや機能との整合確認で手戻りが起きやすい</td></tr>
+          <tr><td>STEP 4</td><td>外部IF設計</td><td>1〜3日</td><td><span class="badge diff-2">★★☆</span></td><td>連携先が多いほど伸びる。連携先担当者の調整待ちが発生する</td></tr>
+          <tr><td>STEP 5</td><td>非機能要件設計</td><td>1〜2日</td><td><span class="badge diff-2">★★☆</span></td><td>顧客へ数値確認が必要なことが多く、回答待ちで止まりやすい</td></tr>
+          <tr><td>STEP 6</td><td>セキュリティ設計</td><td>1〜2日</td><td><span class="badge diff-2">★★☆</span></td><td>要件が曖昧なまま進めると後で大幅修正になる</td></tr>
+          <tr><td>STEP 7</td><td>運用・移行設計</td><td>2〜3日</td><td><span class="badge diff-2">★★☆</span></td><td>移行データが多い場合は大幅に伸びる</td></tr>
+          <tr><td>STEP 7b</td><td>テスト戦略</td><td>0.5〜1日</td><td><span class="badge diff-1">★☆☆</span></td><td>詳細設計フェーズのスケジュールを考慮して決める</td></tr>
+          <tr><td>STEP 8</td><td>取りまとめ・レビュー</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td><td>指摘対応の往復回数によって大きく変動する</td></tr>
+          <tr style="background:var(--primary-lt)"><td colspan="2"><b>合計</b></td><td><b>約19〜34日</b></td><td>—</td><td>規模・チームの習熟度によって変動</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1rem"><canvas id="chartBasicHowto" height="80"></canvas></div>
+  </div>
+  <div class="tab-pane" data-pane="detail">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>STEP</th><th>作業内容</th><th>目安日数</th><th>難易度</th></tr></thead>
+        <tbody>
+          <tr><td>STEP 0</td><td>インプット確認</td><td>0.5日</td><td><span class="badge diff-1">★☆☆</span></td></tr>
+          <tr><td>STEP 先</td><td>共通ライブラリ設計・実装</td><td>3〜5日</td><td><span class="badge diff-2">★★☆</span></td></tr>
+          <tr><td>STEP 1</td><td>詳細機能設計</td><td>5〜10日</td><td><span class="badge diff-3">★★★</span></td></tr>
+          <tr><td>STEP 2</td><td>詳細画面設計</td><td>4〜7日</td><td><span class="badge diff-2">★★☆</span></td></tr>
+          <tr><td>STEP 3</td><td>詳細API設計</td><td>3〜6日</td><td><span class="badge diff-2">★★☆</span></td></tr>
+          <tr><td>STEP 4</td><td>詳細データ設計</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td></tr>
+          <tr><td>STEP 5〜6</td><td>外部IF・セキュリティ</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td></tr>
+          <tr><td>STEP 7</td><td>テスト設計</td><td>3〜5日</td><td><span class="badge diff-2">★★☆</span></td></tr>
+          <tr><td>STEP 8</td><td>開発環境・コーディング規約</td><td>1〜2日</td><td><span class="badge diff-1">★☆☆</span></td></tr>
+          <tr><td>STEP 9</td><td>取りまとめ・レビュー</td><td>2〜4日</td><td><span class="badge diff-2">★★☆</span></td></tr>
+          <tr style="background:var(--secondary-lt)"><td colspan="2"><b>合計</b></td><td><b>約25〜47日</b></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1rem"><canvas id="chartDetailHowto" height="80"></canvas></div>
+  </div>
+</div><h2>✅ PHASE 0 — 前提確認（要件定義完了チェック）</h2>
+<div class="callout callout-danger">
+  <span class="callout-icon">🚫</span>
+  <div class="callout-body">
+    <b>要件定義書の承認が取れていない場合</b>: 設計を先行することは原則やめてください。承認なしで進めると、後から要件が変わったときに設計をすべてやり直すことになります。
+  </div>
+</div><div class="card">
+  <div class="card-header">
+    <span class="card-icon" style="background:var(--danger-lt)">⚠️</span>
+    <h2>設計開始前の必須確認事項</h2>
+  </div>
+  <ul class="checklist" id="phase0-checklist">
+    <li><input type="checkbox" id="p0-1"><label for="p0-1">要件定義書（承認済み）が存在する<br><small class="text-muted">なければ設計の根拠がなく、後から「そんな要件は合意していない」となる</small></label></li>
+    <li><input type="checkbox" id="p0-2"><label for="p0-2">機能要件一覧（機能IDつき）が揃っている<br><small class="text-muted">なければ設計書と要件書を紐づけられず、抜け漏れが検出できない。IDがない場合は起票を依頼します</small></label></li>
+    <li><input type="checkbox" id="p0-3"><label for="p0-3">非機能要件（数値つき）が定義されている<br><small class="text-muted">なければ性能・可用性の設計基準が決まらない。「応答3秒以内」「稼働率99.9%」のように必ず数値で定義します。数値がなければ顧客に確認します</small></label></li>
+    <li><input type="checkbox" id="p0-4"><label for="p0-4">ステークホルダー一覧（連絡先）がある<br><small class="text-muted">なければ確認が必要なとき誰に聞けばいいか分からない</small></label></li>
+    <li><input type="checkbox" id="p0-5"><label for="p0-5">未決事項（TBD）一覧が整理されている<br><small class="text-muted">なければ設計途中で「実はこれ未定でした」が発覚して手戻りになる</small></label></li>
+  </ul>
+  <div style="margin-top:1rem">
+    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+    <div class="text-xs text-muted mt-1 progress-label">0 / 5 完了</div>
+  </div>
+</div><h2>⚠️ リスク管理 — 設計フェーズのリスク登録簿</h2>
+<div class="callout callout-info">
+  <span class="callout-icon">💡</span>
+  <div class="callout-body">
+    <b>PMBOKにおけるリスク管理とは</b><br>
+    リスクとは「まだ起きていないが、発生した場合にプロジェクト目標（スケジュール・品質・コスト）に影響を与える不確かな事象」です。<br>
+    ① 識別（何が起きうるか）→ ② 評価（発生確率×影響度でスコアを付ける）→ ③ 対応計画（回避・軽減・転嫁・受容の4択）→ ④ 監視（定期的に状況を確認） のサイクルで管理します。<br>
+    <b>設計フェーズのリスクを早期に識別することが、後工程の手戻りを防ぐ最大の投資です。</b>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fee2e2">📋</span><h2>リスク登録簿テンプレート</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>リスクID</th><th>リスク内容</th><th>発生確率</th><th>影響度</th><th>スコア</th><th>対応方針</th><th>対策内容</th><th>担当者</th><th>ステータス</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>R-001</td><td>要件定義書のTBDが解消されず、基本設計に手戻りが発生する</td>
+          <td><span class="badge badge-danger">高</span></td><td><span class="badge badge-danger">高</span></td>
+          <td style="background:#fee2e2;font-weight:700">9</td><td>回避</td>
+          <td>PHASE 0でTBD解消期限を確定。解消されない場合は設計開始を延期</td><td>PL</td><td>監視中</td>
+        </tr>
+        <tr>
+          <td>R-002</td><td>外部システム連携先の仕様確定が遅延し、インタフェース設計が進まない</td>
+          <td><span class="badge badge-warning">中</span></td><td><span class="badge badge-danger">高</span></td>
+          <td style="background:#fef9c3;font-weight:700">6</td><td>軽減</td>
+          <td>連携先担当者との週次確認ミーティングを設定。暫定仕様でモック設計を進める</td><td>SE</td><td>監視中</td>
+        </tr>
+        <tr>
+          <td>R-003</td><td>技術選定後にスキルギャップが判明し、実装フェーズが遅延する</td>
+          <td><span class="badge badge-warning">中</span></td><td><span class="badge badge-warning">中</span></td>
+          <td style="background:#fef9c3;font-weight:700">4</td><td>軽減</td>
+          <td>STEP 1でPoC（試作）を実施してスキルを事前確認。必要ならトレーニング計画を立てる</td><td>PL・SE</td><td>対応済</td>
+        </tr>
+        <tr style="opacity:.6">
+          <td>R-XXX</td><td colspan="8">← このテンプレートをコピーしてプロジェクト固有のリスクを追記する</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-warning" style="margin-top:1rem">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body">
+      <b>スコアの計算目安</b>：発生確率（高=3/中=2/低=1）× 影響度（高=3/中=2/低=1）。スコア6以上は赤信号として優先的に対応策を決めます。<br>
+      <b>対応方針の4択</b>：<b>回避</b>＝リスクが発生しない行動を選ぶ / <b>軽減</b>＝発生確率または影響度を下げる / <b>転嫁</b>＝保険・契約で損失を第三者に移す / <b>受容</b>＝許容できるので対策しない（理由を記録する）
+    </div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef9c3">🗂️</span><h2>設計フェーズ 典型リスクカタログ</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>フェーズ</th><th>典型リスク</th><th>早期警戒サイン</th><th>推奨対応</th></tr></thead>
+      <tbody>
+        <tr><td>基本設計</td><td>要件の読み取り漏れによる設計抜け</td><td>機能一覧の行数が要件書より少ない</td><td>トレーサビリティマトリクス（B-19）で全件照合</td></tr>
+        <tr><td>基本設計</td><td>アーキテクチャ選定ミスによる後工程の大規模修正</td><td>PoC結果が非機能要件を満たさない</td><td>STEP 1を先行してPoCで検証。ADRに根拠を記録</td></tr>
+        <tr><td>詳細設計</td><td>共通ライブラリの後出し変更による全機能コードの修正</td><td>STEP先が完了前に機能設計に入っている</td><td>C-01〜C-05が確定するまで機能実装を開始しない</td></tr>
+        <tr><td>詳細設計</td><td>DB設計の後戻りによるマイグレーション履歴の破綻</td><td>物理ER図が頻繁に変わっている</td><td>主要機能が固まってからD-06〜D-09に着手</td></tr>
+        <tr><td>実装</td><td>スコープクリープ（要件外機能の自発的追加）による遅延</td><td>設計書に記載のないIssueが増えている</td><td>変更管理プロセス（下記）を通じていない追加は禁止</td></tr>
+        <tr><td>テスト</td><td>テスト環境の未整備によるテスト開始の遅延</td><td>テスト直前に環境構築が始まっている</td><td>STEP 8（開発環境・規約）でステージング環境も同時に整備</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><h2>🔄 変更管理プロセス — スコープクリープを防ぐ</h2>
+<div class="callout callout-danger">
+  <span class="callout-icon">🚫</span>
+  <div class="callout-body">
+    <b>設計書・要件が変わりそうなとき、勝手に進めてはいけません。</b><br>
+    承認なしで変更を実装すると、スコープ（作る範囲）が知らぬ間に膨らみ、スケジュール・コスト・品質すべてに影響します（スコープクリープ）。変更はすべて変更要求票を起票し、影響分析を行った上で承認を得てから進めます。
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#dbeafe">🔄</span><h2>変更管理フロー（CCBプロセス）</h2></div>
+  <div class="mermaid">
 flowchart LR
   A["①変更要求の発生\n（誰でも起票可）"]:::step
   B["②変更要求票の作成\n（起票者）"]:::step
@@ -329,136 +267,119 @@ flowchart LR
   E["⑤設計書の更新\n（SE）"]:::step
   F["⑥関係者への周知\n（PL）"]:::step
   G["⑦実装・テストに反映\n（実装担当）"]:::step
-  H["否決 → 理由を記録\n起票者へ通知"]:::reject
-
-  A --> B --> C --> D
-  D -->|承認| E --> F --> G
-  D -->|否決/保留| H
-
-  classDef step fill:#dbeafe,color:#1e3a8a,stroke:#1a56db
+  H["否決 → 理由を記録\n起票者へ通知"]:::reject<p>  A --&gt; B --&gt; C --&gt; D
+  D --&gt;|承認| E --&gt; F --&gt; G
+  D --&gt;|否決/保留| H</p>
+<p>  classDef step fill:#dbeafe,color:#1e3a8a,stroke:#1a56db
   classDef decision fill:#fef9c3,color:#713f12,stroke:#d97706
   classDef reject fill:#fee2e2,color:#991b1b,stroke:#dc2626
-        </div>
-        <div class="table-wrap" style="margin-top:1rem">
-          <table>
-            <thead><tr><th colspan="2">変更要求票テンプレート</th></tr></thead>
-            <tbody>
-              <tr><td style="width:30%"><b>変更ID</b></td><td>CR-001（連番管理）</td></tr>
-              <tr><td><b>起票日 / 起票者</b></td><td>YYYY-MM-DD / 氏名</td></tr>
-              <tr><td><b>対象フェーズ</b></td><td>基本設計 / 詳細設計 / 実装 / テスト</td></tr>
-              <tr><td><b>変更区分</b></td><td>要件追加 / 要件変更 / 要件削除 / 設計変更 / 仕様明確化</td></tr>
-              <tr><td><b>変更の内容</b></td><td>変更前：〇〇 → 変更後：△△（具体的に）</td></tr>
-              <tr><td><b>変更の理由・背景</b></td><td>なぜこの変更が必要か</td></tr>
-              <tr><td><b>影響範囲（SE記入）</b></td><td>影響する設計書 / 画面 / API / テーブル / テストケース</td></tr>
-              <tr><td><b>スケジュール影響</b></td><td>+〇日 / 影響なし</td></tr>
-              <tr><td><b>承認者 / 承認日</b></td><td>PL・顧客 / YYYY-MM-DD</td></tr>
-              <tr><td><b>ステータス</b></td><td>申請中 / 承認 / 否決 / 保留 / 完了</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ======================================================
-           PMBOK: コミュニケーション管理・RACI
-           ====================================================== -->
-      <h2 class="section-title"><span class="title-icon">📢</span> コミュニケーション計画 — 誰に・何を・いつ報告するか</h2>
-      <div class="callout callout-info">
-        <span class="callout-icon">💡</span>
-        <div class="callout-body">
-          <b>PMBOKにおけるコミュニケーション管理とは</b><br>
-          プロジェクト情報を「誰が」「誰に」「いつ」「どの手段で」伝えるかを事前に計画することです。「報告が遅れて顧客が知らないうちに問題が大きくなる」「誰が決裁権を持つか分からず作業が止まる」を防ぎます。
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#dcfce7">📢</span><h2>報告・連絡・相談の基本ルール（RACI付き）</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>事象・タイミング</th>
-                <th>報告先</th>
-                <th>手段</th>
-                <th>タイミング</th>
-                <th>RACI</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>設計書の完成・レビュー依頼</td><td>上位SE・PL</td><td>メール＋Slack</td><td>完成後即時</td><td>SE: R / PL: A / 顧客: C</td></tr>
-              <tr><td>TBD（未決事項）の発生</td><td>上位SE・PL</td><td>Slack + TBD管理表更新</td><td>判明後当日中</td><td>SE: R / PL: A</td></tr>
-              <tr><td>スケジュール遅延（1日以上）</td><td>PL</td><td>Slack + 週次ミーティング</td><td>判明後即時</td><td>SE: R / PL: A / 顧客: I</td></tr>
-              <tr><td>仕様の解釈に迷いが生じた</td><td>上位SE（まず）</td><td>Slack・口頭</td><td>迷った当日中（翌日に持ち越さない）</td><td>SE: R / 上位SE: C / PL: I</td></tr>
-              <tr><td>変更要求の発生</td><td>PL・CCB</td><td>変更要求票＋MTG</td><td>気づいた時点で即起票</td><td>起票者: R / PL: A / 顧客: C</td></tr>
-              <tr><td>重大バグ・障害の発生（Sev-1/2）</td><td>PL → 顧客</td><td>電話→メール</td><td>検知後15分以内</td><td>SE: R / PL: A / 顧客: I</td></tr>
-              <tr><td>週次進捗報告</td><td>PL・顧客</td><td>週次定例MTG＋議事録</td><td>毎週決まった曜日</td><td>SE: R / PL: A / 顧客: I</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout callout-info" style="margin-top:1rem">
-          <span class="callout-icon">📌</span>
-          <div class="callout-body">
-            <b>RACIとは</b>：<b>R（Responsible）</b>＝実行する人 / <b>A（Accountable）</b>＝最終責任者（承認権限を持つ）/ <b>C（Consulted）</b>＝事前に相談する人 / <b>I（Informed）</b>＝結果を通知する人。1つの作業に対してAは必ず1名だけにします（複数いると責任が曖昧になる）。
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-icon" style="background:#ffe4e6">🚨</span><h2>エスカレーションルート</h2></div>
-        <div class="callout callout-warning" style="margin-bottom:1rem">
-          <span class="callout-icon">⚠️</span>
-          <div class="callout-body">
-            <b>エスカレーションとは</b>：自分の判断では解決できない問題を上位の責任者に判断を仰ぐこと。若手エンジニアが一人で抱え込んでプロジェクトが炎上するよりも、早めにエスカレーションする方が全員にとってコストが低くなります。「報告するのが怖い」という心理より、「報告しないことで被害が拡大する」リスクを優先してください。
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>状況</th><th>初動（〜1時間）</th><th>解決しない場合（〜1日）</th><th>さらに解決しない場合</th></tr></thead>
-            <tbody>
-              <tr><td>仕様が曖昧で判断できない</td><td>上位SE・チームリーダーに相談</td><td>PL経由で顧客確認</td><td>PLが顧客と協議・合意形成</td></tr>
-              <tr><td>スケジュールが遅延しそう</td><td>上位SEに相談・タスク再見積もり</td><td>PLへ報告・スケジュール見直し</td><td>PLが顧客と調整（納期交渉 or スコープ削減）</td></tr>
-              <tr><td>本番障害が発生した</td><td>PLへ即時報告（電話）</td><td>PL→顧客へ第1報。原因調査開始</td><td>PLが対応方針を決定・顧客承認</td></tr>
-              <tr><td>チームメンバーのタスクが詰まっている</td><td>本人に確認・支援できるか確認</td><td>チームリーダーへ相談・タスク再分担</td><td>PLへ体制強化を要請</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+  </div>
+  <div class="table-wrap" style="margin-top:1rem">
+    <table>
+      <thead><tr><th colspan="2">変更要求票テンプレート</th></tr></thead>
+      <tbody>
+        <tr><td style="width:30%"><b>変更ID</b></td><td>CR-001（連番管理）</td></tr>
+        <tr><td><b>起票日 / 起票者</b></td><td>YYYY-MM-DD / 氏名</td></tr>
+        <tr><td><b>対象フェーズ</b></td><td>基本設計 / 詳細設計 / 実装 / テスト</td></tr>
+        <tr><td><b>変更区分</b></td><td>要件追加 / 要件変更 / 要件削除 / 設計変更 / 仕様明確化</td></tr>
+        <tr><td><b>変更の内容</b></td><td>変更前：〇〇 → 変更後：△△（具体的に）</td></tr>
+        <tr><td><b>変更の理由・背景</b></td><td>なぜこの変更が必要か</td></tr>
+        <tr><td><b>影響範囲（SE記入）</b></td><td>影響する設計書 / 画面 / API / テーブル / テストケース</td></tr>
+        <tr><td><b>スケジュール影響</b></td><td>+〇日 / 影響なし</td></tr>
+        <tr><td><b>承認者 / 承認日</b></td><td>PL・顧客 / YYYY-MM-DD</td></tr>
+        <tr><td><b>ステータス</b></td><td>申請中 / 承認 / 否決 / 保留 / 完了</td></tr>
+      </tbody>
+    </table>
+  </div></p>
+</div><h2>📢 コミュニケーション計画 — 誰に・何を・いつ報告するか</h2>
+<div class="callout callout-info">
+  <span class="callout-icon">💡</span>
+  <div class="callout-body">
+    <b>PMBOKにおけるコミュニケーション管理とは</b><br>
+    プロジェクト情報を「誰が」「誰に」「いつ」「どの手段で」伝えるかを事前に計画することです。「報告が遅れて顧客が知らないうちに問題が大きくなる」「誰が決裁権を持つか分からず作業が止まる」を防ぎます。
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#dcfce7">📢</span><h2>報告・連絡・相談の基本ルール（RACI付き）</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>事象・タイミング</th><th>報告先</th><th>手段</th><th>タイミング</th><th>RACI</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>設計書の完成・レビュー依頼</td><td>上位SE・PL</td><td>メール＋Slack</td><td>完成後即時</td><td>SE: R / PL: A / 顧客: C</td></tr>
+        <tr><td>TBD（未決事項）の発生</td><td>上位SE・PL</td><td>Slack + TBD管理表更新</td><td>判明後当日中</td><td>SE: R / PL: A</td></tr>
+        <tr><td>スケジュール遅延（1日以上）</td><td>PL</td><td>Slack + 週次ミーティング</td><td>判明後即時</td><td>SE: R / PL: A / 顧客: I</td></tr>
+        <tr><td>仕様の解釈に迷いが生じた</td><td>上位SE（まず）</td><td>Slack・口頭</td><td>迷った当日中（翌日に持ち越さない）</td><td>SE: R / 上位SE: C / PL: I</td></tr>
+        <tr><td>変更要求の発生</td><td>PL・CCB</td><td>変更要求票＋MTG</td><td>気づいた時点で即起票</td><td>起票者: R / PL: A / 顧客: C</td></tr>
+        <tr><td>重大バグ・障害の発生（Sev-1/2）</td><td>PL → 顧客</td><td>電話→メール</td><td>検知後15分以内</td><td>SE: R / PL: A / 顧客: I</td></tr>
+        <tr><td>週次進捗報告</td><td>PL・顧客</td><td>週次定例MTG＋議事録</td><td>毎週決まった曜日</td><td>SE: R / PL: A / 顧客: I</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-info" style="margin-top:1rem">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body">
+      <b>RACIとは</b>：<b>R（Responsible）</b>＝実行する人 / <b>A（Accountable）</b>＝最終責任者（承認権限を持つ）/ <b>C（Consulted）</b>＝事前に相談する人 / <b>I（Informed）</b>＝結果を通知する人。1つの作業に対してAは必ず1名だけにします（複数いると責任が曖昧になる）。
+    </div>
+  </div>
+</div><div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#ffe4e6">🚨</span><h2>エスカレーションルート</h2></div>
+  <div class="callout callout-warning" style="margin-bottom:1rem">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <b>エスカレーションとは</b>：自分の判断では解決できない問題を上位の責任者に判断を仰ぐこと。若手エンジニアが一人で抱え込んでプロジェクトが炎上するよりも、早めにエスカレーションする方が全員にとってコストが低くなります。
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>状況</th><th>初動（〜1時間）</th><th>解決しない場合（〜1日）</th><th>さらに解決しない場合</th></tr></thead>
+      <tbody>
+        <tr><td>仕様が曖昧で判断できない</td><td>上位SE・チームリーダーに相談</td><td>PL経由で顧客確認</td><td>PLが顧客と協議・合意形成</td></tr>
+        <tr><td>スケジュールが遅延しそう</td><td>上位SEに相談・タスク再見積もり</td><td>PLへ報告・スケジュール見直し</td><td>PLが顧客と調整（納期交渉 or スコープ削減）</td></tr>
+        <tr><td>本番障害が発生した</td><td>PLへ即時報告（電話）</td><td>PL→顧客へ第1報。原因調査開始</td><td>PLが対応方針を決定・顧客承認</td></tr>
+        <tr><td>チームメンバーのタスクが詰まっている</td><td>本人に確認・支援できるか確認</td><td>チームリーダーへ相談・タスク再分担</td><td>PLへ体制強化を要請</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><script>
+document.addEventListener('DOMContentLoaded', function() {
+  const basicCtx = document.getElementById('chartBasicHowto');
+  if (basicCtx) {
+    new Chart(basicCtx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['STEP0','STEP1','STEP2','STEP3','STEP4','STEP5','STEP6','STEP7','STEP7b','STEP8'],
+        datasets: [
+          { label: '最小(日)', data: [0.5,3,5,3,1,1,1,2,0.5,2], backgroundColor: 'rgba(26,86,219,.4)', borderColor: '#1a56db', borderWidth:1.5 },
+          { label: '最大(日)', data: [1,5,8,5,3,2,2,3,1,4], backgroundColor: 'rgba(26,86,219,.7)', borderColor: '#1a56db', borderWidth:1.5 }
+        ]
+      },
+      options: { responsive:true, scales:{ y:{ beginAtZero:true, title:{ display:true, text:'日数' } } } }
+    });
+  }
+  const detailCtx = document.getElementById('chartDetailHowto');
+  if (detailCtx) {
+    new Chart(detailCtx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['STEP0','STEP先行','STEP1','STEP2','STEP3','STEP4','STEP5-6','STEP7','STEP8','STEP9'],
+        datasets: [
+          { label: '最小(日)', data: [0.5,3,5,4,3,2,2,3,1,2], backgroundColor: 'rgba(14,159,110,.4)', borderColor: '#0e9f6e', borderWidth:1.5 },
+          { label: '最大(日)', data: [0.5,5,10,7,6,4,4,5,2,4], backgroundColor: 'rgba(14,159,110,.7)', borderColor: '#0e9f6e', borderWidth:1.5 }
+        ]
+      },
+      options: { responsive:true, scales:{ y:{ beginAtZero:true, title:{ display:true, text:'日数' } } } }
+    });
+  }
+});
+</script>
 
     </div>
   </main>
 </div>
 
-<script>
-mermaid.initialize({ startOnLoad: true, theme: 'default' });
-// 基本設計グラフ
-const basicPhaseChartCtx = document.getElementById('chartBasicHowto').getContext('2d');
-new Chart(basicPhaseChartCtx, {
-  type: 'bar',
-  data: {
-    labels: ['STEP0','STEP1','STEP2','STEP3','STEP4','STEP5','STEP6','STEP7','STEP7b','STEP8'],
-    datasets: [
-      { label: '最小(日)', data: [0.5,3,5,3,1,1,1,2,0.5,2], backgroundColor: 'rgba(26,86,219,.4)', borderColor: '#1a56db', borderWidth:1.5 },
-      { label: '最大(日)', data: [1,5,8,5,3,2,2,3,1,4],    backgroundColor: 'rgba(26,86,219,.7)', borderColor: '#1a56db', borderWidth:1.5 }
-    ]
-  },
-  options: { responsive:true, scales:{ y:{ beginAtZero:true, title:{ display:true, text:'日数' } } } }
-});
-
-// 詳細設計グラフ
-const detailPhaseChartCtx = document.getElementById('chartDetailHowto').getContext('2d');
-new Chart(detailPhaseChartCtx, {
-  type: 'bar',
-  data: {
-    labels: ['STEP0','STEP先行','STEP1','STEP2','STEP3','STEP4','STEP5-6','STEP7','STEP8','STEP9'],
-    datasets: [
-      { label: '最小(日)', data: [0.5,3,5,4,3,2,2,3,1,2], backgroundColor: 'rgba(14,159,110,.4)', borderColor: '#0e9f6e', borderWidth:1.5 },
-      { label: '最大(日)', data: [0.5,5,10,7,6,4,4,5,2,4],   backgroundColor: 'rgba(14,159,110,.7)', borderColor: '#0e9f6e', borderWidth:1.5 }
-    ]
-  },
-  options: { responsive:true, scales:{ y:{ beginAtZero:true, title:{ display:true, text:'日数' } } } }
-});
-</script>
-<script src="js/main.js"></script>
-<script src="sidebar.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>
+<script src="./js/main.js"></script>
+<script src="./sidebar.js"></script>
 </body>
 </html>
-

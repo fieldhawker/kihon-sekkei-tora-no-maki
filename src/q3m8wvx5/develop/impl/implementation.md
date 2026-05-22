@@ -1,0 +1,130 @@
+---
+title: 実装手順
+subtitle: Phase 3
+phase: impl
+description: 詳細設計書（承認済み）を基に、実際のコードを書くフェーズです。タスク分割・ブランチ戦略・PRレビュー・進捗管理の手順を説明します。
+---
+
+<div class="callout callout-info" style="margin-top:0">
+  <span class="callout-icon">🧭</span>
+  <div class="callout-body">
+    <b>このページの使い方</b><br>
+    1) STEP 0 で「詳細設計が承認済みで、基盤（共通ライブラリ/CI/規約）が揃っているか」を確認 → 2) STEP 1 でタスクを小さく切る → 3) STEP 2 のルールに従ってPRを回す。<br>
+    迷ったら「小さく・早く・レビューしやすく」を優先します（1PR=1目的、差分は小さめ）。
+  </div>
+</div>
+
+## STEP 0 — 実装開始前の確認
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="i0-1"><label for="i0-1">詳細設計書（承認済み）が入手できている</label></li>
+    <li><input type="checkbox" id="i0-2"><label for="i0-2">開発環境（ローカル・CI・ステージング）が構築済みで全員が使える</label></li>
+    <li><input type="checkbox" id="i0-3"><label for="i0-3">共通ライブラリ（C-01〜C-05）の実装が完了・マージ済みである</label></li>
+    <li><input type="checkbox" id="i0-4"><label for="i0-4">コーディング規約・フォーマッタ設定をリポジトリに追加済みである</label></li>
+    <li><input type="checkbox" id="i0-5"><label for="i0-5">CI（自動テスト・Lint）パイプラインが動作している</label></li>
+    <li><input type="checkbox" id="i0-6"><label for="i0-6">ブランチ戦略・PRルールをチームで合意済みである</label></li>
+  </ul>
+</div>
+
+## STEP 1 — タスク分割・バックログ構築
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fef9c3">📋</span><h2>Issue作成テンプレート</h2></div>
+  <pre><code>## 概要
+[機能名] [作業内容を1文で]
+
+## 対象設計書
+- D-01: [詳細機能設計書のURL]
+- D-03: [OpenAPI仕様書のURL]
+
+## 完了条件
+- [ ] 単体テストが通る（カバレッジ目標: XX%）
+- [ ] レビュー承認 1名
+- [ ] CIが全パス
+
+## 見積もり
+[Hまたはポイント]</code></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+  <div class="card-header"><span class="card-icon" style="background:#dcfce7">✂️</span><h2>タスク分割のコツ</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>粒度の目安</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>1タスク = 0.5〜2日</td><td>進捗の「詰まり」が早期に発見できる</td></tr>
+        <tr><td>1PR = 1つの目的</td><td>レビュアーが文脈を理解しやすい</td></tr>
+        <tr><td>APIエンドポイント単位</td><td>フロント/バックの並行開発が可能になる</td></tr>
+        <tr><td>DB変更は単独PR</td><td>マイグレーション適用順序を明確にする</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## STEP 2 — 実装フロー（1機能の流れ）
+
+<div class="card">
+  <ol style="padding-left:1.5rem;font-size:.875rem;line-height:2.2">
+    <li><b>Issueを取る</b>: バックログからIssueをアサイン。設計書URLをIssueに貼る。</li>
+    <li><b>ブランチを切る</b>: <code>feature/機能ID-概要</code>（例: <code>feature/F-001-create-request</code>）</li>
+    <li><b>テストを先に書く（TDD推奨）</b>: 設計書の入力値・期待値からテストを先に書く。</li>
+    <li><b>実装する</b>: テストが通る最小コードを書く。コーディング規約に従う。</li>
+    <li><b>自己レビュー</b>: チェックリストを確認してからPR作成。</li>
+    <li><b>PR作成・レビュー依頼</b>: テンプレートに沿って記載。CIが全パスであること。</li>
+    <li><b>マージ</b>: 承認後、mainまたはdevelopにマージ。ブランチ削除。</li>
+  </ol>
+</div>
+
+## STEP 3 — PR作成チェックリスト
+
+<div class="card">
+  <ul class="checklist">
+    <li><input type="checkbox" id="pr-1"><label for="pr-1">PRのタイトルがConventional Commitsに従っている（例: <code>feat: 申請作成APIを追加</code>）</label></li>
+    <li><input type="checkbox" id="pr-2"><label for="pr-2">PR説明に「何をした・なぜした・どうテストした」が書かれている</label></li>
+    <li><input type="checkbox" id="pr-3"><label for="pr-3">差分が300行以内（超える場合は分割を検討）</label></li>
+    <li><input type="checkbox" id="pr-4"><label for="pr-4">CI（テスト・Lint・フォーマット）が全パスしている</label></li>
+    <li><input type="checkbox" id="pr-5"><label for="pr-5">設計書の仕様と実装が一致していることを自己確認した</label></li>
+    <li><input type="checkbox" id="pr-6"><label for="pr-6">テストが追加・更新されている</label></li>
+    <li><input type="checkbox" id="pr-7"><label for="pr-7">スクリーンショット（UI変更の場合）を添付した</label></li>
+  </ul>
+</div>
+
+## STEP 4 — レビュー観点
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>観点</th><th>確認内容</th></tr></thead>
+      <tbody>
+        <tr><td>設計との整合</td><td>OpenAPI仕様・D-01の処理フローと実装が一致するか</td></tr>
+        <tr><td>セキュリティ</td><td>SQL injection・XSS・認証・権限チェックの漏れ</td></tr>
+        <tr><td>エラー処理</td><td>例外が握りつぶされていない・ログに残る・適切なHTTPステータスを返す</td></tr>
+        <tr><td>パフォーマンス</td><td>N+1・全件取得・不要なDB呼び出しがない</td></tr>
+        <tr><td>テスト品質</td><td>境界値・異常系・権限パターンが網羅されているか</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+## STEP 5 — 進捗管理・リスク対応
+
+<div class="card">
+  <div class="card-header"><span class="card-icon" style="background:#fee2e2">⚠️</span><h2>詰まりのサインと対処</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>サイン</th><th>対処</th></tr></thead>
+      <tbody>
+        <tr><td>同じIssueが2日以上動かない</td><td>チームに共有・設計の再確認・スコープ縮小</td></tr>
+        <tr><td>PRが1週間レビューされない</td><td>レビュアーに直接確認・優先度の再調整</td></tr>
+        <tr><td>テストが増えない</td><td>コードフリーズ前に単体テスト実施率を確認</td></tr>
+        <tr><td>設計と実装が乖離し始めた</td><td>設計書の更新（実装で発見した仕様変更を反映）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="callout callout-success">
+  <span class="callout-icon">✅</span>
+  <div class="callout-body">全機能の実装・単体テストが完了したら <a href="testing.html">テスト実施フェーズ</a> へ進みます。</div>
+</div>

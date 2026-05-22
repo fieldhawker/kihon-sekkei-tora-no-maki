@@ -1,0 +1,14 @@
+{
+  "name": "kihon-sekkei-toranomaki",
+  "version": "1.0.0",
+  "description": "基本設計虎の巻 ドキュメント管理",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build.js",
+    "watch": "node tools/build.js --watch"
+  },
+  "dependencies": {
+    "front-matter": "^4.0.2",
+    "marked": "^18.0.4"
+  }
+}
