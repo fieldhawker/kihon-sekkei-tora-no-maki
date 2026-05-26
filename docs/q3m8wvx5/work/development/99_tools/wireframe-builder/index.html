@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>画面ワイヤーフレームビルダー</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.palette { width: 160px; background: #fff; border-right: 1px solid #ddd; padding: 12px 8px; overflow-y: auto; flex-shrink: 0; }
+.palette h2 { font-size: 12px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.palette-item { border: 1px solid #ccc; border-radius: 4px; padding: 7px 10px; margin-bottom: 6px; font-size: 13px; cursor: grab; background: #f9f9f9; user-select: none; }
+.palette-item:hover { background: #e8f0fe; border-color: #4a90e2; }
+.canvas-wrap { flex: 1; overflow: auto; padding: 20px; }
+#canvas { position: relative; width: 900px; min-height: 600px; background: #fff; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.wf-el { position: absolute; cursor: move; user-select: none; }
+.wf-el.selected { outline: 2px solid #4a90e2; }
+.wf-el .del-btn { display: none; position: absolute; top: -10px; right: -10px; width: 18px; height: 18px; background: #e74c3c; color: #fff; border-radius: 50%; font-size: 11px; line-height: 18px; text-align: center; cursor: pointer; }
+.wf-el.selected .del-btn { display: block; }
+/* element styles */
+.el-input { border: 1px solid #999; padding: 4px 8px; font-size: 13px; min-width: 160px; background: #fff; color: #aaa; }
+.el-button { border: 1px solid #4a90e2; padding: 6px 16px; font-size: 13px; background: #4a90e2; color: #fff; border-radius: 3px; white-space: nowrap; }
+.el-button-sec { border: 1px solid #999; padding: 6px 16px; font-size: 13px; background: #fff; color: #333; border-radius: 3px; white-space: nowrap; }
+.el-label { font-size: 13px; font-weight: bold; color: #333; white-space: nowrap; }
+.el-text { font-size: 12px; color: #666; white-space: nowrap; }
+.el-heading { font-size: 20px; font-weight: bold; color: #222; white-space: nowrap; }
+.el-navbar { width: 400px; height: 40px; background: #2c3e50; display: flex; align-items: center; padding: 0 16px; gap: 20px; }
+.el-navbar span { color: #fff; font-size: 13px; }
+.el-table { border-collapse: collapse; font-size: 12px; }
+.el-table th, .el-table td { border: 1px solid #ccc; padding: 4px 10px; }
+.el-table th { background: #ecf0f1; }
+.el-textarea { border: 1px solid #999; padding: 4px 8px; font-size: 12px; min-width: 160px; min-height: 60px; background: #fff; color: #aaa; resize: none; }
+.el-select { border: 1px solid #999; padding: 4px 8px; font-size: 13px; min-width: 140px; color: #aaa; background: #fff; }
+.el-checkbox { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #333; }
+.el-checkbox input { width: 14px; height: 14px; }
+.el-card { border: 1px solid #ddd; border-radius: 6px; padding: 16px; background: #fff; min-width: 200px; min-height: 80px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); font-size: 12px; color: #666; }
+.el-modal { border: 1px solid #ccc; background: #fff; padding: 20px; min-width: 260px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); font-size: 12px; color: #444; }
+.el-modal-title { font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+.el-divider { width: 200px; height: 1px; background: #ddd; }
+.el-badge { display: inline-block; background: #e74c3c; color: #fff; border-radius: 10px; padding: 2px 8px; font-size: 11px; }
+.el-image { border: 1px dashed #999; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 12px; min-width: 120px; min-height: 80px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>画面ワイヤーフレームビルダー</h1>
+  <button onclick="loadSample()">📋 サンプル</button>
+  <button onclick="clearCanvas()">クリア</button>
+  <button onclick="exportPNG()">PNG保存</button>
+  <button onclick="exportHTML()">HTMLコピー</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+  <span style="margin-left:auto;font-size:12px;color:#aaa">部品をキャンバスにドラッグ / 選択して Delete で削除 / ダブルクリックでテキスト編集</span>
+</header>
+<div class="workspace">
+  <div class="palette">
+    <h2>部品</h2>
+    <div class="palette-item" draggable="true" data-type="heading">見出し</div>
+    <div class="palette-item" draggable="true" data-type="label">ラベル</div>
+    <div class="palette-item" draggable="true" data-type="text">テキスト</div>
+    <div class="palette-item" draggable="true" data-type="input">テキスト入力</div>
+    <div class="palette-item" draggable="true" data-type="textarea">テキストエリア</div>
+    <div class="palette-item" draggable="true" data-type="select">セレクトボックス</div>
+    <div class="palette-item" draggable="true" data-type="checkbox">チェックボックス</div>
+    <div class="palette-item" draggable="true" data-type="button">ボタン（主）</div>
+    <div class="palette-item" draggable="true" data-type="button-sec">ボタン（副）</div>
+    <div class="palette-item" draggable="true" data-type="navbar">ナビゲーションバー</div>
+    <div class="palette-item" draggable="true" data-type="table">テーブル</div>
+    <div class="palette-item" draggable="true" data-type="card">カード</div>
+    <div class="palette-item" draggable="true" data-type="modal">モーダル</div>
+    <div class="palette-item" draggable="true" data-type="image">画像プレースホルダー</div>
+    <div class="palette-item" draggable="true" data-type="divider">区切り線</div>
+    <div class="palette-item" draggable="true" data-type="badge">バッジ</div>
+  </div>
+  <div class="canvas-wrap">
+    <div id="canvas"></div>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('canvas');
+let dragType = null, offsetX = 0, offsetY = 0, selected = null;
+
+document.querySelectorAll('.palette-item').forEach(item => {
+  item.addEventListener('dragstart', e => {
+    dragType = item.dataset.type;
+    e.dataTransfer.setData('text/plain', dragType);
+  });
+});
+
+canvas.addEventListener('dragover', e => e.preventDefault());
+canvas.addEventListener('drop', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left - canvas.scrollLeft;
+  const y = e.clientY - rect.top - canvas.scrollTop;
+  createElement(dragType, x, y);
+});
+
+function createElement(type, x, y) {
+  const wrap = document.createElement('div');
+  wrap.className = 'wf-el';
+  wrap.style.left = x + 'px';
+  wrap.style.top = y + 'px';
+
+  const del = document.createElement('div');
+  del.className = 'del-btn';
+  del.textContent = '×';
+  del.addEventListener('click', e => { e.stopPropagation(); wrap.remove(); });
+  wrap.appendChild(del);
+
+  const el = buildElement(type);
+  wrap.appendChild(el);
+  canvas.appendChild(wrap);
+  makeDraggable(wrap);
+  selectEl(wrap);
+}
+
+function buildElement(type) {
+  const templates = {
+    heading: () => { const e = document.createElement('div'); e.className = 'el-heading'; e.textContent = '見出しテキスト'; return e; },
+    label: () => { const e = document.createElement('div'); e.className = 'el-label'; e.textContent = 'ラベル'; return e; },
+    text: () => { const e = document.createElement('div'); e.className = 'el-text'; e.textContent = '説明テキスト'; return e; },
+    input: () => { const e = document.createElement('div'); e.className = 'el-input'; e.textContent = 'テキスト入力欄'; return e; },
+    textarea: () => { const e = document.createElement('div'); e.className = 'el-textarea'; e.textContent = 'テキストエリア'; return e; },
+    select: () => { const e = document.createElement('div'); e.className = 'el-select'; e.textContent = '▼ 選択してください'; return e; },
+    checkbox: () => { const e = document.createElement('div'); e.className = 'el-checkbox'; e.innerHTML = '<input type="checkbox" disabled> チェックボックス'; return e; },
+    button: () => { const e = document.createElement('div'); e.className = 'el-button'; e.textContent = 'ボタン'; return e; },
+    'button-sec': () => { const e = document.createElement('div'); e.className = 'el-button-sec'; e.textContent = 'キャンセル'; return e; },
+    navbar: () => { const e = document.createElement('div'); e.className = 'el-navbar'; e.innerHTML = '<span>ロゴ</span><span>メニュー1</span><span>メニュー2</span><span>メニュー3</span>'; return e; },
+    table: () => { const e = document.createElement('table'); e.className = 'el-table'; e.innerHTML = '<tr><th>列1</th><th>列2</th><th>列3</th></tr><tr><td>データ</td><td>データ</td><td>データ</td></tr><tr><td>データ</td><td>データ</td><td>データ</td></tr>'; return e; },
+    card: () => { const e = document.createElement('div'); e.className = 'el-card'; e.textContent = 'カードコンテンツ'; return e; },
+    modal: () => { const e = document.createElement('div'); e.className = 'el-modal'; e.innerHTML = '<div class="el-modal-title">ダイアログタイトル</div><div>ダイアログの本文テキスト</div>'; return e; },
+    image: () => { const e = document.createElement('div'); e.className = 'el-image'; e.textContent = '画像 (120×80)'; return e; },
+    divider: () => { const e = document.createElement('div'); e.className = 'el-divider'; return e; },
+    badge: () => { const e = document.createElement('div'); e.className = 'el-badge'; e.textContent = 'NEW'; return e; },
+  };
+  return (templates[type] || templates.label)();
+}
+
+function makeDraggable(wrap) {
+  let startX, startY, startLeft, startTop;
+  wrap.addEventListener('mousedown', e => {
+    if (e.target.classList.contains('del-btn')) return;
+    selectEl(wrap);
+    startX = e.clientX; startY = e.clientY;
+    startLeft = parseInt(wrap.style.left); startTop = parseInt(wrap.style.top);
+    const onMove = ev => {
+      wrap.style.left = (startLeft + ev.clientX - startX) + 'px';
+      wrap.style.top = (startTop + ev.clientY - startY) + 'px';
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      autoSave();
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    e.preventDefault();
+  });
+  wrap.addEventListener('dblclick', e => {
+    if (e.target.classList.contains('del-btn')) return;
+    const inner = wrap.querySelector(':not(.del-btn)');
+    if (inner) {
+      const txt = prompt('テキストを編集', inner.textContent);
+      if (txt !== null) { inner.textContent = txt; autoSave(); }
+    }
+  });
+}
+
+function selectEl(wrap) {
+  if (selected) selected.classList.remove('selected');
+  selected = wrap;
+  wrap.classList.add('selected');
+}
+
+canvas.addEventListener('click', e => {
+  if (e.target === canvas) {
+    if (selected) selected.classList.remove('selected');
+    selected = null;
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Delete' && selected) { selected.remove(); selected = null; }
+});
+
+const WF_STORAGE_KEY = 'wireframe-builder-v1';
+
+function getCanvasState() {
+  return Array.from(canvas.querySelectorAll('.wf-el')).map(el => {
+    const inner = el.querySelector(':not(.del-btn)');
+    return {
+      type: inner ? inner.className.replace('el-', '') : '',
+      x: parseInt(el.style.left),
+      y: parseInt(el.style.top),
+      text: inner ? inner.textContent : '',
+      html: inner ? inner.innerHTML : '',
+    };
+  });
+}
+
+function autoSave() { localStorage.setItem(WF_STORAGE_KEY, JSON.stringify(getCanvasState())); }
+
+function restoreCanvas(items) {
+  canvas.innerHTML = '';
+  items.forEach(item => {
+    const type = item.type.replace(/^el-/, '');
+    const wrap = document.createElement('div');
+    wrap.className = 'wf-el';
+    wrap.style.left = item.x + 'px';
+    wrap.style.top = item.y + 'px';
+    const del = document.createElement('div');
+    del.className = 'del-btn'; del.textContent = '×';
+    del.addEventListener('click', e => { e.stopPropagation(); wrap.remove(); autoSave(); });
+    wrap.appendChild(del);
+    const el = buildElement(type);
+    if (item.html && el.innerHTML !== undefined) el.innerHTML = item.html;
+    else if (item.text) el.textContent = item.text;
+    wrap.appendChild(el);
+    canvas.appendChild(wrap);
+    makeDraggable(wrap);
+  });
+}
+
+function clearCanvas() {
+  if (confirm('キャンバスをクリアしますか？')) { canvas.innerHTML = ''; autoSave(); }
+}
+
+function exportHTML() {
+  const html = canvas.innerHTML;
+  navigator.clipboard.writeText(html).then(() => alert('HTMLをクリップボードにコピーしました'));
+}
+
+function exportPNG() {
+  alert('PNG出力にはブラウザの印刷→PDFまたはスクリーンショットをご利用ください。\n（外部ライブラリなしでのCanvas変換は制限があります）');
+}
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(getCanvasState(), null, 2), 'wireframe.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) throw new Error('配列形式のJSONを指定してください');
+      if (!confirm('現在のキャンバスを読み込んだデータで上書きしますか？')) return;
+      restoreCanvas(data); autoSave();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+const WF_SAMPLES = {
+  'ログイン画面': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">ロゴ</span><span style="color:#fff;font-size:13px">〇〇業務システム</span>' },
+    { type: 'heading', x: 330, y: 80, text: 'ログイン' },
+    { type: 'label', x: 270, y: 145, text: 'メールアドレス' },
+    { type: 'input', x: 270, y: 168, text: 'example@company.com' },
+    { type: 'label', x: 270, y: 215, text: 'パスワード' },
+    { type: 'input', x: 270, y: 238, text: '●●●●●●●●' },
+    { type: 'checkbox', x: 270, y: 285, html: '<input type="checkbox" disabled> ログイン状態を保持する' },
+    { type: 'button', x: 270, y: 320, text: 'ログイン' },
+    { type: 'button-sec', x: 440, y: 320, text: 'キャンセル' },
+    { type: 'text', x: 290, y: 370, text: 'パスワードをお忘れの方はこちら' },
+    { type: 'divider', x: 270, y: 400 },
+    { type: 'text', x: 290, y: 415, text: 'アカウントをお持ちでない方は管理者にお問い合わせください' },
+  ],
+  'ユーザー一覧画面': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">〇〇システム</span><span style="color:#fff;font-size:13px">ダッシュボード</span><span style="color:#fff;font-size:13px">ユーザー管理</span><span style="color:#fff;font-size:13px">設定</span>' },
+    { type: 'heading', x: 20, y: 60, text: 'ユーザー一覧' },
+    { type: 'input', x: 20, y: 100, text: '名前・メールアドレスで検索' },
+    { type: 'select', x: 300, y: 100, text: '▼ ロールで絞り込み' },
+    { type: 'select', x: 460, y: 100, text: '▼ ステータス' },
+    { type: 'button', x: 620, y: 100, text: '検索' },
+    { type: 'button', x: 700, y: 100, text: '＋ 新規登録' },
+    { type: 'table', x: 20, y: 150, html: '<tr><th>ID</th><th>氏名</th><th>メールアドレス</th><th>ロール</th><th>ステータス</th><th>登録日</th><th>操作</th></tr><tr><td>001</td><td>山田 太郎</td><td>yamada@example.com</td><td>一般ユーザー</td><td>有効</td><td>2026-01-10</td><td>編集 / 削除</td></tr><tr><td>002</td><td>鈴木 花子</td><td>suzuki@example.com</td><td>承認者</td><td>有効</td><td>2026-02-05</td><td>編集 / 削除</td></tr><tr><td>003</td><td>佐藤 次郎</td><td>sato@example.com</td><td>管理者</td><td>無効</td><td>2026-03-15</td><td>編集 / 削除</td></tr>' },
+    { type: 'text', x: 20, y: 350, text: '全3件 / ページ 1/1' },
+  ],
+  '申請登録フォーム': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">〇〇システム</span><span style="color:#fff;font-size:13px">申請一覧</span><span style="color:#fff;font-size:13px">新規申請</span>' },
+    { type: 'heading', x: 20, y: 60, text: '経費申請 — 新規登録' },
+    { type: 'label', x: 20, y: 110, text: '申請種別 *' },
+    { type: 'select', x: 20, y: 132, text: '▼ 経費申請' },
+    { type: 'label', x: 20, y: 175, text: '件名 *' },
+    { type: 'input', x: 20, y: 197, text: '申請件名を入力してください' },
+    { type: 'label', x: 20, y: 240, text: '申請日 *' },
+    { type: 'input', x: 20, y: 262, text: '2026-05-20' },
+    { type: 'label', x: 20, y: 305, text: '金額（円）*' },
+    { type: 'input', x: 20, y: 327, text: '0' },
+    { type: 'label', x: 20, y: 370, text: '内容・理由' },
+    { type: 'textarea', x: 20, y: 392, text: '申請の内容・理由を入力してください' },
+    { type: 'label', x: 20, y: 475, text: '添付ファイル（領収書等）' },
+    { type: 'button-sec', x: 20, y: 497, text: '📎 ファイルを選択' },
+    { type: 'button', x: 20, y: 545, text: '申請を提出する' },
+    { type: 'button-sec', x: 160, y: 545, text: 'キャンセル' },
+  ],
+  'モーダル（確認ダイアログ）': [
+    { type: 'navbar', x: 0, y: 0, html: '<span style="color:#fff;font-size:13px">〇〇システム</span>' },
+    { type: 'text', x: 50, y: 60, text: '（背景コンテンツ — ダイアログ表示中は操作不可）' },
+    { type: 'modal', x: 260, y: 130, html: '<div class="el-modal-title">申請を提出しますか？</div><div style="font-size:12px;color:#555;margin-bottom:16px">この操作は取り消せません。承認者にメールで通知が送信されます。</div><div style="display:flex;gap:8px;justify-content:flex-end"><div style="border:1px solid #999;padding:6px 16px;font-size:13px;background:#fff;color:#333;border-radius:3px;cursor:pointer">キャンセル</div><div style="border:1px solid #4a90e2;padding:6px 16px;font-size:13px;background:#4a90e2;color:#fff;border-radius:3px;cursor:pointer">提出する</div></div>' },
+  ],
+};
+
+function loadSample() {
+  const names = Object.keys(WF_SAMPLES);
+  const choice = prompt(
+    `サンプル画面を選択（番号を入力）:\n${names.map((n,i)=>`${i+1}: ${n}`).join('\n')}`, '1'
+  );
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= names.length) { alert('無効な選択です'); return; }
+  canvas.innerHTML = '';
+  restoreCanvas(WF_SAMPLES[names[idx]]);
+  autoSave();
+}
+
+// 要素追加・移動時に自動保存
+const _origCreateElement = createElement;
+createElement = function(type, x, y) { _origCreateElement(type, x, y); autoSave(); };
+
+// ページロード時に復元
+const _saved = localStorage.getItem(WF_STORAGE_KEY);
+if (_saved) { try { restoreCanvas(JSON.parse(_saved)); } catch(e) {} }
+</script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>要件スコープ境界線エディタ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane-form { width: 320px; background: #fff; border-right: 1px solid #ddd; padding: 14px; overflow-y: auto; flex-shrink: 0; }
+.pane-board { flex: 1; overflow: auto; padding: 14px; display: flex; gap: 14px; align-items: flex-start; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+h2:first-child { margin-top: 0; }
+label { font-size: 12px; color: #666; display: block; margin-bottom: 3px; }
+input, select, textarea { border: 1px solid #ccc; border-radius: 4px; padding: 7px 10px; font-size: 13px; width: 100%; margin-bottom: 8px; font-family: sans-serif; }
+textarea { resize: vertical; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; width: 100%; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+/* Lanes */
+.lane { flex: 1; min-width: 240px; display: flex; flex-direction: column; }
+.lane-header { padding: 10px 14px; border-radius: 8px 8px 0 0; color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+.lane-header .lane-count { font-size: 11px; font-weight: normal; background: rgba(255,255,255,0.25); padding: 1px 7px; border-radius: 10px; }
+.lane-body { flex: 1; min-height: 300px; border: 2px dashed; border-top: none; border-radius: 0 0 8px 8px; padding: 10px; }
+.lane-in .lane-header { background: #27ae60; }
+.lane-in .lane-body { border-color: #27ae60; background: #f0fff4; }
+.lane-out .lane-header { background: #e74c3c; }
+.lane-out .lane-body { border-color: #e74c3c; background: #fff5f5; }
+.lane-future .lane-header { background: #f39c12; }
+.lane-future .lane-body { border-color: #f39c12; background: #fffbeb; }
+.lane-body.drag-over { filter: brightness(0.95); }
+/* Cards */
+.scope-card { background: #fff; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: grab; user-select: none; border-left: 3px solid #ccc; }
+.scope-card:active { cursor: grabbing; opacity: 0.8; }
+.card-in { border-left-color: #27ae60; }
+.card-out { border-left-color: #e74c3c; }
+.card-future { border-left-color: #f39c12; }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.card-id { font-size: 11px; color: #aaa; }
+.card-name { font-size: 13px; font-weight: bold; color: #222; }
+.card-cat { font-size: 11px; color: #888; margin-bottom: 3px; }
+.card-reason { font-size: 11px; color: #666; margin-top: 4px; border-top: 1px solid #f0f0f0; padding-top: 4px; }
+.card-actions { display: flex; gap: 3px; }
+.card-action-btn { background: transparent; border: none; cursor: pointer; padding: 2px 4px; font-size: 12px; border-radius: 3px; color: #aaa; }
+.card-action-btn:hover { background: #eee; color: #333; }
+.move-btn { padding: 3px 7px; font-size: 11px; background: transparent; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; color: #555; }
+.move-btn:hover { background: #f5f5f5; }
+.summary-bar { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 10px 16px; margin-bottom: 12px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.summary-item { text-align: center; }
+.summary-num { font-size: 20px; font-weight: bold; }
+.summary-lbl { font-size: 11px; color: #888; }
+.history-panel { margin-top: auto; }
+.history-item { font-size: 11px; color: #888; padding: 3px 0; border-bottom: 1px solid #f0f0f0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>要件スコープ境界線エディタ</h1>
+  <button onclick="loadSample()">サンプル</button>
+  <button onclick="exportMarkdown()">Markdownエクスポート</button>
+  <button onclick="exportCSV()">CSVエクスポート</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane-form">
+    <h2 id="form-title">要件を追加</h2>
+    <input type="hidden" id="edit-id" value="">
+
+    <label>要件ID（任意）</label>
+    <input type="text" id="f-id" placeholder="REQ-001">
+
+    <label>カテゴリ</label>
+    <select id="f-cat">
+      <option value="機能">機能</option>
+      <option value="画面">画面</option>
+      <option value="API">API</option>
+      <option value="データ">データ</option>
+      <option value="非機能">非機能</option>
+      <option value="運用">運用</option>
+      <option value="その他">その他</option>
+    </select>
+
+    <label>要件名・機能名</label>
+    <input type="text" id="f-name" placeholder="ユーザーログイン機能">
+
+    <label>概要（任意）</label>
+    <textarea id="f-desc" rows="2" placeholder="メールアドレスとパスワードで認証する機能"></textarea>
+
+    <label>スコープ区分</label>
+    <select id="f-scope">
+      <option value="in">✅ IN（今回作る）</option>
+      <option value="out">❌ OUT（今回は作らない）</option>
+      <option value="future">🔮 将来検討（次フェーズ候補）</option>
+    </select>
+
+    <label>理由・コメント（OUTの場合は必ず記入）</label>
+    <textarea id="f-reason" rows="2" placeholder="例: 予算・スケジュールの制約により今回は対象外。次フェーズで検討。"></textarea>
+
+    <button class="btn btn-primary" onclick="saveItem()">保存</button>
+    <button class="btn-sm" style="margin-top:8px;width:100%;text-align:center" onclick="cancelEdit()">キャンセル</button>
+
+    <div class="history-panel">
+      <h2>変更履歴</h2>
+      <div id="history-list"><p style="color:#bbb;font-size:12px">変更履歴がここに表示されます</p></div>
+    </div>
+  </div>
+
+  <div style="flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column">
+    <div class="summary-bar" id="summary-bar"></div>
+    <div style="display:flex;gap:14px;flex:1;align-items:flex-start">
+
+      <div class="lane lane-in" style="flex:1">
+        <div class="lane-header">✅ スコープIN <span class="lane-count" id="count-in">0件</span></div>
+        <div class="lane-body" id="lane-in" ondragover="onDragOver(event,'in')" ondrop="onDrop(event,'in')" ondragleave="onDragLeave(event)">
+          <p style="color:#aaa;font-size:12px;text-align:center;padding:16px 0">今回リリースで作る機能</p>
+        </div>
+      </div>
+
+      <div class="lane lane-out" style="flex:1">
+        <div class="lane-header">❌ スコープOUT <span class="lane-count" id="count-out">0件</span></div>
+        <div class="lane-body" id="lane-out" ondragover="onDragOver(event,'out')" ondrop="onDrop(event,'out')" ondragleave="onDragLeave(event)">
+          <p style="color:#aaa;font-size:12px;text-align:center;padding:16px 0">今回は作らない機能</p>
+        </div>
+      </div>
+
+      <div class="lane lane-future" style="flex:1">
+        <div class="lane-header">🔮 将来検討 <span class="lane-count" id="count-future">0件</span></div>
+        <div class="lane-body" id="lane-future" ondragover="onDragOver(event,'future')" ondrop="onDrop(event,'future')" ondragleave="onDragLeave(event)">
+          <p style="color:#aaa;font-size:12px;text-align:center;padding:16px 0">次フェーズ以降の候補</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+const STORAGE_KEY = 'scope-editor-v1';
+const HIST_KEY = 'scope-editor-history-v1';
+let dragId = null;
+
+function load() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function loadHistory() { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+function addHistory(msg) {
+  const h = loadHistory();
+  h.unshift({ msg, time: new Date().toLocaleString('ja-JP') });
+  localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 20)));
+  renderHistory();
+}
+function nextId() { const d = load(); return d.length ? Math.max(...d.map(i => i._id)) + 1 : 1; }
+
+function saveItem() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('要件名は必須です'); return; }
+  const entry = {
+    reqId: document.getElementById('f-id').value.trim(),
+    cat: document.getElementById('f-cat').value,
+    name, desc: document.getElementById('f-desc').value.trim(),
+    scope: document.getElementById('f-scope').value,
+    reason: document.getElementById('f-reason').value.trim(),
+    updatedAt: new Date().toISOString(),
+  };
+  const data = load();
+  const editId = parseInt(document.getElementById('edit-id').value);
+  if (editId) {
+    const idx = data.findIndex(i => i._id === editId);
+    if (idx >= 0) {
+      const old = data[idx];
+      if (old.scope !== entry.scope) addHistory(`「${entry.name}」を ${scopeLabel(old.scope)} → ${scopeLabel(entry.scope)} に変更`);
+      entry._id = editId;
+      data[idx] = entry;
+    }
+  } else {
+    entry._id = nextId();
+    data.push(entry);
+    addHistory(`「${entry.name}」を ${scopeLabel(entry.scope)} として追加`);
+  }
+  save(data);
+  cancelEdit();
+  render();
+}
+
+function editItem(id) {
+  const item = load().find(i => i._id === id);
+  if (!item) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('f-id').value = item.reqId || '';
+  document.getElementById('f-cat').value = item.cat;
+  document.getElementById('f-name').value = item.name;
+  document.getElementById('f-desc').value = item.desc || '';
+  document.getElementById('f-scope').value = item.scope;
+  document.getElementById('f-reason').value = item.reason || '';
+  document.getElementById('form-title').textContent = '要件を編集';
+}
+
+function deleteItem(id) {
+  if (!confirm('削除しますか？')) return;
+  const item = load().find(i => i._id === id);
+  if (item) addHistory(`「${item.name}」を削除`);
+  save(load().filter(i => i._id !== id));
+  render();
+}
+
+function moveItem(id, scope) {
+  const data = load();
+  const idx = data.findIndex(i => i._id === id);
+  if (idx >= 0) {
+    addHistory(`「${data[idx].name}」を ${scopeLabel(data[idx].scope)} → ${scopeLabel(scope)} に移動`);
+    data[idx].scope = scope;
+    data[idx].updatedAt = new Date().toISOString();
+  }
+  save(data);
+  render();
+}
+
+function cancelEdit() {
+  ['edit-id','f-id','f-name','f-desc','f-reason'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-cat').value = '機能';
+  document.getElementById('f-scope').value = 'in';
+  document.getElementById('form-title').textContent = '要件を追加';
+}
+
+function scopeLabel(scope) { return scope === 'in' ? 'IN' : scope === 'out' ? 'OUT' : '将来検討'; }
+
+function render() {
+  const data = load();
+  const groups = { in: data.filter(i => i.scope === 'in'), out: data.filter(i => i.scope === 'out'), future: data.filter(i => i.scope === 'future') };
+
+  ['in','out','future'].forEach(scope => {
+    const lane = document.getElementById('lane-' + scope);
+    const countEl = document.getElementById('count-' + scope);
+    countEl.textContent = groups[scope].length + '件';
+    if (!groups[scope].length) {
+      lane.innerHTML = `<p style="color:#aaa;font-size:12px;text-align:center;padding:16px 0">${scope === 'in' ? '今回リリースで作る機能' : scope === 'out' ? '今回は作らない機能' : '次フェーズ以降の候補'}</p>`;
+      return;
+    }
+    lane.innerHTML = groups[scope].map(item => {
+      const moveButtons = ['in','out','future'].filter(s => s !== scope).map(s =>
+        `<button class="move-btn" onclick="moveItem(${item._id},'${s}')" title="${scopeLabel(s)}へ移動">→ ${scopeLabel(s)}</button>`
+      ).join('');
+      return `<div class="scope-card card-${scope}" draggable="true" ondragstart="onDragStart(event,${item._id})" id="card-${item._id}">
+        <div class="card-top">
+          <div>
+            <div class="card-id">${item.reqId || ''} <span class="card-cat">${item.cat}</span></div>
+            <div class="card-name">${escHtml(item.name)}</div>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn" onclick="editItem(${item._id})" title="編集">✏️</button>
+            <button class="card-action-btn" onclick="deleteItem(${item._id})" title="削除" style="color:#e74c3c">×</button>
+          </div>
+        </div>
+        ${item.desc ? `<div style="font-size:11px;color:#888;margin-bottom:3px">${escHtml(item.desc)}</div>` : ''}
+        ${item.reason ? `<div class="card-reason">📌 ${escHtml(item.reason)}</div>` : ''}
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">${moveButtons}</div>
+      </div>`;
+    }).join('');
+  });
+
+  // Summary
+  document.getElementById('summary-bar').innerHTML = `
+    <div class="summary-item"><div class="summary-num" style="color:#27ae60">${groups.in.length}</div><div class="summary-lbl">✅ IN</div></div>
+    <div class="summary-item"><div class="summary-num" style="color:#e74c3c">${groups.out.length}</div><div class="summary-lbl">❌ OUT</div></div>
+    <div class="summary-item"><div class="summary-num" style="color:#f39c12">${groups.future.length}</div><div class="summary-lbl">🔮 将来</div></div>
+    <div class="summary-item"><div class="summary-num">${data.length}</div><div class="summary-lbl">合計</div></div>
+    <span style="font-size:12px;color:#888;margin-left:8px">カードをドラッグしてレーン間を移動できます</span>
+  `;
+}
+
+function renderHistory() {
+  const h = loadHistory();
+  const el = document.getElementById('history-list');
+  el.innerHTML = h.slice(0, 10).map(e => `<div class="history-item"><span style="color:#bbb">${e.time}</span><br>${e.msg}</div>`).join('') || '<p style="color:#bbb;font-size:12px">変更履歴がここに表示されます</p>';
+}
+
+// Drag & Drop
+function onDragStart(e, id) { dragId = id; e.dataTransfer.effectAllowed = 'move'; }
+function onDragOver(e, scope) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function onDrop(e, scope) {
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  if (dragId !== null) { moveItem(dragId, scope); dragId = null; }
+}
+
+function exportMarkdown() {
+  const data = load();
+  let md = `# 要件スコープ一覧\n\n出力日: ${new Date().toLocaleDateString('ja-JP')}\n\n`;
+  const groups = { in: data.filter(i => i.scope === 'in'), out: data.filter(i => i.scope === 'out'), future: data.filter(i => i.scope === 'future') };
+  ['in','out','future'].forEach(scope => {
+    const label = scope === 'in' ? '✅ スコープIN（今回作る）' : scope === 'out' ? '❌ スコープOUT（今回は作らない）' : '🔮 将来検討（次フェーズ候補）';
+    md += `## ${label}\n\n| ID | カテゴリ | 要件名 | 理由・コメント |\n|----|---------|--------|---------------|\n`;
+    groups[scope].forEach(i => { md += `| ${i.reqId||'-'} | ${i.cat} | ${i.name} | ${i.reason||'-'} |\n`; });
+    md += '\n';
+  });
+  saveFile(md, 'scope-boundary.md', 'text/markdown');
+}
+
+function exportCSV() {
+  const data = load();
+  let csv = 'ID,カテゴリ,要件名,概要,スコープ,理由\n';
+  data.forEach(i => { csv += `"${i.reqId||''}","${i.cat}","${i.name}","${i.desc||''}","${scopeLabel(i.scope)}","${i.reason||''}"\n`; });
+  saveFile('﻿'+csv, 'scope-boundary.csv', 'text/csv');
+}
+
+function loadSample() {
+  const now = new Date().toISOString().slice(0,10);
+  const sample = [
+    // IN: 今回作る
+    { _id:1,  reqId:'REQ-001', cat:'機能', name:'Azure AD SSOログイン', desc:'Azure ADを使ったシングルサインオン認証', scope:'in', reason:'社内AD環境が整備済みのため追加コストなしで高セキュリティ認証を実現できる', updatedAt:now },
+    { _id:2,  reqId:'REQ-002', cat:'機能', name:'申請作成・提出', desc:'各種申請フォームの入力・確認・提出', scope:'in', reason:'システム化の中核機能。これがなければシステムの存在意義がない', updatedAt:now },
+    { _id:3,  reqId:'REQ-003', cat:'機能', name:'申請承認・却下・差し戻し', desc:'承認者によるフロー操作', scope:'in', reason:'申請機能と一体。承認フローがなければ単なる記録システムになる', updatedAt:now },
+    { _id:4,  reqId:'REQ-004', cat:'機能', name:'申請一覧・検索・絞り込み', desc:'ステータス・期間・種別での絞り込み', scope:'in', reason:'申請数が増えると検索なしでは使いものにならない。初日から必要', updatedAt:now },
+    { _id:5,  reqId:'REQ-005', cat:'機能', name:'メール通知（提出・承認・却下）', desc:'申請イベント時のメール自動送信', scope:'in', reason:'承認者への催促を減らし、申請者が状況把握できるようにするために必須', updatedAt:now },
+    { _id:6,  reqId:'REQ-006', cat:'機能', name:'ファイルアップロード・ダウンロード', desc:'領収書等の添付ファイル管理', scope:'in', reason:'経費申請には証憑添付が必須。会計監査対応のため外せない', updatedAt:now },
+    { _id:7,  reqId:'REQ-007', cat:'機能', name:'CSVエクスポート', desc:'申請データのCSV出力（経理連携）', scope:'in', reason:'経理システムへのデータ取り込みに必要。経理担当から強く要望', updatedAt:now },
+    { _id:8,  reqId:'REQ-008', cat:'機能', name:'ユーザー管理（管理者）', desc:'ユーザーCRUD・ロール設定', scope:'in', reason:'社員の入退職対応と権限管理のために必要。運用開始日から必要', updatedAt:now },
+    { _id:9,  reqId:'REQ-009', cat:'機能', name:'Salesforce社員マスタ連携', desc:'Salesforce APIからの日次同期', scope:'in', reason:'HR部門がSalesforceで社員管理。二重管理を避けるために連携が必須', updatedAt:now },
+    { _id:10, reqId:'REQ-010', cat:'非機能', name:'レスポンシブ対応（スマホ閲覧・承認）', desc:'モバイルブラウザからの承認操作', scope:'in', reason:'外出先での承認操作の要望が強い。専用アプリではなくWebレスポンシブで対応', updatedAt:now },
+    { _id:11, reqId:'REQ-011', cat:'画面', name:'申請マスタ管理画面', desc:'申請種別・承認フロー設定', scope:'in', reason:'管理者がIT部門不要で設定変更できることがRFPの要件', updatedAt:now },
+    // OUT: 今回は作らない
+    { _id:12, reqId:'REQ-012', cat:'機能', name:'ネイティブモバイルアプリ（iOS/Android）', desc:'専用アプリ開発', scope:'out', reason:'Webレスポンシブ対応で承認操作の要件は満たせる。ネイティブアプリは開発コストが高く（+500万円）、スケジュールにも収まらない', updatedAt:now },
+    { _id:13, reqId:'REQ-013', cat:'機能', name:'二段階認証（SMS/アプリOTP）', desc:'Azure AD MFA以外の2FA', scope:'out', reason:'Azure AD MFAを活用すれば独自2FA実装は不要。Azure AD MFAの設定はインフラ側で対応', updatedAt:now },
+    { _id:14, reqId:'REQ-014', cat:'機能', name:'ダッシュボード（集計グラフ）', desc:'申請件数・承認率の可視化', scope:'out', reason:'あると便利だが必須ではない。一覧画面のCSVエクスポートでExcel分析可能。フェーズ2で実装', updatedAt:now },
+    { _id:15, reqId:'REQ-015', cat:'機能', name:'会計システム自動連携', desc:'CSVなしでの直接データ送受信', scope:'out', reason:'会計システム側のAPI仕様が未確定。CSVエクスポートで代替し、連携は次フェーズ', updatedAt:now },
+    { _id:16, reqId:'REQ-016', cat:'非機能', name:'DR（ディザスタリカバリ）環境', desc:'本番とは別のDR環境構築', scope:'out', reason:'コスト（月+15万円）と構築工数が大きい。RTO/RPO要件がSLAを超えないため今回は不要', updatedAt:now },
+    // Future: 将来検討
+    { _id:17, reqId:'REQ-017', cat:'機能', name:'AIによる申請不正検知', desc:'機械学習を使った異常申請の自動フラグ', scope:'future', reason:'技術的調査が必要。十分な学習データが溜まってから検討（1年後以降）', updatedAt:now },
+    { _id:18, reqId:'REQ-018', cat:'機能', name:'外部取引先ポータル', desc:'委託先・取引先ユーザーがアクセス可能なポータル', scope:'future', reason:'セキュリティアーキテクチャの再設計が必要。社内の要件定義が完了してから別プロジェクトで実施', updatedAt:now },
+    { _id:19, reqId:'REQ-019', cat:'非機能', name:'マルチテナント対応', desc:'グループ会社が別テナントとして利用可能', scope:'future', reason:'現時点では1社のみ利用。グループ展開が決定した際にアーキテクチャを再検討する', updatedAt:now },
+  ];
+  save(sample);
+  render();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  const state = { items: load(), history: loadHistory() };
+  saveFile(JSON.stringify(state, null, 2), 'scope-boundary.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const state = JSON.parse(ev.target.result);
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      if (Array.isArray(state)) { save(state); }
+      else { save(state.items || []); localStorage.setItem(HIST_KEY, JSON.stringify(state.history || [])); }
+      render(); renderHistory();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+render();
+renderHistory();
+</script>
+</body>
+</html>

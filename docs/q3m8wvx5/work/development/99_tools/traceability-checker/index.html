@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>トレーサビリティマトリクスチェッカー</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane-left { width: 340px; background: #fff; border-right: 1px solid #ddd; padding: 14px; overflow-y: auto; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+.pane-right { flex: 1; overflow: auto; padding: 16px; background: #fafafa; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+textarea { border: 1px solid #ccc; border-radius: 4px; padding: 8px; font-size: 12px; font-family: monospace; width: 100%; resize: vertical; }
+.hint { font-size: 11px; color: #999; margin-bottom: 4px; }
+.btn { padding: 7px 16px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+table.matrix { border-collapse: collapse; font-size: 12px; white-space: nowrap; }
+table.matrix th, table.matrix td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
+table.matrix th { background: #f5f5f5; font-weight: 600; color: #444; }
+table.matrix .row-header { text-align: left; font-weight: 600; min-width: 160px; background: #f9f9f9; }
+table.matrix .row-header .row-id { font-size: 11px; color: #888; }
+table.matrix .cell-ok { background: #d4edda; cursor: pointer; }
+table.matrix .cell-ok:hover { background: #b8ddc8; }
+table.matrix .cell-empty { cursor: pointer; }
+table.matrix .cell-empty:hover { background: #f0f4ff; }
+.cell-ok::after { content: "●"; color: #27ae60; font-size: 14px; }
+.summary { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.summary-card { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 10px 16px; text-align: center; min-width: 100px; }
+.summary-card .num { font-size: 22px; font-weight: bold; }
+.summary-card .label { font-size: 11px; color: #888; }
+.warn-list { margin-top: 14px; }
+.warn-item { background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 7px 12px; margin-bottom: 5px; font-size: 12px; color: #856404; }
+.error-item { background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; padding: 7px 12px; margin-bottom: 5px; font-size: 12px; color: #721c24; }
+.section-label { font-size: 13px; font-weight: bold; color: #444; margin: 14px 0 6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>トレーサビリティマトリクスチェッカー</h1>
+  <button onclick="loadSample()">サンプル</button>
+  <button onclick="buildMatrix()">マトリクス生成</button>
+  <button onclick="exportCSV()">CSVエクスポート</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane-left">
+    <div>
+      <h2>要件 (Requirements)</h2>
+      <p class="hint">1行1件: 「ID,名称」形式で入力</p>
+      <textarea id="reqs" rows="8" placeholder="REQ-001,ユーザーログイン機能&#10;REQ-002,パスワードリセット機能&#10;REQ-003,ユーザー一覧表示"></textarea>
+    </div>
+    <div>
+      <h2>機能 (Functions)</h2>
+      <p class="hint">1行1件: 「ID,名称」形式</p>
+      <textarea id="funcs" rows="6" placeholder="FUNC-001,認証機能&#10;FUNC-002,ユーザー管理機能"></textarea>
+    </div>
+    <div>
+      <h2>画面 (Screens)</h2>
+      <p class="hint">1行1件: 「ID,名称」形式</p>
+      <textarea id="screens" rows="5" placeholder="SCR-001,ログイン画面&#10;SCR-002,パスワードリセット画面"></textarea>
+    </div>
+    <div>
+      <h2>API (APIs)</h2>
+      <p class="hint">1行1件: 「ID,名称」形式</p>
+      <textarea id="apis" rows="5" placeholder="API-001,ログインAPI&#10;API-002,パスワードリセットAPI"></textarea>
+    </div>
+    <div>
+      <h2>テスト (Tests)</h2>
+      <p class="hint">1行1件: 「ID,名称」形式</p>
+      <textarea id="tests" rows="5" placeholder="TEST-001,ログインテスト&#10;TEST-002,パスワードリセットテスト"></textarea>
+    </div>
+    <div>
+      <h2>紐付けデータ (Mappings)</h2>
+      <p class="hint">1行1件: 「from,to」形式でIDを紐付け</p>
+      <textarea id="mappings" rows="8" placeholder="REQ-001,FUNC-001&#10;REQ-001,SCR-001&#10;FUNC-001,API-001&#10;API-001,TEST-001"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="buildMatrix()">マトリクス生成</button>
+  </div>
+
+  <div class="pane-right" id="result">
+    <p style="color:#888;font-size:13px">左側にIDと紐付けを入力して「マトリクス生成」を押してください</p>
+  </div>
+</div>
+<script>
+let matrix = {};
+
+function parseLines(text) {
+  return text.trim().split('\n').map(l => {
+    const [id, ...rest] = l.split(',').map(s => s.trim());
+    return id ? { id, name: rest.join(',') || id } : null;
+  }).filter(Boolean);
+}
+
+function parseMappings(text) {
+  return text.trim().split('\n').map(l => {
+    const [from, to] = l.split(',').map(s => s.trim());
+    return from && to ? { from, to } : null;
+  }).filter(Boolean);
+}
+
+function buildMatrix() {
+  const reqs = parseLines(document.getElementById('reqs').value);
+  const funcs = parseLines(document.getElementById('funcs').value);
+  const screens = parseLines(document.getElementById('screens').value);
+  const apis = parseLines(document.getElementById('apis').value);
+  const tests = parseLines(document.getElementById('tests').value);
+  const mappings = parseMappings(document.getElementById('mappings').value);
+
+  const groups = [
+    { label: '機能', items: funcs },
+    { label: '画面', items: screens },
+    { label: 'API', items: apis },
+    { label: 'テスト', items: tests },
+  ].filter(g => g.items.length > 0);
+
+  if (!reqs.length) { document.getElementById('result').innerHTML = '<p style="color:#e74c3c;font-size:13px">要件を入力してください</p>'; return; }
+
+  const mappingSet = new Set(mappings.map(m => `${m.from}||${m.to}`));
+  const linked = {};
+  mappings.forEach(m => {
+    if (!linked[m.from]) linked[m.from] = new Set();
+    linked[m.from].add(m.to);
+    if (!linked[m.to]) linked[m.to] = new Set();
+    linked[m.to].add(m.from);
+  });
+
+  let html = '';
+
+  // Summary
+  const totalCells = reqs.length * groups.reduce((s, g) => s + g.items.length, 0);
+  const filledCells = mappings.length;
+  const coverage = totalCells ? Math.round(filledCells / totalCells * 100) : 0;
+
+  html += `<div class="summary">
+    <div class="summary-card"><div class="num">${reqs.length}</div><div class="label">要件数</div></div>
+    <div class="summary-card"><div class="num">${groups.reduce((s,g)=>s+g.items.length,0)}</div><div class="label">設計成果物数</div></div>
+    <div class="summary-card"><div class="num">${mappings.length}</div><div class="label">紐付け数</div></div>
+    <div class="summary-card"><div class="num" style="color:${coverage>=80?'#27ae60':coverage>=50?'#f39c12':'#e74c3c'}">${coverage}%</div><div class="label">紐付けカバレッジ</div></div>
+  </div>`;
+
+  // Warnings
+  const warnings = [];
+  const errors = [];
+  reqs.forEach(r => {
+    if (!linked[r.id] || linked[r.id].size === 0) {
+      errors.push(`要件 ${r.id}「${r.name}」に紐付く設計成果物がありません`);
+    }
+  });
+  groups.forEach(g => {
+    g.items.forEach(item => {
+      const hasReq = reqs.some(r => linked[r.id]?.has(item.id) || linked[item.id]?.has(r.id));
+      if (!hasReq) warnings.push(`${g.label} ${item.id}「${item.name}」に対応する要件の紐付けがありません`);
+    });
+  });
+  if (tests.length) {
+    const allApis = apis.map(a => a.id);
+    tests.forEach(t => {
+      const hasTarget = mappings.some(m => (m.from === t.id || m.to === t.id) && (allApis.includes(m.from) || allApis.includes(m.to)));
+      if (!hasTarget) warnings.push(`テスト ${t.id}「${t.name}」に対応するAPIの紐付けがありません`);
+    });
+  }
+
+  if (errors.length) {
+    html += '<div class="section-label">⚠ 抜け漏れ（要対応）</div><div class="warn-list">';
+    errors.forEach(e => { html += `<div class="error-item">❌ ${e}</div>`; });
+    html += '</div>';
+  }
+  if (warnings.length) {
+    html += '<div class="section-label">注意事項</div><div class="warn-list">';
+    warnings.forEach(w => { html += `<div class="warn-item">⚠ ${w}</div>`; });
+    html += '</div>';
+  }
+
+  // Matrix tables per group
+  groups.forEach(g => {
+    html += `<div class="section-label">要件 × ${g.label}</div>
+    <div style="overflow-x:auto;margin-bottom:16px">
+    <table class="matrix"><thead><tr>
+      <th class="row-header">要件</th>`;
+    g.items.forEach(item => { html += `<th title="${item.name}">${item.id}<br><span style="font-weight:normal;color:#888">${item.name.length>8?item.name.slice(0,8)+'…':item.name}</span></th>`; });
+    html += '</tr></thead><tbody>';
+    reqs.forEach(r => {
+      html += `<tr><td class="row-header">${r.id}<br><span class="row-id">${r.name}</span></td>`;
+      g.items.forEach(item => {
+        const key = `${r.id}||${item.id}`;
+        const key2 = `${item.id}||${r.id}`;
+        const isLinked = mappingSet.has(key) || mappingSet.has(key2);
+        html += `<td class="${isLinked ? 'cell-ok' : 'cell-empty'}" onclick="toggleCell('${r.id}','${item.id}')" title="${r.id}⟷${item.id}"></td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+  });
+
+  matrix = { reqs, groups, mappingSet };
+  document.getElementById('result').innerHTML = html;
+}
+
+function toggleCell(reqId, itemId) {
+  const key = `${reqId}||${itemId}`;
+  const key2 = `${itemId}||${reqId}`;
+  const mappingsEl = document.getElementById('mappings');
+  const lines = mappingsEl.value.trim().split('\n').map(l => l.trim()).filter(Boolean);
+  const existsIdx = lines.findIndex(l => l === `${reqId},${itemId}` || l === `${itemId},${reqId}`);
+  if (existsIdx >= 0) {
+    lines.splice(existsIdx, 1);
+  } else {
+    lines.push(`${reqId},${itemId}`);
+  }
+  mappingsEl.value = lines.join('\n');
+  buildMatrix();
+}
+
+function exportCSV() {
+  if (!matrix.reqs) { alert('先にマトリクスを生成してください'); return; }
+  let csv = '要件ID,要件名';
+  matrix.groups.forEach(g => { g.items.forEach(item => { csv += `,${item.id}`; }); });
+  csv += '\n';
+  matrix.reqs.forEach(r => {
+    csv += `${r.id},${r.name}`;
+    matrix.groups.forEach(g => {
+      g.items.forEach(item => {
+        const key = `${r.id}||${item.id}`;
+        const key2 = `${item.id}||${r.id}`;
+        csv += `,${(matrix.mappingSet.has(key) || matrix.mappingSet.has(key2)) ? '●' : ''}`;
+      });
+    });
+    csv += '\n';
+  });
+  saveFile('﻿' + csv, 'traceability-matrix.csv', 'text/csv');
+}
+
+function loadSample() {
+  document.getElementById('reqs').value = `REQ-001,ユーザーログイン（Azure AD SSO）
+REQ-002,申請作成・提出
+REQ-003,申請承認・却下・差し戻し
+REQ-004,申請一覧・検索・絞り込み
+REQ-005,申請詳細閲覧
+REQ-006,メール通知（提出・承認・却下）
+REQ-007,ファイルアップロード・ダウンロード
+REQ-008,ユーザー管理（管理者機能）
+REQ-009,CSVエクスポート
+REQ-010,Salesforce社員マスタ連携`;
+  document.getElementById('funcs').value = `FUNC-001,認証機能（Azure AD SSO連携）
+FUNC-002,申請管理機能
+FUNC-003,承認フロー管理機能
+FUNC-004,ファイル管理機能（S3）
+FUNC-005,通知機能（SendGrid）
+FUNC-006,ユーザー・ロール管理機能
+FUNC-007,データエクスポート機能
+FUNC-008,外部API連携機能（Salesforce）`;
+  document.getElementById('screens').value = `SCR-001,ログイン画面
+SCR-002,ダッシュボード
+SCR-003,申請一覧画面
+SCR-004,申請詳細画面
+SCR-005,申請新規作成画面
+SCR-006,申請確認画面
+SCR-007,申請完了画面
+SCR-008,承認待ち一覧画面
+SCR-009,ユーザー一覧画面
+SCR-010,ユーザー登録・編集画面`;
+  document.getElementById('apis').value = `API-001,POST /api/v1/auth/login
+API-002,POST /api/v1/auth/logout
+API-003,GET /api/v1/applications
+API-004,POST /api/v1/applications
+API-005,GET /api/v1/applications/{id}
+API-006,PUT /api/v1/applications/{id}
+API-007,POST /api/v1/applications/{id}/submit
+API-008,POST /api/v1/applications/{id}/approve
+API-009,POST /api/v1/applications/{id}/reject
+API-010,POST /api/v1/applications/{id}/return
+API-011,POST /api/v1/applications/{id}/attachments
+API-012,GET /api/v1/applications/{id}/attachments/{fileId}
+API-013,GET /api/v1/users
+API-014,POST /api/v1/users
+API-015,PUT /api/v1/users/{id}
+API-016,DELETE /api/v1/users/{id}
+API-017,GET /api/v1/applications/export/csv
+API-018,POST /api/v1/batch/sync-salesforce`;
+  document.getElementById('tests').value = `TEST-001,ログイン正常系テスト
+TEST-002,ログイン異常系（認証失敗・ロック）テスト
+TEST-003,申請作成・提出テスト
+TEST-004,申請バリデーションテスト
+TEST-005,承認フロー正常系テスト
+TEST-006,却下・差し戻しテスト
+TEST-007,申請一覧・検索テスト
+TEST-008,ファイルアップロード・ダウンロードテスト
+TEST-009,メール通知テスト
+TEST-010,ユーザー管理テスト
+TEST-011,CSVエクスポートテスト
+TEST-012,Salesforce連携テスト
+TEST-013,権限制御テスト（ロール別アクセス）`;
+  document.getElementById('mappings').value = `REQ-001,FUNC-001
+REQ-001,SCR-001
+REQ-001,API-001
+REQ-001,API-002
+REQ-001,TEST-001
+REQ-001,TEST-002
+REQ-002,FUNC-002
+REQ-002,SCR-005
+REQ-002,SCR-006
+REQ-002,SCR-007
+REQ-002,API-004
+REQ-002,API-007
+REQ-002,TEST-003
+REQ-002,TEST-004
+REQ-003,FUNC-003
+REQ-003,SCR-008
+REQ-003,SCR-004
+REQ-003,API-008
+REQ-003,API-009
+REQ-003,API-010
+REQ-003,TEST-005
+REQ-003,TEST-006
+REQ-004,FUNC-002
+REQ-004,SCR-003
+REQ-004,API-003
+REQ-004,TEST-007
+REQ-005,FUNC-002
+REQ-005,SCR-004
+REQ-005,API-005
+REQ-005,TEST-007
+REQ-006,FUNC-005
+REQ-006,TEST-009
+REQ-007,FUNC-004
+REQ-007,API-011
+REQ-007,API-012
+REQ-007,TEST-008
+REQ-008,FUNC-006
+REQ-008,SCR-009
+REQ-008,SCR-010
+REQ-008,API-013
+REQ-008,API-014
+REQ-008,API-015
+REQ-008,API-016
+REQ-008,TEST-010
+REQ-008,TEST-013
+REQ-009,FUNC-007
+REQ-009,API-017
+REQ-009,TEST-011
+REQ-010,FUNC-008
+REQ-010,API-018
+REQ-010,TEST-012`;
+  buildMatrix();
+}
+
+const TC_STORAGE_KEY = 'traceability-checker-v1';
+const TC_FIELDS = ['reqs', 'funcs', 'screens', 'apis', 'tests', 'mappings'];
+
+function getState() {
+  return Object.fromEntries(TC_FIELDS.map(id => [id, document.getElementById(id).value]));
+}
+function autoSave() { localStorage.setItem(TC_STORAGE_KEY, JSON.stringify(getState())); }
+TC_FIELDS.forEach(id => document.getElementById(id).addEventListener('input', autoSave));
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(getState(), null, 2), 'traceability.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const state = JSON.parse(ev.target.result);
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      TC_FIELDS.forEach(id => { if (state[id] !== undefined) document.getElementById(id).value = state[id]; });
+      autoSave(); buildMatrix();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+// ページロード時に復元
+const _tcSaved = localStorage.getItem(TC_STORAGE_KEY);
+if (_tcSaved) {
+  try {
+    const state = JSON.parse(_tcSaved);
+    TC_FIELDS.forEach(id => { if (state[id] !== undefined) document.getElementById(id).value = state[id]; });
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

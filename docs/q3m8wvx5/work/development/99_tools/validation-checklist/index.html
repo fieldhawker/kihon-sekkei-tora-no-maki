@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>バリデーションチェックリスト生成ツール</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; font-size: 16px; font-weight: bold; }
+.container { display: flex; gap: 0; height: calc(100vh - 42px); }
+.pane { flex: 1; padding: 16px; overflow-y: auto; }
+.pane-left { background: #fff; border-right: 1px solid #ddd; max-width: 420px; }
+.pane-right { background: #fafafa; }
+h2 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 6px; margin-top: 18px; }
+h2:first-child { margin-top: 0; }
+label { font-size: 13px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer; }
+input[type=checkbox] { width: 15px; height: 15px; }
+input[type=text], input[type=number], select { border: 1px solid #ccc; border-radius: 4px; padding: 6px 10px; font-size: 13px; width: 100%; margin-bottom: 8px; }
+.row { display: flex; gap: 8px; }
+.row input { flex: 1; }
+.btn { padding: 8px 20px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.test-case { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; margin-bottom: 8px; }
+.test-case .tc-title { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+.test-case .tc-input { font-size: 12px; color: #555; margin-bottom: 3px; }
+.test-case .tc-expected { font-size: 12px; }
+.badge-ok { background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.badge-ng { background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.badge-warn { background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.section-label { font-size: 11px; color: #999; text-transform: uppercase; font-weight: bold; margin: 14px 0 4px; }
+textarea.output { width: 100%; font-size: 12px; font-family: monospace; border: 1px solid #ccc; border-radius: 4px; padding: 8px; background: #1e1e1e; color: #d4d4d4; resize: vertical; }
+.count { font-size: 13px; color: #666; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 style="font-size:16px;font-weight:bold">バリデーションチェックリスト生成ツール</h1>
+  <button onclick="exportJSON()" style="padding:5px 12px;border:1px solid #a0c4ff;background:transparent;color:#fff;border-radius:4px;cursor:pointer;font-size:13px">💾 保存</button>
+  <button onclick="importJSON()" style="padding:5px 12px;border:1px solid #fff;background:transparent;color:#fff;border-radius:4px;cursor:pointer;font-size:13px">📂 読み込み</button>
+</header>
+<div class="container">
+  <div class="pane pane-left">
+    <h2>項目情報</h2>
+    <label>項目名（論理名）</label>
+    <input type="text" id="field-name" placeholder="例: メールアドレス">
+
+    <h2>必須チェック</h2>
+    <label><input type="checkbox" id="req-required"> 必須入力</label>
+
+    <h2>文字種チェック</h2>
+    <label><input type="checkbox" id="char-halfnum"> 半角数字のみ</label>
+    <label><input type="checkbox" id="char-halfeng"> 半角英字のみ</label>
+    <label><input type="checkbox" id="char-halfalnum"> 半角英数字のみ</label>
+    <label><input type="checkbox" id="char-full"> 全角文字のみ</label>
+    <label><input type="checkbox" id="char-noemoji"> 絵文字禁止</label>
+    <label><input type="checkbox" id="char-nosymbol"> 特定記号禁止</label>
+
+    <h2>文字数チェック</h2>
+    <div class="row">
+      <div><label style="font-size:12px;color:#666">最小文字数</label><input type="number" id="len-min" placeholder="例: 1" min="0"></div>
+      <div><label style="font-size:12px;color:#666">最大文字数</label><input type="number" id="len-max" placeholder="例: 100" min="1"></div>
+    </div>
+
+    <h2>数値範囲チェック</h2>
+    <label><input type="checkbox" id="num-range"> 数値範囲チェックあり</label>
+    <div class="row">
+      <div><label style="font-size:12px;color:#666">最小値</label><input type="number" id="num-min" placeholder="例: 0"></div>
+      <div><label style="font-size:12px;color:#666">最大値</label><input type="number" id="num-max" placeholder="例: 9999"></div>
+    </div>
+
+    <h2>形式チェック</h2>
+    <label><input type="checkbox" id="fmt-email"> メールアドレス形式</label>
+    <label><input type="checkbox" id="fmt-url"> URL形式</label>
+    <label><input type="checkbox" id="fmt-tel"> 電話番号形式（ハイフンあり/なし）</label>
+    <label><input type="checkbox" id="fmt-postcode"> 郵便番号形式（NNN-NNNN）</label>
+    <label><input type="checkbox" id="fmt-date"> 日付形式（YYYY-MM-DD）</label>
+    <label><input type="checkbox" id="fmt-datetime"> 日時形式（YYYY-MM-DD HH:mm）</label>
+    <label><input type="checkbox" id="fmt-integer"> 整数のみ（小数点禁止）</label>
+
+    <h2>その他</h2>
+    <label><input type="checkbox" id="opt-trim"> 前後スペースはトリム</label>
+    <label><input type="checkbox" id="opt-unique"> 重複不可（一意制約）</label>
+    <label><input type="checkbox" id="opt-future"> 未来日のみ許可</label>
+    <label><input type="checkbox" id="opt-past"> 過去日のみ許可</label>
+
+    <div style="margin-top:16px">
+      <button class="btn btn-primary" onclick="generate()">チェックリスト生成</button>
+      <button class="btn-sm" onclick="loadSample()" style="margin-top:8px;width:100%">📋 サンプル（メールアドレス）</button>
+    </div>
+  </div>
+
+  <div class="pane pane-right">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <h2 style="margin:0">生成結果</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="copyMarkdown()">Markdownコピー</button>
+        <button class="btn-sm" onclick="copyCSV()">CSVコピー</button>
+      </div>
+    </div>
+    <div id="count" class="count"></div>
+    <div id="result"></div>
+  </div>
+</div>
+<script>
+let cases = [];
+
+function generate() {
+  cases = [];
+  const name = document.getElementById('field-name').value || '対象項目';
+  const required = document.getElementById('req-required').checked;
+  const lenMin = document.getElementById('len-min').value;
+  const lenMax = document.getElementById('len-max').value;
+  const numRange = document.getElementById('num-range').checked;
+  const numMin = document.getElementById('num-min').value;
+  const numMax = document.getElementById('num-max').value;
+
+  let caseNum = 1;
+  const add = (category, input, expected, result) => {
+    cases.push({ no: caseNum++, category, input, expected, result });
+  };
+
+  // 必須チェック
+  if (required) {
+    add('必須チェック', '空文字 (未入力)', 'エラー：入力必須', 'NG');
+    add('必須チェック', 'スペースのみ', 'エラー：入力必須 (トリム後空判定)', 'NG');
+    add('必須チェック', '正常な値', '正常終了', 'OK');
+  }
+
+  // 文字種
+  if (document.getElementById('char-halfnum').checked) {
+    add('文字種チェック', '半角数字のみ（例: 12345）', '正常終了', 'OK');
+    add('文字種チェック', '全角数字（例: １２３）', 'エラー：半角数字のみ', 'NG');
+    add('文字種チェック', '半角英字を含む（例: abc12）', 'エラー：半角数字のみ', 'NG');
+    add('文字種チェック', '記号を含む（例: 1,2）', 'エラー：半角数字のみ', 'NG');
+  }
+  if (document.getElementById('char-halfeng').checked) {
+    add('文字種チェック', '半角英字のみ（例: abcABC）', '正常終了', 'OK');
+    add('文字種チェック', '全角英字（例: ａｂｃ）', 'エラー：半角英字のみ', 'NG');
+    add('文字種チェック', '数字を含む（例: abc1）', 'エラー：半角英字のみ', 'NG');
+  }
+  if (document.getElementById('char-halfalnum').checked) {
+    add('文字種チェック', '半角英数字（例: abc123）', '正常終了', 'OK');
+    add('文字種チェック', '全角文字を含む（例: abc１２）', 'エラー：半角英数字のみ', 'NG');
+    add('文字種チェック', '記号を含む（例: abc!）', 'エラー：半角英数字のみ', 'NG');
+  }
+  if (document.getElementById('char-full').checked) {
+    add('文字種チェック', '全角文字のみ（例: 山田太郎）', '正常終了', 'OK');
+    add('文字種チェック', '半角文字を含む（例: Yamada）', 'エラー：全角文字のみ', 'NG');
+  }
+  if (document.getElementById('char-noemoji').checked) {
+    add('文字種チェック', '絵文字を含む（例: テスト😀）', 'エラー：絵文字不可', 'NG');
+    add('文字種チェック', '絵文字なし', '正常終了', 'OK');
+  }
+  if (document.getElementById('char-nosymbol').checked) {
+    add('文字種チェック', '禁止記号を含む（例: < > & " \'）', 'エラー：禁止記号不可', 'NG');
+    add('文字種チェック', '禁止記号なし', '正常終了', 'OK');
+  }
+
+  // 文字数
+  if (lenMin !== '' || lenMax !== '') {
+    const min = parseInt(lenMin) || 0;
+    const max = parseInt(lenMax) || 0;
+    if (lenMin !== '' && min > 0) {
+      add('文字数チェック（境界値）', `文字数 = ${min - 1}文字 (最小未満)`, 'エラー：最小文字数以上で入力', 'NG');
+      add('文字数チェック（境界値）', `文字数 = ${min}文字 (最小値)`, '正常終了', 'OK');
+      if (min + 1 <= max || lenMax === '') {
+        add('文字数チェック（境界値）', `文字数 = ${min + 1}文字 (最小+1)`, '正常終了', 'OK');
+      }
+    }
+    if (lenMax !== '' && max > 0) {
+      add('文字数チェック（境界値）', `文字数 = ${max - 1}文字 (最大-1)`, '正常終了', 'OK');
+      add('文字数チェック（境界値）', `文字数 = ${max}文字 (最大値)`, '正常終了', 'OK');
+      add('文字数チェック（境界値）', `文字数 = ${max + 1}文字 (最大超過)`, 'エラー：最大文字数以内で入力', 'NG');
+    }
+  }
+
+  // 数値範囲
+  if (numRange && (numMin !== '' || numMax !== '')) {
+    const min = parseFloat(numMin);
+    const max = parseFloat(numMax);
+    if (numMin !== '') {
+      add('数値範囲チェック（境界値）', `${min - 1} (最小未満)`, 'エラー：最小値以上で入力', 'NG');
+      add('数値範囲チェック（境界値）', `${min} (最小値)`, '正常終了', 'OK');
+      add('数値範囲チェック（境界値）', `${min + 1} (最小+1)`, '正常終了', 'OK');
+    }
+    if (numMax !== '') {
+      add('数値範囲チェック（境界値）', `${max - 1} (最大-1)`, '正常終了', 'OK');
+      add('数値範囲チェック（境界値）', `${max} (最大値)`, '正常終了', 'OK');
+      add('数値範囲チェック（境界値）', `${max + 1} (最大超過)`, 'エラー：最大値以下で入力', 'NG');
+    }
+  }
+
+  // 形式チェック
+  if (document.getElementById('fmt-email').checked) {
+    add('形式チェック（メール）', 'user@example.com', '正常終了', 'OK');
+    add('形式チェック（メール）', '@なし（例: userexample.com）', 'エラー：メール形式で入力', 'NG');
+    add('形式チェック（メール）', 'ドメインなし（例: user@）', 'エラー：メール形式で入力', 'NG');
+    add('形式チェック（メール）', '二重@（例: user@@example.com）', 'エラー：メール形式で入力', 'NG');
+    add('形式チェック（メール）', '日本語ローカルパート（例: テスト@example.com）', '要確認：仕様による', 'WARN');
+  }
+  if (document.getElementById('fmt-url').checked) {
+    add('形式チェック（URL）', 'https://example.com/path?q=1', '正常終了', 'OK');
+    add('形式チェック（URL）', 'http://example.com', '正常終了', 'OK');
+    add('形式チェック（URL）', 'httpsなし（例: example.com）', 'エラー：URL形式で入力', 'NG');
+    add('形式チェック（URL）', 'スペース含む URL', 'エラー：URL形式で入力', 'NG');
+  }
+  if (document.getElementById('fmt-tel').checked) {
+    add('形式チェック（電話番号）', '090-1234-5678', '正常終了', 'OK');
+    add('形式チェック（電話番号）', '09012345678 (ハイフンなし)', '正常または要確認', 'WARN');
+    add('形式チェック（電話番号）', '090-12345-678 (桁数不正)', 'エラー：電話番号形式で入力', 'NG');
+    add('形式チェック（電話番号）', '文字を含む（例: 090-ABCD-5678）', 'エラー：電話番号形式で入力', 'NG');
+  }
+  if (document.getElementById('fmt-postcode').checked) {
+    add('形式チェック（郵便番号）', '123-4567', '正常終了', 'OK');
+    add('形式チェック（郵便番号）', '1234567 (ハイフンなし)', '要確認：仕様による', 'WARN');
+    add('形式チェック（郵便番号）', '12-34567 (桁数不正)', 'エラー：郵便番号形式で入力', 'NG');
+    add('形式チェック（郵便番号）', 'ABC-DEFG (文字)', 'エラー：郵便番号形式で入力', 'NG');
+  }
+  if (document.getElementById('fmt-date').checked) {
+    add('形式チェック（日付）', '2024-01-15', '正常終了', 'OK');
+    add('形式チェック（日付）', '2024/01/15 (スラッシュ)', 'エラー：YYYY-MM-DD形式で入力', 'NG');
+    add('形式チェック（日付）', '2024-13-01 (月=13)', 'エラー：不正な日付', 'NG');
+    add('形式チェック（日付）', '2024-02-30 (存在しない日)', 'エラー：不正な日付', 'NG');
+    add('形式チェック（日付）', '2024-1-5 (ゼロ埋めなし)', '要確認：仕様による', 'WARN');
+  }
+  if (document.getElementById('fmt-datetime').checked) {
+    add('形式チェック（日時）', '2024-01-15 09:30', '正常終了', 'OK');
+    add('形式チェック（日時）', '2024-01-15T09:30（T区切り）', '要確認：仕様による', 'WARN');
+    add('形式チェック（日時）', '時刻部分なし（例: 2024-01-15）', 'エラー：日時形式で入力', 'NG');
+    add('形式チェック（日時）', '2024-01-15 25:00 (時=25)', 'エラー：不正な日時', 'NG');
+  }
+  if (document.getElementById('fmt-integer').checked) {
+    add('形式チェック（整数）', '123', '正常終了', 'OK');
+    add('形式チェック（整数）', '123.0 (小数点)', 'エラー：整数で入力', 'NG');
+    add('形式チェック（整数）', '-1 (負数)', '仕様確認要', 'WARN');
+  }
+
+  // その他
+  if (document.getElementById('opt-trim').checked) {
+    add('トリムチェック', '前後スペースあり（例: " 山田 "）', 'トリムして正常処理', 'OK');
+  }
+  if (document.getElementById('opt-unique').checked) {
+    add('一意チェック', '既に登録済みの値', 'エラー：既に使用されています', 'NG');
+    add('一意チェック', '未登録の値', '正常終了', 'OK');
+  }
+  if (document.getElementById('opt-future').checked) {
+    add('日付チェック（未来日）', '今日より過去の日付', 'エラー：未来の日付を入力してください', 'NG');
+    add('日付チェック（未来日）', '今日の日付', '要確認：当日許可か確認', 'WARN');
+    add('日付チェック（未来日）', '今日より未来の日付', '正常終了', 'OK');
+  }
+  if (document.getElementById('opt-past').checked) {
+    add('日付チェック（過去日）', '今日より未来の日付', 'エラー：過去の日付を入力してください', 'NG');
+    add('日付チェック（過去日）', '今日の日付', '要確認：当日許可か確認', 'WARN');
+    add('日付チェック（過去日）', '今日より過去の日付', '正常終了', 'OK');
+  }
+
+  render(name);
+}
+
+function render(name) {
+  const el = document.getElementById('result');
+  const countEl = document.getElementById('count');
+  if (cases.length === 0) {
+    el.innerHTML = '<p style="color:#888;font-size:13px">条件を選択して「チェックリスト生成」を押してください</p>';
+    countEl.textContent = '';
+    return;
+  }
+
+  countEl.textContent = `${name} — ${cases.length}件のテストケースを生成`;
+
+  const grouped = {};
+  cases.forEach(c => {
+    if (!grouped[c.category]) grouped[c.category] = [];
+    grouped[c.category].push(c);
+  });
+
+  let html = '';
+  for (const [cat, items] of Object.entries(grouped)) {
+    html += `<div class="section-label">${cat}</div>`;
+    items.forEach(c => {
+      const badge = c.result === 'OK' ? 'badge-ok' : c.result === 'NG' ? 'badge-ng' : 'badge-warn';
+      const label = c.result === 'OK' ? '正常' : c.result === 'NG' ? 'エラー' : '確認';
+      html += `<div class="test-case">
+        <div class="tc-title">No.${c.no} <span class="${badge}">${label}</span></div>
+        <div class="tc-input">入力値: ${c.input}</div>
+        <div class="tc-expected">期待結果: ${c.expected}</div>
+      </div>`;
+    });
+  }
+  el.innerHTML = html;
+}
+
+function copyMarkdown() {
+  if (!cases.length) { alert('先に生成してください'); return; }
+  const name = document.getElementById('field-name').value || '対象項目';
+  let md = `# ${name} バリデーションテストケース\n\n| No. | カテゴリ | 入力値 | 期待結果 | 判定 |\n|-----|---------|--------|---------|------|\n`;
+  cases.forEach(c => {
+    md += `| ${c.no} | ${c.category} | ${c.input} | ${c.expected} | ${c.result} |\n`;
+  });
+  navigator.clipboard.writeText(md).then(() => alert('Markdownをコピーしました'));
+}
+
+function copyCSV() {
+  if (!cases.length) { alert('先に生成してください'); return; }
+  let csv = 'No,カテゴリ,入力値,期待結果,判定\n';
+  cases.forEach(c => {
+    csv += `${c.no},"${c.category}","${c.input}","${c.expected}",${c.result}\n`;
+  });
+  navigator.clipboard.writeText(csv).then(() => alert('CSVをコピーしました'));
+}
+
+const VC_STORAGE_KEY = 'validation-checklist-v1';
+const VC_CHECKBOXES = ['req-required','char-halfnum','char-halfeng','char-halfalnum','char-full','char-noemoji','char-nosymbol','num-range','fmt-email','fmt-url','fmt-tel','fmt-postcode','fmt-date','fmt-datetime','fmt-integer','opt-trim','opt-unique','opt-future','opt-past'];
+const VC_INPUTS = ['field-name','len-min','len-max','num-min','num-max'];
+
+function getState() {
+  const state = {};
+  VC_CHECKBOXES.forEach(id => { state[id] = document.getElementById(id).checked; });
+  VC_INPUTS.forEach(id => { state[id] = document.getElementById(id).value; });
+  return state;
+}
+function restoreState(state) {
+  VC_CHECKBOXES.forEach(id => { if (state[id] !== undefined) document.getElementById(id).checked = state[id]; });
+  VC_INPUTS.forEach(id => { if (state[id] !== undefined) document.getElementById(id).value = state[id]; });
+}
+function autoSave() { localStorage.setItem(VC_STORAGE_KEY, JSON.stringify(getState())); }
+
+VC_CHECKBOXES.forEach(id => document.getElementById(id).addEventListener('change', autoSave));
+VC_INPUTS.forEach(id => document.getElementById(id).addEventListener('input', autoSave));
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(getState(), null, 2), 'validation-checklist.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const state = JSON.parse(ev.target.result);
+      if (!confirm('現在の設定を読み込んだデータで上書きしますか？')) return;
+      restoreState(state); autoSave(); generate();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+function loadSample() {
+  const samples = [
+    {
+      name: 'メールアドレス',
+      checkboxes: { 'req-required': true, 'fmt-email': true, 'char-nosymbol': false, 'char-noemoji': true, 'opt-unique': true, 'opt-trim': true },
+      inputs: { 'field-name': 'メールアドレス', 'len-min': '5', 'len-max': '254' }
+    },
+    {
+      name: 'パスワード',
+      checkboxes: { 'req-required': true, 'char-halfalnum': false, 'char-noemoji': true },
+      inputs: { 'field-name': 'パスワード', 'len-min': '8', 'len-max': '128' }
+    },
+    {
+      name: '電話番号',
+      checkboxes: { 'req-required': false, 'fmt-tel': true, 'char-halfnum': false },
+      inputs: { 'field-name': '電話番号（ハイフンあり）', 'len-min': '12', 'len-max': '13' }
+    },
+    {
+      name: '氏名（全角）',
+      checkboxes: { 'req-required': true, 'char-full': true, 'char-noemoji': true, 'opt-trim': true },
+      inputs: { 'field-name': '氏名', 'len-min': '1', 'len-max': '50' }
+    },
+    {
+      name: '年齢（数値範囲）',
+      checkboxes: { 'req-required': true, 'num-range': true, 'fmt-integer': true },
+      inputs: { 'field-name': '年齢', 'len-min': '', 'len-max': '', 'num-min': '0', 'num-max': '150' }
+    },
+    {
+      name: '申請日（日付）',
+      checkboxes: { 'req-required': true, 'fmt-date': true, 'opt-past': false, 'opt-future': false },
+      inputs: { 'field-name': '申請日', 'len-min': '', 'len-max': '' }
+    },
+  ];
+  const labels = samples.map(s => s.name).join(' / ');
+  const choice = prompt(`サンプル項目を選択してください（番号を入力）:\n${samples.map((s,i) => `${i+1}: ${s.name}`).join('\n')}`, '1');
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= samples.length) { alert('無効な選択です'); return; }
+  const s = samples[idx];
+  VC_CHECKBOXES.forEach(id => { document.getElementById(id).checked = false; });
+  VC_INPUTS.forEach(id => { document.getElementById(id).value = ''; });
+  Object.entries(s.checkboxes).forEach(([id, val]) => { if (document.getElementById(id)) document.getElementById(id).checked = val; });
+  Object.entries(s.inputs).forEach(([id, val]) => { if (document.getElementById(id)) document.getElementById(id).value = val; });
+  autoSave();
+  generate();
+}
+
+// ページロード時に復元
+const _vcSaved = localStorage.getItem(VC_STORAGE_KEY);
+if (_vcSaved) { try { restoreState(JSON.parse(_vcSaved)); } catch(e) {} }
+</script>
+</body>
+</html>

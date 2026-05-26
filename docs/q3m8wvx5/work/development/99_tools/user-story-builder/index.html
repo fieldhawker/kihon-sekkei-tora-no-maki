@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ユーザーストーリー作成ツール</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane-form { width: 380px; background: #fff; border-right: 1px solid #ddd; padding: 16px; overflow-y: auto; flex-shrink: 0; }
+.pane-list { flex: 1; padding: 16px; overflow-y: auto; background: #fafafa; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+h2:first-child { margin-top: 0; }
+label { font-size: 12px; color: #666; display: block; margin-bottom: 3px; }
+input, select, textarea { border: 1px solid #ccc; border-radius: 4px; padding: 7px 10px; font-size: 13px; width: 100%; margin-bottom: 8px; font-family: sans-serif; }
+textarea { resize: vertical; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; width: 100%; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.btn-sm:hover { background: #dce1e7; }
+.story-preview { background: #f0f4ff; border: 1px solid #c5d3f5; border-radius: 6px; padding: 10px 14px; font-size: 13px; color: #2c3e50; line-height: 1.7; margin-bottom: 10px; }
+.story-preview em { font-style: normal; font-weight: bold; color: #4a90e2; }
+.ac-row { display: flex; gap: 6px; margin-bottom: 5px; align-items: flex-start; }
+.ac-row input { flex: 1; margin-bottom: 0; }
+.btn-danger { background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 15px; padding: 4px; }
+/* MoSCoW colors */
+.must { background: #fde8e8; color: #c0392b; }
+.should { background: #fff3cd; color: #856404; }
+.could { background: #d4edda; color: #155724; }
+.wont { background: #e2e3e5; color: #383d41; }
+.moscow-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+/* Story card */
+.story-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+.story-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
+.story-id { font-size: 11px; color: #aaa; }
+.card-title { font-size: 14px; color: #2c3e50; line-height: 1.5; flex: 1; }
+.card-title em { font-style: normal; font-weight: bold; color: #4a90e2; }
+.ac-list { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+.ac-list-title { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 4px; }
+.ac-item { font-size: 12px; color: #555; display: flex; align-items: flex-start; gap: 5px; margin-bottom: 3px; }
+.ac-item::before { content: "✓"; color: #27ae60; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+.card-meta { display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
+.card-actions { display: flex; gap: 4px; margin-left: auto; }
+.filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+.filter-bar select, .filter-bar input { width: auto; margin-bottom: 0; font-size: 12px; padding: 5px 8px; }
+.sort-btn { font-size: 11px; }
+.empty-msg { color: #aaa; font-size: 13px; padding: 20px; text-align: center; }
+.priority-tag { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 11px; background: #ecf0f1; color: #555; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ユーザーストーリー作成ツール</h1>
+  <button onclick="exportMarkdown()">Markdownエクスポート</button>
+  <button onclick="exportCSV()">CSVエクスポート</button>
+  <button onclick="loadSample()">サンプル</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane-form">
+    <h2 id="form-title">ユーザーストーリーを追加</h2>
+    <input type="hidden" id="edit-id" value="">
+
+    <div class="story-preview" id="story-preview">
+      （フォームを入力するとプレビューが表示されます）
+    </div>
+
+    <label>ロール（As a...）</label>
+    <input type="text" id="f-role" placeholder="例: 一般ユーザー、管理者" oninput="updatePreview()">
+
+    <label>ウォント（I want to...）</label>
+    <textarea id="f-want" rows="2" placeholder="例: メールアドレスとパスワードでログインしたい" oninput="updatePreview()"></textarea>
+
+    <label>ベネフィット（So that...）</label>
+    <textarea id="f-benefit" rows="2" placeholder="例: 自分の申請状況を確認できるようにするため" oninput="updatePreview()"></textarea>
+
+    <label>MoSCoW 優先度</label>
+    <select id="f-moscow" onchange="updatePreview()">
+      <option value="must">Must（必須）</option>
+      <option value="should">Should（重要）</option>
+      <option value="could">Could（あると良い）</option>
+      <option value="wont">Won't（今回は対象外）</option>
+    </select>
+
+    <label>担当チーム / 担当者</label>
+    <input type="text" id="f-owner" placeholder="例: フロントエンドチーム">
+
+    <label>ストーリーポイント（見積もり）</label>
+    <select id="f-points">
+      <option value="">未見積</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="5">5</option>
+      <option value="8">8</option>
+      <option value="13">13</option>
+      <option value="21">21</option>
+    </select>
+
+    <h2>受け入れ条件（Acceptance Criteria）</h2>
+    <div id="ac-list"></div>
+    <button class="btn-sm" onclick="addAC()">＋ 条件追加</button>
+
+    <div style="margin-top:14px">
+      <button class="btn btn-primary" onclick="saveStory()">保存</button>
+      <button class="btn-sm" style="margin-top:8px;width:100%;text-align:center" onclick="cancelEdit()">キャンセル</button>
+    </div>
+  </div>
+
+  <div class="pane-list">
+    <div class="filter-bar">
+      <input type="text" id="search" placeholder="キーワード検索..." oninput="renderList()" style="flex:1;min-width:150px">
+      <select id="filter-moscow" onchange="renderList()">
+        <option value="">すべての優先度</option>
+        <option value="must">Must</option>
+        <option value="should">Should</option>
+        <option value="could">Could</option>
+        <option value="wont">Won't</option>
+      </select>
+      <button class="btn-sm sort-btn" onclick="toggleSort()">並び替え: <span id="sort-label">優先度順</span></button>
+    </div>
+    <div id="story-list"></div>
+  </div>
+</div>
+<script>
+const STORAGE_KEY = 'user-stories-v1';
+let sortMode = 'priority';
+let idCounter = 1;
+
+const MOSCOW_ORDER = { must: 0, should: 1, could: 2, wont: 3 };
+const MOSCOW_LABELS = { must: 'Must（必須）', should: 'Should（重要）', could: 'Could（あると良い）', wont: "Won't（今回対象外）" };
+
+function load() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function nextId() {
+  const data = load();
+  return data.length ? Math.max(...data.map(s => s.id)) + 1 : 1;
+}
+
+function addAC(val = '') {
+  const list = document.getElementById('ac-list');
+  const row = document.createElement('div');
+  row.className = 'ac-row';
+  row.innerHTML = `<input type="text" value="${val}" placeholder="例: 正しい認証情報でログインできること"><button class="btn-danger" onclick="this.closest('.ac-row').remove()">×</button>`;
+  list.appendChild(row);
+}
+
+function getACs() {
+  return Array.from(document.getElementById('ac-list').querySelectorAll('input')).map(i => i.value.trim()).filter(Boolean);
+}
+
+function updatePreview() {
+  const role = document.getElementById('f-role').value.trim() || '___';
+  const want = document.getElementById('f-want').value.trim() || '___';
+  const benefit = document.getElementById('f-benefit').value.trim() || '___';
+  document.getElementById('story-preview').innerHTML =
+    `<em>${role}</em> として、<em>${want}</em>。なぜなら、<em>${benefit}</em>。`;
+}
+
+function saveStory() {
+  const role = document.getElementById('f-role').value.trim();
+  const want = document.getElementById('f-want').value.trim();
+  if (!role || !want) { alert('ロールとウォントは必須です'); return; }
+
+  const entry = {
+    role, want,
+    benefit: document.getElementById('f-benefit').value.trim(),
+    moscow: document.getElementById('f-moscow').value,
+    owner: document.getElementById('f-owner').value.trim(),
+    points: document.getElementById('f-points').value,
+    ac: getACs(),
+    createdAt: new Date().toISOString(),
+  };
+
+  const data = load();
+  const editId = document.getElementById('edit-id').value;
+  if (editId) {
+    const idx = data.findIndex(s => String(s.id) === editId);
+    if (idx >= 0) { entry.id = data[idx].id; entry.createdAt = data[idx].createdAt; data[idx] = entry; }
+  } else {
+    entry.id = nextId();
+    data.push(entry);
+  }
+  save(data);
+  cancelEdit();
+  renderList();
+}
+
+function editStory(id) {
+  const story = load().find(s => s.id === id);
+  if (!story) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('f-role').value = story.role;
+  document.getElementById('f-want').value = story.want;
+  document.getElementById('f-benefit').value = story.benefit || '';
+  document.getElementById('f-moscow').value = story.moscow;
+  document.getElementById('f-owner').value = story.owner || '';
+  document.getElementById('f-points').value = story.points || '';
+  document.getElementById('ac-list').innerHTML = '';
+  (story.ac || []).forEach(ac => addAC(ac));
+  document.getElementById('form-title').textContent = 'ユーザーストーリーを編集';
+  updatePreview();
+  document.getElementById('f-role').focus();
+}
+
+function deleteStory(id) {
+  if (!confirm('削除しますか？')) return;
+  save(load().filter(s => s.id !== id));
+  renderList();
+}
+
+function cancelEdit() {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('f-role').value = '';
+  document.getElementById('f-want').value = '';
+  document.getElementById('f-benefit').value = '';
+  document.getElementById('f-moscow').value = 'must';
+  document.getElementById('f-owner').value = '';
+  document.getElementById('f-points').value = '';
+  document.getElementById('ac-list').innerHTML = '';
+  document.getElementById('form-title').textContent = 'ユーザーストーリーを追加';
+  document.getElementById('story-preview').textContent = '（フォームを入力するとプレビューが表示されます）';
+}
+
+function toggleSort() {
+  sortMode = sortMode === 'priority' ? 'id' : 'priority';
+  document.getElementById('sort-label').textContent = sortMode === 'priority' ? '優先度順' : '登録順';
+  renderList();
+}
+
+function renderList() {
+  const data = load();
+  const q = document.getElementById('search').value.toLowerCase();
+  const filterM = document.getElementById('filter-moscow').value;
+
+  let filtered = data.filter(s => {
+    const matchQ = !q || [s.role, s.want, s.benefit, s.owner, ...(s.ac||[])].join(' ').toLowerCase().includes(q);
+    const matchM = !filterM || s.moscow === filterM;
+    return matchQ && matchM;
+  });
+
+  if (sortMode === 'priority') {
+    filtered.sort((a, b) => MOSCOW_ORDER[a.moscow] - MOSCOW_ORDER[b.moscow] || a.id - b.id);
+  }
+
+  const el = document.getElementById('story-list');
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty-msg">${data.length === 0 ? 'ストーリーを追加してください' : '該当するストーリーがありません'}</div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map(s => {
+    const acHtml = s.ac?.length ? `<div class="ac-list"><div class="ac-list-title">受け入れ条件</div>${s.ac.map(a => `<div class="ac-item">${escHtml(a)}</div>`).join('')}</div>` : '';
+    const points = s.points ? `<span class="priority-tag">SP: ${s.points}</span>` : '';
+    const owner = s.owner ? `<span class="priority-tag">👤 ${escHtml(s.owner)}</span>` : '';
+    return `<div class="story-card">
+      <div class="card-header">
+        <div>
+          <div class="story-id">US-${String(s.id).padStart(3,'0')}</div>
+          <div class="card-title"><em>${escHtml(s.role)}</em> として、<em>${escHtml(s.want)}</em>。${s.benefit ? `なぜなら、${escHtml(s.benefit)}。` : ''}</div>
+        </div>
+      </div>
+      ${acHtml}
+      <div class="card-meta">
+        <span class="moscow-badge ${s.moscow}">${MOSCOW_LABELS[s.moscow]}</span>
+        ${points}${owner}
+        <div class="card-actions">
+          <button class="btn-sm" onclick="editStory(${s.id})">✏️ 編集</button>
+          <button class="btn-sm" onclick="deleteStory(${s.id})" style="color:#e74c3c">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function exportMarkdown() {
+  const data = load();
+  if (!data.length) { alert('データがありません'); return; }
+  const sorted = [...data].sort((a, b) => MOSCOW_ORDER[a.moscow] - MOSCOW_ORDER[b.moscow]);
+  let md = '# ユーザーストーリー一覧\n\n';
+  const groups = { must: [], should: [], could: [], wont: [] };
+  sorted.forEach(s => groups[s.moscow].push(s));
+  Object.entries(groups).forEach(([m, stories]) => {
+    if (!stories.length) return;
+    md += `## ${MOSCOW_LABELS[m]}\n\n`;
+    stories.forEach(s => {
+      md += `### US-${String(s.id).padStart(3,'0')}: ${s.role}として、${s.want}\n\n`;
+      if (s.benefit) md += `**目的**: ${s.benefit}\n\n`;
+      if (s.owner) md += `**担当**: ${s.owner}  `;
+      if (s.points) md += `**SP**: ${s.points}`;
+      if (s.owner || s.points) md += '\n\n';
+      if (s.ac?.length) {
+        md += `**受け入れ条件**:\n`;
+        s.ac.forEach(a => { md += `- [ ] ${a}\n`; });
+        md += '\n';
+      }
+    });
+  });
+  saveFile(md, 'user-stories.md', 'text/markdown');
+}
+
+function exportCSV() {
+  const data = load();
+  if (!data.length) { alert('データがありません'); return; }
+  let csv = 'ID,ロール,ウォント,ベネフィット,MoSCoW,担当者,SP,受け入れ条件\n';
+  data.forEach(s => {
+    csv += `"US-${String(s.id).padStart(3,'0')}","${s.role}","${s.want}","${s.benefit||''}","${MOSCOW_LABELS[s.moscow]}","${s.owner||''}","${s.points||''}","${(s.ac||[]).join(' / ')}"\n`;
+  });
+  saveFile('﻿'+csv, 'user-stories.csv', 'text/csv');
+}
+
+function loadSample() {
+  const sample = [
+    { id:1, role:'一般ユーザー（申請者）', want:'会社のSSOアカウントでログインしたい', benefit:'別のパスワードを覚えずにシステムを使い始められるようにするため', moscow:'must', owner:'バックエンドチーム', points:'5', ac:['Azure ADの認証情報でログインできること','未登録ユーザーはエラーメッセージが表示されること','ログアウト後はSSO画面に戻ること'] },
+    { id:2, role:'一般ユーザー（申請者）', want:'経費申請フォームに必要事項を入力して提出したい', benefit:'月次経費処理を紙なしでスピーディに完了できるようにするため', moscow:'must', owner:'フロントエンドチーム', points:'8', ac:['申請種別・件名・申請日・金額・理由の入力が必要なこと','必須項目が未入力の場合はエラーが表示されること','確認画面で内容を確認してから提出できること','提出後に完了メールが届くこと','提出後は内容の編集ができないこと'] },
+    { id:3, role:'一般ユーザー（申請者）', want:'提出した申請の進捗状況をいつでも確認したい', benefit:'承認がどこで止まっているかを把握して催促できるようにするため', moscow:'must', owner:'フロントエンドチーム', points:'3', ac:['申請一覧に自分の申請が一覧表示されること','ステータス（未提出・審査中・承認済・却下・差し戻し）が確認できること','申請詳細画面で現在の承認ステップと承認者が確認できること'] },
+    { id:4, role:'承認者', want:'承認待ちの申請をまとめて確認して承認・却下・差し戻しを行いたい', benefit:'承認業務を効率よく処理して申請者を待たせないようにするため', moscow:'must', owner:'フロントエンドチーム', points:'8', ac:['承認待ち一覧に自分が承認者の申請が表示されること','申請詳細・添付ファイルが確認できること','承認・却下・差し戻し（コメント必須）の操作ができること','操作後に申請者にメールで通知されること','差し戻し時はコメント入力が必須であること'] },
+    { id:5, role:'一般ユーザー（申請者）', want:'差し戻された申請を修正して再申請したい', benefit:'申請を一から作り直す手間なく修正・再提出できるようにするため', moscow:'must', owner:'フロントエンドチーム', points:'5', ac:['差し戻し理由が申請詳細で確認できること','差し戻し申請の内容を編集して再提出できること','再提出後は承認フローが最初からやり直しになること'] },
+    { id:6, role:'一般ユーザー（申請者）', want:'申請に領収書などのファイルを添付したい', benefit:'経理担当が申請内容を確認するために原本証拠を提示できるようにするため', moscow:'must', owner:'バックエンドチーム', points:'5', ac:['PDF・Excel・JPG/PNGのファイルが添付できること','上限10MB・最大5ファイルまで添付できること','添付済みファイルが詳細画面からダウンロードできること'] },
+    { id:7, role:'経理担当', want:'全申請データをCSVで一括エクスポートしたい', benefit:'会計システムへのデータ取り込み作業を自動化できるようにするため', moscow:'must', owner:'バックエンドチーム', points:'3', ac:['ステータス・期間・申請種別で絞り込んだCSVが出力できること','出力項目に申請ID・申請者名・金額・承認日・承認者が含まれること','文字コードはUTF-8（BOMあり）でExcel対応であること'] },
+    { id:8, role:'管理者', want:'ユーザーアカウントを管理したい', benefit:'社員の入退職に合わせてアクセス権を適切に管理できるようにするため', moscow:'must', owner:'フロントエンドチーム', points:'5', ac:['ユーザー一覧の確認・新規登録・編集・無効化ができること','ロール（一般/承認者/経理/管理者）を設定できること','無効化されたユーザーはログインできなくなること'] },
+    { id:9, role:'管理者', want:'申請種別と承認フローをシステム画面から設定したい', benefit:'IT部門に依頼せず自社で承認フローを変更できるようにするため', moscow:'should', owner:'フロントエンドチーム', points:'8', ac:['申請種別のCRUD操作ができること','承認フロー（承認ステップ・承認者ロール）の設定ができること','設定変更後は新規申請から新フローが適用されること（既存申請は変更前フローを維持）'] },
+    { id:10, role:'管理者', want:'ダッシュボードで申請状況を俯瞰したい', benefit:'処理が滞っている申請や月次傾向を素早く把握できるようにするため', moscow:'could', owner:'', points:'8', ac:['今月の申請件数・承認率・平均処理日数が表示されること','ステータス別の件数グラフが表示されること'] },
+    { id:11, role:'管理者', want:'ユーザーの操作履歴（監査ログ）を確認したい', benefit:'不正操作の検知やコンプライアンス対応に必要な証跡を確認できるようにするため', moscow:'should', owner:'バックエンドチーム', points:'3', ac:['ログイン・ログアウト・申請操作のログが確認できること','ユーザー・日付で絞り込み検索できること'] },
+  ];
+  save(sample);
+  renderList();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(load(), null, 2), 'user-stories.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) throw new Error('配列形式のJSONを指定してください');
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      save(data); renderList();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+addAC();
+renderList();
+</script>
+</body>
+</html>

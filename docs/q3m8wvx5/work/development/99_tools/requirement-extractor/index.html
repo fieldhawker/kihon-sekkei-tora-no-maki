@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ヒアリングシート＆要件起こしアシスト</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { font-size: 16px; }
+header p { font-size: 12px; color: #aaa; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane { overflow-y: auto; padding: 16px; }
+.pane-input { width: 400px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+.pane-cards { flex: 1; background: #fafafa; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+textarea { border: 1px solid #ccc; border-radius: 4px; padding: 8px 10px; font-size: 13px; width: 100%; resize: vertical; font-family: sans-serif; line-height: 1.6; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; width: 100%; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.btn-sm:hover { background: #dce1e7; }
+.hint { font-size: 11px; color: #999; line-height: 1.5; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.col-full { grid-column: 1 / -1; }
+.lane { }
+.lane-title { font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 10px; border-radius: 4px 4px 0 0; margin-bottom: 0; }
+.lane-body { min-height: 80px; border: 1px solid #ddd; border-top: none; border-radius: 0 0  6px 6px; padding: 8px; background: #fff; }
+.req-card { border-radius: 5px; padding: 9px 11px; margin-bottom: 7px; font-size: 13px; position: relative; line-height: 1.5; }
+.req-card .del-btn { position: absolute; top: 6px; right: 6px; background: transparent; border: none; color: #bbb; cursor: pointer; font-size: 13px; }
+.req-card .del-btn:hover { color: #e74c3c; }
+.req-card .cat-tag { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.req-card textarea { border: none; background: transparent; font-size: 13px; padding: 0; margin: 0; resize: none; width: 100%; font-family: sans-serif; }
+.req-card textarea:focus { outline: 1px solid rgba(0,0,0,0.15); border-radius: 3px; }
+/* カラー */
+.lane-func .lane-title { background: #dbeafe; color: #1e40af; }
+.lane-func .req-card { background: #eff6ff; border: 1px solid #bfdbfe; }
+.lane-func .cat-tag { color: #1e40af; }
+.lane-nonfunc .lane-title { background: #dcfce7; color: #166534; }
+.lane-nonfunc .req-card { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.lane-nonfunc .cat-tag { color: #166534; }
+.lane-constraint .lane-title { background: #fef9c3; color: #854d0e; }
+.lane-constraint .req-card { background: #fefce8; border: 1px solid #fde68a; }
+.lane-constraint .cat-tag { color: #854d0e; }
+.lane-unknown .lane-title { background: #fee2e2; color: #991b1b; }
+.lane-unknown .req-card { background: #fff1f2; border: 1px solid #fecaca; }
+.lane-unknown .cat-tag { color: #991b1b; }
+.highlight-who { background: #bfdbfe; border-radius: 2px; padding: 0 2px; }
+.highlight-what { background: #bbf7d0; border-radius: 2px; padding: 0 2px; }
+.highlight-why { background: #fde68a; border-radius: 2px; padding: 0 2px; }
+.highlight-cond { background: #f9a8d4; border-radius: 2px; padding: 0 2px; }
+#memo-display { font-size: 13px; line-height: 1.8; white-space: pre-wrap; border: 1px solid #eee; border-radius: 4px; padding: 10px; background: #fafafa; max-height: 200px; overflow-y: auto; }
+.export-area { margin-top: 12px; }
+pre.md-out { background: #1e1e1e; color: #d4d4d4; padding: 10px; border-radius: 4px; font-size: 12px; white-space: pre-wrap; max-height: 200px; overflow-y: auto; display: none; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>ヒアリングシート＆要件起こしアシスト</h1>
+    <p>打ち合わせメモを貼り付けて要件カードに整理します</p>
+  </div>
+  <button onclick="loadSample()">📋 サンプル</button>
+  <button onclick="exportMarkdown()">Markdownエクスポート</button>
+  <button onclick="clearCards()">カードをクリア</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane pane-input">
+    <div>
+      <h2>打ち合わせメモ入力</h2>
+      <p class="hint" style="margin-bottom:6px">顧客との会話メモや議事録をそのまま貼り付けてください。解析ボタンでキーワードをハイライトし、要件カードを自動生成します。</p>
+      <textarea id="memo" rows="12" placeholder="例:
+・ユーザーはメールアドレスとパスワードでログインしたい
+・管理者は全ユーザーの一覧を見たい
+・パスワードは8文字以上にしてほしい
+・スマホでも使えるようにしてほしい
+・既存のExcelデータを移行する必要がある
+・セキュリティは重要、個人情報を扱う
+・CSVのエクスポートは次フェーズでいい
+・ログイン失敗が続いたらアカウントをロックしてほしいが、何回で？要確認"></textarea>
+      <button class="btn btn-primary" style="margin-top:6px" onclick="analyze()">解析して要件カードを生成</button>
+    </div>
+    <div>
+      <h2>キーワードハイライト</h2>
+      <div id="memo-display"><p style="color:#bbb;font-size:12px">解析すると結果が表示されます</p></div>
+      <div style="display:flex;gap:10px;margin-top:6px;font-size:11px;flex-wrap:wrap">
+        <span><span class="highlight-who">誰が</span> ユーザー・役割</span>
+        <span><span class="highlight-what">何を</span> 機能・動詞</span>
+        <span><span class="highlight-why">条件</span> 制約・非機能</span>
+        <span><span class="highlight-cond">未確認</span> 要確認事項</span>
+      </div>
+    </div>
+    <div>
+      <h2>手動でカード追加</h2>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <select id="manual-cat" style="border:1px solid #ccc;border-radius:4px;padding:5px 8px;font-size:13px;flex:1">
+          <option value="func">機能要件</option>
+          <option value="nonfunc">非機能要件</option>
+          <option value="constraint">制約・前提</option>
+          <option value="unknown">未確認事項</option>
+        </select>
+      </div>
+      <textarea id="manual-text" rows="2" placeholder="要件内容を入力..."></textarea>
+      <button class="btn-sm" onclick="addManualCard()">＋ カード追加</button>
+    </div>
+    <div class="export-area">
+      <button class="btn-sm" onclick="toggleExport()">Markdownプレビュー表示/非表示</button>
+      <pre class="md-out" id="md-out"></pre>
+    </div>
+  </div>
+
+  <div class="pane pane-cards">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 style="margin:0;border:none">要件カード</h2>
+      <span id="card-count" style="font-size:12px;color:#888"></span>
+    </div>
+    <div class="cols">
+      <div class="lane lane-func">
+        <div class="lane-title">📋 機能要件</div>
+        <div class="lane-body" id="lane-func"></div>
+      </div>
+      <div class="lane lane-nonfunc">
+        <div class="lane-title">⚙️ 非機能要件</div>
+        <div class="lane-body" id="lane-nonfunc"></div>
+      </div>
+      <div class="lane lane-constraint">
+        <div class="lane-title">🔒 制約・前提条件</div>
+        <div class="lane-body" id="lane-constraint"></div>
+      </div>
+      <div class="lane lane-unknown">
+        <div class="lane-title">❓ 未確認事項（要ヒアリング）</div>
+        <div class="lane-body" id="lane-unknown"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// カテゴリ判定キーワード
+const FUNC_KEYWORDS = ['したい','できる','表示','登録','更新','削除','検索','一覧','詳細','送信','ダウンロード','アップロード','通知','ログイン','ログアウト','申請','承認','却下','編集','作成','閲覧','確認','入力','出力','印刷','エクスポート','インポート','連携'];
+const NONFUNC_KEYWORDS = ['以上','以下','秒','分','件','MB','GB','文字','桁','%','性能','速度','可用性','セキュリティ','暗号化','バックアップ','スマホ','レスポンシブ','同時','ユーザー数','スループット','ログ','監査','保持期間','SLA','稼働率'];
+const CONSTRAINT_KEYWORDS = ['既存','移行','現行','前提','制約','互換','法律','法令','規制','ポリシー','予算','期限','スケジュール','フェーズ','次回','次期','将来','対象外','除く','除外'];
+const UNKNOWN_KEYWORDS = ['？','?','要確認','TBD','未定','不明','検討','どう','何回','何件','何文字','いつ','誰が決める','要相談','後で','あとで'];
+
+const WHO_KEYWORDS = ['ユーザー','管理者','担当者','顧客','お客様','スタッフ','一般','申請者','承認者','システム管理者','オペレーター'];
+const WHAT_VERBS = ['したい','できる','表示','登録','更新','削除','検索','送信','受信','作成','閲覧','編集','出力','インポート','エクスポート'];
+const COND_WORDS = ['場合','とき','ならば','以上','以下','まで','から','制限','禁止','必須','任意','要確認','？','TBD','未定'];
+
+function analyze() {
+  const memo = document.getElementById('memo').value.trim();
+  if (!memo) { alert('メモを入力してください'); return; }
+
+  const lines = memo.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+
+  // Highlight
+  let highlighted = memo;
+  WHO_KEYWORDS.forEach(w => {
+    highlighted = highlighted.replace(new RegExp(w, 'g'), `<span class="highlight-who">${w}</span>`);
+  });
+  WHAT_VERBS.forEach(w => {
+    highlighted = highlighted.replace(new RegExp(w, 'g'), `<span class="highlight-what">${w}</span>`);
+  });
+  COND_WORDS.forEach(w => {
+    highlighted = highlighted.replace(new RegExp(w, 'g'), `<span class="highlight-cond">${w}</span>`);
+  });
+  document.getElementById('memo-display').innerHTML = highlighted;
+
+  // Categorize each line
+  lines.forEach(line => {
+    const clean = line.replace(/^[・\-\*\#\d\.\s]+/, '').trim();
+    if (!clean) return;
+    const cat = categorizeLine(clean);
+    addCard(cat, clean);
+  });
+  updateCount();
+}
+
+function categorizeLine(text) {
+  const unknownScore = UNKNOWN_KEYWORDS.filter(k => text.includes(k)).length * 3;
+  const constraintScore = CONSTRAINT_KEYWORDS.filter(k => text.includes(k)).length * 2;
+  const nonfuncScore = NONFUNC_KEYWORDS.filter(k => text.includes(k)).length * 2;
+  const funcScore = FUNC_KEYWORDS.filter(k => text.includes(k)).length;
+
+  if (unknownScore > 0) return 'unknown';
+  const scores = { func: funcScore, nonfunc: nonfuncScore, constraint: constraintScore };
+  const max = Math.max(...Object.values(scores));
+  if (max === 0) return 'func';
+  return Object.keys(scores).find(k => scores[k] === max);
+}
+
+function addCard(cat, text) {
+  const lane = document.getElementById('lane-' + cat);
+  if (!lane) return;
+  const labels = { func: '機能要件', nonfunc: '非機能要件', constraint: '制約・前提', unknown: '未確認事項' };
+  const card = document.createElement('div');
+  card.className = 'req-card';
+  card.dataset.cat = cat;
+  card.innerHTML = `
+    <div class="cat-tag">${labels[cat]}</div>
+    <button class="del-btn" onclick="this.closest('.req-card').remove();updateCount()">×</button>
+    <textarea rows="2" oninput="autoResize(this)">${escHtml(text)}</textarea>
+  `;
+  lane.appendChild(card);
+  card.querySelector('textarea').rows = Math.max(2, Math.ceil(text.length / 35));
+}
+
+function addManualCard() {
+  const cat = document.getElementById('manual-cat').value;
+  const text = document.getElementById('manual-text').value.trim();
+  if (!text) { alert('内容を入力してください'); return; }
+  addCard(cat, text);
+  document.getElementById('manual-text').value = '';
+  updateCount();
+}
+
+function clearCards() {
+  if (!confirm('全カードを削除しますか？')) return;
+  ['func','nonfunc','constraint','unknown'].forEach(c => { document.getElementById('lane-' + c).innerHTML = ''; });
+  updateCount();
+}
+
+function updateCount() {
+  const total = document.querySelectorAll('.req-card').length;
+  document.getElementById('card-count').textContent = `合計 ${total} 件`;
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function getCards() {
+  const result = { func: [], nonfunc: [], constraint: [], unknown: [] };
+  document.querySelectorAll('.req-card').forEach(card => {
+    const cat = card.dataset.cat;
+    const text = card.querySelector('textarea').value.trim();
+    if (text) result[cat].push(text);
+  });
+  return result;
+}
+
+function exportMarkdown() {
+  const cards = getCards();
+  let md = `# 要件定義書（骨格）\n\n生成日: ${new Date().toLocaleDateString('ja-JP')}\n\n`;
+  md += `## 機能要件\n\n`;
+  cards.func.forEach((t, i) => { md += `- REQ-F${String(i+1).padStart(3,'0')}: ${t}\n`; });
+  md += `\n## 非機能要件\n\n`;
+  cards.nonfunc.forEach((t, i) => { md += `- REQ-N${String(i+1).padStart(3,'0')}: ${t}\n`; });
+  md += `\n## 制約・前提条件\n\n`;
+  cards.constraint.forEach((t, i) => { md += `- REQ-C${String(i+1).padStart(3,'0')}: ${t}\n`; });
+  md += `\n## 未確認事項（次回ヒアリングで確認）\n\n`;
+  cards.unknown.forEach((t, i) => { md += `- [ ] ${t}\n`; });
+
+  saveFile(md, 'requirements-draft.md', 'text/markdown');
+}
+
+function toggleExport() {
+  const cards = getCards();
+  const el = document.getElementById('md-out');
+  if (el.style.display === 'block') { el.style.display = 'none'; return; }
+  let md = `# 要件定義書（骨格）\n\n## 機能要件\n`;
+  cards.func.forEach((t, i) => { md += `- REQ-F${String(i+1).padStart(3,'0')}: ${t}\n`; });
+  md += `\n## 非機能要件\n`;
+  cards.nonfunc.forEach((t, i) => { md += `- REQ-N${String(i+1).padStart(3,'0')}: ${t}\n`; });
+  md += `\n## 制約・前提条件\n`;
+  cards.constraint.forEach((t, i) => { md += `- REQ-C${String(i+1).padStart(3,'0')}: ${t}\n`; });
+  md += `\n## 未確認事項\n`;
+  cards.unknown.forEach(t => { md += `- [ ] ${t}\n`; });
+  el.textContent = md;
+  el.style.display = 'block';
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const SAMPLE_MEMOS = [
+  {
+    label: '社内申請管理システム',
+    memo: `【第1回ヒアリング議事録】2026-05-20 参加者: 田中部長、鈴木SE
+
+・ユーザーはメールアドレスとパスワードでログインしたい
+・管理者は全ユーザーの一覧を確認・編集したい
+・一般ユーザーは経費申請・休暇申請などを登録したい
+・申請者が申請を提出すると、承認者にメール通知を送りたい
+・承認者は申請内容を確認して承認・却下・差し戻しができるようにしたい
+・申請一覧は絞り込み（ステータス・期間・申請種別）で検索したい
+・CSVエクスポートは必要（会計システム連携のため）
+・スマートフォンでも使えるようにしてほしい（外出先での承認操作）
+・パスワードは8文字以上、英数字混在で設定してほしい
+・ログイン失敗が続いたらアカウントをロックしてほしいが、何回で？要確認
+・既存のExcelファイルからのデータ移行が必要（約2000件）
+・セキュリティは重要、個人情報・給与情報を扱う
+・通信はHTTPS必須、社内ISMS認証取得済みのため準拠が必要
+・本番稼働目標は2026年10月1日（期末に間に合わせたい）
+・同時アクセスは最大100名程度を想定
+・バックアップは毎日夜間に自動取得してほしい
+・添付ファイル（PDF・Excel）のアップロード機能が必要、上限サイズは？要確認
+・承認フローは部署によって異なるが、何パターンあるか？要確認
+・二段階認証は今回は対象外（予算制約）、将来検討`
+  },
+  {
+    label: '顧客向けECサイト',
+    memo: `【ヒアリング議事録】ECサイトリニューアル 2026-05-15
+
+・顧客はメールアドレスまたはSNSアカウントで会員登録・ログインしたい
+・商品一覧はカテゴリ別・価格帯・評価で絞り込み検索できるようにしたい
+・商品詳細ページには在庫状況・複数画像・レビューを表示したい
+・カートに入れて決済まで一気に完了できるようにしたい（離脱を減らしたい）
+・クレジットカード・コンビニ払い・銀行振込に対応したい
+・注文完了後はメールで確認書を自動送信したい
+・管理者は商品・在庫・注文・会員を管理できるようにしたい
+・注文履歴はCSV出力できるようにしたい（経理連携）
+・レスポンシブ対応必須（スマートフォンからの購入が7割を占める）
+・ページの応答速度は3秒以内に収めたい（離脱率改善のため）
+・決済代行会社はどこを使うか未定、要確認
+・個人情報（住所・クレジットカード情報）の取り扱いは厳重に
+・既存サイトの会員データ（約5万件）を移行する必要がある
+・クーポン・ポイント機能は次フェーズでよい
+・外部ロジスティクスシステムとのAPI連携が必要（出荷情報の自動連携）`
+  }
+];
+
+function loadSample() {
+  const choice = prompt(
+    `サンプルメモを選択（番号を入力）:\n${SAMPLE_MEMOS.map((s,i)=>`${i+1}: ${s.label}`).join('\n')}`, '1'
+  );
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= SAMPLE_MEMOS.length) { alert('無効な選択です'); return; }
+  clearCards();
+  document.getElementById('memo').value = SAMPLE_MEMOS[idx].memo;
+  analyze();
+}
+
+const RE_STORAGE_KEY = 'requirement-extractor-v1';
+
+function autoSave() {
+  const memoEl = document.getElementById('memo');
+  localStorage.setItem(RE_STORAGE_KEY, JSON.stringify({ memo: memoEl ? memoEl.value : '', cards: getCards() }));
+}
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportJSON() {
+  const memoEl = document.getElementById('memo');
+  const state = { memo: memoEl ? memoEl.value : '', cards: getCards() };
+  saveFile(JSON.stringify(state, null, 2), 'requirements.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const state = JSON.parse(ev.target.result);
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      const memoEl = document.getElementById('memo');
+      if (memoEl && state.memo !== undefined) memoEl.value = state.memo;
+      ['func','nonfunc','constraint','unknown'].forEach(c => { document.getElementById('lane-' + c).innerHTML = ''; });
+      Object.entries(state.cards || {}).forEach(([cat, texts]) => { (texts || []).forEach(t => addCard(cat, t)); });
+      updateCount(); autoSave();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+// ページロード時に復元
+const _reSaved = localStorage.getItem(RE_STORAGE_KEY);
+if (_reSaved) {
+  try {
+    const state = JSON.parse(_reSaved);
+    const memoEl = document.getElementById('memo');
+    if (memoEl && state.memo) memoEl.value = state.memo;
+    Object.entries(state.cards || {}).forEach(([cat, texts]) => { (texts || []).forEach(t => addCard(cat, t)); });
+    updateCount();
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

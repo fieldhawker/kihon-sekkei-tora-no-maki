@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>権限マトリクスエディタ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane-left { width: 300px; background: #fff; border-right: 1px solid #ddd; padding: 14px; overflow-y: auto; flex-shrink: 0; }
+.pane-right { flex: 1; overflow: auto; padding: 14px; background: #fafafa; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+h2:first-child { margin-top: 0; }
+.item-row { display: flex; gap: 6px; margin-bottom: 5px; align-items: center; }
+.item-row input { flex: 1; border: 1px solid #ccc; border-radius: 4px; padding: 5px 8px; font-size: 13px; }
+.btn-danger { background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 14px; padding: 2px 5px; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-right: 4px; }
+.btn-sm:hover { background: #dce1e7; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; margin-top: 12px; width: 100%; }
+.btn-primary:hover { background: #357abd; }
+table.matrix { border-collapse: collapse; font-size: 13px; background: #fff; }
+table.matrix th { padding: 8px 12px; border: 1px solid #ddd; background: #2c3e50; color: #fff; font-weight: 600; white-space: nowrap; text-align: center; }
+table.matrix th.row-head { background: #34495e; text-align: left; }
+table.matrix td { padding: 6px 12px; border: 1px solid #ddd; text-align: left; vertical-align: middle; }
+table.matrix td.cell { text-align: center; cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 8px; min-width: 48px; }
+table.matrix td.cell:hover { background: #e8f0fe; }
+table.matrix td.cell-allow { background: #d4edda; }
+table.matrix td.cell-deny { background: #f8d7da; }
+table.matrix td.cell-cond { background: #fff3cd; }
+table.matrix tr:hover td { filter: brightness(0.97); }
+.legend { display: flex; gap: 16px; margin-bottom: 12px; font-size: 12px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 20px; height: 20px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.hint { font-size: 11px; color: #999; margin-bottom: 6px; }
+.cat-header { background: #ecf0f1; font-size: 12px; font-weight: bold; color: #555; padding: 5px 10px; }
+select.cat-select { border: 1px solid #ccc; border-radius: 4px; padding: 4px 6px; font-size: 12px; width: auto; margin-bottom: 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>権限マトリクスエディタ</h1>
+  <button onclick="loadSample()">サンプル</button>
+  <button onclick="renderMatrix()">マトリクス更新</button>
+  <button onclick="exportMarkdown()">Markdownエクスポート</button>
+  <button onclick="exportCSV()">CSVエクスポート</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane-left">
+    <h2>ロール（列）</h2>
+    <p class="hint">ロール名を入力してください</p>
+    <div id="roles-list"></div>
+    <button class="btn-sm" onclick="addRole()">＋ ロール追加</button>
+
+    <h2>機能・画面・API（行）</h2>
+    <p class="hint">カテゴリ / 機能名 の形式で入力</p>
+    <div id="features-list"></div>
+    <button class="btn-sm" onclick="addFeature()">＋ 項目追加</button>
+
+    <button class="btn btn-primary" onclick="renderMatrix()">マトリクス生成・更新</button>
+
+    <div style="margin-top:16px">
+      <h2>凡例</h2>
+      <div style="font-size:12px;display:flex;flex-direction:column;gap:4px">
+        <div>● クリックで <strong>○ → × → △ → ○</strong> と循環</div>
+        <div style="color:#27ae60">○ = 許可</div>
+        <div style="color:#e74c3c">× = 禁止</div>
+        <div style="color:#f39c12">△ = 条件付き許可</div>
+        <div style="color:#ccc">　 = 未設定</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane-right">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot cell-allow">○</div>許可</div>
+      <div class="legend-item"><div class="legend-dot cell-deny">×</div>禁止</div>
+      <div class="legend-item"><div class="legend-dot cell-cond">△</div>条件付き</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff;border:1px solid #ddd"></div>未設定</div>
+    </div>
+    <div id="matrix-container"><p style="color:#888;font-size:13px">ロールと機能を入力して「マトリクス生成」を押してください</p></div>
+  </div>
+</div>
+<script>
+let matrixData = {};
+const CYCLE = ['', '○', '×', '△'];
+
+function addRole(val = '') {
+  const list = document.getElementById('roles-list');
+  const div = document.createElement('div');
+  div.className = 'item-row';
+  div.innerHTML = `<input type="text" value="${val}" placeholder="一般ユーザー" oninput="syncHeaders()"><button class="btn-danger" onclick="this.closest('.item-row').remove();syncHeaders()">×</button>`;
+  list.appendChild(div);
+}
+
+function addFeature(cat = '', name = '') {
+  const list = document.getElementById('features-list');
+  const div = document.createElement('div');
+  div.className = 'item-row';
+  div.innerHTML = `<input type="text" value="${cat}" placeholder="カテゴリ" style="flex:0.6"><input type="text" value="${name}" placeholder="機能名" style="flex:1"><button class="btn-danger" onclick="this.closest('.item-row').remove()">×</button>`;
+  list.appendChild(div);
+}
+
+function getRoles() {
+  return Array.from(document.getElementById('roles-list').querySelectorAll('.item-row input')).map(i => i.value.trim()).filter(Boolean);
+}
+
+function getFeatures() {
+  return Array.from(document.getElementById('features-list').querySelectorAll('.item-row')).map(row => {
+    const inputs = row.querySelectorAll('input');
+    return { cat: inputs[0].value.trim(), name: inputs[1].value.trim() };
+  }).filter(f => f.name);
+}
+
+function cellKey(featureIdx, role) { return `${featureIdx}__${role}`; }
+
+function renderMatrix() {
+  const roles = getRoles();
+  const features = getFeatures();
+  if (!roles.length || !features.length) { document.getElementById('matrix-container').innerHTML = '<p style="color:#888;font-size:13px">ロールと機能を入力してください</p>'; return; }
+
+  let html = `<table class="matrix"><thead><tr><th class="row-head" style="min-width:120px">カテゴリ</th><th class="row-head" style="min-width:180px">機能・画面・API</th>`;
+  roles.forEach(r => { html += `<th>${escHtml(r)}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  let lastCat = null;
+  features.forEach((f, fi) => {
+    if (f.cat !== lastCat) {
+      html += `<tr><td colspan="${roles.length + 2}" class="cat-header">${escHtml(f.cat || '未分類')}</td></tr>`;
+      lastCat = f.cat;
+    }
+    html += `<tr><td style="color:#888;font-size:12px">${escHtml(f.cat || '')}</td><td><strong>${escHtml(f.name)}</strong></td>`;
+    roles.forEach(r => {
+      const key = cellKey(fi, r);
+      const val = matrixData[key] || '';
+      const cls = val === '○' ? 'cell-allow' : val === '×' ? 'cell-deny' : val === '△' ? 'cell-cond' : '';
+      html += `<td class="cell ${cls}" onclick="cycleCell(${fi},'${escHtml(r)}')" title="${escHtml(f.name)} / ${escHtml(r)}">${val}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('matrix-container').innerHTML = html;
+}
+
+function cycleCell(fi, role) {
+  const key = cellKey(fi, role);
+  const cur = matrixData[key] || '';
+  const idx = CYCLE.indexOf(cur);
+  matrixData[key] = CYCLE[(idx + 1) % CYCLE.length];
+  renderMatrix();
+}
+
+function syncHeaders() { /* live update handled by renderMatrix */ }
+
+function exportMarkdown() {
+  const roles = getRoles();
+  const features = getFeatures();
+  if (!roles.length || !features.length) { alert('先にマトリクスを生成してください'); return; }
+  let md = '# 権限マトリクス\n\n';
+  md += '| カテゴリ | 機能 | ' + roles.map(r => `**${r}**`).join(' | ') + ' |\n';
+  md += '|---------|------|' + roles.map(() => '---').join('|') + '|\n';
+  features.forEach((f, fi) => {
+    md += `| ${f.cat || '-'} | ${f.name} | `;
+    md += roles.map(r => matrixData[cellKey(fi, r)] || '-').join(' | ');
+    md += ' |\n';
+  });
+  md += '\n**凡例**: ○=許可 ×=禁止 △=条件付き許可 -=未設定\n';
+  saveFile(md, 'permission-matrix.md', 'text/markdown');
+}
+
+function exportCSV() {
+  const roles = getRoles();
+  const features = getFeatures();
+  if (!roles.length || !features.length) { alert('先にマトリクスを生成してください'); return; }
+  let csv = 'カテゴリ,機能,' + roles.map(r => `"${r}"`).join(',') + '\n';
+  features.forEach((f, fi) => {
+    csv += `"${f.cat || ''}","${f.name}",`;
+    csv += roles.map(r => `"${matrixData[cellKey(fi, r)] || ''}"`).join(',');
+    csv += '\n';
+  });
+  saveFile('﻿' + csv, 'permission-matrix.csv', 'text/csv');
+}
+
+function loadSample() {
+  document.getElementById('roles-list').innerHTML = '';
+  document.getElementById('features-list').innerHTML = '';
+  matrixData = {};
+  ['一般ユーザー', '承認者', '経理担当', '管理者', 'システム管理者'].forEach(r => addRole(r));
+  [
+    ['認証', 'ログイン'],
+    ['認証', 'ログアウト'],
+    ['認証', 'パスワードリセット（自分）'],
+    ['認証', 'パスワード強制リセット（他者）'],
+    ['プロフィール', 'プロフィール閲覧（自分）'],
+    ['プロフィール', 'プロフィール編集（自分）'],
+    ['ユーザー管理', 'ユーザー一覧閲覧'],
+    ['ユーザー管理', 'ユーザー新規登録'],
+    ['ユーザー管理', 'ユーザー情報編集'],
+    ['ユーザー管理', 'ユーザー無効化・削除'],
+    ['ユーザー管理', 'ロール変更'],
+    ['申請管理', '申請作成'],
+    ['申請管理', '申請編集（提出前・自分）'],
+    ['申請管理', '申請取り消し（提出前）'],
+    ['申請管理', '申請一覧閲覧（自分）'],
+    ['申請管理', '申請一覧閲覧（全員）'],
+    ['申請管理', '申請詳細閲覧（全員）'],
+    ['申請管理', '申請承認'],
+    ['申請管理', '申請却下・差し戻し'],
+    ['申請管理', '申請削除（管理者操作）'],
+    ['添付ファイル', 'ファイルアップロード'],
+    ['添付ファイル', 'ファイルダウンロード（自分の申請）'],
+    ['添付ファイル', 'ファイルダウンロード（全申請）'],
+    ['レポート・集計', 'ダッシュボード閲覧'],
+    ['レポート・集計', 'CSVエクスポート（自分）'],
+    ['レポート・集計', 'CSVエクスポート（全員）'],
+    ['マスタ管理', '申請種別マスタ管理'],
+    ['マスタ管理', '承認フロー設定'],
+    ['マスタ管理', '通知テンプレート編集'],
+    ['システム設定', 'システム設定変更'],
+    ['システム設定', '操作ログ閲覧'],
+    ['システム設定', 'システムバックアップ操作'],
+  ].forEach(([cat, name]) => addFeature(cat, name));
+
+  const roles = ['一般ユーザー', '承認者', '経理担当', '管理者', 'システム管理者'];
+  const perms = {
+    0:['○','○','○','○','○'], 1:['○','○','○','○','○'], 2:['○','○','○','○','○'], 3:['×','×','×','△','○'],
+    4:['○','○','○','○','○'], 5:['○','○','○','○','○'],
+    6:['×','△','△','○','○'], 7:['×','×','×','○','○'],
+    8:['×','×','×','○','○'], 9:['×','×','×','△','○'], 10:['×','×','×','△','○'],
+    11:['○','○','○','○','○'], 12:['○','×','×','○','○'], 13:['○','×','×','○','○'],
+    14:['○','○','○','○','○'], 15:['×','○','○','○','○'],
+    16:['×','○','○','○','○'], 17:['×','○','×','○','○'],
+    18:['×','○','×','○','○'], 19:['×','×','×','△','○'],
+    20:['○','○','○','○','○'], 21:['○','○','○','○','○'], 22:['×','○','○','○','○'],
+    23:['○','○','○','○','○'], 24:['○','×','×','○','○'], 25:['×','×','○','○','○'],
+    26:['×','×','×','△','○'], 27:['×','×','×','△','○'], 28:['×','×','×','△','○'],
+    29:['×','×','×','×','○'], 30:['×','×','×','△','○'], 31:['×','×','×','×','○'],
+  };
+  Object.entries(perms).forEach(([fi, vals]) => {
+    vals.forEach((v, ri) => { matrixData[cellKey(parseInt(fi), roles[ri])] = v; });
+  });
+  renderMatrix();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;'); }
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+const PM_STORAGE_KEY = 'permission-matrix-v1';
+
+function getState() { return { roles: getRoles(), features: getFeatures(), matrixData }; }
+function autoSave() { localStorage.setItem(PM_STORAGE_KEY, JSON.stringify(getState())); }
+function restoreState(state) {
+  document.getElementById('roles-list').innerHTML = '';
+  document.getElementById('features-list').innerHTML = '';
+  matrixData = state.matrixData || {};
+  (state.roles || []).forEach(r => addRole(r));
+  (state.features || []).forEach(f => addFeature(f.cat, f.name));
+  renderMatrix();
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(getState(), null, 2), 'permission-matrix.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const state = JSON.parse(ev.target.result);
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      restoreState(state); autoSave();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+// cycleCell 後に自動保存
+const _origCycleCell = cycleCell;
+cycleCell = function(fi, role) { _origCycleCell(fi, role); autoSave(); };
+
+// ページロード時に復元
+const _pmSaved = localStorage.getItem(PM_STORAGE_KEY);
+if (_pmSaved) {
+  try { restoreState(JSON.parse(_pmSaved)); }
+  catch(e) { addRole(); addRole(); addFeature('認証', 'ログイン'); addFeature('認証', 'ログアウト'); addFeature('ユーザー管理', 'ユーザー一覧'); addFeature('ユーザー管理', 'ユーザー編集'); }
+} else {
+  addRole(); addRole();
+  addFeature('認証', 'ログイン'); addFeature('認証', 'ログアウト');
+  addFeature('ユーザー管理', 'ユーザー一覧'); addFeature('ユーザー管理', 'ユーザー編集');
+}
+</script>
+</body>
+</html>

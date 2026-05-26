@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>画面遷移図ビジュアライザー</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.panel { width: 380px; background: #fff; border-right: 1px solid #ddd; padding: 14px; overflow-y: auto; flex-shrink: 0; }
+.canvas-wrap { flex: 1; overflow: auto; background: #fff; position: relative; }
+svg#diagram { display: block; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+h2:first-child { margin-top: 0; }
+table.input-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.input-table th { background: #f5f5f5; padding: 6px 8px; border: 1px solid #ddd; font-weight: normal; color: #555; }
+table.input-table td { padding: 4px 6px; border: 1px solid #eee; }
+table.input-table input { border: none; outline: none; width: 100%; font-size: 13px; padding: 2px 4px; }
+.btn { padding: 7px 14px; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; }
+.btn-primary { background: #4a90e2; color: #fff; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.btn-sm:hover { background: #dce1e7; }
+.btn-danger { background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 14px; padding: 2px 6px; }
+.node rect { fill: #fff; stroke: #4a90e2; stroke-width: 2; rx: 6; }
+.node text { font-size: 12px; fill: #333; }
+.node.start rect { fill: #2c3e50; stroke: #2c3e50; }
+.node.start text { fill: #fff; }
+.edge path { fill: none; stroke: #888; stroke-width: 1.5; marker-end: url(#arrow); }
+.edge text { font-size: 11px; fill: #666; }
+.node:hover rect { fill: #e8f0fe; cursor: move; }
+</style>
+</head>
+<body>
+<header>
+  <h1>画面遷移図ビジュアライザー</h1>
+  <button onclick="renderDiagram()">図を生成</button>
+  <button onclick="autoLayout()">自動整列</button>
+  <button onclick="exportSVG()">SVG保存</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="panel">
+    <h2>画面一覧</h2>
+    <table class="input-table">
+      <thead><tr><th>画面ID</th><th>画面名</th><th></th></tr></thead>
+      <tbody id="screen-rows"></tbody>
+    </table>
+    <button class="btn-sm" style="margin-top:8px" onclick="addScreen()">＋ 画面追加</button>
+
+    <h2>遷移一覧</h2>
+    <table class="input-table">
+      <thead><tr><th>遷移元ID</th><th>遷移先ID</th><th>トリガー</th><th></th></tr></thead>
+      <tbody id="transition-rows"></tbody>
+    </table>
+    <button class="btn-sm" style="margin-top:8px" onclick="addTransition()">＋ 遷移追加</button>
+
+    <div style="margin-top:16px">
+      <button class="btn btn-primary" onclick="renderDiagram()">図を生成・更新</button>
+    </div>
+
+    <h2>サンプルデータ</h2>
+    <button class="btn-sm" onclick="loadSample()">サンプルを読み込む</button>
+  </div>
+
+  <div class="canvas-wrap">
+    <svg id="diagram" width="900" height="700">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#888"/>
+        </marker>
+      </defs>
+      <g id="diagram-root"></g>
+    </svg>
+  </div>
+</div>
+<script>
+let nodePositions = {};
+
+function addScreen(id = '', name = '') {
+  const tbody = document.getElementById('screen-rows');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" value="${id}" placeholder="SCR-001"></td><td><input type="text" value="${name}" placeholder="ログイン画面"></td><td><button class="btn-danger" onclick="this.closest('tr').remove()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function addTransition(from = '', to = '', trigger = '') {
+  const tbody = document.getElementById('transition-rows');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" value="${from}" placeholder="SCR-001"></td><td><input type="text" value="${to}" placeholder="SCR-002"></td><td><input type="text" value="${trigger}" placeholder="ログインボタン"></td><td><button class="btn-danger" onclick="this.closest('tr').remove()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function getScreens() {
+  return Array.from(document.getElementById('screen-rows').querySelectorAll('tr')).map(tr => {
+    const inputs = tr.querySelectorAll('input');
+    return { id: inputs[0].value.trim(), name: inputs[1].value.trim() };
+  }).filter(s => s.id);
+}
+
+function getTransitions() {
+  return Array.from(document.getElementById('transition-rows').querySelectorAll('tr')).map(tr => {
+    const inputs = tr.querySelectorAll('input');
+    return { from: inputs[0].value.trim(), to: inputs[1].value.trim(), label: inputs[2].value.trim() };
+  }).filter(t => t.from && t.to);
+}
+
+function renderDiagram() {
+  const screens = getScreens();
+  const transitions = getTransitions();
+  if (!screens.length) { alert('画面を追加してください'); return; }
+
+  // Layout: assign positions if not set
+  const W = 140, H = 50, COLS = 3, PADX = 60, PADY = 80, STARTX = 60, STARTY = 60;
+  screens.forEach((s, i) => {
+    if (!nodePositions[s.id]) {
+      const col = i % COLS;
+      const row = Math.floor(i / COLS);
+      nodePositions[s.id] = { x: STARTX + col * (W + PADX), y: STARTY + row * (H + PADY) };
+    }
+  });
+
+  const root = document.getElementById('diagram-root');
+  root.innerHTML = '';
+
+  // Draw edges
+  transitions.forEach((t, idx) => {
+    const from = nodePositions[t.from];
+    const to = nodePositions[t.to];
+    if (!from || !to) return;
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.className.baseVal = 'edge';
+
+    if (t.from === t.to) {
+      // self-loop
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const cx = from.x + W / 2, cy = from.y;
+      path.setAttribute('d', `M ${cx} ${cy} C ${cx + 60} ${cy - 60}, ${cx + 80} ${cy - 60}, ${cx + W/2 - 10} ${cy}`);
+      path.setAttribute('stroke', '#888');
+      path.setAttribute('stroke-width', '1.5');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('marker-end', 'url(#arrow)');
+      g.appendChild(path);
+    } else {
+      const fx = from.x + W / 2, fy = from.y + H / 2;
+      const tx = to.x + W / 2, ty = to.y + H / 2;
+      const dx = tx - fx, dy = ty - fy;
+      const len = Math.sqrt(dx * dx + dy * dy);
+      const ex = tx - (W / 2 + 8) * dx / len;
+      const ey = ty - (H / 2 + 8) * dy / len;
+      const sx = fx + (W / 2 + 4) * dx / len;
+      const sy = fy + (H / 2 + 4) * dy / len;
+      const offset = (idx % 2 === 1) ? 20 : 0;
+      const mx = (sx + ex) / 2 - offset * dy / len;
+      const my = (sy + ey) / 2 + offset * dx / len;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M ${sx} ${sy} Q ${mx} ${my} ${ex} ${ey}`);
+      path.setAttribute('stroke', '#888');
+      path.setAttribute('stroke-width', '1.5');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('marker-end', 'url(#arrow)');
+      g.appendChild(path);
+
+      if (t.label) {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', mx);
+        text.setAttribute('y', my - 5);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '11');
+        text.setAttribute('fill', '#555');
+        text.textContent = t.label;
+        g.appendChild(text);
+      }
+    }
+    root.appendChild(g);
+  });
+
+  // Draw nodes
+  screens.forEach(s => {
+    const pos = nodePositions[s.id];
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.className.baseVal = 'node';
+    g.setAttribute('transform', `translate(${pos.x}, ${pos.y})`);
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('width', W);
+    rect.setAttribute('height', H);
+    rect.setAttribute('rx', 6);
+    rect.setAttribute('fill', '#fff');
+    rect.setAttribute('stroke', '#4a90e2');
+    rect.setAttribute('stroke-width', 2);
+    g.appendChild(rect);
+
+    const idText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    idText.setAttribute('x', W / 2);
+    idText.setAttribute('y', 16);
+    idText.setAttribute('text-anchor', 'middle');
+    idText.setAttribute('font-size', '10');
+    idText.setAttribute('fill', '#888');
+    idText.textContent = s.id;
+    g.appendChild(idText);
+
+    const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    nameText.setAttribute('x', W / 2);
+    nameText.setAttribute('y', 34);
+    nameText.setAttribute('text-anchor', 'middle');
+    nameText.setAttribute('font-size', '13');
+    nameText.setAttribute('font-weight', 'bold');
+    nameText.setAttribute('fill', '#222');
+    nameText.textContent = s.name.length > 12 ? s.name.slice(0, 12) + '…' : s.name;
+    g.appendChild(nameText);
+
+    makeDraggableNode(g, s.id);
+    root.appendChild(g);
+  });
+
+  // resize SVG
+  const allX = screens.map(s => nodePositions[s.id].x + W + 40);
+  const allY = screens.map(s => nodePositions[s.id].y + H + 40);
+  const svgW = Math.max(900, ...allX);
+  const svgH = Math.max(700, ...allY);
+  document.getElementById('diagram').setAttribute('width', svgW);
+  document.getElementById('diagram').setAttribute('height', svgH);
+}
+
+function makeDraggableNode(g, id) {
+  let startX, startY, startPosX, startPosY;
+  g.addEventListener('mousedown', e => {
+    e.preventDefault();
+    startX = e.clientX; startY = e.clientY;
+    startPosX = nodePositions[id].x;
+    startPosY = nodePositions[id].y;
+    const onMove = ev => {
+      nodePositions[id].x = startPosX + ev.clientX - startX;
+      nodePositions[id].y = startPosY + ev.clientY - startY;
+      renderDiagram();
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+function autoLayout() {
+  nodePositions = {};
+  renderDiagram();
+}
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function exportSVG() {
+  const svg = document.getElementById('diagram').outerHTML;
+  saveFile(svg, 'screen-flow.svg', 'image/svg+xml');
+}
+
+function loadSample() {
+  document.getElementById('screen-rows').innerHTML = '';
+  document.getElementById('transition-rows').innerHTML = '';
+  nodePositions = {};
+  [
+    ['SCR-001', 'ログイン画面'],
+    ['SCR-002', 'パスワードリセット画面'],
+    ['SCR-003', 'ダッシュボード'],
+    ['SCR-004', '申請一覧画面'],
+    ['SCR-005', '申請詳細画面'],
+    ['SCR-006', '申請新規作成画面'],
+    ['SCR-007', '申請確認画面'],
+    ['SCR-008', '申請完了画面'],
+    ['SCR-009', '承認待ち一覧画面（承認者）'],
+    ['SCR-010', '承認・却下確認ダイアログ'],
+    ['SCR-011', 'ユーザー一覧画面（管理者）'],
+    ['SCR-012', 'ユーザー登録・編集画面'],
+    ['SCR-013', 'マスタ管理画面'],
+    ['SCR-014', 'プロフィール編集画面'],
+  ].forEach(([id, name]) => addScreen(id, name));
+  [
+    ['SCR-001', 'SCR-003', 'ログイン成功'],
+    ['SCR-001', 'SCR-002', 'パスワードを忘れた場合'],
+    ['SCR-002', 'SCR-001', 'リセットメール送信完了→ログインへ'],
+    ['SCR-003', 'SCR-004', '申請一覧を見る'],
+    ['SCR-003', 'SCR-009', '承認待ち確認（承認者）'],
+    ['SCR-003', 'SCR-011', 'ユーザー管理（管理者）'],
+    ['SCR-003', 'SCR-006', '新規申請作成'],
+    ['SCR-003', 'SCR-014', 'プロフィール編集'],
+    ['SCR-004', 'SCR-005', '申請を選択'],
+    ['SCR-004', 'SCR-006', '新規申請作成'],
+    ['SCR-005', 'SCR-004', '一覧に戻る'],
+    ['SCR-005', 'SCR-006', '申請を複製して新規作成'],
+    ['SCR-006', 'SCR-007', '確認画面へ'],
+    ['SCR-006', 'SCR-004', 'キャンセル'],
+    ['SCR-007', 'SCR-008', '申請提出'],
+    ['SCR-007', 'SCR-006', '修正する'],
+    ['SCR-008', 'SCR-004', '申請一覧へ'],
+    ['SCR-009', 'SCR-005', '申請詳細を確認'],
+    ['SCR-005', 'SCR-010', '承認・却下操作（承認者）'],
+    ['SCR-010', 'SCR-009', '承認/却下完了後'],
+    ['SCR-011', 'SCR-012', 'ユーザー新規登録/編集'],
+    ['SCR-012', 'SCR-011', '保存/キャンセル'],
+    ['SCR-013', 'SCR-003', '設定完了'],
+    ['SCR-014', 'SCR-003', '保存完了'],
+    ['SCR-001', 'SCR-001', 'ログアウト→ログイン画面へ戻る'],
+  ].forEach(([f, t, l]) => addTransition(f, t, l));
+  renderDiagram();
+}
+
+const SF_STORAGE_KEY = 'screen-flow-v1';
+
+function getState() { return { screens: getScreens(), transitions: getTransitions(), nodePositions }; }
+function autoSave() { localStorage.setItem(SF_STORAGE_KEY, JSON.stringify(getState())); }
+
+function restoreState(state) {
+  document.getElementById('screen-rows').innerHTML = '';
+  document.getElementById('transition-rows').innerHTML = '';
+  nodePositions = state.nodePositions || {};
+  (state.screens || []).forEach(s => addScreen(s.id, s.name));
+  (state.transitions || []).forEach(t => addTransition(t.from, t.to, t.label));
+}
+
+function exportJSON() {
+  saveFile(JSON.stringify(getState(), null, 2), 'screen-flow.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const state = JSON.parse(ev.target.result);
+      if (!confirm('現在のデータを読み込んだデータで上書きしますか？')) return;
+      restoreState(state); renderDiagram(); autoSave();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+// Init
+const _sfSaved = localStorage.getItem(SF_STORAGE_KEY);
+if (_sfSaved) {
+  try { restoreState(JSON.parse(_sfSaved)); }
+  catch(e) { addScreen(); addTransition(); }
+} else {
+  addScreen();
+  addTransition();
+}
+</script>
+</body>
+</html>

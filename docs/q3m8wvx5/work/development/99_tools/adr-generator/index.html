@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ADRテンプレート生成ツール</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+header { background: #2c3e50; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 12px; }
+header h1 { font-size: 16px; }
+header button { padding: 5px 12px; border: 1px solid #fff; background: transparent; color: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; }
+header button:hover { background: rgba(255,255,255,0.15); }
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.pane { flex: 1; padding: 16px; overflow-y: auto; }
+.pane-left { background: #fff; border-right: 1px solid #ddd; max-width: 480px; }
+.pane-right { background: #fafafa; display: flex; flex-direction: column; gap: 10px; }
+h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+h2:first-child { margin-top: 0; }
+label { font-size: 12px; color: #666; display: block; margin-bottom: 3px; }
+input[type=text], input[type=date], select, textarea { border: 1px solid #ccc; border-radius: 4px; padding: 7px 10px; font-size: 13px; width: 100%; margin-bottom: 10px; }
+textarea { resize: vertical; font-family: sans-serif; }
+.row { display: flex; gap: 8px; }
+.row > div { flex: 1; }
+.btn { padding: 8px 20px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold; }
+.btn-primary { background: #4a90e2; color: #fff; }
+.btn-primary:hover { background: #357abd; }
+.btn-sm { background: #ecf0f1; border: 1px solid #ccc; padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.btn-sm:hover { background: #dce1e7; }
+.alt-item { border: 1px solid #eee; border-radius: 4px; padding: 10px; margin-bottom: 8px; background: #fafafa; }
+.alt-item label { font-size: 12px; color: #666; }
+.alt-item input, .alt-item textarea { margin-bottom: 6px; }
+.btn-danger { background: #e74c3c; color: #fff; border: none; padding: 3px 8px; border-radius: 3px; font-size: 11px; cursor: pointer; float: right; }
+pre.md-preview { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; word-break: break-all; overflow-y: auto; flex: 1; max-height: 400px; }
+.status-draft { color: #856404; background: #fff3cd; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+.status-accepted { color: #155724; background: #d4edda; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+.status-rejected { color: #721c24; background: #f8d7da; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+.status-deprecated { color: #383d41; background: #e2e3e5; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ADRテンプレート生成ツール</h1>
+  <button onclick="loadSample()">サンプル</button>
+  <button onclick="clearForm()">クリア</button>
+  <button onclick="exportJSON()" style="border-color:#a0c4ff">💾 保存</button>
+  <button onclick="importJSON()">📂 読み込み</button>
+</header>
+<div class="workspace">
+  <div class="pane pane-left">
+    <h2>基本情報</h2>
+    <div class="row">
+      <div>
+        <label>ADR番号</label>
+        <input type="text" id="adr-num" placeholder="001">
+      </div>
+      <div>
+        <label>日付</label>
+        <input type="date" id="adr-date">
+      </div>
+    </div>
+    <label>タイトル</label>
+    <input type="text" id="adr-title" placeholder="バックエンドフレームワークの選定" oninput="generate()">
+    <div class="row">
+      <div>
+        <label>ステータス</label>
+        <select id="adr-status" onchange="generate()">
+          <option value="Draft">Draft（草案）</option>
+          <option value="Proposed">Proposed（提案中）</option>
+          <option value="Accepted">Accepted（承認済）</option>
+          <option value="Rejected">Rejected（却下）</option>
+          <option value="Deprecated">Deprecated（非推奨）</option>
+          <option value="Superseded">Superseded（置換済）</option>
+        </select>
+      </div>
+      <div>
+        <label>担当者</label>
+        <input type="text" id="adr-author" placeholder="山田太郎" oninput="generate()">
+      </div>
+    </div>
+
+    <h2>背景・コンテキスト</h2>
+    <textarea id="adr-context" rows="4" placeholder="この決定が必要になった背景や状況を記述してください。&#10;例: 新規Webシステムのバックエンド開発にあたり、フレームワークを選定する必要がある。" oninput="generate()"></textarea>
+
+    <h2>決定事項</h2>
+    <textarea id="adr-decision" rows="3" placeholder="何を決定したかを明確に記述してください。&#10;例: バックエンドフレームワークにSpring Boot 3.xを採用する。" oninput="generate()"></textarea>
+
+    <h2>根拠・理由</h2>
+    <textarea id="adr-rationale" rows="4" placeholder="なぜその選択をしたかの理由を記述してください。&#10;例: チームの既存スキルセット、豊富なエコシステム、本番実績の多さから選定。" oninput="generate()"></textarea>
+
+    <h2>代替案</h2>
+    <div id="alternatives-list"></div>
+    <button class="btn-sm" onclick="addAlternative()">＋ 代替案を追加</button>
+
+    <h2>影響・トレードオフ</h2>
+    <textarea id="adr-consequences" rows="4" placeholder="この決定によるポジティブ・ネガティブな影響を記述してください。&#10;Good: チームの学習コストが低い&#10;Bad: 起動時間がやや長い" oninput="generate()"></textarea>
+
+    <h2>関連ADR・参考資料</h2>
+    <textarea id="adr-refs" rows="2" placeholder="ADR-002, https://example.com/..." oninput="generate()"></textarea>
+
+    <div style="margin-top:14px">
+      <button class="btn btn-primary" onclick="generate()">Markdownを生成・更新</button>
+    </div>
+  </div>
+
+  <div class="pane pane-right">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">Markdownプレビュー</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="copyMd()">コピー</button>
+        <button class="btn-sm" onclick="downloadMd()">ダウンロード</button>
+      </div>
+    </div>
+    <pre class="md-preview" id="md-preview">フォームを入力すると自動でMarkdownが生成されます</pre>
+  </div>
+</div>
+<script>
+function addAlternative(name = '', desc = '', pros = '', cons = '') {
+  const list = document.getElementById('alternatives-list');
+  const div = document.createElement('div');
+  div.className = 'alt-item';
+  div.innerHTML = `
+    <button class="btn-danger" onclick="this.closest('.alt-item').remove();generate()">×</button>
+    <label>代替案名</label><input type="text" value="${name}" placeholder="FastAPI" oninput="generate()">
+    <label>概要</label><textarea rows="2" oninput="generate()" placeholder="Pythonの軽量フレームワーク">${desc}</textarea>
+    <label>利点</label><input type="text" value="${pros}" placeholder="高速・シンプル" oninput="generate()">
+    <label>欠点</label><input type="text" value="${cons}" placeholder="チームスキル不足" oninput="generate()">
+  `;
+  list.appendChild(div);
+}
+
+function generate() {
+  const num = document.getElementById('adr-num').value || 'XXX';
+  const date = document.getElementById('adr-date').value || new Date().toISOString().slice(0, 10);
+  const title = document.getElementById('adr-title').value || 'タイトル未入力';
+  const status = document.getElementById('adr-status').value;
+  const author = document.getElementById('adr-author').value || '';
+  const context = document.getElementById('adr-context').value || '';
+  const decision = document.getElementById('adr-decision').value || '';
+  const rationale = document.getElementById('adr-rationale').value || '';
+  const consequences = document.getElementById('adr-consequences').value || '';
+  const refs = document.getElementById('adr-refs').value || '';
+
+  let altsSection = '';
+  document.querySelectorAll('.alt-item').forEach(item => {
+    const inputs = item.querySelectorAll('input');
+    const textareas = item.querySelectorAll('textarea');
+    const name = inputs[0]?.value || '';
+    const desc = textareas[0]?.value || '';
+    const pros = inputs[1]?.value || '';
+    const cons = inputs[2]?.value || '';
+    if (name) {
+      altsSection += `\n### ${name}\n`;
+      if (desc) altsSection += `${desc}\n`;
+      if (pros) altsSection += `- **利点**: ${pros}\n`;
+      if (cons) altsSection += `- **欠点**: ${cons}\n`;
+    }
+  });
+
+  let md = `# ADR-${num.padStart(3, '0')} ${title}
+
+| 項目 | 内容 |
+|------|------|
+| ステータス | ${status} |
+| 日付 | ${date} |
+${author ? `| 担当者 | ${author} |\n` : ''}
+## 背景・コンテキスト
+
+${context || '（記入してください）'}
+
+## 決定事項
+
+${decision || '（記入してください）'}
+
+## 根拠・理由
+
+${rationale || '（記入してください）'}
+`;
+
+  if (altsSection) {
+    md += `\n## 検討した代替案\n${altsSection}`;
+  }
+
+  md += `
+## 影響・トレードオフ
+
+${consequences || '（記入してください）'}
+`;
+
+  if (refs) {
+    md += `\n## 関連ADR・参考資料\n\n${refs}\n`;
+  }
+
+  document.getElementById('md-preview').textContent = md;
+}
+
+function copyMd() {
+  const md = document.getElementById('md-preview').textContent;
+  navigator.clipboard.writeText(md).then(() => alert('コピーしました'));
+}
+
+async function _getLastHandle() {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const g = e.target.result.transaction('prefs','readonly').objectStore('prefs').get('h'); g.onsuccess = () => r(g.result||null); g.onerror = () => r(null); };
+      req.onerror = () => r(null);
+    } catch { r(null); }
+  });
+}
+async function _setLastHandle(h) {
+  return new Promise(r => {
+    try {
+      const req = indexedDB.open('tool-prefs', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('prefs');
+      req.onsuccess = e => { const tx = e.target.result.transaction('prefs','readwrite'); tx.objectStore('prefs').put(h,'h'); tx.oncomplete = r; tx.onerror = r; };
+      req.onerror = r;
+    } catch { r(); }
+  });
+}
+async function saveFile(content, filename, mimeType) {
+  const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+  const dot = filename.lastIndexOf('.');
+  const named = dot > 0 ? filename.slice(0,dot) + '_' + ts + filename.slice(dot) : filename + '_' + ts;
+  if (window.showSaveFilePicker) {
+    try {
+      const last = await _getLastHandle();
+      const opts = { suggestedName: named, types: [{ description: filename, accept: { [mimeType]: ['.' + filename.split('.').pop()] } }] };
+      if (last) opts.startIn = last;
+      const handle = await window.showSaveFilePicker(opts);
+      const w = await handle.createWritable();
+      await w.write(new Blob([content], {type: mimeType}));
+      await w.close();
+      await _setLastHandle(handle);
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  const blob = new Blob([content], {type: mimeType});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = named; a.click();
+}
+async function openFile(accept) {
+  const last = await _getLastHandle();
+  if (window.showOpenFilePicker) {
+    try {
+      const exts = accept.split(',').map(s => s.trim());
+      const mimes = { '.json':'application/json', '.yaml':'text/yaml', '.yml':'text/yaml', '.md':'text/markdown', '.txt':'text/plain', '.csv':'text/csv' };
+      const acceptMap = {};
+      exts.forEach(e => { const m = mimes[e]||'application/octet-stream'; (acceptMap[m]=acceptMap[m]||[]).push(e); });
+      const opts = { multiple: false, types: [{ description: 'File', accept: acceptMap }] };
+      if (last) opts.startIn = last;
+      const [handle] = await window.showOpenFilePicker(opts);
+      await _setLastHandle(handle);
+      return await handle.getFile();
+    } catch(e) { if (e.name === 'AbortError') return null; }
+  }
+  return new Promise(r => {
+    const input = document.createElement('input'); input.type = 'file'; input.accept = accept;
+    input.onchange = e => r(e.target.files[0]||null);
+    input.click();
+  });
+}
+
+function downloadMd() {
+  const num = document.getElementById('adr-num').value || 'XXX';
+  const md = document.getElementById('md-preview').textContent;
+  saveFile(md, `ADR-${num.padStart(3, '0')}.md`, 'text/markdown');
+}
+
+function clearForm() {
+  document.getElementById('adr-num').value = '';
+  document.getElementById('adr-title').value = '';
+  document.getElementById('adr-author').value = '';
+  document.getElementById('adr-context').value = '';
+  document.getElementById('adr-decision').value = '';
+  document.getElementById('adr-rationale').value = '';
+  document.getElementById('adr-consequences').value = '';
+  document.getElementById('adr-refs').value = '';
+  document.getElementById('alternatives-list').innerHTML = '';
+  generate();
+}
+
+const ADR_SAMPLES = [
+  {
+    num:'003', title:'バックエンドフレームワークの選定', status:'Accepted', author:'山田 太郎',
+    context:'新規WebシステムのバックエンドAPI開発にあたり、Java/Pythonベースのフレームワークを選定する必要がある。チームは全員Javaの経験者であり、本番稼働規模は月間100万リクエスト程度を想定。SLAは99.9%稼働。',
+    decision:'バックエンドフレームワークにSpring Boot 3.2を採用する。',
+    rationale:'1. チーム全員がJavaに習熟しており学習コストがゼロ\n2. エンタープライズ向けの豊富なエコシステム（Security / Data / AOP / Actuator）\n3. 本番実績が多く、社内の既存システムとの一貫性がある\n4. Spring Security によるOAuth2/JWT対応が容易',
+    consequences:'Good:\n- 開発速度が高い（チームスキル活用）\n- セキュリティ・トランザクション管理が容易\n- Spring Actuatorでメトリクス収集可能\n\nBad:\n- 起動時間がやや長い（GraalVM Native Imageで改善可能）\n- メモリ使用量が他フレームワークより多い（コンテナサイズ 512MB確保必要）',
+    refs:'ADR-001（技術スタック選定方針）\nADR-002（インフラ・クラウド選定）\nhttps://spring.io/projects/spring-boot',
+    alternatives:[
+      { name:'FastAPI (Python)', desc:'Pythonの非同期対応フレームワーク。OpenAPI自動生成に強み', pros:'高速・シンプル・自動ドキュメント生成・型ヒント対応', cons:'チームにPython経験者がいない（習得コスト大）' },
+      { name:'Quarkus', desc:'GraalVM対応の軽量Javaフレームワーク。クラウドネイティブ向け', pros:'起動時間・メモリ効率が優秀。Kubernetesとの親和性高い', cons:'チームの習熟度が低く、導入リスクあり。エコシステムがSpringより小さい' },
+    ]
+  },
+  {
+    num:'004', title:'認証方式の選定（パスワード認証 vs SSO）', status:'Accepted', author:'鈴木 花子',
+    context:'社内申請管理システムの認証方式として、独自パスワード認証とAzure AD SSOの2方式を検討している。社内にはすでにAzure AD環境があり、150名の社員アカウントが管理されている。IT部門からはAD連携を強く推奨されている。',
+    decision:'Azure AD SSOを採用し、SAML 2.0/OpenID Connectでシングルサインオンを実現する。パスワード管理は完全にAzure AD側に委任する。',
+    rationale:'1. 既存のAzure ADアカウントをそのまま使えるため、ユーザーの利便性が高い\n2. パスワード管理・ロック・MFA等のセキュリティ機能をAD側に委任できる\n3. 退職者アカウントのAD無効化がシステムに即反映される\n4. ISMSの認証管理要件を最小工数で満たせる',
+    consequences:'Good:\n- ユーザーはパスワードを覚えなくてよい（UX向上）\n- アカウント管理の運用コスト削減\n- MFA・条件付きアクセスポリシーをAD側で一元管理\n\nBad:\n- Azure ADが停止した場合にシステムにアクセス不可\n- 外部ユーザー（委託先等）のアクセスにはゲストアカウント発行が必要\n- 初期実装コストがパスワード認証より高い（+1週間程度）',
+    refs:'ADR-001（技術スタック選定方針）\nhttps://learn.microsoft.com/ja-jp/azure/active-directory/',
+    alternatives:[
+      { name:'独自パスワード認証', desc:'メールアドレス+パスワードによる従来型認証', pros:'実装が簡単。Azure ADへの依存がない。', cons:'パスワード管理の運用負荷が高い。退職者アカウント管理が手動になる。' },
+      { name:'Google Workspace SSO', desc:'Googleアカウントを使ったSSO（OpenID Connect）', pros:'導入実績多数。実装が容易。', cons:'社内はAzure AD利用のため二重管理が発生する。' },
+    ]
+  },
+  {
+    num:'005', title:'クラウドインフラ・ホスティング先の選定', status:'Accepted', author:'佐藤 次郎',
+    context:'社内申請管理システムのインフラとして、AWS / Azure / オンプレミスを比較検討している。セキュリティ部門から「データを国内に保存すること」という要件がある。予算は初期50万円・月次20万円以内。',
+    decision:'AWS（東京リージョン）を採用する。構成はECS Fargate + RDS Aurora PostgreSQL + S3 + CloudFront。',
+    rationale:'1. 社内のクラウド利用規定でAWSが承認済み（Azure, GCPは申請中）\n2. 東京リージョンでデータ国内保存要件を満たせる\n3. チームにAWS経験者が2名おりノウハウがある\n4. Fargate採用によりサーバー管理レスで運用工数を削減\n5. Aurora Serverless v2で夜間・週末のコスト最適化が可能',
+    consequences:'Good:\n- サーバー管理が不要（Fargate）\n- 従量課金でコスト最適化しやすい\n- Auto Scalingでピークアクセスへのスケールアウトが自動化\n\nBad:\n- AWSの費用が変動する（予算オーバーリスク、Cost Explorerで監視）\n- クラウド障害時の対応はAWS依存\n- チームがFargateに不慣れのため、初期設定に追加工数が必要',
+    refs:'ADR-001（技術スタック選定方針）\n社内クラウド利用規定 v2.3\nhttps://aws.amazon.com/jp/fargate/',
+    alternatives:[
+      { name:'Azure (East Japan)', desc:'AzureのApp Service + Azure SQL Databaseを使った構成', pros:'Azure ADとのネイティブ連携が容易', cons:'AWSより社内経験が少ない。現状は利用申請中で未承認。' },
+      { name:'オンプレミス（社内データセンター）', desc:'既存の社内サーバーへのデプロイ', pros:'データが完全に社内に留まる。固定費のみ。', cons:'インフラ調達リードタイム3ヶ月。スケールアップが困難。インフラ担当の運用負荷増大。' },
+    ]
+  },
+];
+
+function loadSample() {
+  const choice = prompt(
+    `ADRサンプルを選択（番号を入力）:\n${ADR_SAMPLES.map((s,i)=>`${i+1}: ADR-${s.num} ${s.title}`).join('\n')}`, '1'
+  );
+  if (choice === null) return;
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= ADR_SAMPLES.length) { alert('無効な選択です'); return; }
+  const s = ADR_SAMPLES[idx];
+  document.getElementById('adr-num').value = s.num;
+  document.getElementById('adr-date').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('adr-title').value = s.title;
+  document.getElementById('adr-status').value = s.status;
+  document.getElementById('adr-author').value = s.author;
+  document.getElementById('adr-context').value = s.context;
+  document.getElementById('adr-decision').value = s.decision;
+  document.getElementById('adr-rationale').value = s.rationale;
+  document.getElementById('adr-consequences').value = s.consequences;
+  document.getElementById('adr-refs').value = s.refs;
+  document.getElementById('alternatives-list').innerHTML = '';
+  s.alternatives.forEach(a => addAlternative(a.name, a.desc, a.pros, a.cons));
+  generate();
+}
+
+const ADR_STORAGE_KEY = 'adr-generator-v1';
+const ADR_TEXT_FIELDS = ['adr-num', 'adr-date', 'adr-title', 'adr-author', 'adr-context', 'adr-decision', 'adr-rationale', 'adr-consequences', 'adr-refs'];
+
+function getState() {
+  const fields = Object.fromEntries(ADR_TEXT_FIELDS.map(id => [id, document.getElementById(id).value]));
+  fields['adr-status'] = document.getElementById('adr-status').value;
+  fields.alternatives = Array.from(document.querySelectorAll('.alt-item')).map(item => {
+    const inputs = item.querySelectorAll('input');
+    const textareas = item.querySelectorAll('textarea');
+    return { name: inputs[0]?.value || '', desc: textareas[0]?.value || '', pros: inputs[1]?.value || '', cons: inputs[2]?.value || '' };
+  });
+  return fields;
+}
+
+function restoreState(state) {
+  ADR_TEXT_FIELDS.forEach(id => { if (state[id] !== undefined) document.getElementById(id).value = state[id]; });
+  if (state['adr-status']) document.getElementById('adr-status').value = state['adr-status'];
+  document.getElementById('alternatives-list').innerHTML = '';
+  (state.alternatives || []).forEach(a => addAlternative(a.name, a.desc, a.pros, a.cons));
+  generate();
+}
+
+function autoSave() { localStorage.setItem(ADR_STORAGE_KEY, JSON.stringify(getState())); }
+document.querySelectorAll('#adr-num,#adr-title,#adr-author,#adr-context,#adr-decision,#adr-rationale,#adr-consequences,#adr-refs').forEach(el => el.addEventListener('input', autoSave));
+document.getElementById('adr-status').addEventListener('change', autoSave);
+
+function exportJSON() {
+  saveFile(JSON.stringify(getState(), null, 2), 'adr.json', 'application/json');
+}
+async function importJSON() {
+  const file = await openFile('.json');
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const state = JSON.parse(ev.target.result);
+      if (!confirm('現在の入力を読み込んだデータで上書きしますか？')) return;
+      restoreState(state); autoSave();
+    } catch(e) { alert('読み込みに失敗しました: ' + e.message); }
+  };
+  reader.readAsText(file);
+}
+
+// Init
+const _adrSaved = localStorage.getItem(ADR_STORAGE_KEY);
+if (_adrSaved) { try { restoreState(JSON.parse(_adrSaved)); } catch(e) { document.getElementById('adr-date').value = new Date().toISOString().slice(0, 10); generate(); } }
+else { document.getElementById('adr-date').value = new Date().toISOString().slice(0, 10); generate(); }
+</script>
+</body>
+</html>
