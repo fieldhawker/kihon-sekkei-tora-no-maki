@@ -1,0 +1,5948 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="個人ナレッジ蓄積ドキュメント">
+      
+      
+      
+      
+        <link rel="prev" href="../web_api_design/">
+      
+      
+        <link rel="next" href="../git_github_team_practice/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.43">
+    
+    
+      
+        <title>Webを支える技術 — 要点まとめ - ナレッジベース</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.fba56155.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="ナビゲーション"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#web" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../../.." title="ナレッジベース" class="md-header__button md-logo" aria-label="ナレッジベース" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="ナビゲーション">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ナレッジベース
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Webを支える技術 — 要点まとめ
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ダークモードに切り替え"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="ダークモードに切り替え" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ライトモードに切り替え"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="ライトモードに切り替え" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="検索">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="検索">
+  <button type="button" class="md-search__button">
+    検索
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  ホーム
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  書籍
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../life/sidejob/" class="md-tabs__link">
+          
+  
+  ライフ
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../work/" class="md-tabs__link">
+          
+  
+  仕事
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../work/development/" class="md-tabs__link">
+          
+  
+  開発プロセス
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ナレッジベース" class="md-nav__button md-logo" aria-label="ナレッジベース" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    ナレッジベース
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ホーム
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  書籍
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  書籍
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  マネジメント
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  マネジメント
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/engineer_growth_37tips/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  エンジニアの成長37のヒント
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/issue-driven/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  イシューからはじめよ
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/pmbok_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  PMBOK ガイド
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%83%AA%E3%83%B3%E3%82%B0%E7%B5%84%E7%B9%94%E8%AB%96%E3%81%B8%E3%81%AE%E6%8B%9B%E5%BE%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  エンジニアリング組織論への招待
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  技術
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  技術
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readable_code/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  リーダブルコード
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pragmatic_programmer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  達人プログラマー
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../legacy_code_escape/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  レガシーコードからの脱却
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql_antipatterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SQLアンチパターン
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../software-testing-techniques/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ソフトウェアのテスト技法
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web_api_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Web APIの設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Webを支える技術
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Webを支える技術
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        目次
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. Webとは何か
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Webとは何か">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Webの三大要素
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        リソースとは
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-uri" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. URI — リソースを指し示す仕組み
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. URI — リソースを指し示す仕組み">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uri" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        URIの構造
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uri_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        良いURIの設計原則
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uriurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        URIとURLの違い
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-http-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. HTTP — Webの通信プロトコル
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. HTTP — Webの通信プロトコル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPの基本：リクエストとレスポンス
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPリクエストの構造
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPレスポンスの構造
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPのバージョン
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-html" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. HTMLとメディアタイプ
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. HTMLとメディアタイプ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#content-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        メディアタイプ（Content-Type）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        コンテントネゴシエーション
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-rest-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. REST — Webのアーキテクチャスタイル
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. REST — Webのアーキテクチャスタイル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RESTとは
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest6" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RESTの6つの制約
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        ステートレスとは
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. HTTPメソッドの使い方
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. HTTPメソッドの使い方">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        主要メソッド一覧
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crudhttp" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CRUDとHTTPメソッドの対応
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        7. ステータスコード
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. ステータスコード">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        ステータスコードの分類
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        よく使うステータスコード
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        8. HTTPヘッダ
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. HTTPヘッダ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        リクエストヘッダ（クライアント → サーバー）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        レスポンスヘッダ（サーバー → クライアント）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        キャッシュの仕組み
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        9. Webサービスの設計パターン
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Webサービスの設計パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restful-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RESTful APIの設計ガイドライン
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RESTful APIの設計ガイドライン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uri_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        URIの設計
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        クエリパラメータの使いどころ
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        API バージョニング
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        10. セキュリティの基礎
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. セキュリティの基礎">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#httpshttp-over-tlsssl" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPS（HTTP over TLS/SSL）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        認証・認可
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        よく使われる認証方式
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corscross-origin-resource-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CORS（Cross-Origin Resource Sharing）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        まとめ：Webの基本を押さえるためのチェックリスト
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        参考リンク
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git_github_team_practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Git・GitHubチーム実践
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unix_philosophy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  UNIX的考え方
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ライフ
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  ライフ
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../life/sidejob/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  副業
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  副業
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_1_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../life/sidejob/ai_images/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  AI画像生成
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_1_2" id="__nav_3_1_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  AI画像生成
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../life/sidejob/ai_images/SellableImages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  販売可能な画像
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../life/sidejob/ai_images/StableDiffusion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Stable Diffusion
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../life/sidejob/ai_images/StableDiffusion_Setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  セットアップ
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../life/sidejob/ai_images/StableDiffusion_Usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  使い方
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  食事・健康
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  食事・健康
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../life/diet/diet_plan_comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ダイエット計画比較
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../life/diet/lunch_plan_wfh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  在宅ランチプラン
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  仕事
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  仕事
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  AI活用
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  AI活用
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/ai/ai_use_cases_50/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  AI活用事例50選
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/ai/claude_code_use_cases_50/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Claude Code活用事例50選
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  開発プロセス
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  開発プロセス
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/10_requirements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  要件定義
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  要件定義
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/10_requirements/01_hearing_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ヒアリングの進め方
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/10_requirements/02_workflow_organizing_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  業務フロー整理
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/10_requirements/03_request_organizing_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  要求の整理と優先度付け
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/10_requirements/04_requirements_definition_form_template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  要件定義書テンプレート
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/10_requirements/05_review_approval_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  レビュー・承認手順
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/20_basic_design/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  基本設計
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  基本設計
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/01_system_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  システム方式設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/02_screen_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  画面設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/03_report_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  帳票設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/04_data_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  データ設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/05_function_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  機能設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/06_interface_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  外部インターフェース設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/07_nonfunctional_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  非機能要件設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/09_batch_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  バッチ設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/20_basic_design/08_review_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  レビュー・承認手順
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/30_detailed_design/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  詳細設計
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  詳細設計
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/01_screen_detail_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  画面詳細設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/02_process_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  処理詳細設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/03_data_detail_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  データ詳細設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/04_report_detail_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  帳票詳細設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/05_interface_detail_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  外部インターフェース詳細設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/06_error_exception_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  エラー・例外設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/08_batch_detail_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  バッチ詳細設計
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/30_detailed_design/07_review_procedure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  レビュー・承認手順
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/40_implementation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  実装
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  実装
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/40_implementation/01_preparation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  作業開始前の準備
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/40_implementation/02_environment_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  開発環境のセットアップ
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/40_implementation/03_branch_management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ブランチ管理
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/40_implementation/04_coding_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  コーディングガイド
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/40_implementation/05_unit_test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  単体テスト（実装時）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/40_implementation/06_code_review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  コードレビュー
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/40_implementation/07_merge_completion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  マージ・完了確認
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/50_unit_testing/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  単体テスト
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  単体テスト
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/50_unit_testing/01_test_plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト計画の確認
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/50_unit_testing/02_test_case_creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テストケースの作成
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/50_unit_testing/03_test_environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト環境の準備
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/50_unit_testing/04_test_execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テストの実施
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/50_unit_testing/05_defect_management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  不具合の記録・報告
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/50_unit_testing/06_retest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  修正・再テスト
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/50_unit_testing/07_test_completion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト完了確認
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/60_Integration_test/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  結合テスト
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_7" id="__nav_5_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  結合テスト
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/60_Integration_test/01_test_plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト計画の確認
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/60_Integration_test/02_test_case_creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テストケースの作成
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/60_Integration_test/03_test_environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト環境の準備
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/60_Integration_test/04_test_execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テストの実施
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/60_Integration_test/05_defect_management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  不具合の記録・報告
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/60_Integration_test/06_retest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  修正・再テスト
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/60_Integration_test/07_test_completion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト完了確認
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../work/development/70_comprehensive_test/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  運用テスト
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  運用テスト
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/01_test_plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト計画の確認
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/02_test_scenario_creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テストシナリオの作成
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/03_test_environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト環境の準備
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/04_test_execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テストの実施
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/05_defect_management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  不具合の記録・報告
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/06_retest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  修正・再テスト
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/07_migration_handover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  移行・引き継ぎ準備
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/70_comprehensive_test/08_test_completion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  テスト完了確認
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_9" id="__nav_5_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  チェックリスト
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  チェックリスト
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/90_checklist/basic_design_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  基本設計チェックリスト
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/90_checklist/detailed_design_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  詳細設計チェックリスト
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_10" id="__nav_5_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ツール
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  ツール
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../work/development/99_tools/tool-ideas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ツールアイデア
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        目次
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. Webとは何か
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Webとは何か">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#web_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Webの三大要素
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        リソースとは
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-uri" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. URI — リソースを指し示す仕組み
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. URI — リソースを指し示す仕組み">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uri" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        URIの構造
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uri_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        良いURIの設計原則
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uriurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        URIとURLの違い
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-http-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. HTTP — Webの通信プロトコル
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. HTTP — Webの通信プロトコル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPの基本：リクエストとレスポンス
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPリクエストの構造
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPレスポンスの構造
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPのバージョン
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-html" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. HTMLとメディアタイプ
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. HTMLとメディアタイプ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#content-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        メディアタイプ（Content-Type）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        コンテントネゴシエーション
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-rest-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. REST — Webのアーキテクチャスタイル
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. REST — Webのアーキテクチャスタイル">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RESTとは
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest6" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RESTの6つの制約
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        ステートレスとは
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. HTTPメソッドの使い方
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. HTTPメソッドの使い方">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        主要メソッド一覧
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crudhttp" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CRUDとHTTPメソッドの対応
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        7. ステータスコード
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. ステータスコード">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        ステータスコードの分類
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        よく使うステータスコード
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        8. HTTPヘッダ
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. HTTPヘッダ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        リクエストヘッダ（クライアント → サーバー）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        レスポンスヘッダ（サーバー → クライアント）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        キャッシュの仕組み
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-web" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        9. Webサービスの設計パターン
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Webサービスの設計パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restful-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RESTful APIの設計ガイドライン
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RESTful APIの設計ガイドライン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uri_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        URIの設計
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        クエリパラメータの使いどころ
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        API バージョニング
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        10. セキュリティの基礎
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. セキュリティの基礎">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#httpshttp-over-tlsssl" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        HTTPS（HTTP over TLS/SSL）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        認証・認可
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        よく使われる認証方式
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corscross-origin-resource-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CORS（Cross-Origin Resource Sharing）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        まとめ：Webの基本を押さえるためのチェックリスト
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        参考リンク
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="ナビゲーション" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../.." class="md-path__link">
+        
+  
+  <span class="md-ellipsis">
+    ホーム
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    書籍
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../readable_code/" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    技術
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="web">Webを支える技術 — 要点まとめ<a class="headerlink" href="#web" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>対象読者：Web開発の経験が浅い若手エンジニア<br />
+参考書籍：『Webを支える技術 ── HTTP、URI、HTML、そしてREST』山本陽平 著（技術評論社）</p>
+</blockquote>
+<hr />
+<h2 id="_1">目次<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#1-web">Webとは何か</a></li>
+<li><a href="#2-uri">URI — リソースを指し示す仕組み</a></li>
+<li><a href="#3-http-web">HTTP — Webの通信プロトコル</a></li>
+<li><a href="#4-html">HTMLとメディアタイプ</a></li>
+<li><a href="#5-rest-web">REST — Webのアーキテクチャスタイル</a></li>
+<li><a href="#6-http">HTTPメソッドの使い方</a></li>
+<li><a href="#7">ステータスコード</a></li>
+<li><a href="#8-http">HTTPヘッダ</a></li>
+<li><a href="#9-web">Webサービスの設計パターン</a></li>
+<li><a href="#10">セキュリティの基礎</a></li>
+</ol>
+<hr />
+<h2 id="1-web">1. Webとは何か<a class="headerlink" href="#1-web" title="Permanent link">&para;</a></h2>
+<h3 id="web_1">Webの三大要素<a class="headerlink" href="#web_1" title="Permanent link">&para;</a></h3>
+<p>Webは3つの技術の組み合わせで成り立っています。</p>
+<table>
+<thead>
+<tr>
+<th>技術</th>
+<th>役割</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>URI</strong></td>
+<td>リソースの住所（どこにあるか）</td>
+<td><code>https://example.com/users/1</code></td>
+</tr>
+<tr>
+<td><strong>HTTP</strong></td>
+<td>通信のルール（どうやり取りするか）</td>
+<td><code>GET /users/1 HTTP/1.1</code></td>
+</tr>
+<tr>
+<td><strong>HTML</strong></td>
+<td>情報の表現形式（何を伝えるか）</td>
+<td><code>&lt;h1&gt;ユーザー情報&lt;/h1&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_2">リソースとは<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>リソース</strong> = Web上で扱うすべての「もの」</p>
+</blockquote>
+<ul>
+<li>ユーザー情報、商品データ、画像、動画など</li>
+<li>「名詞」で考える。「ユーザーを取得する」ではなく「ユーザーというリソースが存在する」</li>
+</ul>
+<hr />
+<h2 id="2-uri">2. URI — リソースを指し示す仕組み<a class="headerlink" href="#2-uri" title="Permanent link">&para;</a></h2>
+<h3 id="uri">URIの構造<a class="headerlink" href="#uri" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>https://api.example.com:443/users/123?format=json#section1
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  │         │              │    │       │            │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  │         │              │    │       │            └── フラグメント（ページ内の位置）
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  │         │              │    │       └── クエリ（検索条件などの補足情報）
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  │         │              │    └── パス（リソースの場所）
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  │         │              └── ポート番号
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  │         └── ホスト名（サーバーのアドレス）
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  └── スキーム（通信方式）
+</code></pre></div>
+<h3 id="uri_1">良いURIの設計原則<a class="headerlink" href="#uri_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>変わらない</strong> — URIは一度公開したら変えない（リンク切れを防ぐ）</li>
+<li><strong>シンプルで推測しやすい</strong> — <code>/users/123</code> は分かりやすい、<code>/getUserById?id=123</code> は冗長</li>
+<li><strong>リソースを表す名詞を使う</strong> — 動詞はURIに入れない</li>
+<li><strong>階層構造を表現する</strong> — <code>/departments/1/employees</code> （部署1の従業員一覧）</li>
+</ol>
+<p><strong>悪い例 vs 良い例</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a># 悪い例（動詞がURIに含まれている）
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>POST /createUser
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>GET  /getUserList
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>POST /deleteUser?id=5
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a># 良い例（名詞でリソースを表現）
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>POST   /users          ← ユーザー作成
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>GET    /users          ← ユーザー一覧取得
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>DELETE /users/5        ← ユーザー削除
+</code></pre></div>
+<h3 id="uriurl">URIとURLの違い<a class="headerlink" href="#uriurl" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>URL</strong> (Uniform Resource Locator)：リソースの場所を示す</li>
+<li><strong>URI</strong> (Uniform Resource Identifier)：リソースを識別する（URLを含む上位概念）</li>
+<li>日常会話では混同しても問題ないが、技術的にはURIの方が広い概念</li>
+</ul>
+<hr />
+<h2 id="3-http-web">3. HTTP — Webの通信プロトコル<a class="headerlink" href="#3-http-web" title="Permanent link">&para;</a></h2>
+<h3 id="http">HTTPの基本：リクエストとレスポンス<a class="headerlink" href="#http" title="Permanent link">&para;</a></h3>
+<p>Webの通信はすべて <strong>クライアント（ブラウザ等）がリクエストを送り、サーバーがレスポンスを返す</strong> 流れです。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>クライアント                       サーバー
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    │                                 │
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    │  ──── HTTPリクエスト ────→      │
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    │                                 │  処理
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    │  ←─── HTTPレスポンス ────       │
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    │                                 │
+</code></pre></div>
+<h3 id="http_1">HTTPリクエストの構造<a class="headerlink" href="#http_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>GET /users/1 HTTP/1.1          ← リクエストライン（メソッド・パス・バージョン）
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Host: api.example.com          ← ヘッダ（付加情報）
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Accept: application/json
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                               ← 空行（ヘッダとボディの区切り）
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>                               ← ボディ（GETの場合は通常なし）
+</code></pre></div>
+<h3 id="http_2">HTTPレスポンスの構造<a class="headerlink" href="#http_2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>HTTP/1.1 200 OK                ← ステータスライン（バージョン・ステータスコード・理由句）
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Content-Type: application/json ← ヘッダ
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Content-Length: 42
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>{&quot;id&quot;: 1, &quot;name&quot;: &quot;山田太郎&quot;}  ← ボディ（実際のデータ）
+</code></pre></div>
+<h3 id="http_3">HTTPのバージョン<a class="headerlink" href="#http_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>バージョン</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP/1.0</td>
+<td>1リクエストごとに接続を切断</td>
+</tr>
+<tr>
+<td>HTTP/1.1</td>
+<td>接続の再利用（Keep-Alive）、パイプライン化</td>
+</tr>
+<tr>
+<td>HTTP/2</td>
+<td>複数リクエストの並列処理、ヘッダ圧縮</td>
+</tr>
+<tr>
+<td>HTTP/3</td>
+<td>UDPベース（QUIC）、さらなる高速化</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-html">4. HTMLとメディアタイプ<a class="headerlink" href="#4-html" title="Permanent link">&para;</a></h2>
+<h3 id="content-type">メディアタイプ（Content-Type）<a class="headerlink" href="#content-type" title="Permanent link">&para;</a></h3>
+<p>HTTPでデータをやり取りするとき、「このデータは何形式か」をサーバーとクライアントに伝えるのがメディアタイプです。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Content-Type: text/html; charset=UTF-8
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Content-Type: application/json
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Content-Type: image/png
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Content-Type: application/pdf
+</code></pre></div>
+<p>形式は <code>タイプ/サブタイプ</code> です。</p>
+<table>
+<thead>
+<tr>
+<th>タイプ</th>
+<th>意味</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>テキスト系</td>
+<td><code>text/html</code>, <code>text/plain</code></td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>画像</td>
+<td><code>image/png</code>, <code>image/jpeg</code></td>
+</tr>
+<tr>
+<td><code>application</code></td>
+<td>アプリケーション固有</td>
+<td><code>application/json</code>, <code>application/xml</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">コンテントネゴシエーション<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>クライアントが「自分はこの形式が扱える」とサーバーに伝え、サーバーが最適な形式でレスポンスを返す仕組みです。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a># クライアントのリクエスト（JSONとXMLを受け入れられる）
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Accept: application/json, application/xml;q=0.9
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a># サーバーのレスポンス（JSONで返す）
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>Content-Type: application/json
+</code></pre></div>
+<hr />
+<h2 id="5-rest-web">5. REST — Webのアーキテクチャスタイル<a class="headerlink" href="#5-rest-web" title="Permanent link">&para;</a></h2>
+<h3 id="rest">RESTとは<a class="headerlink" href="#rest" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>REST</strong> (Representational State Transfer) = Webのアーキテクチャスタイル（設計思想）</p>
+</blockquote>
+<p>「こう設計すると良いWebシステムができる」という考え方の集まりです。</p>
+<h3 id="rest6">RESTの6つの制約<a class="headerlink" href="#rest6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>制約</th>
+<th>内容</th>
+<th>なぜ重要か</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>クライアント/サーバー</strong></td>
+<td>役割を分離する</td>
+<td>それぞれが独立して進化できる</td>
+</tr>
+<tr>
+<td><strong>ステートレス</strong></td>
+<td>サーバーはセッション状態を保持しない</td>
+<td>スケールアウトが容易になる</td>
+</tr>
+<tr>
+<td><strong>キャッシュ</strong></td>
+<td>レスポンスにキャッシュ可否を示す</td>
+<td>性能向上、負荷軽減</td>
+</tr>
+<tr>
+<td><strong>統一インターフェース</strong></td>
+<td>URIとHTTPメソッドで統一する</td>
+<td>システム間連携が容易になる</td>
+</tr>
+<tr>
+<td><strong>階層化システム</strong></td>
+<td>ロードバランサ等を挟める</td>
+<td>柔軟なシステム構成が可能</td>
+</tr>
+<tr>
+<td><strong>コードオンデマンド</strong></td>
+<td>JavaScriptなどを動的に送れる</td>
+<td>（オプション）機能の拡張性</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">ステートレスとは<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>サーバーがクライアントの「状態」を記憶しないということです。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a># ステートフル（サーバーが状態を持つ）— RESTではない
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>リクエスト1: ログイン
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>リクエスト2: 商品を取得（サーバーは「誰がログインしているか」を覚えている）
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a># ステートレス（サーバーが状態を持たない）— REST
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>リクエスト1: ログイン → トークンを受け取る
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>リクエスト2: 商品を取得（リクエストにトークンを含める）
+</code></pre></div>
+<p>各リクエストが自己完結しているため、サーバーを複数台に増やしやすくなります。</p>
+<hr />
+<h2 id="6-http">6. HTTPメソッドの使い方<a class="headerlink" href="#6-http" title="Permanent link">&para;</a></h2>
+<p>HTTPメソッドは「リソースに何をするか」を表します。</p>
+<h3 id="_5">主要メソッド一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>メソッド</th>
+<th>操作</th>
+<th>冪等性</th>
+<th>安全性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GET</strong></td>
+<td>リソースの取得</td>
+<td>○</td>
+<td>○</td>
+</tr>
+<tr>
+<td><strong>POST</strong></td>
+<td>リソースの作成</td>
+<td>✕</td>
+<td>✕</td>
+</tr>
+<tr>
+<td><strong>PUT</strong></td>
+<td>リソースの置き換え（全体更新）</td>
+<td>○</td>
+<td>✕</td>
+</tr>
+<tr>
+<td><strong>PATCH</strong></td>
+<td>リソースの部分更新</td>
+<td>△</td>
+<td>✕</td>
+</tr>
+<tr>
+<td><strong>DELETE</strong></td>
+<td>リソースの削除</td>
+<td>○</td>
+<td>✕</td>
+</tr>
+<tr>
+<td><strong>HEAD</strong></td>
+<td>ヘッダのみ取得（GETと同じだがボディなし）</td>
+<td>○</td>
+<td>○</td>
+</tr>
+<tr>
+<td><strong>OPTIONS</strong></td>
+<td>利用可能なメソッドの確認</td>
+<td>○</td>
+<td>○</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>冪等性（べきとうせい）</strong>：同じ操作を何度繰り返しても結果が同じになること<br />
+例：<code>DELETE /users/1</code> を2回実行しても「ユーザー1が存在しない」状態になる（変わらない）</p>
+<p><strong>安全性</strong>：リソースの状態を変更しないこと<br />
+例：GETはデータを取得するだけで変更しない</p>
+</blockquote>
+<h3 id="crudhttp">CRUDとHTTPメソッドの対応<a class="headerlink" href="#crudhttp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>CRUD操作</th>
+<th>HTTPメソッド</th>
+<th>URI例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create（作成）</td>
+<td>POST</td>
+<td><code>POST /users</code></td>
+</tr>
+<tr>
+<td>Read（取得）</td>
+<td>GET</td>
+<td><code>GET /users</code> / <code>GET /users/1</code></td>
+</tr>
+<tr>
+<td>Update（更新）</td>
+<td>PUT / PATCH</td>
+<td><code>PUT /users/1</code></td>
+</tr>
+<tr>
+<td>Delete（削除）</td>
+<td>DELETE</td>
+<td><code>DELETE /users/1</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7">7. ステータスコード<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
+<p>レスポンスの「結果」を3桁の数字で表します。</p>
+<h3 id="_6">ステータスコードの分類<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>範囲</th>
+<th>分類</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1xx</td>
+<td>情報</td>
+<td>処理継続中</td>
+</tr>
+<tr>
+<td>2xx</td>
+<td>成功</td>
+<td>リクエスト成功</td>
+</tr>
+<tr>
+<td>3xx</td>
+<td>リダイレクト</td>
+<td>別のURIへ転送</td>
+</tr>
+<tr>
+<td>4xx</td>
+<td>クライアントエラー</td>
+<td>リクエストに問題がある</td>
+</tr>
+<tr>
+<td>5xx</td>
+<td>サーバーエラー</td>
+<td>サーバー側で問題が発生</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">よく使うステータスコード<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>コード</th>
+<th>名称</th>
+<th>使いどころ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>OK</td>
+<td>成功（GET/PUT/PATCHなど）</td>
+</tr>
+<tr>
+<td><strong>201</strong></td>
+<td>Created</td>
+<td>リソース作成成功（POST）</td>
+</tr>
+<tr>
+<td><strong>204</strong></td>
+<td>No Content</td>
+<td>成功だがボディなし（DELETE）</td>
+</tr>
+<tr>
+<td><strong>301</strong></td>
+<td>Moved Permanently</td>
+<td>永続的なリダイレクト（URI変更時）</td>
+</tr>
+<tr>
+<td><strong>302</strong></td>
+<td>Found</td>
+<td>一時的なリダイレクト</td>
+</tr>
+<tr>
+<td><strong>304</strong></td>
+<td>Not Modified</td>
+<td>キャッシュが有効（更新なし）</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td>Bad Request</td>
+<td>リクエストの形式が不正</td>
+</tr>
+<tr>
+<td><strong>401</strong></td>
+<td>Unauthorized</td>
+<td>認証が必要</td>
+</tr>
+<tr>
+<td><strong>403</strong></td>
+<td>Forbidden</td>
+<td>認証済みだが権限なし</td>
+</tr>
+<tr>
+<td><strong>404</strong></td>
+<td>Not Found</td>
+<td>リソースが存在しない</td>
+</tr>
+<tr>
+<td><strong>409</strong></td>
+<td>Conflict</td>
+<td>競合（重複登録など）</td>
+</tr>
+<tr>
+<td><strong>500</strong></td>
+<td>Internal Server Error</td>
+<td>サーバー内部エラー</td>
+</tr>
+<tr>
+<td><strong>503</strong></td>
+<td>Service Unavailable</td>
+<td>サーバーが一時的に利用不可</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-http">8. HTTPヘッダ<a class="headerlink" href="#8-http" title="Permanent link">&para;</a></h2>
+<h3 id="_8">リクエストヘッダ（クライアント → サーバー）<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ヘッダ名</th>
+<th>役割</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Host</code></td>
+<td>アクセス先のホスト名</td>
+<td><code>Host: api.example.com</code></td>
+</tr>
+<tr>
+<td><code>Accept</code></td>
+<td>受け入れ可能なメディアタイプ</td>
+<td><code>Accept: application/json</code></td>
+</tr>
+<tr>
+<td><code>Authorization</code></td>
+<td>認証情報</td>
+<td><code>Authorization: Bearer &lt;token&gt;</code></td>
+</tr>
+<tr>
+<td><code>Content-Type</code></td>
+<td>ボディのメディアタイプ</td>
+<td><code>Content-Type: application/json</code></td>
+</tr>
+<tr>
+<td><code>User-Agent</code></td>
+<td>クライアントの種類</td>
+<td><code>User-Agent: Mozilla/5.0 ...</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">レスポンスヘッダ（サーバー → クライアント）<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ヘッダ名</th>
+<th>役割</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Content-Type</code></td>
+<td>ボディのメディアタイプ</td>
+<td><code>Content-Type: application/json</code></td>
+</tr>
+<tr>
+<td><code>Location</code></td>
+<td>リダイレクト先や作成されたリソースのURI</td>
+<td><code>Location: /users/123</code></td>
+</tr>
+<tr>
+<td><code>Cache-Control</code></td>
+<td>キャッシュの制御</td>
+<td><code>Cache-Control: max-age=3600</code></td>
+</tr>
+<tr>
+<td><code>ETag</code></td>
+<td>リソースのバージョン識別子</td>
+<td><code>ETag: "abc123"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">キャッシュの仕組み<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a># 初回リクエスト
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>クライアント → GET /users/1
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>サーバー     ← 200 OK + ETag: &quot;abc123&quot; + Cache-Control: max-age=3600
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a># 2回目（キャッシュ有効期限内）
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>クライアントはサーバーにアクセスせずキャッシュを使用
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a># キャッシュ期限切れ後
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>クライアント → GET /users/1 + If-None-Match: &quot;abc123&quot;
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>サーバー     ← 304 Not Modified（変更なし → キャッシュ継続使用）
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>         または 200 OK + 新しいデータ（変更あり）
+</code></pre></div>
+<hr />
+<h2 id="9-web">9. Webサービスの設計パターン<a class="headerlink" href="#9-web" title="Permanent link">&para;</a></h2>
+<h3 id="restful-api">RESTful APIの設計ガイドライン<a class="headerlink" href="#restful-api" title="Permanent link">&para;</a></h3>
+<h4 id="uri_2">URIの設計<a class="headerlink" href="#uri_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a># コレクション（一覧）とメンバー（個別）
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>GET  /articles          # 記事一覧
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>POST /articles          # 記事作成
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>GET  /articles/1        # 記事1を取得
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>PUT  /articles/1        # 記事1を更新
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>DELETE /articles/1      # 記事1を削除
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a># ネストしたリソース
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>GET /articles/1/comments       # 記事1のコメント一覧
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>POST /articles/1/comments      # 記事1にコメント作成
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>GET /articles/1/comments/5    # 記事1のコメント5を取得
+</code></pre></div>
+<h4 id="_11">クエリパラメータの使いどころ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a># 絞り込み・並び替え・ページング → クエリパラメータ
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>GET /articles?category=tech&amp;sort=created_at&amp;page=2&amp;per_page=20
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a># リソースの識別（どのリソースか）→ パス
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>GET /articles/1
+</code></pre></div>
+<h3 id="api">API バージョニング<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<p>APIを変更する場合、既存のクライアントを壊さないためにバージョン管理します。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a># URIにバージョンを含める（シンプルで分かりやすい）
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>/v1/users
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>/v2/users
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a># ヘッダにバージョンを含める
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>Accept: application/vnd.example.v2+json
+</code></pre></div>
+<hr />
+<h2 id="10">10. セキュリティの基礎<a class="headerlink" href="#10" title="Permanent link">&para;</a></h2>
+<h3 id="httpshttp-over-tlsssl">HTTPS（HTTP over TLS/SSL）<a class="headerlink" href="#httpshttp-over-tlsssl" title="Permanent link">&para;</a></h3>
+<p>HTTPはデータが平文で流れるため盗聴・改ざんのリスクがあります。HTTPSはTLSによって通信を暗号化します。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>HTTP  → データが平文（盗聴・改ざん可能）
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>HTTPS → データが暗号化（安全な通信）
+</code></pre></div>
+<p>現代のWebサービスでは<strong>必ずHTTPSを使用</strong>します。</p>
+<h3 id="_12">認証・認可<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>意味</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>認証（Authentication）</strong></td>
+<td>「あなたは誰？」を確認する</td>
+<td>ログイン、API Key確認</td>
+</tr>
+<tr>
+<td><strong>認可（Authorization）</strong></td>
+<td>「あなたは何ができる？」を確認する</td>
+<td>管理者のみ削除可能</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_13">よく使われる認証方式<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p><strong>Basic認証</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Authorization: Basic base64(username:password)
+</code></pre></div>
+- シンプルだがHTTPSなしでは危険</p>
+<p><strong>Bearer Token（JWT等）</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+</code></pre></div>
+- トークンをHTTPヘッダで送る
+- 現代のAPIでよく使われる</p>
+<p><strong>OAuth 2.0</strong>
+- 外部サービスへのアクセス権限を安全に委譲する仕組み
+- 「Googleでログイン」などがこれ</p>
+<h3 id="corscross-origin-resource-sharing">CORS（Cross-Origin Resource Sharing）<a class="headerlink" href="#corscross-origin-resource-sharing" title="Permanent link">&para;</a></h3>
+<p>異なるドメイン間のHTTPリクエストを制御する仕組みです。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a># フロントエンド: https://app.example.com
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a># APIサーバー:    https://api.example.com
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a># ブラウザはデフォルトで異なるオリジンへのリクエストをブロック
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a># APIサーバー側でCORSを許可するヘッダを返す必要がある
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>Access-Control-Allow-Origin: https://app.example.com
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+</code></pre></div>
+<hr />
+<h2 id="web_2">まとめ：Webの基本を押さえるためのチェックリスト<a class="headerlink" href="#web_2" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> URIはリソースを表す名詞で設計できる</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> HTTPメソッド（GET/POST/PUT/DELETE）の使い分けが分かる</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> ステータスコードの意味を200/400/500系で説明できる</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> RESTがステートレスである理由を説明できる</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> HTTPSとHTTPの違いを説明できる</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 認証と認可の違いを説明できる</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Content-Typeとは何かを説明できる</li>
+</ul>
+<hr />
+<h2 id="_14">参考リンク<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/HTTP">MDN Web Docs — HTTP</a></li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7230">RFC 7230 — HTTP/1.1</a></li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986 — URI</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["navigation.tabs","navigation.tabs.sticky","navigation.sections","navigation.indexes","navigation.expand","navigation.path","navigation.top","toc.follow","search.suggest","search.highlight","search.share","content.code.copy","content.code.annotate","content.tabs.link","content.tooltips"],"search":"../../../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"コピーしました","clipboard.copy":"クリップボードへコピー","search.result.more.one":"このページ内にもう1件見つかりました","search.result.more.other":"このページ内にあと#件見つかりました","search.result.none":"何も見つかりませんでした","search.result.one":"1件見つかりました","search.result.other":"#件見つかりました","search.result.placeholder":"検索キーワードを入力してください","search.result.term.missing":"検索に含まれない","select.version":"バージョン切り替え"},"version":null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.6e5f0216.min.js"></script>
+      
+    
+  </body>
+</html>
